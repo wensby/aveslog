@@ -11,7 +11,7 @@ fi
 
 remote_directory='~/birding'
 
-ssh $1 "mkdir -p $remote_directory"
+ssh $1 "mkdir -p $remote_directory && mkdir -p $remote_directory/data"
 
 scp ./docker-compose.yml $1:$remote_directory/docker-compose.yml
 scp ./docker-compose.prod.yml $1:$remote_directory/docker-compose.prod.yml

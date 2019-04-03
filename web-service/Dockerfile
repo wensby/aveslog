@@ -6,6 +6,7 @@ RUN pip install -r /requirements.txt
 
 COPY src/ /app
 WORKDIR /app
+VOLUME /data
 
 ENTRYPOINT ["python"]
 CMD ["app.py"]

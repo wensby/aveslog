@@ -8,3 +8,5 @@ services:
     image: birding-web-service
     container_name: birding-web-service
     restart: always
+    volumes:
+      - ./data:/data
