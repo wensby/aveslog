@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  birding-web-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./web-service
+    image: birding-web-service
+    container_name: birding-web-service
+    restart: always

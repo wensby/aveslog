@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  birding-web-service:
+    expose:
+      - 3000
+    environment:
+      VIRTUAL_HOST: yourdomain.tld
+      VIRTUAL_PORT: 3000
+      LETSENCRYPT_HOST: yourdomain.tld
+      LETSENCRYPT_EMAIL: email@domain.tld
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
