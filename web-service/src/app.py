@@ -4,7 +4,7 @@ from flask import Flask, request, redirect, url_for, session, render_template
 app = Flask(__name__)
 
 bird_directory = '/data/'
-app.secret_key = '40958hft09834utnv093nt50934tv983vnasdfu4'
+app.secret_key = open('/app/secret_key', 'r').readline()
 
 def login_username():
   username = request.form['username']
