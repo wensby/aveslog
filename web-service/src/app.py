@@ -3,28 +3,51 @@ import re
 from flask import Flask, request, redirect, url_for, session, render_template
 app = Flask(__name__)
 
-bird_filepath_str = '/data/bird.txt'
-app.secret_key = '40958hft09834utnv093nt50934tv983vnu4'
+bird_directory = '/data/'
+app.secret_key = '40958hft09834utnv093nt50934tv983vnasdfu4'
+
+def login_username():
+  username = request.form['username']
+  if re.compile('^[A-z]{1,20}$').match(username):
+    session['username'] = username
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-  if request.method == 'GET':
-    return render_template('login.html')
-  else:
-    username = request.form['username']
-    session['username'] = username
+  if request.method == 'POST':
+    login_username()
     return redirect(url_for('index'))
+  else:
+    return render_template('login.html')
 
-def putbird(bird):
-  if len(bird) < 20 and re.compile("^([A-z]+)( [A-z]+)*$").match(bird):
-    with open(bird_filepath_str, 'a+') as f:
-      f.write(bird + '\n')
+@app.route('/logout', methods=['GET'])
+def logout():
+  session.pop('username', None)
+  return redirect(url_for('login'))
 
-def getbirds():
+def get_bird_firepath_str(username):
+  return bird_directory + username + '.txt'
+
+def createbirdfileifnotpresent(username):
+  bird_filepath_str = get_bird_firepath_str(session['username'])
   if not os.path.exists(bird_filepath_str):
     open(bird_filepath_str, 'w+').close()
-  with open(bird_filepath_str, 'r') as f:
-    return [line.rstrip('\n') for line in f]
+
+def putbird(bird):
+  if session['username']:
+    bird_filepath_str = get_bird_firepath_str(session['username'])
+    createbirdfileifnotpresent(session['username'])
+    if re.compile("^[A-zåäöÅÄÖ ]{1,20}$").match(bird):
+      with open(bird_filepath_str, 'a+') as f:
+        f.write(bird + '\n')
+
+def getbirds():
+  if session['username']:
+    bird_filepath_str = get_bird_firepath_str(session['username'])
+    createbirdfileifnotpresent(session['username'])
+    with open(bird_filepath_str, 'r') as f:
+      return [line.rstrip('\n') for line in f]
+  else:
+    return []
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
