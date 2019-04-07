@@ -36,7 +36,7 @@ def putbird(bird):
   if session['username']:
     bird_filepath_str = get_bird_firepath_str(session['username'])
     createbirdfileifnotpresent(session['username'])
-    if re.compile("^[A-zåäöÅÄÖ ]{1,20}$").match(bird):
+    if re.compile("^[A-zåäöÅÄÖ ]{1,50}$").match(bird):
       with open(bird_filepath_str, 'a+') as f:
         f.write(bird + '\n')
 
