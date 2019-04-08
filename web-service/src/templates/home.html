@@ -1,12 +1,21 @@
 <!doctype html>
-<head></head>
+<head>
+  <title>Birding</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
   Hello world! Hello {{ username }}!
-  <form action="/" method="post">Bird:<input type="text" name="bird"></form><br>
+  <form action="/" method="post">Bird Sighting:
+    <input type="text" name="bird">
+    <input type="submit" value="Add">
+  </form>
+  <br>
   {% if birds %}
-  {% for bird in birds %}
-  <p>{{ bird }}</p>
-  {% endfor %}
+  <ol>
+    {% for bird in birds %}
+    <li>{{ bird }}</li>
+    {% endfor %}
+  </ol>
   {% endif %}
   <a href='/logout'>logout</a>
 </body>

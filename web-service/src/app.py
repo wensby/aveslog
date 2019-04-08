@@ -5,9 +5,9 @@ from flask import Flask, request, redirect, url_for, session, render_template
 from sighting import SightingRepository
 from bird import BirdRepository
 from person import PersonRepository
+
 app = Flask(__name__)
 
-bird_directory = '/data/'
 app.secret_key = open('/app/secret_key', 'r').readline()
 sighting_file = Path('/data/sighting/sighting.txt')
 bird_file = Path('/data/bird/bird.txt')
@@ -39,14 +39,6 @@ def login():
 def logout():
   session.pop('username', None)
   return redirect(url_for('login'))
-
-def get_bird_filepath_str(username):
-  return bird_directory + username + '.txt'
-
-def createbirdfileifnotpresent(username):
-  bird_filepath_str = get_bird_filepath_str(session['username'])
-  if not os.path.exists(bird_filepath_str):
-    open(bird_filepath_str, 'w+').close()
 
 def putbird(bird_name):
   if session['username']:
