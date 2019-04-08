@@ -3,6 +3,10 @@
 <body>
   Hello world! Hello {{ username }}!
   <form action="/" method="post">Bird:<input type="text" name="bird"></form><br>
-  <p>{{ birds }}</p>
+  {% if birds %}
+  {% for bird in birds %}
+  <p>{{ bird }}</p>
+  {% endfor %}
+  {% endif %}
   <a href='/logout'>logout</a>
 </body>
