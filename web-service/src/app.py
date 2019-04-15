@@ -1,5 +1,6 @@
 import os.path
 import re
+import psycopg2
 from pathlib import Path
 from flask import Flask, request, redirect, url_for, session, render_template
 from sighting import SightingRepository
@@ -57,7 +58,9 @@ def getbirds():
     sightings = sighting_repo.get_sightings_by_person_id(person_id)
     birds = []
     for sighting in sightings:
-      birds.append(bird_repo.get_bird_by_id(sighting.bird_id).name)
+      bird = bird_repo.get_bird_by_id(sighting.bird_id)
+      if bird:
+        birds.append(bird.name)
     return birds
 
 @app.route('/', methods=['GET', 'POST'])

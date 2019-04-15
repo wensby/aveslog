@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+
   birding-web-service:
     build:
       dockerfile: Dockerfile
@@ -8,5 +9,28 @@ services:
     image: birding-web-service
     container_name: birding-web-service
     restart: always
+    networks:
+      - default
+      - birding-database-network
     volumes:
       - ./data:/data
+    depends_on:
+      - birding-database-service
+
+  birding-database-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: birding-database-service
+    container_name: birding-database-service
+    restart: always
+    networks:
+      - birding-database-network
+    volumes:
+      - ./volumes/database:/var/lib/postgresql/data
+
+networks:
+  birding-database-network:
+    driver: bridge
+  default:
+    driver: bridge
