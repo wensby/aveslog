@@ -6,17 +6,16 @@ from flask import Flask, request, redirect, url_for, session, render_template
 from sighting import SightingRepository
 from bird import BirdRepository
 from person import PersonRepository
+from database import Database
 
 app = Flask(__name__)
 
 app.secret_key = open('/app/secret_key', 'r').readline()
-sighting_file = Path('/data/sighting/sighting.txt')
-bird_file = Path('/data/bird/bird.txt')
-person_file = Path('/data/person/person.txt')
 
-bird_repo = BirdRepository(bird_file)
-sighting_repo = SightingRepository(sighting_file)
-person_repo = PersonRepository(person_file)
+database = Database('birding-database-service', 'birding-database', 'postgres', 'docker')
+bird_repo = BirdRepository(database)
+sighting_repo = SightingRepository(database)
+person_repo = PersonRepository(database)
 
 def login_username():
   username = request.form['username']

@@ -9,32 +9,11 @@ class Bird:
 
 class BirdRepository:
 
-  def __init__(self, filepath):
-    self.filepath = filepath
-
-  def fetchone(self, query, vars=None):
-    result = self.doquery(query, vars)
-    if result:
-      return result[0]
-    else:
-      return None
-
-  def doquery(self, query, vars=None):
-    connection = psycopg2.connect(host='birding-database-service', dbname="birding-database", user="postgres", password="docker")
-    cursor = connection.cursor()
-    cursor.execute(query, vars)
-    result = None
-    try:
-      result = cursor.fetchall()
-    except:
-      pass
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return result 
+  def __init__(self, database):
+    self.database = database
 
   def fetchonebird(self, query, vars=None):
-    result = self.fetchone(query, vars)
+    result = self.database.fetchone(query, vars)
     if result:
       return Bird(result[0], result[1])
     return None
@@ -46,11 +25,11 @@ class BirdRepository:
     return self.fetchonebird("SELECT id, name FROM bird WHERE name like %s;", (name,))
 
   def add_bird(self, name):
-    self.fetchone("INSERT INTO bird (name) VALUES (%s);", (name,))
+    self.database.fetchone("INSERT INTO bird (name) VALUES (%s);", (name,))
     return self.get_bird_by_name(name)
 
   def read_birds(self):
-    rows = self.doquery("SELECT * FROM bird;")
+    rows = self.database.doquery("SELECT * FROM bird;")
     birds = []
     for row in rows:
       bird = Bird(row[0], row[1])

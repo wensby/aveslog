@@ -10,42 +10,15 @@ class Sighting:
 
 class SightingRepository:
 
-  def __init__(self, sighting_file):
-    self.sighting_file = sighting_file
+  def __init__(self, database):
+    self.database = database
 
   def get_sightings_by_person_id(self, id):
+    rows = self.database.doquery('SELECT id, person_id, bird_id FROM sighting WHERE person_id = %s;', (id,))
     sightings = []
-    for sighting in self.read_sightings():
-      if sighting.person_id == id:
-        sightings.append(sighting)
+    for row in rows:
+      sightings.append(Sighting(row[0], row[1], row[2]))
     return sightings
-
-  def read_sightings(self):
-    sightings = []
-    with self.sighting_file.open('r') as file:
-      for line in file:
-        strippedline = line.rstrip()
-        json_dict = json.loads(strippedline)
-        sightings.append(Sighting(json_dict['id'], json_dict['person_id'], json_dict['bird_id']))
-    return sightings
-
-  def find_unused_id(self, sightings):
-    ids = []
-    for sighting in sightings:
-      ids.append(sighting.id)
-    id = 0
-    while id in ids:
-      id = id + 1
-    return id
 
   def add_sighting(self, person_id, bird_id):
-    sightings = self.read_sightings()
-    unused_id = self.find_unused_id(sightings)
-    new_sighting = Sighting(unused_id, person_id, bird_id)
-    with self.sighting_file.open('a') as file:
-      file.write(json.dumps(new_sighting.__dict__) + '\n')
-    return new_sighting
-
-  def get_sightings(self, person_id):
-    sightings = self.read_sightings()
-    return filter(lambda sighting : sighting.person_id == person_id, sightings)
+    self.database.doquery('INSERT INTO sighting (person_id, bird_id) VALUES (%s, %s);', (person_id, bird_id))
