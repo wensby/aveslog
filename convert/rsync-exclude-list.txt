@@ -1,3 +1,0 @@
-+*.DS_Store
-+*.pyc
-+convert/rsync-exclude-list.txt
