@@ -3,10 +3,14 @@ import json
 
 class Sighting:
 
-  def __init__(self, id, person_id, bird_id):
+  def __init__(self, id, person_id, bird_id, sighting_time):
     self.id = id
     self.person_id = person_id
     self.bird_id = bird_id
+    self.sighting_time = sighting_time
+
+  def from_row(row):
+    return Sighting(row[0], row[1], row[2], row[3])
 
 class SightingRepository:
 
@@ -14,11 +18,11 @@ class SightingRepository:
     self.database = database
 
   def get_sightings_by_person_id(self, id):
-    rows = self.database.doquery('SELECT id, person_id, bird_id FROM sighting WHERE person_id = %s;', (id,))
-    sightings = []
-    for row in rows:
-      sightings.append(Sighting(row[0], row[1], row[2]))
-    return sightings
+    query = ('SELECT id, person_id, bird_id, sighting_time '
+             'FROM sighting '
+             'WHERE person_id = %s;')
+    rows = self.database.doquery(query, (id,))
+    return map(Sighting.from_row, rows)
 
   def add_sighting(self, person_id, bird_id):
     self.database.doquery('INSERT INTO sighting (person_id, bird_id) VALUES (%s, %s);', (person_id, bird_id))
