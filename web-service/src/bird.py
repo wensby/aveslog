@@ -29,7 +29,7 @@ class BirdRepository:
     return self.get_bird_by_name(name)
 
   def read_birds(self):
-    rows = self.database.doquery("SELECT * FROM bird;")
+    rows = self.database.query("SELECT * FROM bird;")
     birds = []
     for row in rows:
       bird = Bird(row[0], row[1])

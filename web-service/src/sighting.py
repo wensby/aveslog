@@ -21,8 +21,8 @@ class SightingRepository:
     query = ('SELECT id, person_id, bird_id, sighting_time '
              'FROM sighting '
              'WHERE person_id = %s;')
-    rows = self.database.doquery(query, (id,))
+    rows = self.database.query(query, (id,))
     return map(Sighting.from_row, rows)
 
   def add_sighting(self, person_id, bird_id):
-    self.database.doquery('INSERT INTO sighting (person_id, bird_id) VALUES (%s, %s);', (person_id, bird_id))
+    self.database.query('INSERT INTO sighting (person_id, bird_id) VALUES (%s, %s);', (person_id, bird_id))

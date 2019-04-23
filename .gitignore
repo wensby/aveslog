@@ -1,3 +1,5 @@
 docker-compose.prod.yml
 secret_key
 volumes
+*.swp
+__pycache__/

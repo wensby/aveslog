@@ -25,7 +25,7 @@ class PersonRepository:
     return self.fetchoneperson('SELECT id, name FROM person WHERE name like %s;', (name,))
 
   def get_people(self):
-    rows = self.database.doquery('SELECT * FROM person;')
+    rows = self.database.query('SELECT * FROM person;')
     people = []
     for row in rows:
       person = Person(row[0], row[1])
