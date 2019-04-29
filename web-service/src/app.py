@@ -8,6 +8,8 @@ from bird import BirdRepository
 from person import PersonRepository
 from database import Database
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
+from datetime import datetime
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -67,7 +69,7 @@ def logout():
   session.pop('username', None)
   return redirect(url_for('login'))
 
-def putbird(bird_name):
+def putbird(bird_name, sighting_time):
   if session['username']:
     person_name = session['username']
     person_id = person_repo.get_person_by_name(person_name).id
@@ -75,7 +77,7 @@ def putbird(bird_name):
     if not bird:
       bird = bird_repo.add_bird(bird_name)
     bird_id = bird.id
-    sighting_repo.add_sighting(person_id, bird_id)
+    sighting_repo.add_sighting(person_id, bird_id, sighting_time)
 
 def getbirds():
   if session['username']:
@@ -94,7 +96,9 @@ def index():
   if 'username' in session:
     if request.method == 'POST':
       bird = request.form['bird']
-      putbird(bird)
+      timezoneoffset = int(request.form['timezoneoffset'])
+      sighting_time = datetime.utcnow() + timedelta(minutes=timezoneoffset)
+      putbird(bird, sighting_time)
       return redirect(url_for('index'))
     else:
       birds = getbirds()

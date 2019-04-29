@@ -5,9 +5,10 @@
 </head>
 <body>
   Hello world! Hello {{ username }}!
-  <form action="/" method="post">Bird Sighting:
+  <form id=sightingForm action="/" method="post">Bird Sighting:
     <input type="text" name="bird">
-    <input type="submit" value="Add">
+    <input type="submit" value="Add" onclick="submitSighting()">
+    <input type=hidden id=timezoneoffset name=timezoneoffset>
   </form>
   <br>
   {% if birds %}
@@ -18,4 +19,10 @@
   </ol>
   {% endif %}
   <a href='/logout'>logout</a>
+  <script>
+    function submitSighting() {
+      document.getElementById('timezoneoffset').value = -(new Date().getTimezoneOffset());
+      document.getElementById('sightingForm').submit();
+    }
+  </script>
 </body>
