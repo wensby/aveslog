@@ -1,9 +1,6 @@
-<!doctype html>
-<head>
-  <title>Birding</title>
-  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block content %}
   Hello world! Hello {{ username }}!
   <form id=sightingForm action="/" method="post">Bird Sighting:
     <input type="text" name="bird">
@@ -25,4 +22,4 @@
       document.getElementById('sightingForm').submit();
     }
   </script>
-</body>
+{% endblock %}

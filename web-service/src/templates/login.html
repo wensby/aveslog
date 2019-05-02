@@ -1,14 +1,10 @@
-<!doctype html>
-<head>
-  <title>Birding</title>
-  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-  <h1>Birding</h1>
+{% extends 'base.html' %}
+
+{% block content %}
   <form method=post>
     <input type=text name=username>
     <input type=password name=password>
     <input type=submit value=Login>
   </form>
   <a href='/register'>Register new account</a>
-</body>
+{% endblock %}
