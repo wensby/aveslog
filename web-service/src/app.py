@@ -50,6 +50,14 @@ def register():
   else:
     return render_template('register.html')
 
+@app.route('/bird/search', methods=['GET'])
+def bird_search():
+  query = request.args.get('query')
+  if re.compile('^[A-zåäöÅÄÖ ]+$').match(query):
+    return render_template('birdsearch.html', result=[query])
+  else:
+    return redirect(url_for('index'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   app.logger.info('login %s', request.method)
