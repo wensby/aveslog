@@ -67,7 +67,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
   session.pop('username', None)
-  return redirect(url_for('login'))
+  return redirect(url_for('index'))
 
 def putbird(bird_name, sighting_time):
   if session['username']:
@@ -102,9 +102,9 @@ def index():
       return redirect(url_for('index'))
     else:
       birds = getbirds()
-      return render_template('home.html', username=session['username'], birds=birds)
+      return render_template('index.html', username=session['username'], birds=birds)
   else:
-    return redirect(url_for('login'))
+    return render_template('index.html', username=None)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3002, debug=True)

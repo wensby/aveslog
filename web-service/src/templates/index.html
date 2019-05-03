@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  {% if username %}
   Hello world! Hello {{ username }}!
   <form id=sightingForm action="/" method="post">Bird Sighting:
     <input type="text" name="bird">
@@ -15,11 +16,11 @@
     {% endfor %}
   </ol>
   {% endif %}
-  <a href='/logout'>logout</a>
   <script>
     function submitSighting() {
       document.getElementById('timezoneoffset').value = -(new Date().getTimezoneOffset());
       document.getElementById('sightingForm').submit();
     }
   </script>
+  {% endif %}
 {% endblock %}
