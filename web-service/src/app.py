@@ -54,7 +54,11 @@ def register():
 def bird_search():
   query = request.args.get('query')
   if re.compile('^[A-zåäöÅÄÖ ]+$').match(query):
-    return render_template('birdsearch.html', result=[query])
+    kwargs = dict()
+    kwargs['result'] = [query]
+    if 'username' in session:
+      kwargs['username'] = session['username']
+    return render_template('birdsearch.html', **kwargs)
   else:
     return redirect(url_for('index'))
 
