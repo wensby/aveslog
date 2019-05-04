@@ -23,16 +23,6 @@ person_repo = PersonRepository(database)
 account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
 
-def valid(text):
-  return re.compile('^[A-z]{1,20}$').match(text)
-
-def login_username():
-  username = request.form['username']
-  password = request.form['password']
-  if valid(username) and valid(password):
-    cred = Credentials(username, password)
-    return authenticator.get_authenticated_user_account(cred)
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
   if request.method == 'POST':
@@ -43,7 +33,7 @@ def register():
       flash('user account created')
       person = person_repo.add_person(username)
       account_repo.set_user_account_person(account, person)
-      return redirect(url_for('login'))
+      return redirect(url_for('get_login'))
     else:
       flash('user account not created')
       return redirect(url_for('register'))
@@ -62,19 +52,22 @@ def bird_search():
   else:
     return redirect(url_for('index'))
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-  app.logger.info('login %s', request.method)
-  if request.method == 'POST':
-    account = login_username()
-    app.logger.info('%s logged in', account)
+@app.route('/login', methods=['POST'])
+def post_login():
+  posted_username = request.form['username']
+  posted_password = request.form['password']
+  if Credentials.is_valid(posted_username, posted_password):
+    credentials = Credentials(posted_username, posted_password)
+    account = authenticator.get_authenticated_user_account(credentials)
     if account:
       session['username'] = account.username
       return redirect(url_for('index'))
-    else:
-      return redirect(url_for('login'))
   else:
-    return render_template('login.html')
+    return redirect(url_for('get_login'))
+
+@app.route('/login', methods=['GET'])
+def get_login():
+  return render_template('login.html')
 
 @app.route('/logout', methods=['GET'])
 def logout():

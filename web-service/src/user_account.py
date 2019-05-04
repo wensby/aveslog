@@ -2,6 +2,16 @@ from hashlib import pbkdf2_hmac
 from base64 import b64encode, b64decode
 import binascii
 import os
+import re
+
+username_regex = re.compile('^[A-z]{1,20}$')
+password_regex = re.compile('^[A-z]{1,20}$')
+
+def is_valid_username(username):
+  return username_regex.match(username)
+
+def is_valid_password(password):
+  return password_regex.match(password)
 
 class UserAccount:
 
@@ -13,8 +23,15 @@ class UserAccount:
 class Credentials:
 
   def __init__(self, username, password):
+    if not is_valid_username(username):
+      raise Exception("invalid username format")
+    if not is_valid_password(password):
+      raise Exception("invalid password format")
     self.username = username
     self.password = password
+
+  def is_valid(username, password):
+    return is_valid_username(username) and is_valid_password(password)
 
 class HashedPassword:
 
