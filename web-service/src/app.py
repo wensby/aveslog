@@ -93,7 +93,7 @@ def getbirds():
     for sighting in sightings:
       bird = bird_repo.get_bird_by_id(sighting.bird_id)
       if bird:
-        birds.append((bird.name, sighting.sighting_time))
+        birds.append((bird.name, sighting.sighting_time.isoformat(' ')))
     return birds
 
 @app.route('/', methods=['GET', 'POST'])
