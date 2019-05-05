@@ -11,7 +11,7 @@
     <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-12 col-md-2 mr-0" href="/">Birding</a>
       <form class="w-100" onKeyPress="return checkSubmit(event)" id=birdSearchForm action="/bird/search" method="get">
-        <input name="query"  placeholder="Search bird" class="form-control form-control-light" aria-label="Search bird">
+        <input name="query"  placeholder="{{ language_dic['Search bird'] }}" class="form-control form-control-light" aria-label="Search bird">
       </form>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
@@ -33,6 +33,15 @@
              </li>
              <li class="nav-item">
                <a class="nav-link" href="#">Sightings</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="/language?l=eng">English</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="/language?l=swe">Swedish</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="/language?l=kor">Korean</a>
              </li>
            </ul>
         </nav>

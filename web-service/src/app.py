@@ -2,7 +2,7 @@ import os.path
 import re
 import psycopg2
 from pathlib import Path
-from flask import Flask, request, redirect, url_for, session, render_template, flash
+from flask import Flask, request, redirect, url_for, session, render_template, flash, g, after_this_request
 from sighting import SightingRepository
 from bird import BirdRepository
 from person import PersonRepository
@@ -22,6 +22,38 @@ sighting_repo = SightingRepository(database)
 person_repo = PersonRepository(database)
 account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
+language_dictionaries = {
+    'swe': {'Search bird': 'Sök fågel'},
+    'kor': {'Search bird': '새 검색'},
+    'eng': {'Search bird': 'Search bird'}
+}
+
+@app.before_request
+def before_request():
+  # initialize render context dictionary
+  g.render_context = dict()
+  detect_user_language()
+
+def detect_user_language():
+  language = request.cookies.get('user_lang')
+  if not language:
+    language = 'kor'
+  update_language_context(language)
+
+def update_language_context(language):
+  # when the response exists, set a cookie with the language
+  @after_this_request
+  def remember_language(response):
+    response.set_cookie('user_lang', language)
+    return response
+  g.language = language
+  g.render_context['language_dic'] = language_dictionaries[language]
+
+@app.route('/language', methods=['GET'])
+def language():
+  language = request.args.get('l')
+  update_language_context(language)
+  return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -38,7 +70,7 @@ def register():
       flash('user account not created')
       return redirect(url_for('register'))
   else:
-    return render_template('register.html')
+    return render_page('register.html')
 
 @app.route('/bird/search', methods=['GET'])
 def bird_search():
@@ -47,8 +79,8 @@ def bird_search():
     kwargs = dict()
     kwargs['result'] = [query]
     if 'username' in session:
-      kwargs['username'] = session['username']
-    return render_template('birdsearch.html', **kwargs)
+      g.render_context['username'] = session['username']
+    return render_page('birdsearch.html')
   else:
     return redirect(url_for('index'))
 
@@ -67,7 +99,7 @@ def post_login():
 
 @app.route('/login', methods=['GET'])
 def get_login():
-  return render_template('login.html')
+  return render_page('login.html')
 
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -96,6 +128,9 @@ def getbirds():
         birds.append((bird.name, sighting.sighting_time.isoformat(' ')))
     return birds
 
+def render_page(page):
+  return render_template(page, **g.render_context)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
   if 'username' in session:
@@ -107,9 +142,11 @@ def index():
       return redirect(url_for('index'))
     else:
       birds = getbirds()
-      return render_template('index.html', username=session['username'], birds=birds)
+      g.render_context['username'] = session['username']
+      g.render_context['birds'] = birds
+      return render_page('index.html')
   else:
-    return render_template('index.html', username=None)
+    return render_page('index.html')
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3002, debug=True)
