@@ -8,10 +8,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <nav class="navbar navbar-dark fixed-top bg-primary flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-12 col-md-2 mr-0" href="/">Birding</a>
-      <form class="w-100" onKeyPress="return checkSubmit(event)" id=birdSearchForm action="/bird/search" method="get">
-        <input name="query"  placeholder="{{ language_dic['Search bird'] }}" class="form-control form-control-light" aria-label="Search bird">
+    <nav class="navbar navbar-dark fixed-top bg-primary d-flex flex-md-nowrap p-0 shadow">
+      <div class="navbar-main d-flex col-md-2 mr-0">
+        <a class="navbar-brand flex-grow-1 align-self-center" href="/">Birding</a>
+        <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+      <form class="flex-grow-1 form-inline" onKeyPress="return checkSubmit(event)" id=birdSearchForm action="/bird/search" method="get">
+        <input class="w-100 form-control form-control-light" name="query" placeholder="{{ language_dic['Search bird'] }}" aria-label="Search bird">
       </form>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
@@ -22,28 +27,16 @@
           {% endif %}
         </li>
       </ul>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+        <ul class="navbar-nav mr-auto" id="collapsableMenuList"></ul>
+      </div>
     </nav>
     <div class="container-fluid">
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
-           <ul class="nav flex-column">
-             <li class="nav-item">
-               <a class="nav-link" href="#">Profile</a>
-             </li>
-             <li class="nav-item">
-               <a class="nav-link" href="#">Sightings</a>
-             </li>
-             <li class="nav-item">
-               <a class="nav-link" href="/language?l=eng">English</a>
-             </li>
-             <li class="nav-item">
-               <a class="nav-link" href="/language?l=swe">Swedish</a>
-             </li>
-             <li class="nav-item">
-               <a class="nav-link" href="/language?l=kor">Korean</a>
-             </li>
-           </ul>
+            <ul class="nav flex-column" id="sidebarList"></ul>
+          </div>
         </nav>
         <main role="main" class="ml-sm-auto col-md-10 px-4">
         {% block content %}{% endblock %}
@@ -59,6 +52,49 @@
           document.getElementById('birdSearchForm').submit();
         }
       }
+    </script>
+    <script>
+      (function() {
+        var items = [ 
+          {href: '/#', text: 'Profile'}, 
+          {href: '/#', text: 'Sightings'}, 
+          {href: '/language?l=eng', text: 'English'},
+          {href: '/language?l=swe', text: 'Swedish'}, 
+          {href: '/language?l=kor', text: 'Korean'}
+        ];
+        function addSidebarMenuItem(item) {
+          var listElem = document.getElementById('sidebarList');
+          var itemElem = document.createElement('li');
+          var linkElem = document.createElement('a');
+
+          itemElem.classList.add('nav-item');
+          linkElem.classList.add('nav-link');
+          
+          linkElem.href = item.href;
+          linkElem.innerHTML = item.text;
+
+          itemElem.appendChild(linkElem);
+          listElem.appendChild(itemElem);
+        }
+        function addMenubarExpandableMenuItem(item) {
+          var listElem = document.getElementById('collapsableMenuList');
+          var itemElem = document.createElement('li');
+          var linkElem = document.createElement('a');
+
+          itemElem.classList.add('nav-item');
+          linkElem.classList.add('nav-link');
+
+          linkElem.href = item.href;
+          linkElem.innerHTML = item.text;
+
+          itemElem.appendChild(linkElem);
+          listElem.appendChild(itemElem);
+        }
+        for (var i = 0; i < items.length; i++) {
+          addSidebarMenuItem(items[i]);
+          addMenubarExpandableMenuItem(items[i]);
+        }
+      }());
     </script>
   </body>
 </html>

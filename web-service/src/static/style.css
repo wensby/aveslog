@@ -12,7 +12,11 @@ body {
  * Navbar
  */
 
-.navbar-brand {
+.fa-1x {
+  font-size: 1.5rem;
+}
+
+.navbar-main {
   padding-top: .75rem;
   padding-bottom: .75rem;
   font-size: 1rem;
@@ -73,11 +77,11 @@ body {
  */
 
 [role="main"] {
-  padding-top: 133px; /* Space for fixed navbar */
+  padding-top: 102px; /* Space for fixed navbar */
 }
 
 @media (min-width: 768px) {
   [role="main"] {
-    padding-top: 48px; /* Space for fixed navbar */
+    padding-top: 64px; /* Space for fixed navbar */
   }
 }
