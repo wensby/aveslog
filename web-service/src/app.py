@@ -10,6 +10,7 @@ from database import Database
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
 from datetime import datetime
 from datetime import timedelta
+import birding_locale
 
 app = Flask(__name__)
 
@@ -22,11 +23,6 @@ sighting_repo = SightingRepository(database)
 person_repo = PersonRepository(database)
 account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
-language_dictionaries = {
-    'swe': {'Search bird': 'Sök fågel'},
-    'kor': {'Search bird': '새 검색'},
-    'eng': {'Search bird': 'Search bird'}
-}
 
 @app.before_request
 def before_request():
@@ -35,19 +31,21 @@ def before_request():
   detect_user_language()
 
 def detect_user_language():
-  language = request.cookies.get('user_lang')
-  if not language:
-    language = 'kor'
+  language = birding_locale.figure_out_language_from_request(request)
   update_language_context(language)
 
 def update_language_context(language):
-  # when the response exists, set a cookie with the language
-  @after_this_request
-  def remember_language(response):
-    response.set_cookie('user_lang', language)
-    return response
+  if language not in birding_locale.language_dictionaries:
+    return
+  previously_set = request.cookies.get('user_lang', None)
+  # when the response exists, set a cookie with the language if it is new
+  if previously_set and previously_set is not language:
+    @after_this_request
+    def remember_language(response):
+      response.set_cookie('user_lang', language)
+      return response
   g.language = language
-  g.render_context['language_dic'] = language_dictionaries[language]
+  g.render_context['language_dic'] = birding_locale.language_dictionaries[language]
 
 @app.route('/language', methods=['GET'])
 def language():
