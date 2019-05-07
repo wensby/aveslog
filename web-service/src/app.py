@@ -10,7 +10,7 @@ from database import Database
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
 from datetime import datetime
 from datetime import timedelta
-import birding_locale
+import birding_locale as locale
 
 app = Flask(__name__)
 
@@ -31,21 +31,22 @@ def before_request():
   detect_user_language()
 
 def detect_user_language():
-  language = birding_locale.figure_out_language_from_request(request)
+  language = locale.figure_out_language_from_request(request)
   update_language_context(language)
 
 def update_language_context(language):
-  if language not in birding_locale.language_dictionaries:
-    return
-  previously_set = request.cookies.get('user_lang', None)
-  # when the response exists, set a cookie with the language if it is new
-  if not previously_set or previously_set is not language:
-    @after_this_request
-    def remember_language(response):
-      response.set_cookie('user_lang', language)
-      return response
-  g.language = language
-  g.render_context['language_dic'] = birding_locale.language_dictionaries[language]
+  if language in locale.language_dictionaries:
+    previously_set = request.cookies.get('user_lang', None)
+    # when the response exists, set a cookie with the language if it is new
+    if not previously_set or previously_set is not language:
+      set_langauge_cookie_after_this_request(language)
+    g.render_context['language_dic'] = locale.language_dictionaries[language]
+
+def set_langauge_cookie_after_this_request(language):
+  @after_this_request
+  def remember_language(response):
+    response.set_cookie('user_lang', language)
+    return response
 
 @app.route('/language', methods=['GET'])
 def language():

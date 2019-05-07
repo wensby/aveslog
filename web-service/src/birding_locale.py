@@ -6,7 +6,7 @@ language_dictionaries = {
 
 def figure_out_language_from_request_cookies(cookies):
   user_lang = cookies.get('user_lang')
-  if user_lang and user_lang in language_dictionaries.keys():
+  if user_lang in language_dictionaries.keys():
     return user_lang
 
 def figure_out_language_from_request_headers(headers):
