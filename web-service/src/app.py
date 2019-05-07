@@ -39,7 +39,7 @@ def update_language_context(language):
     return
   previously_set = request.cookies.get('user_lang', None)
   # when the response exists, set a cookie with the language if it is new
-  if previously_set and previously_set is not language:
+  if not previously_set or previously_set is not language:
     @after_this_request
     def remember_language(response):
       response.set_cookie('user_lang', language)
