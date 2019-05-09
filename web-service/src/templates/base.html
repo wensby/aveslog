@@ -35,7 +35,23 @@
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
-            <ul class="nav flex-column" id="sidebarList"></ul>
+            <ul class="nav flex-column" id="sidebarList">
+              <li class="nav-item">
+                <a class="nav-link" href="/#">{{ locale.text('Profile') }}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/#">{{ locale.text('Sightings') }}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/language?l=en">English</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/language?l=se">Svenska</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/language?l=ko">한국어</a>
+              </li>
+            </ul>
           </div>
         </nav>
         <main role="main" class="ml-sm-auto col-md-10 px-4">
@@ -55,45 +71,11 @@
     </script>
     <script>
       (function() {
-        var items = [ 
-          {href: '/#', text: '{{ locale.text('Profile') }}'},
-          {href: '/#', text: '{{ locale.text('Sightings') }}'},
-          {href: '/language?l=en', text: 'English'},
-          {href: '/language?l=se', text: 'Svenska'},
-          {href: '/language?l=ko', text: '한국어'}
-        ];
-        function addSidebarMenuItem(item) {
-          var listElem = document.getElementById('sidebarList');
-          var itemElem = document.createElement('li');
-          var linkElem = document.createElement('a');
-
-          itemElem.classList.add('nav-item');
-          linkElem.classList.add('nav-link');
-          
-          linkElem.href = item.href;
-          linkElem.innerHTML = item.text;
-
-          itemElem.appendChild(linkElem);
-          listElem.appendChild(itemElem);
-        }
-        function addMenubarExpandableMenuItem(item) {
-          var listElem = document.getElementById('collapsableMenuList');
-          var itemElem = document.createElement('li');
-          var linkElem = document.createElement('a');
-
-          itemElem.classList.add('nav-item');
-          linkElem.classList.add('nav-link');
-
-          linkElem.href = item.href;
-          linkElem.innerHTML = item.text;
-
-          itemElem.appendChild(linkElem);
-          listElem.appendChild(itemElem);
-        }
-        for (var i = 0; i < items.length; i++) {
-          addSidebarMenuItem(items[i]);
-          addMenubarExpandableMenuItem(items[i]);
-        }
+        var sidebarList = document.getElementById('sidebarList');
+        var collapsableList = document.getElementById('collapsableMenuList');
+        sidebarList.childNodes.forEach(function(item) {
+          collapsableList.appendChild(item.cloneNode(true));
+        });
       }());
     </script>
   </body>
