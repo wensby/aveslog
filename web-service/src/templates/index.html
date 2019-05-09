@@ -2,10 +2,10 @@
 
 {% block content %}
   {% if username %}
-  Hello world! Hello {{ username }}!
-  <form id=sightingForm action="/" method="post">Bird Sighting:
+  {{ locale.text("Hello world! Hello {{}}!", [username]) }}
+  <form id=sightingForm action="/" method="post">{{ locale.text('Bird Sighting') }}:
     <input type="text" name="bird">
-    <input type="submit" value="Add" onclick="submitSighting()">
+    <input type="submit" value="{{ locale.text('Add') }}" onclick="submitSighting()">
     <input type=hidden id=timezoneoffset name=timezoneoffset>
   </form>
   <br>

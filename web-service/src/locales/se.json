@@ -1,0 +1,17 @@
+{
+  "Search bird": "Sök fågel",
+  "Birding": "Fågelskådning",
+  "Login": "Logga in",
+  "Logout": "Logga ut",
+  "Profile": "Profil",
+  "Sightings": "Observationer",
+  "Username": "Användarnamn",
+  "Password": "Lösenord",
+  "Register new account": "Registrera nytt konto",
+  "Register": "Registrera",
+  "Back to login page": "Tillbaka till login sidan",
+  "You searched for {{}}": "Du sökte efter {{}}",
+  "Hello world! Hello {{}}!": "Hej världen! Hej {{}}",
+  "Bird Sighting": "Fågelobservation",
+  "Add": "Lägg till"
+}

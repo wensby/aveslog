@@ -2,6 +2,6 @@
 
 {% block content %}
   {% if result %}
-    <p>You searched for {{result}}</p>
+    <p>{{ locale.text("You searched for {{}}", [result|string()]) }}</p>
   {% endif %}
 {% endblock %}

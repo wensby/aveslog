@@ -10,7 +10,7 @@ from database import Database
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
 from datetime import datetime
 from datetime import timedelta
-import birding_locale as locale
+from birding_locale import LocaleRepository, LocaleDeterminer
 
 app = Flask(__name__)
 
@@ -23,6 +23,8 @@ sighting_repo = SightingRepository(database)
 person_repo = PersonRepository(database)
 account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
+locale_repository = LocaleRepository('locales/')
+locale_determiner = LocaleDeterminer(locale_repository)
 
 @app.before_request
 def before_request():
@@ -31,16 +33,16 @@ def before_request():
   detect_user_language()
 
 def detect_user_language():
-  language = locale.figure_out_language_from_request(request)
+  language = locale_determiner.figure_out_language_from_request(request)
   update_language_context(language)
 
 def update_language_context(language):
-  if language in locale.language_dictionaries:
+  if language in locale_repository.languages():
     previously_set = request.cookies.get('user_lang', None)
     # when the response exists, set a cookie with the language if it is new
     if not previously_set or previously_set is not language:
       set_langauge_cookie_after_this_request(language)
-    g.render_context['language_dic'] = locale.language_dictionaries[language]
+    g.render_context['locale'] = locale_repository.get_locale(language)
 
 def set_langauge_cookie_after_this_request(language):
   @after_this_request

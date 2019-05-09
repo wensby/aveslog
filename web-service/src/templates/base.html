@@ -3,27 +3,27 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Birding</title>
+    <title>{{ locale.text('Birding') }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
     <nav class="navbar navbar-dark fixed-top bg-primary d-flex flex-md-nowrap p-0 shadow">
       <div class="navbar-main d-flex col-md-2 mr-0">
-        <a class="navbar-brand flex-grow-1 align-self-center" href="/">Birding</a>
+        <a class="navbar-brand flex-grow-1 align-self-center" href="/">{{ locale.text('Birding') }}</a>
         <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
       <form class="flex-grow-1 form-inline" onKeyPress="return checkSubmit(event)" id=birdSearchForm action="/bird/search" method="get">
-        <input class="w-100 form-control form-control-light" name="query" placeholder="{{ language_dic['Search bird'] }}" aria-label="Search bird">
+        <input class="w-100 form-control form-control-light" name="query" placeholder="{{ locale.text('Search bird') }}" aria-label="Search bird">
       </form>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           {% if username %}
-          <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link" href="/logout">{{ locale.text('Logout') }}</a>
           {% else %}
-          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" href="/login">{{ locale.text('Login') }}</a>
           {% endif %}
         </li>
       </ul>
@@ -56,11 +56,11 @@
     <script>
       (function() {
         var items = [ 
-          {href: '/#', text: 'Profile'}, 
-          {href: '/#', text: 'Sightings'}, 
+          {href: '/#', text: '{{ locale.text('Profile') }}'},
+          {href: '/#', text: '{{ locale.text('Sightings') }}'},
           {href: '/language?l=en', text: 'English'},
-          {href: '/language?l=se', text: 'Swedish'},
-          {href: '/language?l=ko', text: 'Korean'}
+          {href: '/language?l=se', text: 'Svenska'},
+          {href: '/language?l=ko', text: '한국어'}
         ];
         function addSidebarMenuItem(item) {
           var listElem = document.getElementById('sidebarList');
