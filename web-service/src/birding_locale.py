@@ -44,8 +44,8 @@ class LocaleDeterminer:
     if 'Accept-Language' in headers:
       requested = headers['Accept-Language'].split(',')
       matches = filter(lambda x: x.split(';')[0] in supported, requested)
-      return next(matches, supported[0]).split(';')[0]
-    return supported[0]
+      return next(matches, next(iter(supported))).split(';')[0]
+    return next(iter(supported))
 
   def figure_out_language_from_request(self, request):
     language = self.figure_out_language_from_request_cookies(request.cookies)
