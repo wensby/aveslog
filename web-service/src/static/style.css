@@ -2,19 +2,9 @@ body {
   font-size: .875rem;
 }
 
-.feather {
-  width: 16px;
-  height: 16px;
-  vertical-align: text-bottom;
-}
-
 /*
  * Navbar
  */
-
-.fa-1x {
-  font-size: 1.5rem;
-}
 
 .navbar-main {
   padding-top: .75rem;
@@ -30,10 +20,9 @@ body {
   border-radius: 0;
 }
 
-.form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
+.navbar-brand {
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 .form-control-dark:focus {

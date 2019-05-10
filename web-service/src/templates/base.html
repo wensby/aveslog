@@ -10,7 +10,9 @@
   <body>
     <nav class="navbar navbar-dark fixed-top bg-primary d-flex flex-md-nowrap p-0 shadow">
       <div class="navbar-main d-flex col-md-2 mr-0">
-        <a class="navbar-brand flex-grow-1 align-self-center" href="/">{{ locale.text('Birding') }}</a>
+        <a class="flex-grow-1 align-self-center" href="/">
+          <img class="navbar-brand"src="{{ url_for('static', filename='logo-w-s.png') }}" style="width: 40px;">
+        </a>
         <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
