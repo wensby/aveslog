@@ -56,22 +56,24 @@ def language():
   update_language_context(language)
   return redirect(url_for('index'))
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-  if request.method == 'POST':
-    username = request.form['username']
-    password = request.form['password']
-    account = account_repo.put_new_user_account(username, password)
-    if account:
-      flash('user account created')
-      person = person_repo.add_person(username)
-      account_repo.set_user_account_person(account, person)
-      return redirect(url_for('get_login'))
-    else:
-      flash('user account not created')
-      return redirect(url_for('register'))
+@app.route('/register', methods=['POST'])
+def post_register():
+  username = request.form['username']
+  password = request.form['password']
+  account = account_repo.put_new_user_account(username, password)
+  if account:
+    flash('user account created')
+    person = person_repo.add_person(username)
+    account_repo.set_user_account_person(account, person)
+    return redirect(url_for('get_register'))
   else:
-    return render_page('register.html')
+    flash('user account not created')
+    return redirect(url_for('get_register'))
+
+
+@app.route('/register', methods=['GET'])
+def get_register():
+  return render_page('register.html')
 
 @app.route('/bird/search', methods=['GET'])
 def bird_search():

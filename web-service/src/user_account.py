@@ -63,6 +63,8 @@ class UserAccountRepository:
       return HashedPassword(rows[0][0], rows[0][1], rows[0][2])
 
   def put_new_user_account(self, username, password):
+    if not Credentials.is_valid(username, password):
+      return None
     if not self.find_user_account(username):
       query = ('INSERT INTO user_account (username) '
                'VALUES (%s);')
