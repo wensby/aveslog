@@ -11,6 +11,7 @@ from user_account import UserAccountRepository, PasswordHasher, Credentials, Aut
 from datetime import datetime
 from datetime import timedelta
 from birding_locale import LocaleRepository, LocaleDeterminer
+from search import BirdSearcher
 
 app = Flask(__name__)
 
@@ -25,6 +26,7 @@ account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
 locale_repository = LocaleRepository('locales/')
 locale_determiner = LocaleDeterminer(locale_repository)
+bird_searcher = BirdSearcher(bird_repo)
 
 @app.before_request
 def before_request():
@@ -77,10 +79,9 @@ def get_register():
 
 @app.route('/bird/search', methods=['GET'])
 def bird_search():
-  query = request.args.get('query')
-  birds = bird_repo.birds
-  matches = list(filter(lambda x: query in x.name, birds))
-  if re.compile('^[A-zåäöÅÄÖ ]+$').match(query):
+  name = request.args.get('query')
+  matches = bird_searcher.search(name)
+  if re.compile('^[A-zåäöÅÄÖ ]+$').match(name):
     g.render_context['result'] = list(map(lambda x: x.name, matches))
     if 'username' in session:
       g.render_context['username'] = session['username']
