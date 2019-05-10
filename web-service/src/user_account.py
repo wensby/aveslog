@@ -46,6 +46,14 @@ class UserAccountRepository:
     self.database = database
     self.hasher = password_hasher
 
+  def get_user_account_by_id(self, id):
+    query = ('SELECT id, username, person_id '
+             'FROM user_account '
+             'WHERE id = %s;')
+    rows = self.database.query(query, (id,))
+    if rows:
+      return UserAccount(rows[0][0], rows[0][1], rows[0][2])
+
   def find_user_account(self, username):
     query = ('SELECT id, username, person_id '
              'FROM user_account '

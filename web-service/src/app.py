@@ -83,8 +83,8 @@ def bird_search():
   matches = bird_searcher.search(name)
   if re.compile('^[A-zåäöÅÄÖ ]+$').match(name):
     g.render_context['result'] = list(map(lambda x: x.name, matches))
-    if 'username' in session:
-      g.render_context['username'] = session['username']
+    if 'account_id' in session:
+      g.render_context['username'] = get_account(session['account_id']).username
     return render_page('birdsearch.html')
   else:
     return redirect(url_for('index'))
@@ -97,7 +97,7 @@ def post_login():
     credentials = Credentials(posted_username, posted_password)
     account = authenticator.get_authenticated_user_account(credentials)
     if account:
-      session['username'] = account.username
+      session['account_id'] = account.id
       return redirect(url_for('index'))
   return redirect(url_for('get_login'))
 
@@ -107,13 +107,12 @@ def get_login():
 
 @app.route('/logout', methods=['GET'])
 def logout():
-  session.pop('username', None)
+  session.pop('account_id', None)
   return redirect(url_for('index'))
 
 def putbird(bird_name, sighting_time):
-  if session['username']:
-    person_name = session['username']
-    person_id = person_repo.get_person_by_name(person_name).id
+  if 'account_id' in session:
+    person_id = get_account(session['account_id']).person_id
     bird = bird_repo.get_bird_by_name(bird_name)
     if not bird:
       bird = bird_repo.add_bird(bird_name)
@@ -121,9 +120,8 @@ def putbird(bird_name, sighting_time):
     sighting_repo.add_sighting(person_id, bird_id, sighting_time)
 
 def getbirds():
-  if session['username']:
-    person_name = session['username']
-    person_id = person_repo.get_person_by_name(person_name).id
+  if 'account_id' in session:
+    person_id = get_account(session['account_id']).person_id
     sightings = sighting_repo.get_sightings_by_person_id(person_id)
     birds = []
     for sighting in sightings:
@@ -137,7 +135,7 @@ def render_page(page):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-  if 'username' in session:
+  if 'account_id' in session:
     if request.method == 'POST':
       bird = request.form['bird']
       timezoneoffset = int(request.form['timezoneoffset'])
@@ -146,11 +144,14 @@ def index():
       return redirect(url_for('index'))
     else:
       birds = getbirds()
-      g.render_context['username'] = session['username']
+      g.render_context['username'] = get_account(session['account_id']).username
       g.render_context['birds'] = birds
       return render_page('index.html')
   else:
     return render_page('index.html')
+
+def get_account(id):
+  return account_repo.get_user_account_by_id(id)
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3002, debug=True)
