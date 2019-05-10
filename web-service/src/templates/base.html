@@ -38,12 +38,14 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column" id="sidebarList">
+              {% if username %}
               <li class="nav-item">
                 <a class="nav-link" href="/#">{{ locale.text('Profile') }}</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/#">{{ locale.text('Sightings') }}</a>
               </li>
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link" href="/language?l=en">English</a>
               </li>
