@@ -105,10 +105,10 @@ class Authenticator:
     username = credentials.username
     password = credentials.password
     account = self.account_repository.find_user_account(username)
-    hashed_password = self.account_repository.find_hashed_password(account)
-    if not hashed_password:
-      return
-    salt = hashed_password.salt
-    expected_hash = hashed_password.salted_hash
-    if self.hasher.hash_password(password, salt) == expected_hash:
-      return account
+    if account:
+      hashed_password = self.account_repository.find_hashed_password(account)
+      if hashed_password:
+        salt = hashed_password.salt
+        expected_hash = hashed_password.salted_hash
+        if self.hasher.hash_password(password, salt) == expected_hash:
+          return account
