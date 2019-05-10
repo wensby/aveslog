@@ -78,8 +78,10 @@ def get_register():
 @app.route('/bird/search', methods=['GET'])
 def bird_search():
   query = request.args.get('query')
+  birds = bird_repo.birds
+  matches = list(filter(lambda x: query in x.name, birds))
   if re.compile('^[A-zåäöÅÄÖ ]+$').match(query):
-    g.render_context['result'] = [query]
+    g.render_context['result'] = list(map(lambda x: x.name, matches))
     if 'username' in session:
       g.render_context['username'] = session['username']
     return render_page('birdsearch.html')

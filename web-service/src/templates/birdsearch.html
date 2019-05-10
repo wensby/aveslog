@@ -2,6 +2,8 @@
 
 {% block content %}
   {% if result %}
-    <p>{{ locale.text("You searched for {{}}", [result|string()]) }}</p>
+    {% for bird in result %}
+      <p>{{ locale.text(bird) }}</p>
+    {% endfor %}
   {% endif %}
 {% endblock %}

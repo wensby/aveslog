@@ -28,7 +28,8 @@ class BirdRepository:
     self.database.fetchone("INSERT INTO bird (name) VALUES (%s);", (name,))
     return self.get_bird_by_name(name)
 
-  def read_birds(self):
+  @property
+  def birds(self):
     rows = self.database.query("SELECT * FROM bird;")
     birds = []
     for row in rows:
