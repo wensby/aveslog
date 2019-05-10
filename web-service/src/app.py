@@ -99,8 +99,7 @@ def post_login():
     if account:
       session['username'] = account.username
       return redirect(url_for('index'))
-  else:
-    return redirect(url_for('get_login'))
+  return redirect(url_for('get_login'))
 
 @app.route('/login', methods=['GET'])
 def get_login():
