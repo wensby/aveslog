@@ -11,7 +11,7 @@
     <nav class="navbar navbar-dark fixed-top bg-primary d-flex flex-md-nowrap p-0 shadow">
       <div class="navbar-main d-flex col-md-2 mr-0">
         <a class="navbar-brand flex-grow-1 align-self-center" href="/">{{ locale.text('Birding') }}</a>
-        <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
@@ -27,11 +27,11 @@
           {% endif %}
         </li>
       </ul>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+      <div class="col-12 d-md-none collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto" id="collapsableMenuList"></ul>
       </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container-fluid navbar-pushed">
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
