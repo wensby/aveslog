@@ -1,9 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% if result %}
-    {% for bird in result %}
-      <p>{{ locale.text(bird) }}</p>
+  {% if birds %}
+    {% for bird in birds %}
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text">{{ locale.text(bird.binomial_name) }}</p>
+          <button onclick="addSighting({{ bird.id }})">{{ locale.text('Sighted') }}</button>
+        </div>
+      </div>
     {% endfor %}
   {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function addSighting(id) {
+      var timezoneoffset = -(new Date().getTimezoneOffset());
+      $.ajax({
+          url: "/sighting",
+          type: "POST",
+          data: { timezoneoffset: timezoneoffset, bird_id: id },
+          success: function(result) {
+            console.log(result);
+          },
+          error: function(result) {
+            console.log(result);
+          }
+      });
+    }
+  </script>
 {% endblock %}

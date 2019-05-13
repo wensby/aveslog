@@ -3,3 +3,5 @@
 \i /schema/public/table/sighting.sql
 \i /schema/public/table/user_account.sql
 \i /schema/public/table/hashed_password.sql
+
+\i /schema/base-data/birds.sql

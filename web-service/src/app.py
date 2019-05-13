@@ -72,6 +72,13 @@ def post_register():
     flash('user account not created')
     return redirect(url_for('get_register'))
 
+@app.route('/sighting', methods=['POST'])
+def post_sighting():
+  bird_id = int(request.form['bird_id'])
+  timezoneoffset = int(request.form['timezoneoffset'])
+  sighting_time = datetime.utcnow() + timedelta(minutes=timezoneoffset)
+  putbird(bird_id, sighting_time)
+  return 'success?'
 
 @app.route('/register', methods=['GET'])
 def get_register():
@@ -80,9 +87,9 @@ def get_register():
 @app.route('/bird/search', methods=['GET'])
 def bird_search():
   name = request.args.get('query')
-  matches = bird_searcher.search(name)
+  birds = bird_searcher.search(name)
   if re.compile('^[A-zåäöÅÄÖ ]+$').match(name):
-    g.render_context['result'] = list(map(lambda x: x.name, matches))
+    g.render_context['birds'] = list(birds)
     if 'account_id' in session:
       g.render_context['username'] = get_account(session['account_id']).username
     return render_page('birdsearch.html')
@@ -110,13 +117,9 @@ def logout():
   session.pop('account_id', None)
   return redirect(url_for('index'))
 
-def putbird(bird_name, sighting_time):
+def putbird(bird_id, sighting_time):
   if 'account_id' in session:
     person_id = get_account(session['account_id']).person_id
-    bird = bird_repo.get_bird_by_name(bird_name)
-    if not bird:
-      bird = bird_repo.add_bird(bird_name)
-    bird_id = bird.id
     sighting_repo.add_sighting(person_id, bird_id, sighting_time)
 
 def getbirds():
@@ -127,26 +130,22 @@ def getbirds():
     for sighting in sightings:
       bird = bird_repo.get_bird_by_id(sighting.bird_id)
       if bird:
-        birds.append((bird.name, sighting.sighting_time.isoformat(' ')))
+        sighting_time = sighting.sighting_date.isoformat()
+        if sighting.sighting_time:
+          sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
+        birds.append((bird.binomial_name, sighting_time))
     return birds
 
 def render_page(page):
   return render_template(page, **g.render_context)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
   if 'account_id' in session:
-    if request.method == 'POST':
-      bird = request.form['bird']
-      timezoneoffset = int(request.form['timezoneoffset'])
-      sighting_time = datetime.utcnow() + timedelta(minutes=timezoneoffset)
-      putbird(bird, sighting_time)
-      return redirect(url_for('index'))
-    else:
-      birds = getbirds()
-      g.render_context['username'] = get_account(session['account_id']).username
-      g.render_context['birds'] = birds
-      return render_page('index.html')
+    birds = getbirds()
+    g.render_context['username'] = get_account(session['account_id']).username
+    g.render_context['birds'] = birds
+    return render_page('index.html')
   else:
     return render_page('index.html')
 

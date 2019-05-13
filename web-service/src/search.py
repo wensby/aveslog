@@ -6,4 +6,4 @@ class BirdSearcher:
   def search(self, name=None):
     birds = self.bird_repository.birds
     if name:
-      return list(filter(lambda x: name.lower() in x.name.lower(), birds))
+      return list(filter(lambda x: name.lower() in x.binomial_name.lower(), birds))

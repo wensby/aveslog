@@ -12,8 +12,6 @@ services:
     networks:
       - default
       - birding-database-network
-    volumes:
-      - ./data:/data
     depends_on:
       - birding-database-service
 

@@ -3,9 +3,9 @@ import psycopg2
 
 class Bird:
 
-  def __init__(self, id, name):
+  def __init__(self, id, binomial_name):
     self.id = id
-    self.name = name
+    self.binomial_name = binomial_name
 
 class BirdRepository:
 
@@ -19,14 +19,10 @@ class BirdRepository:
     return None
 
   def get_bird_by_id(self, id):
-    return self.fetchonebird("SELECT id, name FROM bird WHERE id = %s;", (id,))
+    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
 
-  def get_bird_by_name(self, name):
-    return self.fetchonebird("SELECT id, name FROM bird WHERE name like %s;", (name,))
-
-  def add_bird(self, name):
-    self.database.fetchone("INSERT INTO bird (name) VALUES (%s);", (name,))
-    return self.get_bird_by_name(name)
+  def get_bird_by_binomial_name(self, binomial_name):
+    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE binomial_name like %s;", (name,))
 
   @property
   def birds(self):

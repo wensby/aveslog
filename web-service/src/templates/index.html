@@ -3,12 +3,6 @@
 {% block content %}
   {% if username %}
   {{ locale.text("Hello world! Hello {{}}!", [username]) }}
-  <form id=sightingForm action="/" method="post">{{ locale.text('Bird Sighting') }}:
-    <input type="text" name="bird">
-    <input type="submit" value="{{ locale.text('Add') }}" onclick="submitSighting()">
-    <input type=hidden id=timezoneoffset name=timezoneoffset>
-  </form>
-  <br>
   {% if birds %}
   <div class="container">
     <div class="row">
@@ -16,7 +10,7 @@
       <div class="col-12">
         <div class="row border rounded">
           <div class="bird-image col-4">
-            <img class="img-responsive col-12"src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}"/>
+            <img class="img-responsive col-12" style="max-width: 100px;" src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}"/>
           </div>
           <div class="col-4">{{ bird[0] }}</div>
           <div class="col-4">{{ bird[1] }}</div>
@@ -26,11 +20,5 @@
     </div>
   </div>
   {% endif %}
-  <script>
-    function submitSighting() {
-      document.getElementById('timezoneoffset').value = -(new Date().getTimezoneOffset());
-      document.getElementById('sightingForm').submit();
-    }
-  </script>
   {% endif %}
 {% endblock %}
