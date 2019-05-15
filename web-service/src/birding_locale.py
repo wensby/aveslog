@@ -1,10 +1,36 @@
 import json
 
+class Language:
+
+  def __init__(self, iso_639_1_code):
+    self.iso_639_1_code = iso_639_1_code
+
+  def bird_names(self):
+    with open('locales/bird-names-by-language.json', 'r') as jsonfile:
+      names_by_language = json.load(jsonfile)
+      if self.iso_639_1_code in names_by_language:
+        return names_by_language[self.iso_639_1_code]
+
+class LanguageRepository:
+
+  def __init__(self, languages):
+    self.languages = languages
+
+class LanguageRepositoryFactory:
+
+  def __init__(self, database):
+    self.database = database
+
+  def create_repository(self):
+    languages = []
+    self.database.query('SELECT ()')
+
 class Locale:
 
-  def __init__(self, id, dictionary):
+  def __init__(self, id, dictionary, bird_names):
     self.id = id
     self.dictionary = dictionary
+    self.bird_names = bird_names
 
   def text(self, text, variables=None):
     translated = self.dictionary[text] if text in self.dictionary else text
@@ -15,19 +41,23 @@ class Locale:
         i = i + 1
     return translated
 
+  def name(self, bird):
+    if bird.binomial_name in self.bird_names:
+      return self.bird_names[bird.binomial_name]
+
 class LocaleRepository:
 
   def __init__(self, locale_dictionary_path):
     self.locales = dict()
-    for lang in ['en', 'se', 'ko']:
-      with open(locale_dictionary_path + lang + '.json', 'r') as f:
-        self.locales[lang] = Locale(lang, json.load(f))
+    self.languages = [Language('sv'), Language('en'), Language('ko')]
+    for lang in self.languages:
+      iso_lang = lang.iso_639_1_code
+      with open(locale_dictionary_path + iso_lang + '.json', 'r') as f:
+        dictionary = json.load(f)
+        self.locales[iso_lang] = Locale(iso_lang, dictionary, None)
 
   def get_locale(self, language):
     return self.locales[language]
-
-  def languages(self):
-    return self.locales.keys()
 
 class LocaleDeterminer:
 
@@ -36,11 +66,11 @@ class LocaleDeterminer:
 
   def figure_out_language_from_request_cookies(self, cookies):
     user_lang = cookies.get('user_lang')
-    if user_lang in self.repository.languages():
+    if user_lang in map(lambda x: x.iso_639_1_code, self.repository.languages):
       return user_lang
 
   def figure_out_language_from_request_headers(self, headers):
-    supported = self.repository.languages()
+    supported = map(lambda x: x.iso_639_1_code, self.repository.languages)
     if 'Accept-Language' in headers:
       requested = headers['Accept-Language'].split(',')
       matches = filter(lambda x: x.split(';')[0] in supported, requested)

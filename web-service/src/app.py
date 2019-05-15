@@ -10,13 +10,14 @@ from database import Database
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
 from datetime import datetime
 from datetime import timedelta
-from birding_locale import LocaleRepository, LocaleDeterminer
+from localization import LocaleDeterminer, LocalesFactory
 from search import BirdSearcher
 
 app = Flask(__name__)
 
 app.secret_key = open('/app/secret_key', 'r').readline()
 
+user_locale_cookie_key = 'user_locale'
 hasher = PasswordHasher()
 database = Database('birding-database-service', 'birding-database', 'postgres', 'docker')
 bird_repo = BirdRepository(database)
@@ -24,39 +25,43 @@ sighting_repo = SightingRepository(database)
 person_repo = PersonRepository(database)
 account_repo = UserAccountRepository(database, hasher)
 authenticator = Authenticator(account_repo, hasher)
-locale_repository = LocaleRepository('locales/')
-locale_determiner = LocaleDeterminer(locale_repository)
-bird_searcher = BirdSearcher(bird_repo)
+locales_factory = LocalesFactory('locales/')
+locales = locales_factory.create_locales(['en', 'sv', 'ko'])
+locale_determiner = LocaleDeterminer(locales, user_locale_cookie_key)
+bird_searcher = BirdSearcher(bird_repo, locales)
 
 @app.before_request
 def before_request():
   # initialize render context dictionary
   g.render_context = dict()
-  detect_user_language()
+  detect_user_locale()
 
-def detect_user_language():
-  language = locale_determiner.figure_out_language_from_request(request)
-  update_language_context(language)
+def detect_user_locale():
+  locale = locale_determiner.determine_locale_from_request(request)
+  update_locale_context(locale)
 
-def update_language_context(language):
-  if language in locale_repository.languages():
-    previously_set = request.cookies.get('user_lang', None)
-    # when the response exists, set a cookie with the language if it is new
-    if not previously_set or previously_set is not language:
-      set_langauge_cookie_after_this_request(language)
-    g.render_context['locale'] = locale_repository.get_locale(language)
+def update_locale_context(locale):
+  previously_set = request.cookies.get(user_locale_cookie_key, None)
+  # when the response exists, set a cookie with the language if it is new
+  if not previously_set or previously_set is not locale.language.iso_639_1_code:
+    set_locale_cookie_after_this_request(locale)
+  g.render_context['locale'] = locale
 
-def set_langauge_cookie_after_this_request(language):
+def set_locale_cookie_after_this_request(locale):
   @after_this_request
   def remember_language(response):
-    response.set_cookie('user_lang', language)
+    response.set_cookie(user_locale_cookie_key, locale.language.iso_639_1_code)
     return response
 
 @app.route('/language', methods=['GET'])
 def language():
-  language = request.args.get('l')
-  update_language_context(language)
-  return redirect(url_for('index'))
+  language_code = request.args.get('l')
+  languages = list(filter(lambda l: l.iso_639_1_code == language_code, locales))
+  if languages:
+    language = languages[0]
+    locale = locales[language]
+    update_locale_context(locale)
+    return redirect(url_for('index'))
 
 @app.route('/register', methods=['POST'])
 def post_register():
@@ -122,7 +127,7 @@ def putbird(bird_id, sighting_time):
     person_id = get_account(session['account_id']).person_id
     sighting_repo.add_sighting(person_id, bird_id, sighting_time)
 
-def getbirds():
+def get_sightings():
   if 'account_id' in session:
     person_id = get_account(session['account_id']).person_id
     sightings = sighting_repo.get_sightings_by_person_id(person_id)
@@ -142,9 +147,10 @@ def render_page(page):
 @app.route('/', methods=['GET'])
 def index():
   if 'account_id' in session:
-    birds = getbirds()
+    birds = get_sightings()
     g.render_context['username'] = get_account(session['account_id']).username
     g.render_context['birds'] = birds
+    #g.render_context['bird_dictionary'] = g.render_context['locale'].bird_dictionary
     return render_page('index.html')
   else:
     return render_page('index.html')
