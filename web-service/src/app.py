@@ -138,7 +138,7 @@ def get_sightings():
         sighting_time = sighting.sighting_date.isoformat()
         if sighting.sighting_time:
           sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
-        birds.append((bird.binomial_name, sighting_time))
+        birds.append((bird, sighting_time))
     return birds
 
 def render_page(page):

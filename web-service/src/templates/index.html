@@ -12,7 +12,7 @@
           <div class="bird-image col-4">
             <img class="img-responsive col-12" style="max-width: 100px;" src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}"/>
           </div>
-          <div class="col-4">{{ bird[0] }}</div>
+          <div class="col-4">{{ locale.name(bird[0])|default(bird[0].binomial_name, true) }}</div>
           <div class="col-4">{{ bird[1] }}</div>
         </div>
       </div>

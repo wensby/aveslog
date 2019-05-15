@@ -44,7 +44,7 @@ class Locale:
     return translated
 
   def name(self, bird):
-    if bird.binomial_name in self.bird_dictionary:
+    if self.bird_dictionary and bird.binomial_name in self.bird_dictionary:
       return self.bird_dictionary[bird.binomial_name]
 
 class BirdDictionaryFactory:
