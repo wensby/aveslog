@@ -2,15 +2,22 @@ import json
 
 class LocalesFactory:
 
-  def __init__(self, locales_directory_path):
+  def __init__(self, database, locales_directory_path):
+    self.database = database
     self.locales_directory_path = locales_directory_path
 
-  def create_locales(self, language_codes):
+  def create_locales(self):
     locales = dict()
+    language_codes = self.__get_locale_codes()
     languages = map(lambda x: Language(x), language_codes)
     for language in languages:
       locales[language] = self.create_locale(language)
     return locales
+
+  def __get_locale_codes(self):
+    rows = self.database.query('SELECT code FROM locale;')
+    if rows:
+      return [row[0] for row in rows]
 
   def create_locale(self, language):
     language_dictionary = self.create_language_dictionary(language)

@@ -3,5 +3,9 @@
 \i /schema/public/table/sighting.sql
 \i /schema/public/table/user_account.sql
 \i /schema/public/table/hashed_password.sql
+\i /schema/public/table/locale.sql
 
-\i /schema/base-data/birds.sql
+\i /schema/public/foreign-key-constraint/user_account.sql
+
+\i /schema/base-data/bird.sql
+\i /schema/base-data/locale.sql
