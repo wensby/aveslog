@@ -6,7 +6,9 @@
       <div class="card">
         <div class="card-body">
           <p class="card-text">{{ locale.text(bird.binomial_name) }}</p>
+          {% if username %}
           <button onclick="addSighting({{ bird.id }})">{{ locale.text('Sighted') }}</button>
+          {% endif %}
         </div>
       </div>
     {% endfor %}
