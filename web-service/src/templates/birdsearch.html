@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% if birds %}
-    {% for bird in birds %}
+  {% if bird_matches %}
+    {% for bird_match in bird_matches %}
       <div class="card">
         <div class="card-body">
-          <p class="card-text">{{ locale.text(bird.binomial_name) }}</p>
+          {% if locale.name(bird_match.bird) %}
+          <p class="card-text">{{ locale.name(bird_match.bird) }}</p>
+          {% else %}
+          <p class="card-text">{{ bird_match.bird.binomial_name }}</p>
+          {% endif %}
           {% if username %}
-          <button onclick="addSighting({{ bird.id }})">{{ locale.text('Sighted') }}</button>
+          <button onclick="addSighting({{ bird_match.bird.id }})">{{ locale.text('Sighted') }}</button>
           {% endif %}
         </div>
       </div>

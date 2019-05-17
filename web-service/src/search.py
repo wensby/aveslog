@@ -11,7 +11,7 @@ class BirdSearcher:
     result_builder.add_matches(binomial_name_matches)
     language_name_matches = self.search_by_language_names(name)
     result_builder.add_matches(language_name_matches)
-    return result_builder.matches_by_bird
+    return result_builder.create_bird_matches()
 
   def search_by_binomial_name(self, name):
     matches = dict()
@@ -49,7 +49,27 @@ class ResultBuilder:
       self.matches_by_bird[bird] = []
     self.matches_by_bird[bird].append(match)
 
+  def create_bird_matches(self):
+    bird_matches = []
+    for bird in self.matches_by_bird:
+      bird_matches.append(BirdMatch(bird, 1))
+    return bird_matches
+
 class Match:
 
   def __init__(self):
     pass
+
+class BirdMatch:
+
+  def __init__(self, bird, query_match):
+    self.__bird = bird
+    self.__query_match = query_match
+
+  @property
+  def bird(self):
+    return self.__bird
+
+  @property
+  def query_match(self):
+    return self.__query_match
