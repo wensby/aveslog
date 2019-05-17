@@ -14,6 +14,15 @@ body {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
 }
 
+/* => md */
+@media (min-width: 768px) {
+  .navbar-main {
+    flex-grow: unset;
+    flex-basis: auto!important;
+    width: 180px;
+  }
+}
+
 .navbar .form-control {
   padding: .75rem 1rem;
   border-width: 0;
@@ -32,6 +41,7 @@ body {
 
 .sidebar {
   position: fixed;
+  width: 180px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -63,6 +73,13 @@ body {
 /*
  * Content
  */
+
+/* => md */
+@media (min-width: 768px) {
+  main {
+    padding-left: 220px!important;
+  }
+}
 
 /* < md */
 .navbar-pushed {
