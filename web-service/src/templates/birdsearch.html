@@ -3,21 +3,23 @@
 {% block content %}
   {% if bird_matches %}
     {% for bird_match in bird_matches %}
-      <div class="card">
-        <div class="card-horizontal">
-          <div class="img-square-wrapper">
-            <img style="max-height: 150px;" src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}" alt="Card image cap">
-          </div>
-          <div class="card-body">
-            {% if locale.name(bird_match.bird) %}
-            <h5 class="card-title">{{ locale.name(bird_match.bird) }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ bird_match.bird.binomial_name }}</h6>
-            {% else %}
-            <h5 class="card-title">{{ bird_match.bird.binomial_name }}</h5>
-            {% endif %}
-            {% if username %}
-            <button onclick="addSighting({{ bird_match.bird.id }})">{{ locale.text('Sighted') }}</button>
-            {% endif %}
+      <div class="text-break">
+        <div class="card">
+          <div class="card-horizontal">
+            <div class="img-square-wrapper">
+              <img style="max-height: 150px;" src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}" alt="Card image cap">
+            </div>
+            <div class="card-body">
+              {% if locale.name(bird_match.bird) %}
+              <h5 class="card-title">{{ locale.name(bird_match.bird) }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ bird_match.bird.binomial_name }}</h6>
+              {% else %}
+              <h5 class="card-title">{{ bird_match.bird.binomial_name }}</h5>
+              {% endif %}
+              {% if username %}
+              <button onclick="addSighting({{ bird_match.bird.id }})">{{ locale.text('Sighted') }}</button>
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
