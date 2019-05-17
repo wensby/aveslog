@@ -92,3 +92,8 @@ body {
     padding-top: 74px; /* Space for fixed navbar */
   }
 }
+
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+}
