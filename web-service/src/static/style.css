@@ -17,9 +17,7 @@ body {
 /* => md */
 @media (min-width: 768px) {
   .navbar-main {
-    flex-grow: unset;
-    flex-basis: auto!important;
-    width: 180px;
+    flex: 0 0 180px;
   }
 }
 
