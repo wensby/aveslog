@@ -27,8 +27,7 @@ class TestBirdSearcher(unittest.TestCase):
     swedish = Mock()
     swedish_locale = Mock()
     self.bird_repository.birds = [picapica]
-    bird_dictionary = Mock()
-    bird_dictionary.names_by_binomial_name = {'Pica pica': 'Skata'}
+    bird_dictionary = {'Pica pica': 'Skata'}
     swedish_locale.bird_dictionary = bird_dictionary
     locales = {swedish: swedish_locale}
     searcher = BirdSearcher(self.bird_repository, locales)

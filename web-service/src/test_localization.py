@@ -1,5 +1,4 @@
 import unittest
-import birding_locale as locale
 from unittest.mock import Mock
 from localization import Locale, LocaleDeterminer, Language
 
