@@ -75,7 +75,7 @@ body {
 /* => md */
 @media (min-width: 768px) {
   main {
-    padding-left: 220px!important;
+    padding-left: 190px!important;
   }
 }
 

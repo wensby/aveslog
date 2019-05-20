@@ -2,8 +2,8 @@
 
 {% block content %}
   {% if bird_matches %}
-    {% for bird_match in bird_matches %}
-      <div class="text-break">
+    <div class="text-break">
+      {% for bird_match in bird_matches %}
         <div class="card">
           <div class="card-horizontal">
             <div class="img-square-wrapper">
@@ -22,8 +22,8 @@
             </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
   {% endif %}
 {% endblock %}
 
