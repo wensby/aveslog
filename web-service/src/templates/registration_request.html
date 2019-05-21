@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul class=flashes>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+  <h2>{{ locale.text('Register') }}</h2>
+  <p>{{ locale.text('Please provide your email address to register.') }}</p>
+  <form method="post">
+    <input type="text" name="email">
+    <input type="submit" value="{{ locale.text('Request registration link') }}">
+  </form>
+  <a href='/login'>{{ locale.text('Back to login page') }}</a>
+{% endblock %}

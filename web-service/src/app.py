@@ -12,6 +12,7 @@ from datetime import datetime
 from datetime import timedelta
 from localization import LocaleDeterminer, LocalesFactory
 from search import BirdSearcher
+from mail import MailDispatcherFactory
 
 app = Flask(__name__)
 
@@ -29,6 +30,8 @@ locales_factory = LocalesFactory(database, 'locales/')
 locales = locales_factory.create_locales()
 locale_determiner = LocaleDeterminer(locales, user_locale_cookie_key)
 bird_searcher = BirdSearcher(bird_repo, locales)
+mail_dispatcher_factory = MailDispatcherFactory(app)
+mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
 
 @app.before_request
 def before_request():
@@ -63,20 +66,6 @@ def language():
     update_locale_context(locale)
     return redirect(url_for('index'))
 
-@app.route('/register', methods=['POST'])
-def post_register():
-  username = request.form['username']
-  password = request.form['password']
-  account = account_repo.put_new_user_account(username, password)
-  if account:
-    flash('user account created')
-    person = person_repo.add_person(username)
-    account_repo.set_user_account_person(account, person)
-    return redirect(url_for('get_register'))
-  else:
-    flash('user account not created')
-    return redirect(url_for('get_register'))
-
 @app.route('/sighting', methods=['POST'])
 def post_sighting():
   bird_id = int(request.form['bird_id'])
@@ -85,9 +74,56 @@ def post_sighting():
   putbird(bird_id, sighting_time)
   return 'success?'
 
-@app.route('/register', methods=['GET'])
-def get_register():
-  return render_page('register.html')
+@app.route('/registration_request')
+def get_registration_request():
+  return render_page('registration_request.html')
+
+@app.route('/registration_request', methods=['POST'])
+def post_registration_request():
+  email = request.form['email']
+  email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+  if email_pattern.match(email):
+    account_repo.put_user_account_registration(email)
+    registration = account_repo.get_user_account_registration_by_email(email)
+    token = registration.token
+    link = os.environ['HOST'] + url_for('get_register_token', token=token)
+    mail_dispatcher.dispatch(email, 'Birding Registration', 'Link: ' + link)
+  flash('Please check your email inbox for your registration link.')
+  return redirect(url_for('get_registration_request'))
+
+@app.route('/register/<token>')
+def get_register_token(token):
+  registration = account_repo.get_user_account_registration_by_token(token)
+  if registration:
+    g.render_context['user_account_registration'] = registration
+    return render_page('register.html')
+  else:
+    flash('This registration link is no longer valid, please request a new one.')
+    return redirect(url_for('get_registration_request'))
+
+@app.route('/register/<token>', methods=['POST'])
+def post_register_token(token):
+  formemail = request.form['email']
+  username = request.form['username']
+  password = request.form['password']
+  formtoken = request.form['token']
+  registration = account_repo.get_user_account_registration_by_token(token)
+  if formtoken == token and formemail == registration.email:
+    # if username already present
+    if account_repo.find_user_account(username):
+      flash('username already taken')
+      return redirect(url_for('get_register_token', token=token))
+    else:
+      account = account_repo.put_new_user_account(formemail, username, password)
+      if account:
+        # account created, remove the registration token
+        account_repo.remove_user_account_registration_by_id(registration.id)
+        person = person_repo.add_person(username)
+        account_repo.set_user_account_person(account, person)
+        flash('user account created')
+        return redirect(url_for('get_login'))
+  flash('user account creation failed')
+  return redirect(url_for('get_register_token', token=token))
 
 @app.route('/bird/search', methods=['GET'])
 def bird_search():

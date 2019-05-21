@@ -15,10 +15,19 @@ def is_valid_password(password):
 
 class UserAccount:
 
-  def __init__(self, id, username, person_id):
+  def __init__(self, id, username, email, person_id, locale_id):
     self.id = id
     self.username = username
+    self.email = email
     self.person_id = person_id
+    self.locale_id = locale_id
+
+class UserAccountRegistration:
+
+  def __init__(self, id, email, token):
+    self.id = id
+    self.email = email
+    self.token = token
 
 class Credentials:
 
@@ -46,21 +55,49 @@ class UserAccountRepository:
     self.database = database
     self.hasher = password_hasher
 
+  def remove_user_account_registration_by_id(self, id):
+    query = ('DELETE FROM user_account_registration '
+             'WHERE id = %s;')
+    self.database.query(query, (id,))
+
+  def put_user_account_registration(self, email):
+    if not self.get_user_account_registration_by_email(email):
+      token = os.urandom(16).hex()
+      query = ('INSERT INTO user_account_registration (email, token) '
+               'VALUES (%s, %s);')
+      self.database.query(query, (email, token))
+
+  def get_user_account_registration_by_email(self, email):
+    query = ('SELECT id, email, token '
+             'FROM user_account_registration '
+             'WHERE email LIKE %s;')
+    rows = self.database.query(query, (email,))
+    if rows:
+      return UserAccountRegistration(rows[0][0], rows[0][1], rows[0][2])
+
+  def get_user_account_registration_by_token(self, token):
+    query = ('SELECT id, email, token '
+             'FROM user_account_registration '
+             'WHERE token LIKE %s;')
+    rows = self.database.query(query, (token,))
+    if rows:
+      return UserAccountRegistration(rows[0][0], rows[0][1], rows[0][2])
+
   def get_user_account_by_id(self, id):
-    query = ('SELECT id, username, person_id '
+    query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE id = %s;')
     rows = self.database.query(query, (id,))
     if rows:
-      return UserAccount(rows[0][0], rows[0][1], rows[0][2])
+      return UserAccount(rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4])
 
   def find_user_account(self, username):
-    query = ('SELECT id, username, person_id '
+    query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE username LIKE %s;')
     rows = self.database.query(query, (username,))
     if rows:
-      return UserAccount(rows[0][0], rows[0][1], rows[0][2])
+      return UserAccount(rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4])
 
   def find_hashed_password(self, user_account):
     query = ('SELECT user_account_id, salt, salted_hash '
@@ -70,13 +107,13 @@ class UserAccountRepository:
     if rows:
       return HashedPassword(rows[0][0], rows[0][1], rows[0][2])
 
-  def put_new_user_account(self, username, password):
+  def put_new_user_account(self, email, username, password):
     if not Credentials.is_valid(username, password):
       return None
     if not self.find_user_account(username):
-      query = ('INSERT INTO user_account (username) '
-               'VALUES (%s);')
-      self.database.query(query, (username,))
+      query = ('INSERT INTO user_account (username, email) '
+               'VALUES (%s, %s);')
+      self.database.query(query, (username, email))
       account = self.find_user_account(username)
       if not account:
         return

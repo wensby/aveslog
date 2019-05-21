@@ -5,10 +5,17 @@ services:
     expose:
       - 3000
     environment:
+      HOST: https://yourdomain.tld
       VIRTUAL_HOST: yourdomain.tld
       VIRTUAL_PORT: 3000
       LETSENCRYPT_HOST: yourdomain.tld
       LETSENCRYPT_EMAIL: email@domain.tld
+      MAIL_SERVER: smtp.yourmailserver.tld
+      MAIL_PORT: 465
+      MAIL_USERNAME: yourusername
+      MAIL_PASSWORD: yourpassword
+      MAIL_USE_TLS: 'false'
+      MAIL_USE_SSL: 'true'
 
 networks:
   default:
