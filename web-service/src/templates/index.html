@@ -2,23 +2,28 @@
 
 {% block content %}
   {% if username %}
-  {{ locale.text("Hello world! Hello {{}}!", [username]) }}
-  {% if birds %}
-  <div class="container">
-    <div class="row">
-      {% for bird in birds %}
-      <div class="col-12">
-        <div class="row border rounded">
-          <div class="bird-image col-4">
-            <img class="img-responsive col-12" style="max-width: 100px;" src="{{url_for('static', filename='spring-bird-2295434_640.jpg')}}"/>
+    {{ locale.text("Hello world! Hello {{}}!", [username]) }}
+    {% if sightings %}
+      <div class="text-break">
+        {% for sighting in sightings %}
+          <div class="card">
+            <div class="card-horizontal">
+              <div class="img-square-wrapper">
+                <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
+              </div>
+              <div class="card-body">
+                {% if locale.name(sighting['bird']) %}
+                <h5 class="card-title">{{ locale.name(sighting['bird']) }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ sighting['bird'].binomial_name }}</h6>
+                {% else %}
+                <h5 class="card-title">{{ sighting['bird'].binomial_name }}</h5>
+                {% endif %}
+                <p class="card-text">{{ sighting['time'] }}</p>
+              </div>
+            </div>
           </div>
-          <div class="col-4">{{ locale.name(bird[0])|default(bird[0].binomial_name, true) }}</div>
-          <div class="col-4">{{ bird[1] }}</div>
-        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
+    {% endif %}
   {% endif %}
 {% endblock %}

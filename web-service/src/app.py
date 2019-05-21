@@ -164,15 +164,16 @@ def get_sightings():
   if 'account_id' in session:
     person_id = get_account(session['account_id']).person_id
     sightings = sighting_repo.get_sightings_by_person_id(person_id)
-    birds = []
+    result = []
     for sighting in sightings:
       bird = bird_repo.get_bird_by_id(sighting.bird_id)
       if bird:
         sighting_time = sighting.sighting_date.isoformat()
         if sighting.sighting_time:
           sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
-        birds.append((bird, sighting_time))
-    return birds
+        result.append({'bird': bird, 'time': sighting_time})
+    result.sort(reverse=True, key=lambda r: r['time'])
+    return result
 
 def render_page(page):
   return render_template(page, **g.render_context)
@@ -180,10 +181,9 @@ def render_page(page):
 @app.route('/', methods=['GET'])
 def index():
   if 'account_id' in session:
-    birds = get_sightings()
+    sightings = get_sightings()
     g.render_context['username'] = get_account(session['account_id']).username
-    g.render_context['birds'] = birds
-    #g.render_context['bird_dictionary'] = g.render_context['locale'].bird_dictionary
+    g.render_context['sightings'] = sightings
     return render_page('index.html')
   else:
     return render_page('index.html')
