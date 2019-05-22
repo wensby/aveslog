@@ -11,7 +11,7 @@ class TestAuthenticator(unittest.TestCase):
 
   def test_get_authenticated_user_account_when_correct_password(self):
     credentials = Credentials('username', 'password')
-    account = UserAccount(1, 'username', 1)
+    account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
     hash = 'hash'
     hashed_password = HashedPassword(1, 'salt', hash)
     self.repository.find_user_account = Mock(return_value=account)
@@ -23,7 +23,7 @@ class TestAuthenticator(unittest.TestCase):
 
   def test_get_authenticated_user_account_none_when_wrong_password(self):
     credentials = Credentials('username', 'password')
-    account = UserAccount(1, 'username', 1)
+    account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
     hashed_password = HashedPassword(1, 'salt', 'correct_hash')
     self.repository.find_user_account = Mock(return_value=account)
     self.repository.find_hashed_password = Mock(return_value=hashed_password)
