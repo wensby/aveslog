@@ -1,3 +1,4 @@
 Flask==0.12.3
 Flask-Mail
 psycopg2-binary
+retrying

@@ -6,7 +6,7 @@ from flask import Flask, request, redirect, url_for, session, render_template, f
 from sighting import SightingRepository
 from bird import BirdRepository
 from person import PersonRepository
-from database import Database
+from database import DatabaseConnector
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
 from datetime import datetime
 from datetime import timedelta
@@ -20,7 +20,7 @@ app.secret_key = open('/app/secret_key', 'r').readline()
 
 user_locale_cookie_key = 'user_locale'
 hasher = PasswordHasher()
-database = Database('birding-database-service', 'birding-database', 'postgres', 'docker')
+database = DatabaseConnector.connect('birding-database-service', 'birding-database', 'postgres', 'docker')
 bird_repo = BirdRepository(database)
 sighting_repo = SightingRepository(database)
 person_repo = PersonRepository(database)

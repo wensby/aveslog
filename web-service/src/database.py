@@ -1,10 +1,18 @@
 import psycopg2
+from retrying import retry
+
+class DatabaseConnector:
+
+  @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
+  def connect(host, dbname, user, password):
+    kwargs = {'host': host, 'dbname': dbname, 'user': user, 'password': password}
+    connection = psycopg2.connect(**kwargs)
+    return Database(connection)
 
 class Database:
 
-  def __init__(self, host, dbname, user, password):
-    kwargs = {'host': host, 'dbname': dbname, 'user': user, 'password': password}
-    self.connection = psycopg2.connect(**kwargs)
+  def __init__(self, connection):
+    self.connection = connection
 
   def fetchone(self, query, vars=None):
     result = self.query(query, vars)
