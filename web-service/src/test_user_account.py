@@ -1,38 +1,39 @@
-import unittest
+from unittest import TestCase
 from unittest.mock import Mock
 from user_account import Authenticator, Credentials, UserAccount, HashedPassword
 from user_account import PasswordHasher
+from test_util import mock_return
 
-class TestAuthenticator(unittest.TestCase):
+class TestAuthenticator(TestCase):
 
   def setUp(self):
     self.repository = Mock()
     self.hasher = Mock()
+    self.credentials = Credentials('username', 'password')
+    self.account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
+    self.hashed_password = HashedPassword(1, 'salt', 'hashed-password')
 
   def test_get_authenticated_user_account_when_correct_password(self):
-    credentials = Credentials('username', 'password')
-    account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
-    hash = 'hash'
-    hashed_password = HashedPassword(1, 'salt', hash)
-    self.repository.find_user_account = Mock(return_value=account)
-    self.repository.find_hashed_password = Mock(return_value=hashed_password)
-    self.hasher.hash_password = Mock(return_value=hash)
+    self.repository.find_user_account = mock_return(self.account)
+    self.repository.find_hashed_password = mock_return(self.hashed_password)
+    self.hasher.hash_password = Mock(return_value='hashed-password')
     authenticator = Authenticator(self.repository, self.hasher)
-    authenticated = authenticator.get_authenticated_user_account(credentials)
-    self.assertTrue(authenticated == account)
+
+    authenticated = authenticator.get_authenticated_user_account(self.credentials)
+
+    self.assertEqual(authenticated, self.account)
 
   def test_get_authenticated_user_account_none_when_wrong_password(self):
-    credentials = Credentials('username', 'password')
-    account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
-    hashed_password = HashedPassword(1, 'salt', 'correct_hash')
-    self.repository.find_user_account = Mock(return_value=account)
-    self.repository.find_hashed_password = Mock(return_value=hashed_password)
+    self.repository.find_user_account = mock_return(self.account)
+    self.repository.find_hashed_password = mock_return(self.hashed_password)
     self.hasher.hash_password = Mock(return_value='wrong_hash')
     authenticator = Authenticator(self.repository, self.hasher)
-    authenticated = authenticator.get_authenticated_user_account(credentials)
-    self.assertTrue(authenticated == None)
 
-class TestPasswordHasher(unittest.TestCase):
+    authenticated = authenticator.get_authenticated_user_account(self.credentials)
+
+    self.assertIsNone(authenticated)
+
+class TestPasswordHasher(TestCase):
 
   def test_hash_password(self):
     hasher = PasswordHasher()
