@@ -1,15 +1,11 @@
-import os.path
 import re
-import psycopg2
-from pathlib import Path
 from flask import Flask, request, redirect, url_for, session, render_template, flash, g, after_this_request
 from sighting import SightingRepository
 from bird import BirdRepository
 from person import PersonRepository
 from database import DatabaseConnector
 from user_account import UserAccountRepository, PasswordHasher, Credentials, Authenticator
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from localization import LocaleDeterminer, LocalesFactory
 from search import BirdSearcher
 from mail import MailDispatcherFactory
