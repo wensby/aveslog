@@ -4,3 +4,5 @@ deploy/deploy.sh
 deploy/rsync-exclude-list.txt
 docker/docker-compose.dev.yml
 docker/docker-compose.prod.yml.tmpl
+web-service/src/venv
+web-service/venv

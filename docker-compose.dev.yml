@@ -6,3 +6,4 @@ services:
      - "3002:3002"
     environment:
       HOST: http://0.0.0.0:3002
+      FLASK_ENV: development
