@@ -2,3 +2,4 @@ Flask==1.0
 Flask-Mail
 psycopg2-binary
 retrying
+gunicorn

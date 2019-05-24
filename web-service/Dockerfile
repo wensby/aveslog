@@ -12,4 +12,4 @@ WORKDIR /src
 
 ENV FLASK_APP=birding
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=3002"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "-b", "0.0.0.0:3002", "birding:create_app()"]
