@@ -95,3 +95,10 @@ body {
   display: flex;
   flex: 1 1 auto;
 }
+
+/* => md */
+@media (min-width: 768px) {
+  #loginFormContainer {
+    width: 520px;
+  }
+}

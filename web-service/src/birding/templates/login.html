@@ -1,19 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-  <ul class="flashes">
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
-  {% endwith %}
-  <form method=post>
-    <input type=text name=username placeholder="{{ locale.text('Username') }}">
-    <input type=password name=password placeholder="{{ locale.text('Password') }}">
-    <input type=submit value="{{ locale.text('Login') }}">
-  </form>
-  <a href="/registration_request">{{ locale.text('Register new account') }}</a>
+  <div class="container">
+    <h1>{{ locale.text('Login') }}</h1>
+    <div class="d-flex justify-content-center">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      <div id="loginFormContainer">
+        <form method="post">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="usernameInput">{{ locale.text('Username') }}</label>
+              <input id="usernameInput" class="form-control" type="text" name="username" placeholder="{{ locale.text('Username') }}">
+            </div>
+            <div class="form-group col-6">
+              <label for="passwordInput">{{ locale.text('Password') }}</label>
+              <input id="passwordInput" class="form-control" type="password" name="password" placeholder="{{ locale.text('Password') }}">
+            </div>
+          </div>
+          <div class="d-flex flex-row">
+            <a class="btn btn-secondary" href="/registration_request">{{ locale.text('Register new account') }}</a>
+            <button class="btn btn-primary ml-auto" type="submit">{{ locale.text('Login') }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 {% endblock %}
