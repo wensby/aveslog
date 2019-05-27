@@ -12,4 +12,4 @@ WORKDIR /src
 
 ENV FLASK_APP=birding
 
-CMD ["gunicorn", "-c", "gunicorn_config.py", "-b", "0.0.0.0:3002", "birding:create_app()"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "birding:create_app()"]
