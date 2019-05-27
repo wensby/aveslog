@@ -1,3 +1,5 @@
+import os.path
+
 from flask import Blueprint
 from flask import request
 from flask import session
@@ -23,7 +25,7 @@ def create_sighting_blueprint(account_repo, sighting_repo, bird_repo):
     if 'account_id' in session:
       person_id = get_account(session['account_id']).person_id
       sighting_repo.add_sighting(person_id, bird_id, sighting_time)
-  
+
   def get_sightings():
     if 'account_id' in session:
       person_id = get_account(session['account_id']).person_id
@@ -32,12 +34,24 @@ def create_sighting_blueprint(account_repo, sighting_repo, bird_repo):
       for sighting in sightings:
         bird = bird_repo.get_bird_by_id(sighting.bird_id)
         if bird:
+          s = dict()
           sighting_time = sighting.sighting_date.isoformat()
           if sighting.sighting_time:
             sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
-          result.append({'bird': bird, 'time': sighting_time})
+          s['bird'] = bird
+          s['time'] = sighting_time
+          thumbnail_image = find_thumbnail_image(bird)
+          if thumbnail_image:
+            s['thumbnail'] = thumbnail_image
+          result.append(s)
       result.sort(reverse=True, key=lambda r: r['time'])
       return result
+
+  def find_thumbnail_image(bird):
+    birdname = bird.binomial_name.lower().replace(' ', '-')
+    path = "image/bird/" + birdname + "-thumb.jpg"
+    if os.path.isfile(blueprint.root_path + "/static/" + path):
+      return path
 
   @blueprint.route('/')
   def index():

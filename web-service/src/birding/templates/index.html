@@ -9,7 +9,11 @@
           <div class="card">
             <div class="card-horizontal">
               <div class="img-square-wrapper">
-                <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
+                {% if 'thumbnail' in sighting %}
+                  <img style="max-height: 150px;" src="{{url_for('static', filename=sighting['thumbnail'])}}" alt="Card image cap">
+                {% else %}
+                  <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
+                {% endif %}
               </div>
               <div class="card-body">
                 {% if locale.name(sighting['bird']) %}
