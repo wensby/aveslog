@@ -12,8 +12,8 @@ from flask import url_for
 from .render import render_page
 from .user_account import Credentials
 
-def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authenticator):
-  blueprint = Blueprint('auth', __name__)
+def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, authenticator):
+  blueprint = Blueprint('authentication', __name__)
   
   @blueprint.route('/registration_request')
   def get_registration_request():
@@ -27,10 +27,10 @@ def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authentica
       account_repo.put_user_account_registration(email)
       registration = account_repo.get_user_account_registration_by_email(email)
       token = registration.token
-      link = os.environ['HOST'] + url_for('auth.get_register_token', token=token)
+      link = os.environ['HOST'] + url_for('authentication.get_register_token', token=token)
       mail_dispatcher.dispatch(email, 'Birding Registration', 'Link: ' + link)
     flash('Please check your email inbox for your registration link.')
-    return redirect(url_for('auth.get_registration_request'))
+    return redirect(url_for('authentication.get_registration_request'))
   
   @blueprint.route('/register/<token>')
   def get_register_token(token):
@@ -40,7 +40,7 @@ def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authentica
       return render_page('register.html')
     else:
       flash('This registration link is no longer valid, please request a new one.')
-      return redirect(url_for('auth.get_registration_request'))
+      return redirect(url_for('authentication.get_registration_request'))
   
   @blueprint.route('/register/<token>', methods=['POST'])
   def post_register_token(token):
@@ -53,7 +53,7 @@ def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authentica
       # if username already present
       if account_repo.find_user_account(username):
         flash('username already taken')
-        return redirect(url_for('auth.get_register_token', token=token))
+        return redirect(url_for('authentication.get_register_token', token=token))
       else:
         account = account_repo.put_new_user_account(formemail, username, password)
         if account:
@@ -62,9 +62,9 @@ def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authentica
           person = person_repo.add_person(username)
           account_repo.set_user_account_person(account, person)
           flash('user account created')
-          return redirect(url_for('auth.get_login'))
+          return redirect(url_for('authentication.get_login'))
     flash('user account creation failed')
-    return redirect(url_for('auth.get_register_token', token=token))
+    return redirect(url_for('authentication.get_register_token', token=token))
   
   @blueprint.route('/login', methods=['POST'])
   def post_login():
@@ -76,7 +76,7 @@ def create_auth_blueprint(account_repo, mail_dispatcher, person_repo, authentica
       if account:
         session['account_id'] = account.id
         return redirect(url_for('sighting.index'))
-    return redirect(url_for('auth.get_login'))
+    return redirect(url_for('authentication.get_login'))
   
   @blueprint.route('/login', methods=['GET'])
   def get_login():

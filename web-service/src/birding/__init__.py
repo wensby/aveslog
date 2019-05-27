@@ -7,7 +7,7 @@ from .user_account import Credentials
 from .user_account import Authenticator
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
-from .auth import create_auth_blueprint
+from .authentication import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
 from .blueprint_sighting import create_sighting_blueprint
 from .localization import LocaleDeterminer
@@ -47,13 +47,13 @@ def create_app(test_config=None):
   sighting_repository = SightingRepository(database)
 
   # Create and register blueprints
-  auth_blueprint = create_auth_blueprint(
+  authentication_blueprint = create_authentication_blueprint(
       account_repository, mail_dispatcher, person_repository, authenticator
   )
-  app.register_blueprint(auth_blueprint)
   search_blueprint = create_search_blueprint(bird_searcher, account_repository)
-  app.register_blueprint(search_blueprint)
   sighting_blueprint = create_sighting_blueprint(account_repository, sighting_repository, bird_repository)
+  app.register_blueprint(authentication_blueprint)
+  app.register_blueprint(search_blueprint)
   app.register_blueprint(sighting_blueprint)
 
   @app.before_request
