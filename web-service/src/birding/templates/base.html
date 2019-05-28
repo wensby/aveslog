@@ -15,7 +15,7 @@
             <img class="navbar-brand"src="{{ url_for('static', filename='logo-w-s.png') }}" style="width: 40px;">
           </a>
           {% if username %}
-          <a class="text-light" href="/profile">{{ username }}</a>
+            <a class="text-light" href="/profile">{{ username }}</a>
           {% endif %}
         </div>
         <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,18 +40,18 @@
           <div class="sidebar-sticky flex-column">
             <ul class="nav flex-column nav-sidebar" id="sidebarList">
               {% if username %}
-              <li class="nav-item">
-                <a class="nav-link" href="/profile">{{ locale.text('Profile') }}</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/#">{{ locale.text('Sightings') }}</a>
-              </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/profile">{{ locale.text('Profile') }}</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/#">{{ locale.text('Sightings') }}</a>
+                </li>
               {% endif %}
               <li class="nav-item">
                 {% if username %}
-                <a class="nav-link" href="/logout">{{ locale.text('Logout') }}</a>
+                  <a class="nav-link" href="/logout">{{ locale.text('Logout') }}</a>
                 {% else %}
-                <a class="nav-link" href="/login">{{ locale.text('Login') }}</a>
+                  <a class="nav-link" href="/login">{{ locale.text('Login') }}</a>
                 {% endif %}
               </li>
               <li class="nav-item">
