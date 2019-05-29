@@ -126,6 +126,14 @@ class UserAccountRepository:
       if self.find_hashed_password(account):
         return account
 
+  def update_password(self, account, password):
+    salt = b64encode(os.urandom(16)).decode('utf-8')
+    hash = self.hasher.hash_password(password, salt)
+    query = ('UPDATE hashed_password '
+             'SET salt = %s, salted_hash = %s '
+             'WHERE user_account_id = %s;')
+    self.database.query(query, (salt, hash, account.id))
+
   def set_user_account_person(self, account, person):
     query = ('UPDATE user_account '
              'SET person_id = %s '
@@ -146,14 +154,16 @@ class Authenticator:
     self.account_repository = user_account_repository
     self.hasher = password_hasher
 
+  def is_account_password_correct(self, account, password):
+    hashed_password = self.account_repository.find_hashed_password(account)
+    if hashed_password:
+      salt = hashed_password.salt
+      expected_hash = hashed_password.salted_hash
+      return self.hasher.hash_password(password, salt) == expected_hash
+
   def get_authenticated_user_account(self, credentials):
     username = credentials.username
     password = credentials.password
     account = self.account_repository.find_user_account(username)
-    if account:
-      hashed_password = self.account_repository.find_hashed_password(account)
-      if hashed_password:
-        salt = hashed_password.salt
-        expected_hash = hashed_password.salted_hash
-        if self.hasher.hash_password(password, salt) == expected_hash:
-          return account
+    if account and self.is_account_password_correct(account, password):
+      return account

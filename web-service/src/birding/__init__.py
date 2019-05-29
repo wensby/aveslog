@@ -11,6 +11,7 @@ from .authentication import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
 from .blueprint_sighting import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint
+from .blueprint_settings import create_settings_blueprint
 from .localization import LocaleDeterminer
 from .localization import LocalesFactory
 from .bird import BirdRepository
@@ -54,10 +55,12 @@ def create_app(test_config=None):
   search_blueprint = create_search_blueprint(bird_searcher, account_repository)
   sighting_blueprint = create_sighting_blueprint(account_repository, sighting_repository, bird_repository)
   profile_blueprint = create_profile_blueprint(account_repository)
+  settings_blueprint = create_settings_blueprint(account_repository, authenticator)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(search_blueprint)
   app.register_blueprint(sighting_blueprint)
   app.register_blueprint(profile_blueprint)
+  app.register_blueprint(settings_blueprint)
 
   @app.before_request
   def before_request():
