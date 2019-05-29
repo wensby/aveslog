@@ -1,5 +1,6 @@
 import os
 from flask import Flask, g, request, after_this_request, redirect, url_for
+from flask import session
 from .database import DatabaseConnector
 from .user_account import UserAccountRepository
 from .user_account import PasswordHasher
@@ -17,6 +18,7 @@ from .localization import LocalesFactory
 from .bird import BirdRepository
 from .search import BirdSearcher
 from .sighting import SightingRepository
+from .render import render_page
 
 def create_app(test_config=None):
   secret_key = open('secret_key', 'r').readline()
@@ -93,6 +95,43 @@ def create_app(test_config=None):
       language = languages[0]
       locale = locales[language]
       update_locale_context(locale)
-      return redirect(url_for('sighting.index'))
+      return redirect(url_for('index'))
+
+  @app.route('/')
+  def index():
+    if g.logged_in_account:
+      sightings = get_sightings()
+      g.render_context['username'] = g.logged_in_account.username
+      g.render_context['sightings'] = sightings
+      return render_page('index.html')
+    else:
+      return render_page('index.html')
+
+  def get_sightings():
+    if g.logged_in_account:
+      person_id = g.logged_in_account.person_id
+      sightings = sighting_repository.get_sightings_by_person_id(person_id)
+      result = []
+      for sighting in sightings:
+        bird = bird_repository.get_bird_by_id(sighting.bird_id)
+        if bird:
+          s = dict()
+          sighting_time = sighting.sighting_date.isoformat()
+          if sighting.sighting_time:
+            sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
+          s['bird'] = bird
+          s['time'] = sighting_time
+          thumbnail_image = find_thumbnail_image(bird)
+          if thumbnail_image:
+            s['thumbnail'] = thumbnail_image
+          result.append(s)
+      result.sort(reverse=True, key=lambda r: r['time'])
+      return result
+
+  def find_thumbnail_image(bird):
+    birdname = bird.binomial_name.lower().replace(' ', '-')
+    path = "image/bird/" + birdname + "-thumb.jpg"
+    if os.path.isfile(app.root_path + "/static/" + path):
+      return path
 
   return app

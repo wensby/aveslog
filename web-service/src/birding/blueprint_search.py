@@ -12,9 +12,8 @@ def create_search_blueprint(bird_searcher, account_repo):
     name = request.args.get('query')
     bird_matches = bird_searcher.search(name)
     g.render_context['bird_matches'] = list(bird_matches)
-    if 'account_id' in session:
-      account = account_repo.get_user_account_by_id(session['account_id'])
-      g.render_context['username'] = account.username
+    if g.logged_in_account:
+      g.render_context['username'] = g.logged_in_account.username
     return render_page('birdsearch.html')
   
   return blueprint

@@ -1,4 +1,4 @@
-import functools
+from functools import wraps
 import re
 import os
 
@@ -12,9 +12,26 @@ from flask import url_for
 from .render import render_page
 from .user_account import Credentials
 
-def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, authenticator):
+def require_login(view):
+  @wraps(view)
+  def wrapped_view(**kwargs):
+    if g.logged_in_account:
+      return view(**kwargs)
+    else:
+      return redirect(url_for('authentication.get_login'))
+  return wrapped_view
+
+def create_authentication_blueprint(account_repository, mail_dispatcher, person_repo, authenticator):
   blueprint = Blueprint('authentication', __name__)
   
+  @blueprint.before_app_request
+  def load_logged_in_account():
+    account_id = session.get('account_id')
+    if account_id:
+      g.logged_in_account = account_repository.get_user_account_by_id(account_id)
+    else:
+      g.logged_in_account = None
+
   @blueprint.route('/registration_request')
   def get_registration_request():
     return render_page('registration_request.html')
@@ -24,8 +41,8 @@ def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, 
     email = request.form['email']
     email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     if email_pattern.match(email):
-      account_repo.put_user_account_registration(email)
-      registration = account_repo.get_user_account_registration_by_email(email)
+      account_repository.put_user_account_registration(email)
+      registration = account_repository.get_user_account_registration_by_email(email)
       token = registration.token
       link = os.environ['HOST'] + url_for('authentication.get_register_token', token=token)
       mail_dispatcher.dispatch(email, 'Birding Registration', 'Link: ' + link)
@@ -34,7 +51,7 @@ def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, 
   
   @blueprint.route('/register/<token>')
   def get_register_token(token):
-    registration = account_repo.get_user_account_registration_by_token(token)
+    registration = account_repository.get_user_account_registration_by_token(token)
     if registration:
       g.render_context['user_account_registration'] = registration
       return render_page('register.html')
@@ -48,19 +65,19 @@ def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, 
     username = request.form['username']
     password = request.form['password']
     formtoken = request.form['token']
-    registration = account_repo.get_user_account_registration_by_token(token)
+    registration = account_repository.get_user_account_registration_by_token(token)
     if formtoken == token and formemail == registration.email:
       # if username already present
-      if account_repo.find_user_account(username):
+      if account_repository.find_user_account(username):
         flash('username already taken')
         return redirect(url_for('authentication.get_register_token', token=token))
       else:
-        account = account_repo.put_new_user_account(formemail, username, password)
+        account = account_repository.put_new_user_account(formemail, username, password)
         if account:
           # account created, remove the registration token
-          account_repo.remove_user_account_registration_by_id(registration.id)
+          account_repository.remove_user_account_registration_by_id(registration.id)
           person = person_repo.add_person(username)
-          account_repo.set_user_account_person(account, person)
+          account_repository.set_user_account_person(account, person)
           flash('user account created')
           return redirect(url_for('authentication.get_login'))
     flash('user account creation failed')
@@ -75,7 +92,7 @@ def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, 
       account = authenticator.get_authenticated_user_account(credentials)
       if account:
         session['account_id'] = account.id
-        return redirect(url_for('sighting.index'))
+        return redirect(url_for('index'))
     return redirect(url_for('authentication.get_login'))
   
   @blueprint.route('/login', methods=['GET'])
@@ -85,6 +102,6 @@ def create_authentication_blueprint(account_repo, mail_dispatcher, person_repo, 
   @blueprint.route('/logout', methods=['GET'])
   def logout():
     session.pop('account_id', None)
-    return redirect(url_for('sighting.index'))
+    return redirect(url_for('index'))
 
   return blueprint
