@@ -5,8 +5,7 @@ from flask import request
 from flask import after_this_request
 from flask import redirect
 from flask import url_for
-from flask import session
-from .database import DatabaseConnector
+from .database import DatabaseConnectionFactory
 from .user_account import UserAccountRepository
 from .user_account import PasswordHasher
 from .user_account import Credentials
@@ -25,29 +24,15 @@ from .search import BirdSearcher
 from .sighting import SightingRepository
 from .render import render_page
 
-def configure_app(app, test_config):
-  if not os.path.isdir(app.instance_path):
-    os.makedirs(app.instance_path)
-  if test_config:
-    app.config.from_mapping(test_config)
-  else:
-    app.config.from_pyfile('config.py', silent=True)
-  if not app.config['SECRET_KEY']:
-    raise Exception('Flask secret key not set')
-
 def create_app(test_config=None):
   app = Flask(__name__, instance_relative_config=True)
   configure_app(app, test_config)
 
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
-  database_kwargs = {
-      'host': os.environ.get('DATABASE_HOST'),
-      'dbname': os.environ.get('DATABASE_NAME'),
-      'user': os.environ.get('DATABASE_USER'),
-      'password': os.environ.get('DATABASE_PASSWORD')
-  }
-  database = DatabaseConnector.connect(**database_kwargs)
+  database_connection_factory = DatabaseConnectionFactory(app.logger)
+  database_connection_details = create_database_connection_details()
+  database = database_connection_factory.create_connection(**database_connection_details)
   hasher = PasswordHasher()
   account_repository = UserAccountRepository(database, hasher)
   mail_dispatcher_factory = MailDispatcherFactory(app)
@@ -147,3 +132,21 @@ def create_app(test_config=None):
       return path
 
   return app
+
+def configure_app(app, test_config):
+  if not os.path.isdir(app.instance_path):
+    os.makedirs(app.instance_path)
+  if test_config:
+    app.config.from_mapping(test_config)
+  else:
+    app.config.from_pyfile('config.py', silent=True)
+  if not app.config['SECRET_KEY']:
+    raise Exception('Flask secret key not set')
+
+def create_database_connection_details():
+  return {
+      'host': os.environ.get('DATABASE_HOST'),
+      'dbname': os.environ.get('DATABASE_NAME'),
+      'user': os.environ.get('DATABASE_USER'),
+      'password': os.environ.get('DATABASE_PASSWORD')
+  }
