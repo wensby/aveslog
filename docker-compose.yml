@@ -14,6 +14,11 @@ services:
       - birding-database-network
     depends_on:
       - birding-database-service
+    environment:
+      DATABASE_HOST: birding-database-service
+      DATABASE_NAME: birding-database
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: docker
 
   birding-database-service:
     build:
@@ -26,6 +31,10 @@ services:
       - birding-database-network
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: birding-database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
 
 networks:
   birding-database-network:

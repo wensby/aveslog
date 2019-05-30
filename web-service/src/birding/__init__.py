@@ -41,7 +41,13 @@ def create_app(test_config=None):
 
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
-  database = DatabaseConnector.connect('birding-database-service', 'birding-database', 'postgres', 'docker')
+  database_kwargs = {
+      'host': os.environ.get('DATABASE_HOST'),
+      'dbname': os.environ.get('DATABASE_NAME'),
+      'user': os.environ.get('DATABASE_USER'),
+      'password': os.environ.get('DATABASE_PASSWORD')
+  }
+  database = DatabaseConnector.connect(**database_kwargs)
   hasher = PasswordHasher()
   account_repository = UserAccountRepository(database, hasher)
   mail_dispatcher_factory = MailDispatcherFactory(app)
