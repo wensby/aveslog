@@ -1,5 +1,10 @@
 import os
-from flask import Flask, g, request, after_this_request, redirect, url_for
+from flask import Flask
+from flask import g
+from flask import request
+from flask import after_this_request
+from flask import redirect
+from flask import url_for
 from flask import session
 from .database import DatabaseConnector
 from .user_account import UserAccountRepository
@@ -20,18 +25,19 @@ from .search import BirdSearcher
 from .sighting import SightingRepository
 from .render import render_page
 
-def create_app(test_config=None):
-  secret_key = open('secret_key', 'r').readline()
-  app = Flask(__name__, instance_relative_config=True)
-  app.config['SECRET_KEY'] = secret_key
-  
+def configure_app(app, test_config):
+  if not os.path.isdir(app.instance_path):
+    os.makedirs(app.instance_path)
   if test_config:
     app.config.from_mapping(test_config)
   else:
     app.config.from_pyfile('config.py', silent=True)
+  if not app.config['SECRET_KEY']:
+    raise Exception('Flask secret key not set')
 
-  if not os.path.isdir(app.instance_path):
-    os.makedirs(app.instance_path)
+def create_app(test_config=None):
+  app = Flask(__name__, instance_relative_config=True)
+  configure_app(app, test_config)
 
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
