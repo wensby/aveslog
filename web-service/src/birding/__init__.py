@@ -131,6 +131,7 @@ def create_app(test_config=None):
     if os.path.isfile(app.root_path + "/static/" + path):
       return path
 
+  app.logger.info('Flask app constructed')
   return app
 
 def configure_app(app, test_config):
