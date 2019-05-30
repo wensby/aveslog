@@ -13,10 +13,9 @@ class BirdRepository:
     self.database = database
 
   def fetchonebird(self, query, vars=None):
-    result = self.database.fetchone(query, vars)
+    result = self.database.query(query, vars)
     if result:
-      return Bird(result[0], result[1])
-    return None
+      return Bird(result[0][0], result[0][1])
 
   def get_bird_by_id(self, id):
     return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))

@@ -16,10 +16,9 @@ class PersonRepository:
     return self.get_person_by_name(name) is not None
 
   def fetchoneperson(self, query, vars=None):
-    result = self.database.fetchone(query, vars)
+    result = self.database.query(query, vars)
     if result:
-      return Person(result[0], result[1])
-    return None
+      return Person(result[0][0], result[0][1])
 
   def get_person_by_name(self, name):
     return self.fetchoneperson('SELECT id, name FROM person WHERE name like %s;', (name,))
@@ -33,5 +32,5 @@ class PersonRepository:
     return people
 
   def add_person(self, name):
-    self.database.fetchone('INSERT INTO person (name) VALUES (%s);', (name,))
+    self.database.query('INSERT INTO person (name) VALUES (%s);', (name,))
     return self.get_person_by_name(name)
