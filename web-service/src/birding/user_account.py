@@ -22,12 +22,20 @@ class UserAccount:
     self.person_id = person_id
     self.locale_id = locale_id
 
+  @classmethod
+  def fromrow(cls, row):
+    return cls(row[0], row[1], row[2], row[3], row[4])
+
 class UserAccountRegistration:
 
   def __init__(self, id, email, token):
     self.id = id
     self.email = email
     self.token = token
+
+  @classmethod
+  def fromrow(cls, row):
+    return cls(row[0], row[1], row[2])
 
 class Credentials:
 
@@ -48,6 +56,10 @@ class HashedPassword:
     self.user_account_id = user_account_id
     self.salt = salt
     self.salted_hash = salted_hash
+
+  @classmethod
+  def fromrow(cls, row):
+    return cls(row[0], row[1], row[2])
 
 class UserAccountRepository:
 
@@ -72,47 +84,35 @@ class UserAccountRepository:
              'FROM user_account_registration '
              'WHERE email LIKE %s;')
     result = self.database.query(query, (email,))
-    if len(result.rows) == 1:
-      return self.user_account_registration_from_row(result.rows[0])
+    return next(map(UserAccountRegistration.fromrow, result.rows), None)
 
   def get_user_account_registration_by_token(self, token):
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
              'WHERE token LIKE %s;')
     result = self.database.query(query, (token,))
-    if len(result.rows) == 1:
-      return self.user_account_registration_from_row(result.rows[0])
-
-  def user_account_registration_from_row(self, row):
-    return UserAccountRegistration(row[0], row[1], row[2])
+    return next(map(UserAccountRegistration.fromrow, result.rows), None)
 
   def get_user_account_by_id(self, id):
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE id = %s;')
     result = self.database.query(query, (id,))
-    if len(result.rows) == 1:
-      return self.user_account_from_row(result.rows[0])
+    return next(map(UserAccount.fromrow, result.rows), None)
 
   def find_user_account(self, username):
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE username LIKE %s;')
     result = self.database.query(query, (username,))
-    if len(result.rows) == 1:
-      return self.user_account_from_row(result.rows[0])
-
-  def user_account_from_row(self, row):
-    return UserAccount(row[0], row[1], row[2], row[3], row[4])
+    return next(map(UserAccount.fromrow, result.rows), None)
 
   def find_hashed_password(self, user_account):
     query = ('SELECT user_account_id, salt, salted_hash '
              'FROM hashed_password '
              'WHERE user_account_id = %s;')
     result = self.database.query(query, (user_account.id,))
-    if len(result.rows) == 1:
-      row = result.rows[0]
-      return HashedPassword(row[0], row[1], row[2])
+    return next(map(HashedPassword.fromrow, result.rows), None)
 
   def put_new_user_account(self, email, username, password):
     if not Credentials.is_valid(username, password):
