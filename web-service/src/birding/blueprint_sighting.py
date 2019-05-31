@@ -3,31 +3,31 @@ import json
 
 from flask import Blueprint
 from flask import request
-from flask import session
 from flask import g
-from datetime import datetime, timedelta
-from .render import render_page
 from .authentication import require_login
 from .sighting import SightingPost
+from .time import get_current_time
 
-def create_sighting_blueprint(account_repo, sighting_repo, bird_repo):
+def create_sighting_blueprint(sighting_repository):
   blueprint = Blueprint('sighting', __name__)
 
   @blueprint.route('/sighting', methods=['POST'])
   @require_login
   def post_sighting():
     sighting_post = create_sighting_post(request.form)
-    result = sighting_repo.add_sighting(sighting_post)
-    headers = {'ContentType':'application/json'}
-    if 'INSERT 0 1' in result.status:
-      return json.dumps({'success':True}), 201, headers
+    if sighting_repository.add_sighting(sighting_post):
+      return create_post_sighting_response(True, 201)
     else:
-      return json.dumps({'success':False}), 400, headers
+      return create_post_sighting_response(False, 400)
+
+  def create_post_sighting_response(success, status_code):
+    headers = {'ContentType':'application/json'}
+    return json.dumps({'success':success}), status_code, headers
   
   def create_sighting_post(form):
     bird_id = int(form['bird_id'])
-    timezoneoffset = int(form['timezoneoffset'])
-    sighting_datetime = datetime.utcnow() + timedelta(minutes=timezoneoffset)
+    timezoneoffset_minute = int(form['timezoneoffset_minute'])
+    sighting_datetime = get_current_time(timezoneoffset_minute)
     person_id = g.logged_in_account.person_id
     date = sighting_datetime.date()
     time = sighting_datetime.time()

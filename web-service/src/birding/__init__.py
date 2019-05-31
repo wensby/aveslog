@@ -52,7 +52,7 @@ def create_app(test_config=None):
       account_repository, mail_dispatcher, person_repository, authenticator
   )
   search_blueprint = create_search_blueprint(bird_searcher, account_repository)
-  sighting_blueprint = create_sighting_blueprint(account_repository, sighting_repository, bird_repository)
+  sighting_blueprint = create_sighting_blueprint(sighting_repository)
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(account_repository, authenticator)
   app.register_blueprint(authentication_blueprint)

@@ -38,7 +38,8 @@ class SightingRepository:
         sighting_post.date,
         sighting_post.time,
     )
-    return self.database.query(query, args)
+    result = self.database.query(query, args)
+    return 'INSERT 0 1' in result.status
 
 class SightingPost:
 
