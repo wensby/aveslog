@@ -71,41 +71,48 @@ class UserAccountRepository:
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
              'WHERE email LIKE %s;')
-    rows = self.database.query(query, (email,))
-    if rows:
-      return UserAccountRegistration(rows[0][0], rows[0][1], rows[0][2])
+    result = self.database.query(query, (email,))
+    if len(result.rows) == 1:
+      return self.user_account_registration_from_row(result.rows[0])
 
   def get_user_account_registration_by_token(self, token):
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
              'WHERE token LIKE %s;')
-    rows = self.database.query(query, (token,))
-    if rows:
-      return UserAccountRegistration(rows[0][0], rows[0][1], rows[0][2])
+    result = self.database.query(query, (token,))
+    if len(result.rows) == 1:
+      return self.user_account_registration_from_row(result.rows[0])
+
+  def user_account_registration_from_row(self, row):
+    return UserAccountRegistration(row[0], row[1], row[2])
 
   def get_user_account_by_id(self, id):
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE id = %s;')
-    rows = self.database.query(query, (id,))
-    if rows:
-      return UserAccount(rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4])
+    result = self.database.query(query, (id,))
+    if len(result.rows) == 1:
+      return self.user_account_from_row(result.rows[0])
 
   def find_user_account(self, username):
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE username LIKE %s;')
-    rows = self.database.query(query, (username,))
-    if rows:
-      return UserAccount(rows[0][0], rows[0][1], rows[0][2], rows[0][3], rows[0][4])
+    result = self.database.query(query, (username,))
+    if len(result.rows) == 1:
+      return self.user_account_from_row(result.rows[0])
+
+  def user_account_from_row(self, row):
+    return UserAccount(row[0], row[1], row[2], row[3], row[4])
 
   def find_hashed_password(self, user_account):
     query = ('SELECT user_account_id, salt, salted_hash '
              'FROM hashed_password '
              'WHERE user_account_id = %s;')
-    rows = self.database.query(query, (user_account.id,))
-    if rows:
-      return HashedPassword(rows[0][0], rows[0][1], rows[0][2])
+    result = self.database.query(query, (user_account.id,))
+    if len(result.rows) == 1:
+      row = result.rows[0]
+      return HashedPassword(row[0], row[1], row[2])
 
   def put_new_user_account(self, email, username, password):
     if not Credentials.is_valid(username, password):

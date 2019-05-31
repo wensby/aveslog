@@ -16,7 +16,7 @@ class LocalesFactory:
     return locales
 
   def __get_locale_codes(self):
-    rows = self.database.query('SELECT code FROM locale;')
+    rows = self.database.query('SELECT code FROM locale;').rows
     if rows:
       return [row[0] for row in rows]
 

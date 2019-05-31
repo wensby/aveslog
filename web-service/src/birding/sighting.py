@@ -10,9 +10,6 @@ class Sighting:
     self.sighting_date = sighting_date
     self.sighting_time = sighting_time
 
-  def from_row(row):
-    return Sighting(row[0], row[1], row[2], row[3], row[4])
-
 class SightingRepository:
 
   def __init__(self, database):
@@ -22,10 +19,31 @@ class SightingRepository:
     query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
              'FROM sighting '
              'WHERE person_id = %s;')
-    rows = self.database.query(query, (id,))
-    return map(Sighting.from_row, rows)
+    result = self.database.query(query, (id,))
+    return list(map(self.sighting_from_row, result.rows))
 
-  def add_sighting(self, person_id, bird_id, sighting_time):
-    query = ('INSERT INTO sighting (person_id, bird_id, sighting_date, sighting_time) '
-             'VALUES (%s, %s, %s, %s);')
-    self.database.query(query, (person_id, bird_id, sighting_time.date(), sighting_time.time()))
+  def sighting_from_row(self, row):
+    return Sighting(row[0], row[1], row[2], row[3], row[4])
+
+  def add_sighting(self, sighting_post):
+    query = (
+        'INSERT INTO '
+        '  sighting (person_id, bird_id, sighting_date, sighting_time) '
+        'VALUES '
+        '  (%s, %s, %s, %s);'
+    )
+    args = (
+        sighting_post.person_id,
+        sighting_post.bird_id,
+        sighting_post.date,
+        sighting_post.time,
+    )
+    return self.database.query(query, args)
+
+class SightingPost:
+
+  def __init__(self, person_id, bird_id, date, time=None):
+    self.person_id = person_id
+    self.bird_id = bird_id
+    self.date = date
+    self.time = time

@@ -14,8 +14,11 @@ class BirdRepository:
 
   def fetchonebird(self, query, vars=None):
     result = self.database.query(query, vars)
-    if result:
-      return Bird(result[0][0], result[0][1])
+    if len(result.rows) == 1:
+      return self.bird_from_row(result.rows[0])
+
+  def bird_from_row(self, row):
+    return Bird(row[0], row[1])
 
   def get_bird_by_id(self, id):
     return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
@@ -25,9 +28,9 @@ class BirdRepository:
 
   @property
   def birds(self):
-    rows = self.database.query("SELECT * FROM bird;")
+    result = self.database.query("SELECT * FROM bird;")
     birds = []
-    for row in rows:
+    for row in result.rows:
       bird = Bird(row[0], row[1])
       birds.append(bird)
     return birds

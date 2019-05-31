@@ -31,9 +31,17 @@ class Database:
     cursor = self.connection.cursor()
     cursor.execute(query, vars)
     try:
-      result = cursor.fetchall()
+      rows = cursor.fetchall()
     except:
-      result = None
+      rows = []
+    status = cursor.statusmessage
+    result = QueryResult(status, rows)
     self.connection.commit()
     cursor.close()
     return result
+
+class QueryResult:
+
+  def __init__(self, status, rows):
+    self.status = status
+    self.rows = rows
