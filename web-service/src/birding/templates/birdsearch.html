@@ -16,8 +16,8 @@
               {% else %}
               <h5 class="card-title">{{ bird_match.bird.binomial_name }}</h5>
               {% endif %}
-              {% if username %}
-              <button onclick="addSighting({{ bird_match.bird.id }})">{{ locale.text('Sighted') }}</button>
+              {% if g.logged_in_account %}
+                <button onclick="addSighting({{ bird_match.bird.id }})">{{ locale.text('Sighted') }}</button>
               {% endif %}
             </div>
           </div>

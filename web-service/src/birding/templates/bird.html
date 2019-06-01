@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    {% if locale.name(bird) %}
+      <h1>{{ locale.name(bird) }}</h1>
+    {% else %}
+      <h1>{{ bird.binomial_name }}</h1>
+    {% endif %}
+    <p>Thumbnail Photo by: {{ thumbnail_photographer }}</p>
+  </div>
+{% endblock %}

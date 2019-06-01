@@ -23,6 +23,7 @@
                 <h5 class="card-title">{{ sighting['bird'].binomial_name }}</h5>
                 {% endif %}
                 <p class="card-text">{{ sighting['time'] }}</p>
+                <a href="{{ url_for('bird.get_bird', bird_id=sighting['bird'].id|string) }}">Link!</a>
               </div>
             </div>
           </div>

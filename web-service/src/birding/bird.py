@@ -7,6 +7,16 @@ class Bird:
     self.id = id
     self.binomial_name = binomial_name
 
+class BirdThumbnail:
+
+  def __init__(self, bird_id, picture_id):
+    self.bird_id = bird_id
+    self.picture_id = picture_id
+
+  @classmethod
+  def fromrow(cls, row):
+    return cls(row[0], row[1])
+
 class BirdRepository:
 
   def __init__(self, database):
@@ -16,6 +26,19 @@ class BirdRepository:
     result = self.database.query(query, vars)
     if len(result.rows) == 1:
       return self.bird_from_row(result.rows[0])
+
+  def bird_thumbnails(self):
+    result = self.database.query('SELECT bird_id, picture_id FROM bird_thumbnail;')
+    return list(map(BirdThumbnail.fromrow, result.rows))
+
+  def bird_thumbnail(self, bird):
+    query = (
+      'SELECT bird_id, picture_id '
+      'FROM bird_thumbnail '
+      'WHERE bird_id = %s;'
+    )
+    result = self.database.query(query, (bird.id,))
+    return next(map(BirdThumbnail.fromrow, result.rows), None)
 
   def bird_from_row(self, row):
     return Bird(row[0], row[1])

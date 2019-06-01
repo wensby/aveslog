@@ -17,12 +17,14 @@ from .blueprint_search import create_search_blueprint
 from .blueprint_sighting import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint
 from .blueprint_settings import create_settings_blueprint
+from .blueprint_bird import create_bird_blueprint
 from .localization import LocaleDeterminer
 from .localization import LocalesFactory
 from .bird import BirdRepository
 from .search import BirdSearcher
 from .sighting import SightingRepository
 from .render import render_page
+from .picture import PictureRepository
 
 def create_app(test_config=None):
   app = Flask(__name__, instance_relative_config=True)
@@ -46,20 +48,23 @@ def create_app(test_config=None):
   bird_repository = BirdRepository(database)
   bird_searcher = BirdSearcher(bird_repository, locales)
   sighting_repository = SightingRepository(database)
+  picture_repository = PictureRepository(database)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
       account_repository, mail_dispatcher, person_repository, authenticator
   )
-  search_blueprint = create_search_blueprint(bird_searcher, account_repository)
+  search_blueprint = create_search_blueprint(bird_searcher, bird_repository)
   sighting_blueprint = create_sighting_blueprint(sighting_repository)
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(account_repository, authenticator)
+  bird_blueprint = create_bird_blueprint(bird_repository, picture_repository)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(search_blueprint)
   app.register_blueprint(sighting_blueprint)
   app.register_blueprint(profile_blueprint)
   app.register_blueprint(settings_blueprint)
+  app.register_blueprint(bird_blueprint)
 
   @app.before_request
   def before_request():
@@ -108,6 +113,8 @@ def create_app(test_config=None):
     if g.logged_in_account:
       person_id = g.logged_in_account.person_id
       sightings = sighting_repository.get_sightings_by_person_id(person_id)
+      thumbnails = bird_repository.bird_thumbnails()
+      pictures = picture_repository.pictures()
       result = []
       for sighting in sightings:
         bird = bird_repository.get_bird_by_id(sighting.bird_id)
@@ -118,16 +125,19 @@ def create_app(test_config=None):
             sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
           s['bird'] = bird
           s['time'] = sighting_time
-          thumbnail_image = find_thumbnail_image(bird)
+          thumbnail_image = find_thumbnail_image(bird, thumbnails, pictures)
           if thumbnail_image:
             s['thumbnail'] = thumbnail_image
           result.append(s)
       result.sort(reverse=True, key=lambda r: r['time'])
       return result
 
-  def find_thumbnail_image(bird):
-    birdname = bird.binomial_name.lower().replace(' ', '-')
-    path = "image/bird/" + birdname + "-thumb.jpg"
+  def find_thumbnail_image(bird, thumbnails, pictures):
+    thumbnail = [x for x in thumbnails if x.bird_id == bird.id]
+    if len(thumbnail) < 1:
+      return
+    thumbnail = thumbnail[0]
+    path = [x for x in pictures if x.id == thumbnail.picture_id][0].filepath
     if os.path.isfile(app.root_path + "/static/" + path):
       return path
 
