@@ -7,11 +7,13 @@
         <div class="card">
           <div class="card-horizontal">
             <div class="img-square-wrapper">
-              {% if item.thumbnail_picture %}
-                <img style="max-height: 150px;" src="{{url_for('static', filename=item.thumbnail_picture.filepath)}}" alt="Card image">
-              {% else %}
-                <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
-              {% endif %}
+              <a href="{{ url_for('bird.get_bird', bird_id=item.bird.id|string) }}">
+                {% if item.thumbnail_picture %}
+                  <img style="max-height: 150px;" src="{{url_for('static', filename=item.thumbnail_picture.filepath)}}" alt="Card image">
+                {% else %}
+                  <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
+                {% endif %}
+              </a>
             </div>
             <div class="card-body">
               {% if locale.name(item.bird) %}
