@@ -4,7 +4,7 @@ class BirdSearcher:
     self.bird_repository = bird_repository
     self.locales = locales
 
-  def search(self, name):
+  def search(self, name=None):
     result_builder = ResultBuilder()
     birds = self.bird_repository.birds
     binomial_name_matches = self.search_by_binomial_name(name)
