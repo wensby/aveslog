@@ -7,3 +7,4 @@ docker/docker-compose.prod.yml.tmpl
 web-service/venv
 web-service/src/instance
 web-service/src/venv
+web-service/src/birding/static/image

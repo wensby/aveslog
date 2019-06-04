@@ -1,4 +1,4 @@
-birding/static/image/bird/*
+birding/static/image/*
 venv/
 
 *.pyc
