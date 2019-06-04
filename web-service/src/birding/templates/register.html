@@ -14,8 +14,8 @@
   <p>{{ locale.text('Fill out the following form to complete your registration.') }}</p>
   <form method="post">
     <input type="text" name="email" readonly value="{{user_account_registration.email}}">
-    <input type="username" name="username">
-    <input type="password" name="password">
+    <input type="username" name="username" placeholder="{{locale.text('Username')}}">
+    <input type="password" name="password" placeholder="{{locale.text('Password')}}">
     <input type="hidden" name="token" value="{{user_account_registration.token}}">
     <input type="submit" value="{{ locale.text('Register') }}">
   </form>
