@@ -1,34 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% if username %}
-    {% if sightings %}
-      <div class="text-break">
-        {% for sighting in sightings %}
-          <div class="card">
-            <div class="card-horizontal">
-              <div class="img-square-wrapper">
-                <a href="{{ url_for('bird.get_bird', bird_id=sighting['bird'].id|string) }}">
-                  {% if 'thumbnail' in sighting %}
-                    <img style="max-height: 150px;" src="{{url_for('static', filename=sighting['thumbnail'])}}" alt="Card image cap">
-                  {% else %}
-                    <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
-                  {% endif %}
-                </a>
-              </div>
-              <div class="card-body">
-                {% if locale.name(sighting['bird']) %}
-                <h5 class="card-title">{{ locale.name(sighting['bird']) }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ sighting['bird'].binomial_name }}</h6>
-                {% else %}
-                <h5 class="card-title">{{ sighting['bird'].binomial_name }}</h5>
-                {% endif %}
-                <p class="card-text">{{ sighting['time'] }}</p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
+  {% if g.logged_in_account %}
+    <div class="text-break">
+      <h1>It's birding time!</h1>
+    </div>
   {% endif %}
 {% endblock %}

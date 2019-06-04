@@ -57,7 +57,7 @@ def create_app(test_config=None):
       account_repository, mail_dispatcher, person_repository, authenticator
   )
   search_blueprint = create_search_blueprint(bird_searcher, bird_search_view_factory)
-  sighting_blueprint = create_sighting_blueprint(sighting_repository)
+  sighting_blueprint = create_sighting_blueprint(sighting_repository, bird_repository, picture_repository)
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(account_repository, authenticator)
   bird_blueprint = create_bird_blueprint(bird_repository, picture_repository)
@@ -103,45 +103,7 @@ def create_app(test_config=None):
 
   @app.route('/')
   def index():
-    if g.logged_in_account:
-      sightings = get_sightings()
-      g.render_context['username'] = g.logged_in_account.username
-      g.render_context['sightings'] = sightings
-      return render_page('index.html')
-    else:
-      return render_page('index.html')
-
-  def get_sightings():
-    if g.logged_in_account:
-      person_id = g.logged_in_account.person_id
-      sightings = sighting_repository.get_sightings_by_person_id(person_id)
-      thumbnails = bird_repository.bird_thumbnails()
-      pictures = picture_repository.pictures()
-      result = []
-      for sighting in sightings:
-        bird = bird_repository.get_bird_by_id(sighting.bird_id)
-        if bird:
-          s = dict()
-          sighting_time = sighting.sighting_date.isoformat()
-          if sighting.sighting_time:
-            sighting_time = sighting_time + ' ' + sighting.sighting_time.isoformat()
-          s['bird'] = bird
-          s['time'] = sighting_time
-          thumbnail_image = find_thumbnail_image(bird, thumbnails, pictures)
-          if thumbnail_image:
-            s['thumbnail'] = thumbnail_image
-          result.append(s)
-      result.sort(reverse=True, key=lambda r: r['time'])
-      return result
-
-  def find_thumbnail_image(bird, thumbnails, pictures):
-    thumbnail = [x for x in thumbnails if x.bird_id == bird.id]
-    if len(thumbnail) < 1:
-      return
-    thumbnail = thumbnail[0]
-    path = [x for x in pictures if x.id == thumbnail.picture_id][0].filepath
-    if os.path.isfile(app.root_path + "/static/" + path):
-      return path
+    return render_page('index.html')
 
   app.logger.info('Flask app constructed')
   return app
