@@ -2,7 +2,6 @@
 
 {% block content %}
   {% if username %}
-    {{ locale.text("Hello world! Hello {{}}!", [username]) }}
     {% if sightings %}
       <div class="text-break">
         {% for sighting in sightings %}
