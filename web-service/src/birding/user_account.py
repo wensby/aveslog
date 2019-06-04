@@ -4,8 +4,8 @@ import binascii
 import os
 import re
 
-username_regex = re.compile('^[A-z]{1,20}$')
-password_regex = re.compile('^[A-z]{1,20}$')
+username_regex = re.compile('^[A-Za-z0-9_-]{1,20}$')
+password_regex = re.compile('^[A-Za-z0-9@#$%^&+=]{8,}$')
 
 def is_valid_username(username):
   return username_regex.match(username)
