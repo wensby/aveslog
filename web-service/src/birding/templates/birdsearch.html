@@ -38,7 +38,7 @@
     function addSighting(id) {
       var timezoneoffset_minute = -(new Date().getTimezoneOffset());
       $.ajax({
-          url: "/sighting",
+          url: "/sighting/",
           type: "POST",
           data: { timezoneoffset_minute: timezoneoffset_minute, bird_id: id },
           success: function(result) {
