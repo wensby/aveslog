@@ -16,13 +16,31 @@ class BirdSearchResultItem:
 class BirdSearchViewFactory:
 
   def __init__(self, picture_repository, bird_repository):
-    self.bird_thumbnails = bird_repository.bird_thumbnails()
-    self.pictures = picture_repository.pictures()
+    self.bird_repository = bird_repository
+    self.picture_repository = picture_repository
 
   def create_search_result_items(self, bird_matches):
-    return list(map(self.create_search_result_item, bird_matches))
+    bird_thumbnails = self.bird_repository.bird_thumbnails()
+    pictures = self.picture_repository.pictures()
+    builder = BirdSearchResultItemsBuilder(bird_thumbnails, pictures)
+    for bird_match in bird_matches:
+      builder.add_bird_match(bird_match)
+    return builder.create_items()
 
-  def create_search_result_item(self, bird_match):
+class BirdSearchResultItemsBuilder:
+
+  def __init__(self, bird_thumbnails, pictures):
+    self.__bird_thumbnails = bird_thumbnails
+    self.__pictures = pictures
+    self.__bird_matches = []
+
+  def add_bird_match(self, bird_match):
+    self.__bird_matches.append(bird_match)
+
+  def create_items(self):
+    return list(map(self.__to_item, self.__bird_matches))
+
+  def __to_item(self, bird_match):
     bird = bird_match.bird
     thumbnail_picture = self.__thumbnail_picture(bird)
     return BirdSearchResultItem(bird, thumbnail_picture)
@@ -33,11 +51,11 @@ class BirdSearchViewFactory:
       return self.__picture(bird_thumbnail.picture_id)
 
   def __bird_thumbnail(self, bird):
-    for bird_thumbnail in self.bird_thumbnails:
+    for bird_thumbnail in self.__bird_thumbnails:
       if bird_thumbnail.bird_id == bird.id:
         return bird_thumbnail
 
   def __picture(self, picture_id):
-    for picture in self.pictures:
+    for picture in self.__pictures:
       if picture.id == picture_id:
         return picture
