@@ -36,6 +36,14 @@ class TestBirdSearcher(unittest.TestCase):
 
     self.assertEqual(len(matches), 1)
 
+  def test_search_finds_nothing_with_only_empty_string_name_query(self):
+    bird_repository = Mock(birds=[picapica])
+    searcher = BirdSearcher(bird_repository, {})
+
+    matches = searcher.search('')
+
+    self.assertEqual(matches, [])
+
 class TestBirdMatch(unittest.TestCase):
 
   def test_query_match(self):

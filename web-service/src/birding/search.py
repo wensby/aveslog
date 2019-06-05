@@ -7,10 +7,11 @@ class BirdSearcher:
   def search(self, name=None):
     result_builder = ResultBuilder()
     birds = self.bird_repository.birds
-    binomial_name_matches = self.search_by_binomial_name(name)
-    result_builder.add_matches(binomial_name_matches)
-    language_name_matches = self.search_by_language_names(name)
-    result_builder.add_matches(language_name_matches)
+    if name:
+      binomial_name_matches = self.search_by_binomial_name(name)
+      result_builder.add_matches(binomial_name_matches)
+      language_name_matches = self.search_by_language_names(name)
+      result_builder.add_matches(language_name_matches)
     return result_builder.create_bird_matches()
 
   def search_by_binomial_name(self, name):
