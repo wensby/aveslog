@@ -12,7 +12,7 @@ from .user_account import Credentials
 from .user_account import Authenticator
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
-from .authentication import create_authentication_blueprint
+from .blueprint_authentication import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
 from .blueprint_sighting import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint

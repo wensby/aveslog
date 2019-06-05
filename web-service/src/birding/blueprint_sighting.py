@@ -4,7 +4,7 @@ import json
 from flask import Blueprint
 from flask import request
 from flask import g
-from .authentication import require_login
+from .blueprint_authentication import require_login
 from .sighting import SightingPost
 from .time import get_current_time
 from .render import render_page

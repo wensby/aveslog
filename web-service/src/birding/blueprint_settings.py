@@ -6,7 +6,7 @@ from flask import flash
 from .render import render_page
 from .user_account import Credentials
 from .user_account import is_valid_password
-from .authentication import require_login
+from .blueprint_authentication import require_login
 
 def create_settings_blueprint(account_repository, authenticator):
   blueprint = Blueprint('settings', __name__, url_prefix='/settings')
