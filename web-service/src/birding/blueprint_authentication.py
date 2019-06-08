@@ -78,9 +78,10 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
     formemail = request.form['email']
     username = request.form['username']
     password = request.form['password']
+    confirmPassword = request.form['confirmPassword']
     formtoken = request.form['token']
     registration = account_repository.get_user_account_registration_by_token(token)
-    if formtoken == token and formemail == registration.email:
+    if formtoken == token and formemail == registration.email and password == confirmPassword:
       # if username already present
       if account_repository.find_user_account(username):
         flash('username already taken')
@@ -92,7 +93,7 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
           account_repository.remove_user_account_registration_by_id(registration.id)
           person = person_repo.add_person(username)
           account_repository.set_user_account_person(account, person)
-          flash('user account created')
+          flash(u'user account created', 'success')
           return redirect(url_for('authentication.get_login'))
     flash(u'user account creation failed', 'danger')
     return redirect(url_for('authentication.get_register_form', token=token))

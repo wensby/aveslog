@@ -22,7 +22,7 @@
         <form class="needs-validation" method="post" novalidate>
           <div class="form-group">
             <label for="emailInput">{{ locale.text('Email address') }}</label>
-            <input class="form-control" id="emailInput" type="text" name="email" readonly placeholder="{{user_account_registration.email}}">
+            <input class="form-control" id="emailInput" type="text" name="email" readonly placeholder="{{user_account_registration.email}}" value="{{ user_account_registration.email }}">
           </div>
           <div class="form-group">
             <label for="usernameInput">{{ locale.text('Username') }}</label>
@@ -49,7 +49,7 @@
           </div>
           <div class="form-group">
             <label for="confirmPasswordInput">{{ locale.text('Confirm password') }}</label>
-            <input id="confirmPasswordInput" class="form-control" type="password" name="password" placeholder="{{locale.text('Confirm password')}}">
+            <input id="confirmPasswordInput" class="form-control" type="password" name="confirmPassword" placeholder="{{locale.text('Confirm password')}}">
             <div class="valid-feedback">
               {{ locale.text("Both passwords matches!") }}
             </div>
