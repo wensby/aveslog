@@ -2,6 +2,10 @@
 Tiny birding web application for learning purposes
 
 ## Local development testing
+### Starting
+The whole app can be run locally using the local-dev-docker.sh script. This
+script can also be run with a specific service name as argument, to rebuild and
+restart only the specified service.
 ### Mail
 As to not send real emails when testing the application locally, the dispatched
 emails are instead logged in the birding-web-service container through the flask
