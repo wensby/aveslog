@@ -85,6 +85,7 @@ def create_app(test_config=None):
     # when the response exists, set a cookie with the language if it is new
     if not previously_set or previously_set is not locale.language.iso_639_1_code:
       set_locale_cookie_after_this_request(locale)
+    g.locale = locale
     g.render_context['locale'] = locale
   
   def set_locale_cookie_after_this_request(locale):

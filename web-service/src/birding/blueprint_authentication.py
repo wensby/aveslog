@@ -12,6 +12,8 @@ from flask import url_for
 from .render import render_page
 from .user_account import Credentials
 
+email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+
 def require_login(view):
   @wraps(view)
   def wrapped_view(**kwargs):
@@ -39,14 +41,13 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
   @blueprint.route('/register/request', methods=['POST'])
   def post_register_request():
     email = request.form['email']
-    email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     if email_pattern.match(email):
       account_repository.put_user_account_registration(email)
       registration = account_repository.get_user_account_registration_by_email(email)
       token = registration.token
       link = os.environ['HOST'] + url_for('authentication.get_register_form', token=token)
       mail_dispatcher.dispatch(email, 'Birding Registration', 'Link: ' + link)
-    flash('Please check your email inbox for your registration link.')
+    flash(g.locale.text(u'An email containing your registration form link has been sent to your email address.'), 'success')
     return redirect(url_for('authentication.get_register_request'))
   
   @blueprint.route('/register/form/<token>')
@@ -80,7 +81,7 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
           account_repository.set_user_account_person(account, person)
           flash('user account created')
           return redirect(url_for('authentication.get_login'))
-    flash('user account creation failed')
+    flash(u'user account creation failed', 'danger')
     return redirect(url_for('authentication.get_register_form', token=token))
 
   @blueprint.route('/login')
