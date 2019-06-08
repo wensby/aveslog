@@ -23,6 +23,15 @@ def require_login(view):
       return redirect(url_for('authentication.get_login'))
   return wrapped_view
 
+def require_logged_out(view):
+  @wraps(view)
+  def wrapped_view(**kwargs):
+    if g.logged_in_account:
+      return redirect(url_for('index'))
+    else:
+      return view(**kwargs)
+  return wrapped_view
+
 def create_authentication_blueprint(account_repository, mail_dispatcher, person_repo, authenticator):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
   
@@ -35,10 +44,12 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
       g.logged_in_account = None
 
   @blueprint.route('/register/request')
+  @require_logged_out
   def get_register_request():
     return render_page('registration_request.html')
   
   @blueprint.route('/register/request', methods=['POST'])
+  @require_logged_out
   def post_register_request():
     email = request.form['email']
     if email_pattern.match(email):
@@ -51,6 +62,7 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
     return redirect(url_for('authentication.get_register_request'))
   
   @blueprint.route('/register/form/<token>')
+  @require_logged_out
   def get_register_form(token):
     registration = account_repository.get_user_account_registration_by_token(token)
     if registration:
@@ -61,6 +73,7 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
       return redirect(url_for('authentication.get_register_request'))
   
   @blueprint.route('/register/form/<token>', methods=['POST'])
+  @require_logged_out
   def post_register_form(token):
     formemail = request.form['email']
     username = request.form['username']
@@ -85,10 +98,12 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
     return redirect(url_for('authentication.get_register_form', token=token))
 
   @blueprint.route('/login')
+  @require_logged_out
   def get_login():
     return render_page('login.html')
   
   @blueprint.route('/login', methods=['POST'])
+  @require_logged_out
   def post_login():
     posted_username = request.form['username']
     posted_password = request.form['password']
