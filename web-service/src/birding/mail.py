@@ -1,6 +1,21 @@
 import os
 from flask_mail import Mail, Message
 from distutils.util import strtobool
+import re
+
+class EmailAddress:
+
+  pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+
+  def __init__(self, address):
+    if EmailAddress.is_valid(address):
+      self.address = address
+    else:
+      raise Exception(f"Invalid email address format: {address}")
+
+  @classmethod
+  def is_valid(cls, address):
+    return EmailAddress.pattern.match(address)
 
 class MailDispatcherFactory:
 

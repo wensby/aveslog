@@ -27,6 +27,8 @@ from .render import render_page
 from .picture import PictureRepository
 from .search_view import BirdSearchViewFactory
 from .sighting_view import SightingViewFactory
+from .authentication import AccountRegistrationController
+from .link import LinkFactory
 
 def create_app(test_config=None):
   app = Flask(__name__, instance_relative_config=True)
@@ -53,10 +55,13 @@ def create_app(test_config=None):
   picture_repository = PictureRepository(database)
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, picture_repository)
+  link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
+  account_registration_factory = AccountRegistrationController(account_repository, mail_dispatcher, link_factory)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
-      account_repository, mail_dispatcher, person_repository, authenticator
+      account_repository, mail_dispatcher, person_repository, authenticator,
+      account_registration_factory
   )
   search_blueprint = create_search_blueprint(bird_searcher, bird_search_view_factory)
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)

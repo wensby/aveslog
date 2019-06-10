@@ -11,8 +11,7 @@ from flask import session
 from flask import url_for
 from .render import render_page
 from .user_account import Credentials
-
-email_pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
+from .mail import EmailAddress
 
 def require_login(view):
   @wraps(view)
@@ -32,7 +31,7 @@ def require_logged_out(view):
       return view(**kwargs)
   return wrapped_view
 
-def create_authentication_blueprint(account_repository, mail_dispatcher, person_repo, authenticator):
+def create_authentication_blueprint(account_repository, mail_dispatcher, person_repo, authenticator, account_registration_controller):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
   
   @blueprint.before_app_request
@@ -52,12 +51,7 @@ def create_authentication_blueprint(account_repository, mail_dispatcher, person_
   @require_logged_out
   def post_register_request():
     email = request.form['email']
-    if email_pattern.match(email):
-      account_repository.put_user_account_registration(email)
-      registration = account_repository.get_user_account_registration_by_email(email)
-      token = registration.token
-      link = os.environ['HOST'] + url_for('authentication.get_register_form', token=token)
-      mail_dispatcher.dispatch(email, 'Birding Registration', 'Link: ' + link)
+    account_registration_controller.prepare_account_registration(email)
     flash(g.locale.text(u'An email containing your registration form link has been sent to your email address.'), 'success')
     return redirect(url_for('authentication.get_register_request'))
   
