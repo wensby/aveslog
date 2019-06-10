@@ -60,7 +60,7 @@ def create_app(test_config=None):
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
-      account_repository, mail_dispatcher, person_repository, authenticator,
+      account_repository, person_repository, authenticator,
       account_registration_factory
   )
   search_blueprint = create_search_blueprint(bird_searcher, bird_search_view_factory)

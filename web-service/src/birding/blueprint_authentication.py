@@ -11,7 +11,6 @@ from flask import session
 from flask import url_for
 from .render import render_page
 from .user_account import Credentials
-from .mail import EmailAddress
 
 def require_login(view):
   @wraps(view)
@@ -31,7 +30,7 @@ def require_logged_out(view):
       return view(**kwargs)
   return wrapped_view
 
-def create_authentication_blueprint(account_repository, mail_dispatcher, person_repo, authenticator, account_registration_controller):
+def create_authentication_blueprint(account_repository, person_repo, authenticator, account_registration_controller):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
   
   @blueprint.before_app_request
