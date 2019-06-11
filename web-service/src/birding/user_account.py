@@ -67,7 +67,7 @@ class UserAccountRepository:
     self.database = database
     self.hasher = password_hasher
 
-  def remove_user_account_registration_by_id(self, id):
+  def remove_account_registration_by_id(self, id):
     query = ('DELETE FROM user_account_registration '
              'WHERE id = %s;')
     self.database.query(query, (id,))
@@ -86,7 +86,14 @@ class UserAccountRepository:
     result = self.database.query(query, (email,))
     return next(map(UserAccountRegistration.fromrow, result.rows), None)
 
-  def get_user_account_registration_by_token(self, token):
+  def find_account_registration(self, email, token):
+    query = ('SELECT id, email, token '
+             'FROM user_account_registration '
+             'WHERE email LIKE %s AND token LIKE %s;')
+    result = self.database.query(query, (email, token))
+    return next(map(UserAccountRegistration.fromrow, result.rows), None)
+
+  def find_account_registration_by_token(self, token):
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
              'WHERE token LIKE %s;')

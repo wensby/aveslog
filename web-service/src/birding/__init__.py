@@ -56,7 +56,7 @@ def create_app(test_config=None):
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, picture_repository)
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
-  account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory)
+  account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory, person_repository)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
