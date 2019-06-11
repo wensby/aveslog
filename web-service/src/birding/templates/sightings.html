@@ -5,13 +5,13 @@
     <div class="text-break">
       {% for sighting in sightings %}
         <div class="card">
-          <div class="card-horizontal">
-            <div class="img-square-wrapper">
+          <div class="row no-gutters">
+            <div class="col-sm-4">
               <a href="{{ url_for('bird.get_bird', bird_id=sighting.bird.id|string) }}">
                 {% if sighting.thumbnail_picture %}
-                  <img style="max-height: 150px;" src="{{url_for('static', filename=sighting.thumbnail_picture.filepath)}}" alt="Card image cap">
+                  <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename=sighting.thumbnail_picture.filepath)}}" alt="Card image cap">
                 {% else %}
-                  <img style="max-height: 150px;" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
+                  <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
                 {% endif %}
               </a>
             </div>
