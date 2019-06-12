@@ -2,7 +2,9 @@ import os.path
 import json
 
 from flask import Blueprint
+from flask import url_for
 from flask import request
+from flask import redirect
 from flask import g
 from .blueprint_authentication import require_login
 from .sighting import SightingPost
@@ -30,6 +32,26 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
       return create_post_sighting_response(True, 201)
     else:
       return create_post_sighting_response(False, 400)
+
+  @blueprint.route('/<sighting_id>')
+  @require_login
+  def get_sighting(sighting_id):
+    sighting = sighting_repository.find_sighting(sighting_id)
+    if sighting and sighting.person_id == g.logged_in_account.person_id:
+      g.render_context['sighting_view'] = view_factory.create_sighting_view(sighting)
+      return render_page('sighting.html')
+    else:
+      return redirect(url_for('index'))
+
+  @blueprint.route('/<sighting_id>', methods=['POST'])
+  @require_login
+  def post_sighting_edit(sighting_id):
+    sighting = sighting_repository.find_sighting(sighting_id)
+    if sighting and sighting.person_id == g.logged_in_account.person_id:
+      if request.form['action'] == 'Delete':
+        sighting_repository.delete_sighting(sighting_id)
+        return redirect(url_for('sighting.get_sightings_index'))
+    return redirect(url_for('index'))
 
   def create_post_sighting_response(success, status_code):
     headers = {'ContentType':'application/json'}

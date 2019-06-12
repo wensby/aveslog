@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ locale.name(sighting_view.bird) }}</h1>
+  <form method="post">
+    <button type="submit" name="action" value="Delete" class="btn btn-danger">Delete</button>
+  </form>
+{% endblock %}

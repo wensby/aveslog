@@ -10,10 +10,32 @@ class Sighting:
     self.sighting_date = sighting_date
     self.sighting_time = sighting_time
 
+  def __eq__(self, other):
+    if isinstance(other, Sighting):
+        return self.__dict__ == other.__dict__
+    return False
+
+  def __repr__(self):
+    return str(self.__dict__)
+
 class SightingRepository:
 
   def __init__(self, database):
     self.database = database
+
+  def find_sighting(self, sighting_id):
+    query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
+             'FROM sighting '
+             'WHERE id = %s;')
+    result = self.database.query(query, (sighting_id,))
+    return next(map(self.sighting_from_row, result.rows), None)
+
+  def delete_sighting(self, sighting_id):
+    query = ('DELETE '
+             'FROM sighting '
+             'WHERE id = %s;')
+    result = self.database.query(query, (sighting_id,))
+    return 'DELETE' in result.status
 
   def get_sightings_by_person_id(self, id):
     query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
