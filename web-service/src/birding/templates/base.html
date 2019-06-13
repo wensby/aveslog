@@ -22,7 +22,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
-      <div class="px-0 d-md-block col-md-6">
+      <div class="px-0 d-md-block col-md-9 col-lg-6 pr-md-2 pr-lg-0">
         <form class="input-group input-group-lg" action="/bird/search" method="get">
           <input aria-describedby="button-addon" class="form-control form-control-light" name="query" placeholder="{{ locale.text('Search bird') }}" aria-label="Search bird">
           <div class="input-group-append">
@@ -30,49 +30,50 @@
           </div>
         </form>
       </div>
-      <div class="col-md-3"></div>
+      <div class="d-none d-lg-block col-lg-3">
+      </div>
       <div class="col-12 d-md-none collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto" id="collapsableMenuList"></ul>
       </div>
     </nav>
     <div class="container-fluid navbar-pushed">
       <div class="row">
-        <nav class="d-none d-md-block bg-light sidebar">
-          <div class="sidebar-sticky flex-column">
-            <ul class="nav flex-column nav-sidebar" id="sidebarList">
+        <div class="d-none d-md-block col-md-3 col-lg-2 pr-0">
+          <nav class="sidebar nav flex-column border-left" id="sidebarList">
+            {% if g.logged_in_account %}
+              <div class="nav-item">
+                <a class="nav-link" href="/profile">{{ locale.text('Profile') }}</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/sighting">{{ locale.text('Sightings') }}</a>
+              </div>
+              <div class="nav-item">
+                <a class="nav-link" href="/settings">{{ locale.text('Settings') }}</a>
+              </div>
+            {% endif %}
+            <div class="nav-item">
               {% if g.logged_in_account %}
-                <li class="nav-item">
-                  <a class="nav-link" href="/profile">{{ locale.text('Profile') }}</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/sighting">{{ locale.text('Sightings') }}</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/settings">{{ locale.text('Settings') }}</a>
-                </li>
+                <a class="nav-link" href="/authentication/logout">{{ locale.text('Logout') }}</a>
+              {% else %}
+                <a class="nav-link" href="/authentication/login">{{ locale.text('Login') }}</a>
               {% endif %}
-              <li class="nav-item">
-                {% if g.logged_in_account %}
-                  <a class="nav-link" href="/authentication/logout">{{ locale.text('Logout') }}</a>
-                {% else %}
-                  <a class="nav-link" href="/authentication/login">{{ locale.text('Login') }}</a>
-                {% endif %}
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/language?l=en">English</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/language?l=sv">Svenska</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/language?l=ko">한국어</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <main role="main" class="col">
-        {% block content %}{% endblock %}
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="/language?l=en">English</a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="/language?l=sv">Svenska</a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="/language?l=ko">한국어</a>
+            </div>
+          </nav>
+        </div>
+        <main role="main" class="col-12 col-md-9 col-lg-8">
+          {% block content %}{% endblock %}
         </main>
+        <div class="d-none d-lg-block col-lg-2">
+        </div>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
