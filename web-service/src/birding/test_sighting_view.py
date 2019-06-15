@@ -22,7 +22,7 @@ class TestSightingViewFactory(TestCase):
     now = datetime.now()
     date = now.date()
     time = now.time()
-    sighting = Simple(id=sighting_id, bird_id=8, sighting_date=date, sighting_time=time)
+    sighting = Simple(id=4, bird_id=8, sighting_date=date, sighting_time=time)
     bird = Simple(id=8)
     picture = Simple(id=15)
     thumbnail = Simple(bird_id=8, picture_id=15)
