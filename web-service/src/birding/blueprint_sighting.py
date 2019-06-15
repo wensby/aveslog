@@ -8,7 +8,8 @@ from flask import redirect
 from flask import g
 from .blueprint_authentication import require_login
 from .sighting import SightingPost
-from .time import get_current_time
+from .time import parse_date
+from .time import parse_time
 from .render import render_page
 
 def create_sighting_blueprint(sighting_repository, sighting_view_factory):
@@ -29,9 +30,16 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   def post_sighting():
     sighting_post = create_sighting_post(request.form)
     if sighting_repository.add_sighting(sighting_post):
-      return create_post_sighting_response(True, 201)
+      return redirect(url_for('sighting.get_sightings_index'))
     else:
-      return create_post_sighting_response(False, 400)
+      return redirect(url_for('sighting.get_sightings_index'))
+
+  @blueprint.route('/create/<birdid>')
+  @require_login
+  def create(birdid):
+    view = view_factory.create_sighting_creation_view(birdid)
+    g.render_context['view'] = view
+    return render_page('sighting/create.html')
 
   @blueprint.route('/<sighting_id>')
   @require_login
@@ -58,12 +66,10 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
     return json.dumps({'success':success}), status_code, headers
   
   def create_sighting_post(form):
-    bird_id = int(form['bird_id'])
-    timezoneoffset_minute = int(form['timezoneoffset_minute'])
-    sighting_datetime = get_current_time(timezoneoffset_minute)
+    bird_id = int(form['birdId'])
     person_id = g.logged_in_account.person_id
-    date = sighting_datetime.date()
-    time = sighting_datetime.time()
+    date = parse_date(form['dateInput'])
+    time = parse_time(form['timeTimeInput']) if 'timeTimeInput' in form else None
     return SightingPost(person_id, bird_id, date, time)
 
   return blueprint

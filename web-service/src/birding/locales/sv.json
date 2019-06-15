@@ -1,6 +1,11 @@
 {
   "An email containing your registration form link has been sent to your email address.": "Ett mejl med din registrerings länk har skickats till din e-postadress.",
   "Please provide your email address to receive your registration form link.": "Var god ange din e-postadress för att få en länk till ditt registreringsformulär.",
+  "Add Sighting": "Lägg till observation",
+  "Bird": "Fågel",
+  "Date": "Datum",
+  "Time": "Tidpunkt",
+  "Cancel": "Avbryt",
   "Enter email": "Skriv in e-post",
   "Step 1 - Email": "Steg 1 - E-post",
   "Step 2 - Registration": "Steg 2 - Registrering",

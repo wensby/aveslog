@@ -1,9 +1,10 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import date
+from datetime import time
 
-def get_current_time(minutesoffset=None):
-  time = datetime.utcnow()
-  if minutesoffset:
-    return time + timedelta(minutes=minutesoffset)
-  else:
-    return time
+def parse_date(date_string):
+  return date.fromisoformat(date_string)
+
+def parse_time(time_string):
+  if time_string:
+    return time.fromisoformat(time_string)
+
