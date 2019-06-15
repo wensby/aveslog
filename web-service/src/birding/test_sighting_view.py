@@ -1,7 +1,8 @@
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, ANY
 from .sighting_view import SightingViewFactory
 from .sighting_view import SightingItem
+from .sighting_view import SightingCreationView
 from .test_util import mock_return
 from types import SimpleNamespace as Simple
 from datetime import datetime
@@ -34,3 +35,12 @@ class TestSightingViewFactory(TestCase):
 
     time = f'{date.isoformat()} {time.isoformat()}'
     self.assertListEqual(items, [SightingItem(4, bird, time, picture)])
+
+  def test_create_sighting_creation_view_when_valid_bird_id(self):
+    self.bird_repository.get_bird_by_id = mock_return('White wagtail')
+
+    result = self.factory.create_sighting_creation_view(1)
+
+    self.assertEqual(result, SightingCreationView('White wagtail'))
+    self.bird_repository.get_bird_by_id.assert_called_with(1)
+    self.bird_repository.get_bird_by_id.assert_called_once_with(ANY)

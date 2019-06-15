@@ -44,6 +44,11 @@ class SightingViewFactory:
     if bird:
       return SightingView(sighting, bird)
 
+  def create_sighting_creation_view(self, birdid=None):
+    bird = self.bird_repository.get_bird_by_id(birdid)
+    if bird:
+      return SightingCreationView(bird)
+
   def find_thumbnail_image(self, bird, thumbnails, pictures):
     thumbnail = [x for x in thumbnails if x.bird_id == bird.id]
     if len(thumbnail) < 1:
@@ -56,3 +61,16 @@ class SightingView:
   def __init__(self, sighting, bird):
     self.sighting = sighting
     self.bird = bird
+
+class SightingCreationView:
+
+  def __init__(self, bird):
+    self.bird = bird
+
+  def __eq__(self, other):
+    if isinstance(other, SightingCreationView):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __repr__(self):
+    return f'SightingCreationView<bird={self.bird}>'
