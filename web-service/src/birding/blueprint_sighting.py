@@ -23,7 +23,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
     person_id = g.logged_in_account.person_id
     sightings = sighting_repository.get_sightings_by_person_id(person_id)
     g.render_context['sightings'] = view_factory.create_sighting_items(sightings)
-    return render_page('sightings.html')
+    return render_page('sighting/sightings.html')
 
   @blueprint.route('/', methods=['POST'])
   @require_login
@@ -47,7 +47,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
     sighting = sighting_repository.find_sighting(sighting_id)
     if sighting and sighting.person_id == g.logged_in_account.person_id:
       g.render_context['sighting_view'] = view_factory.create_sighting_view(sighting)
-      return render_page('sighting.html')
+      return render_page('sighting/sighting.html')
     else:
       return redirect(url_for('index'))
 
