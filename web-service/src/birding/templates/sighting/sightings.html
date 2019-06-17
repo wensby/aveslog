@@ -6,7 +6,7 @@
       {% for sighting in sightings %}
         <div class="card">
           <div class="row no-gutters">
-            <div class="col-sm-4">
+            <div class="col-sm-4" id="card-bird-thumbnail-col">
               <a href="{{ url_for('bird.get_bird', bird_id=sighting.bird.id|string) }}">
                 {% if sighting.thumbnail_picture %}
                   <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename=sighting.thumbnail_picture.filepath)}}" alt="Card image cap">
