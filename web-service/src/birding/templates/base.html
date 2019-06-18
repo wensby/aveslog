@@ -87,6 +87,25 @@
           collapsableList.appendChild(item.cloneNode(true));
         });
       }());
+      (function() {
+        'use strict'
+        function setUpMenuOffClickCollapse() {
+          $(document).click(function(event) {
+            var $navbar = $('.navbar');
+            var $dropdown = $('#collapsableMenuList')
+            var target = event.target;
+            if ($dropdown.is(':visible')) {
+              if (target !== $dropdown && !$dropdown.has(target).length) {
+                $('.collapse').collapse('hide');
+                if (target !== $navbar && !$navbar.has(target).length) {
+                  event.preventDefault();
+                }
+              }
+            }
+          });
+        }
+        window.addEventListener('load', setUpMenuOffClickCollapse, true);
+      }());
     </script>
     {% block scripts %}{% endblock %}
   </body>
