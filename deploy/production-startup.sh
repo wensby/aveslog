@@ -8,4 +8,4 @@ mkdir -p volumes/database
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
-  up -d --build --force-recreate
+  up -d --no-deps --build --force-recreate $1
