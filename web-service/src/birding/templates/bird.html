@@ -14,16 +14,15 @@
 {% block content %}
   <div class="container">
     <div class="row picture-cover-container rounded-top overflow-hidden" style="background-image: url({{ cover_picture_url }})">
-      <div class="col-1 d-none d-sm-block"></div>
-      <div class="col col-sm-10">
-        <div class="shadow bg-white pt-1 mb-0 px-2 rounded-top">
+      <div class="col picture-cover"></div>
+      <div class="w-100 d-flex justify-content-center">
+        <div class="shadow bg-white text-center pt-1 mb-0 px-2 rounded-top">
           <h1 class="text-dark bird-page-name pb-2 mb-0">{{ name }}</h1>
           {% if locale.name(view.bird) %}
             <p class="font-italic font-weight-light text-muted mb-0 pb-2">{{ view.bird.binomial_name }}</p>
           {% endif %}
         </div>
       </div>
-      <div class="col-1 d-none d-sm-block"></div>
     </div>
     <div class="row">
       <div class="col">

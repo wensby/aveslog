@@ -42,17 +42,13 @@ body {
  */
 
 .picture-cover-container {
-  padding-top: 45.00%;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: 50%;
+  background-position: 50% 35%;
 }
 
 .picture-cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
+  height: 150px;
 }
 
 .bird-page-name {
