@@ -51,7 +51,8 @@ def create_authentication_blueprint(account_repository, person_repo, authenticat
   @require_logged_out
   def post_register_request():
     email = request.form['email']
-    account_registration_controller.initiate_registration(email)
+    locale = g.locale
+    account_registration_controller.initiate_registration(email, locale)
     flash(g.locale.text(u'An email containing your registration form link has been sent to your email address.'), 'success')
     return redirect(url_for('authentication.get_register_request'))
   

@@ -9,15 +9,22 @@ class AccountRegistrationController:
     self.link_factory = link_factory
     self.person_repository = person_repository
 
-  def initiate_registration(self, email):
+  def initiate_registration(self, email, locale):
     if EmailAddress.is_valid(email):
       email = EmailAddress(email)
       self.account_repository.put_user_account_registration(email.address)
       registration = self.account_repository.get_user_account_registration_by_email(email.address)
       token = registration.token
       link = self.link_factory.create_endpoint_external_link('authentication.get_register_form', token=token)
-      self.mail_dispatcher.dispatch(email.address, 'Birding Registration', 'Link: ' + link)
+      message = self.create_registration_mail_message(link, locale)
+      self.mail_dispatcher.dispatch(email.address, 'Birding Registration', message)
       return registration
+
+  def create_registration_mail_message(self, link, locale):
+    message = (
+        'Hi there, thanks for showing interest in birding. '
+        'Here is your link to the registration form: ')
+    return locale.text(message) + link
 
   def perform_registration_request(self, request):
     registration = self.__find_associated_registration(request)
