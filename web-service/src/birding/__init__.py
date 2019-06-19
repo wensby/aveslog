@@ -23,6 +23,7 @@ from .localization import LocalesFactory
 from .bird import BirdRepository
 from .search import BirdSearcher
 from .search import BirdSearchController
+from .search import StringMatcher
 from .sighting import SightingRepository
 from .render import render_page
 from .picture import PictureRepository
@@ -52,7 +53,8 @@ def create_app(test_config=None):
   locales = locales_factory.create_locales()
   locale_determiner = LocaleDeterminer(locales, user_locale_cookie_key)
   bird_repository = BirdRepository(database)
-  bird_searcher = BirdSearcher(bird_repository, locales)
+  string_matcher = StringMatcher()
+  bird_searcher = BirdSearcher(bird_repository, locales, string_matcher)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)

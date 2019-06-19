@@ -1,3 +1,5 @@
+from difflib import SequenceMatcher
+
 class BirdSearchController:
 
   def __init__(self, bird_searcher):
@@ -10,9 +12,10 @@ class BirdSearchController:
 
 class BirdSearcher:
 
-  def __init__(self, bird_repository, locales):
+  def __init__(self, bird_repository, locales, string_matcher):
     self.bird_repository = bird_repository
     self.locales = locales
+    self.string_matcher = string_matcher
 
   def search(self, name=None):
     result_builder = ResultBuilder()
@@ -29,7 +32,7 @@ class BirdSearcher:
     birds = self.bird_repository.birds
     for bird in birds:
       if name.lower() in bird.binomial_name.lower():
-        matches[bird] = Match()
+        matches[bird] = [self.string_matcher.match(name, bird.binomial_name)]
     return matches
 
   def search_by_language_names(self, name):
@@ -41,7 +44,7 @@ class BirdSearcher:
       for bird in birds:
         binomial_name = bird.binomial_name
         if binomial_name in dictionary and name.lower() in dictionary[binomial_name].lower():
-          match = Match()
+          match = self.string_matcher.match(name, dictionary[binomial_name])
           matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches
 
@@ -53,7 +56,8 @@ class ResultBuilder:
   def add_matches(self, matches):
     if matches:
       for k, v in matches.items():
-        self.add_match(k, v)
+        for match in v:
+          self.add_match(k, match)
 
   def add_match(self, bird, match):
     if bird not in self.matches_by_bird:
@@ -63,13 +67,12 @@ class ResultBuilder:
   def create_bird_matches(self):
     bird_matches = []
     for bird in self.matches_by_bird:
-      bird_matches.append(BirdMatch(bird, 1))
+      query_match = self.__average_query_match(bird)
+      bird_matches.append(BirdMatch(bird, query_match))
     return bird_matches
 
-class Match:
-
-  def __init__(self):
-    pass
+  def __average_query_match(self, bird):
+    return sum(self.matches_by_bird[bird]) / len(self.matches_by_bird[bird])
 
 class BirdMatch:
 
@@ -84,3 +87,8 @@ class BirdMatch:
   @property
   def query_match(self):
     return self.__query_match
+
+class StringMatcher:
+
+  def match(self, a, b):
+    return SequenceMatcher(None, a.lower(), b.lower()).ratio()

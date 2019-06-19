@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 from search import BirdSearcher, BirdMatch
 from search import BirdSearchController
+from search import StringMatcher
 from bird import Bird
 from localization import Language
 from test_util import mock_return
@@ -34,9 +35,12 @@ class TestBirdSearchController(TestCase):
 
 class TestBirdSearcher(TestCase):
 
+  def setUp(self):
+    self.string_matcher = StringMatcher()
+
   def test_search_returns_list_of_bird_matches(self):
     bird_repository = Simple(birds=[picapica])
-    searcher = BirdSearcher(bird_repository, dict())
+    searcher = BirdSearcher(bird_repository, dict(), self.string_matcher)
 
     matches = searcher.search('Pica pica')
 
@@ -46,7 +50,7 @@ class TestBirdSearcher(TestCase):
     swedish_locale = Simple(bird_dictionary=None)
     bird_repository = Simple(birds=[picapica])
     locales = { 'swedish': swedish_locale }
-    searcher = BirdSearcher(bird_repository, locales)
+    searcher = BirdSearcher(bird_repository, locales, self.string_matcher)
     
     matches = searcher.search('Pica pica')
 
@@ -56,7 +60,7 @@ class TestBirdSearcher(TestCase):
     bird_repository = Simple(birds=[picapica])
     swedish_locale = Simple(bird_dictionary={'Pica pica': 'Skata'})
     locales = { 'swedish': swedish_locale }
-    searcher = BirdSearcher(bird_repository, locales)
+    searcher = BirdSearcher(bird_repository, locales, self.string_matcher)
 
     matches = searcher.search('Skata')
 
@@ -64,7 +68,7 @@ class TestBirdSearcher(TestCase):
 
   def test_search_finds_nothing_with_only_empty_string_name_query(self):
     bird_repository = Simple(birds=[picapica])
-    searcher = BirdSearcher(bird_repository, {})
+    searcher = BirdSearcher(bird_repository, {}, self.string_matcher)
 
     matches = searcher.search('')
 
@@ -81,6 +85,20 @@ class TestBirdMatch(TestCase):
     bird = picapica
     match = BirdMatch(bird, 1)
     self.assertIs(match.bird, bird)
+
+class TestStringMatcher(TestCase):
+  
+  def test_equal_strings_return_1(self):
+    self.assertEqual(StringMatcher().match('test', 'test'), 1)
+
+  def test_equal_strings_return_1_when_different_cases(self):
+    self.assertEqual(StringMatcher().match('test', 'TEST'), 1)
+
+  def test_string_with_empty_string_return_0(self):
+    self.assertEqual(StringMatcher().match('t', ''), 0)
+
+  def test_string_with_one_out_of_two_matching_chars_returns_half(self):
+    self.assertEqual(StringMatcher().match('ab', 'ac'), 0.5)
 
 if __name__ == '__main__':
   unittest.main()
