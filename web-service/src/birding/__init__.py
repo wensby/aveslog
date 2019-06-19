@@ -22,6 +22,7 @@ from .localization import LocaleDeterminer
 from .localization import LocalesFactory
 from .bird import BirdRepository
 from .search import BirdSearcher
+from .search import BirdSearchController
 from .sighting import SightingRepository
 from .render import render_page
 from .picture import PictureRepository
@@ -59,13 +60,14 @@ def create_app(test_config=None):
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
   account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory, person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
+  bird_search_controller = BirdSearchController(bird_searcher)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
       account_repository, person_repository, authenticator,
       account_registration_controller
   )
-  search_blueprint = create_search_blueprint(bird_searcher, bird_search_view_factory)
+  search_blueprint = create_search_blueprint(bird_search_controller, bird_search_view_factory)
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(account_repository, authenticator)
