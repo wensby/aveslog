@@ -23,6 +23,7 @@ class BirdSearchViewFactory:
     bird_thumbnails = self.bird_repository.bird_thumbnails()
     pictures = self.picture_repository.pictures()
     builder = BirdSearchResultItemsBuilder(bird_thumbnails, pictures)
+    bird_matches = sorted(bird_matches, key=lambda m: m.query_match, reverse=True)
     for bird_match in bird_matches:
       builder.add_bird_match(bird_match)
     return builder.create_items()
