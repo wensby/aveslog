@@ -1,7 +1,9 @@
 from unittest import TestCase
 from unittest.mock import Mock
+from types import SimpleNamespace as Simple
 from .authentication import AccountRegistrationController
 from .authentication import AccountRegistrationRequest
+from .authentication import PasswordResetController
 from .test_util import mock_return
 
 valid_email = 'valid@email.com'
@@ -97,3 +99,68 @@ class TestAccountRegistrationController(TestCase):
     self.account_repository.put_new_user_account = mock_return(None)
     result = self.controller.perform_registration_request(request)
     self.assertEqual(result, 'failure')
+
+class TestPasswordResetController(TestCase):
+
+  def setUp(self):
+    self.account_repository = Mock()
+    self.password_repository = Mock()
+    self.link_factory = Mock()
+    self.mail_dispatcher = Mock()
+    self.controller = PasswordResetController(
+        self.account_repository,
+        self.password_repository,
+        self.link_factory,
+        self.mail_dispatcher,
+    )
+
+  def test_initiate_password_reset_creates_token_when_account_present(self):
+    locale = Simple(text=mock_return('translated: '))
+    account = Simple()
+    self.link_factory.create_endpoint_external_link = mock_return('myLink')
+    self.account_repository.find_account_by_email = mock_return(account)
+
+    self.controller.initiate_password_reset(valid_email, locale)
+
+    self.account_repository.find_account_by_email.assert_called_with(valid_email)
+    self.password_repository.create_password_reset_token.assert_called_with(account)
+
+  def test_initiate_password_reset_not_create_token_when_account_not_present(self):
+    self.account_repository.find_account_by_email = mock_return(None)
+
+    self.controller.initiate_password_reset(valid_email, None)
+
+    self.account_repository.find_account_by_email.assert_called_with(valid_email)
+    self.password_repository.create_password_reset_token.assert_not_called()
+
+  def test_initiate_password_reset_dispatches_email_with_link(self):
+    locale = Simple(text=mock_return('translated: '))
+    self.link_factory.create_endpoint_external_link = mock_return('myLink')
+
+    self.controller.initiate_password_reset(valid_email, locale)
+
+    self.mail_dispatcher.dispatch.assert_called_with(valid_email, 'Birding Password Reset', 'translated: myLink')
+
+  def test_initiate_password_reset_creates_link_for_correct_endpoint(self):
+    locale = Simple(text=mock_return('translated: '))
+    password_reset_token = Simple(token='myToken')
+    self.link_factory.create_endpoint_external_link = mock_return('myLink')
+    self.password_repository.create_password_reset_token = mock_return(password_reset_token)
+
+    self.controller.initiate_password_reset(valid_email, locale)
+
+    self.link_factory.create_endpoint_external_link.assert_called_with('authentication.get_password_reset_form', token='myToken')
+
+  def test_perform_password_reset_updates_password_when_reset_token_present(self):
+    token = 'myToken'
+    self.password_repository.find_password_reset_account_id.return_value = 4
+
+    result = self.controller.perform_password_reset(token, valid_password)
+
+    self.password_repository.find_password_reset_account_id.assert_called_with(token)
+    self.password_repository.update_password.assert_called_with(4, valid_password)
+    self.assertEqual(result, 'success')
+
+  def test_perform_password_reset_removes_password_reset_token_on_success(self):
+    result = self.controller.perform_password_reset('myToken', valid_password)
+    self.password_repository.remove_password_reset_token.assert_called_with('myToken')

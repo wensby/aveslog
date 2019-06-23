@@ -31,7 +31,7 @@ def require_logged_out(view):
       return view(**kwargs)
   return wrapped_view
 
-def create_authentication_blueprint(account_repository, person_repo, authenticator, account_registration_controller):
+def create_authentication_blueprint(account_repository, person_repo, authenticator, account_registration_controller, password_reset_controller):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
   
   @blueprint.before_app_request
@@ -47,6 +47,38 @@ def create_authentication_blueprint(account_repository, person_repo, authenticat
   def get_register_request():
     return render_page('registration_request.html')
   
+  @blueprint.route('/password-reset')
+  @require_logged_out
+  def get_password_reset_request():
+    return render_page('password_reset_request.html')
+
+  @blueprint.route('/password-reset', methods=['POST'])
+  @require_logged_out
+  def post_password_reset_request():
+    email = request.form['email']
+    password_reset_controller.initiate_password_reset(email, g.locale)
+    flash(g.locale.text(u"An email has been sent. If you have't received it in a few minutes, please check your spam folder."), 'success')
+    return redirect(url_for('authentication.get_password_reset_request'))
+
+  @blueprint.route('/password-reset/<token>')
+  @require_logged_out
+  def get_password_reset_form(token):
+    g.render_context['password_reset_token'] = token
+    return render_page('password_reset_form.html')
+
+  @blueprint.route('/password-reset/<token>', methods=['POST'])
+  @require_logged_out
+  def post_password_reset_form(token):
+    token = request.form['token']
+    password = request.form['password']
+    result = password_reset_controller.perform_password_reset(token, password)
+    if result == 'success':
+      flash(u"Your password has been reset.", 'success')
+      return redirect(url_for('authentication.get_login'))
+    else:
+      flash(u"Something went wrong", 'danger')
+      return redirect(url_for('authentication.get_password_reset_form', token=token))
+
   @blueprint.route('/register/request', methods=['POST'])
   @require_logged_out
   def post_register_request():

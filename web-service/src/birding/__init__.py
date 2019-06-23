@@ -10,6 +10,8 @@ from .user_account import UserAccountRepository
 from .user_account import PasswordHasher
 from .user_account import Credentials
 from .user_account import Authenticator
+from .user_account import PasswordRepository
+from .user_account import TokenFactory
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
 from .blueprint_authentication import create_authentication_blueprint
@@ -30,6 +32,8 @@ from .picture import PictureRepository
 from .search_view import BirdSearchViewFactory
 from .sighting_view import SightingViewFactory
 from .authentication import AccountRegistrationController
+from .authentication import PasswordResetController
+from .authentication import SaltFactory
 from .link import LinkFactory
 from .bird_view import BirdViewFactory
 
@@ -42,7 +46,8 @@ def create_app(test_config=None):
   database_connection_factory = DatabaseConnectionFactory(app.logger)
   database_connection_details = create_database_connection_details()
   database = database_connection_factory.create_connection(**database_connection_details)
-  hasher = PasswordHasher()
+  salt_factory = SaltFactory()
+  hasher = PasswordHasher(salt_factory)
   account_repository = UserAccountRepository(database, hasher)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
@@ -63,16 +68,20 @@ def create_app(test_config=None):
   account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory, person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
+  token_factory = TokenFactory()
+  password_repository = PasswordRepository(token_factory, database, hasher)
+  password_reset_controller = PasswordResetController(account_repository, password_repository, link_factory, mail_dispatcher)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
       account_repository, person_repository, authenticator,
-      account_registration_controller
+      account_registration_controller,
+      password_reset_controller,
   )
   search_blueprint = create_search_blueprint(bird_search_controller, bird_search_view_factory)
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
   profile_blueprint = create_profile_blueprint(account_repository)
-  settings_blueprint = create_settings_blueprint(account_repository, authenticator)
+  settings_blueprint = create_settings_blueprint(account_repository, authenticator, password_repository)
   bird_blueprint = create_bird_blueprint(bird_view_factory)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(search_blueprint)

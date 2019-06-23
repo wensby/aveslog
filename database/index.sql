@@ -7,9 +7,11 @@
 \i /schema/public/table/user_account_registration.sql
 \i /schema/public/table/picture.sql
 \i /schema/public/table/bird_thumbnail.sql
+\i /schema/public/table/password_reset_token.sql
 
 \i /schema/public/foreign-key-constraint/user_account.sql
 \i /schema/public/foreign-key-constraint/bird_thumbnail.sql
+\i /schema/public/foreign-key-constraint/password_reset_token.sql
 
 \i /schema/base-data/bird.sql
 \i /schema/base-data/locale.sql

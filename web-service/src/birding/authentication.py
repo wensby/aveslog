@@ -1,3 +1,5 @@
+import os
+from base64 import b64encode
 from .mail import EmailAddress
 from flask import url_for
 
@@ -64,3 +66,40 @@ class AccountRegistrationRequest:
     self.registration_token = registration_token
     self.username = username
     self.password = password
+
+class PasswordResetController:
+
+  def __init__(self, account_repository, password_repository, link_factory, mail_dispatcher):
+    self.account_repository = account_repository
+    self.password_repository = password_repository
+    self.link_factory = link_factory
+    self.mail_dispatcher = mail_dispatcher
+
+  def initiate_password_reset(self, email, locale):
+    account = self.account_repository.find_account_by_email(email)
+    if account:
+      password_reset_token = self.password_repository.create_password_reset_token(account)
+      token = password_reset_token.token
+      link = self.link_factory.create_endpoint_external_link('authentication.get_password_reset_form', token=token)
+      message = self.__create_mail_message(link, locale)
+      self.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
+      return True
+    return False
+
+  def __create_mail_message(self, link, locale):
+    message = (
+        'You have requested a password reset of your Birding account. '
+        'Please follow this link to get to your password reset form: ')
+    return locale.text(message) + link
+
+  def perform_password_reset(self, token, password):
+    account_id = self.password_repository.find_password_reset_account_id(token)
+    if account_id:
+      self.password_repository.update_password(account_id, password)
+      self.password_repository.remove_password_reset_token(token)
+      return 'success'
+
+class SaltFactory:
+
+  def create_salt(self):
+    return b64encode(os.urandom(16)).decode('utf-8')

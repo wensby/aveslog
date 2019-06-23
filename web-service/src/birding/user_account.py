@@ -114,6 +114,13 @@ class UserAccountRepository:
     result = self.database.query(query, (username,))
     return next(map(UserAccount.fromrow, result.rows), None)
 
+  def find_account_by_email(self, email):
+    query = ('SELECT id, username, email, person_id, locale_id '
+             'FROM user_account '
+             'WHERE email LIKE %s;')
+    result = self.database.query(query, (email,))
+    return next(map(UserAccount.fromrow, result.rows), None)
+
   def find_hashed_password(self, user_account):
     query = ('SELECT user_account_id, salt, salted_hash '
              'FROM hashed_password '
@@ -140,14 +147,6 @@ class UserAccountRepository:
       if self.find_hashed_password(account):
         return account
 
-  def update_password(self, account, password):
-    salt = b64encode(os.urandom(16)).decode('utf-8')
-    hash = self.hasher.hash_password(password, salt)
-    query = ('UPDATE hashed_password '
-             'SET salt = %s, salted_hash = %s '
-             'WHERE user_account_id = %s;')
-    self.database.query(query, (salt, hash, account.id))
-
   def set_user_account_person(self, account, person):
     query = ('UPDATE user_account '
              'SET person_id = %s '
@@ -155,6 +154,14 @@ class UserAccountRepository:
     self.database.query(query, (person.id, account.id))
 
 class PasswordHasher:
+
+  def __init__(self, salt_factory):
+    self.salt_factory = salt_factory
+
+  def create_salt_hashed_password(self, password):
+    salt = self.salt_factory.create_salt()
+    hash = self.hash_password(password, salt)
+    return (salt, hash)
 
   def hash_password(self, password, salt):
     encoded_password = password.encode()
@@ -181,3 +188,78 @@ class Authenticator:
     account = self.account_repository.find_user_account(username)
     if account and self.is_account_password_correct(account, password):
       return account
+
+class PasswordRepository:
+
+  def __init__(self, token_factory, database, password_hasher):
+    self.token_factory = token_factory
+    self.database = database
+    self.hasher = password_hasher
+
+  def create_password_reset_token(self, account):
+    token = self.token_factory.create_token()
+    query = (
+        'INSERT INTO password_reset_token (user_account_id, token) '
+        'VALUES (%s, %s) '
+        'ON CONFLICT (user_account_id) '
+        'DO UPDATE SET token = excluded.token;')
+    result = self.database.query(query, (account.id, token))
+    if 'INSERT' in result.status:
+      return self.find_password_reset_token(account)
+
+  def find_password_reset_token(self, account):
+    query = (
+        'SELECT user_account_id, token '
+        'FROM password_reset_token '
+        'WHERE user_account_id = %s;')
+    result = self.database.query(query, (account.id,))
+    return next(map(PasswordResetToken.fromrow, result.rows), None)
+
+  def find_password_reset_account_id(self, token):
+    query = (
+        'SELECT user_account_id '
+        'FROM password_reset_token '
+        'WHERE token LIKE %s;')
+    result = self.database.query(query, (token,))
+    return next(map(lambda row: row[0], result.rows), None)
+
+  def update_password(self, account_id, password):
+    salt_hashed_password = self.hasher.create_salt_hashed_password(password)
+    salt = salt_hashed_password[0]
+    hash = salt_hashed_password[1]
+    query = ('UPDATE hashed_password '
+             'SET salt = %s, salted_hash = %s '
+             'WHERE user_account_id = %s;')
+    self.database.query(query, (salt, hash, account_id))
+
+  def remove_password_reset_token(self, token):
+    query = (
+        'DELETE FROM password_reset_token '
+        'WHERE token LIKE %s;')
+    self.database.query(query, (token,))
+
+class PasswordResetToken:
+
+  def __init__(self, user_account_id, token):
+    self.user_account_id = user_account_id
+    self.token = token
+
+  @classmethod
+  def fromrow(cls, row):
+    return cls(row[0], row[1])
+
+  def __repr__(self):
+    return ('PasswordResetToken<'
+      f'user_account_id={self.user_account_id}, '
+      f'token={self.token}'
+      '>')
+
+  def __eq__(self, other):
+    if isinstance(other, PasswordResetToken):
+      return self.__dict__ == other.__dict__
+    return False
+
+class TokenFactory:
+
+  def create_token(self):
+    return os.urandom(16).hex()

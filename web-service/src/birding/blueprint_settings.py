@@ -8,7 +8,7 @@ from .user_account import Credentials
 from .user_account import is_valid_password
 from .blueprint_authentication import require_login
 
-def create_settings_blueprint(account_repository, authenticator):
+def create_settings_blueprint(account_repository, authenticator, password_repository):
   blueprint = Blueprint('settings', __name__, url_prefix='/settings')
 
   @blueprint.route('/')
@@ -32,7 +32,7 @@ def create_settings_blueprint(account_repository, authenticator):
     oldpassword = request.form['oldPasswordInput']
     if is_password_change_valid(account, request.form):
       newpassword = request.form['newPasswordInput']
-      account_repository.update_password(account, newpassword)
+      password_repository.update_password(account.id, newpassword)
       flash('success')
     else:
       flash('failure')

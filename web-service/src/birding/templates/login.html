@@ -32,6 +32,9 @@
                 <button class="btn btn-primary ml-auto" type="submit">{{ locale.text('Login') }}</button>
               </div>
             </form>
+            <div class="row">
+              <a href="{{url_for('authentication.get_password_reset_request')}}">Forgot your password?</a>
+            </div>
           </div>
         </div>
       </div>
