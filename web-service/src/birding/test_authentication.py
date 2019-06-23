@@ -19,8 +19,11 @@ class TestAccountRegistrationController(TestCase):
     self.person_repository = Mock()
     self.locale = Mock()
     self.controller = AccountRegistrationController(
-        self.account_repository, self.mail_dispatcher, self.link_factory, 
-        self.person_repository)
+        self.account_repository,
+        self.mail_dispatcher,
+        self.link_factory,
+        self.person_repository,
+    )
 
   def test_initiate_registration_when_invalid_email(self):
     result = self.controller.initiate_registration('invalid@email', self.locale)
