@@ -10,7 +10,7 @@ from flask import request
 from flask import session
 from flask import url_for
 from .render import render_page
-from .user_account import Credentials
+from .account import Credentials
 from .authentication import AccountRegistrationRequest
 
 def require_login(view):

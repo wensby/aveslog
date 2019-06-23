@@ -4,7 +4,7 @@ from types import SimpleNamespace as Simple
 from .authentication import AccountRegistrationController
 from .authentication import AccountRegistrationRequest
 from .authentication import PasswordResetController
-from user_account import UserAccountRepository
+from account import UserAccountRepository
 from .test_util import mock_return
 
 valid_email = 'valid@email.com'

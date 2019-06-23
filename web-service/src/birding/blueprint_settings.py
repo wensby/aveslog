@@ -4,8 +4,8 @@ from flask import g
 from flask import request
 from flask import flash
 from .render import render_page
-from .user_account import Credentials
-from .user_account import is_valid_password
+from .account import Credentials
+from .account import is_valid_password
 from .blueprint_authentication import require_login
 
 def create_settings_blueprint(account_repository, authenticator, password_repository):

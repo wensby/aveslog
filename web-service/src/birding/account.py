@@ -75,8 +75,6 @@ class UserAccountRepository:
   def create_account_registration(self, email):
     if not self.get_user_account_registration_by_email(email):
       token = os.urandom(16).hex()
-      query = ('INSERT INTO user_account_registration (email, token) '
-               'VALUES (%s, %s);')
       self.database.query(query, (email, token))
       return self.get_user_account_registration_by_email(email)
 
