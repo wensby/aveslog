@@ -4,6 +4,7 @@ from types import SimpleNamespace as Simple
 from .authentication import AccountRegistrationController
 from .authentication import AccountRegistrationRequest
 from .authentication import PasswordResetController
+from user_account import UserAccountRepository
 from .test_util import mock_return
 
 valid_email = 'valid@email.com'
@@ -13,11 +14,10 @@ valid_password = 'myPassword'
 class TestAccountRegistrationController(TestCase):
 
   def setUp(self):
-    self.account_repository = Mock()
+    self.account_repository = Mock(spec=UserAccountRepository)
     self.mail_dispatcher = Mock()
     self.link_factory = Mock()
     self.person_repository = Mock()
-    self.locale = Mock()
     self.controller = AccountRegistrationController(
         self.account_repository,
         self.mail_dispatcher,
@@ -26,37 +26,44 @@ class TestAccountRegistrationController(TestCase):
     )
 
   def test_initiate_registration_when_invalid_email(self):
-    result = self.controller.initiate_registration('invalid@email', self.locale)
+    result = self.controller.initiate_registration('invalid@email', None)
     self.assertEqual(result, 'invalid email')
 
-  def test_initiate_registration_puts_user_account_registration_when_valid_email(self):
-    self.locale.text = mock_return('translated')
-    self.link_factory.create_endpoint_external_link = mock_return('myRegistrationLink')
-    result = self.controller.initiate_registration(valid_email, self.locale)
-    self.account_repository.put_user_account_registration.assert_called()
+  def test_initiate_registration_creates_account_registration_when_valid_email(self):
+    locale = Mock()
+    locale.text.return_value = 'translated'
+    self.link_factory.create_endpoint_external_link.return_value = 'myLink'
+
+    result = self.controller.initiate_registration(valid_email, locale)
+
+    self.account_repository.create_account_registration.assert_called_with(valid_email)
 
   def test_initiate_registration_creates_correct_registration_link_when_valid_email(self):
-    self.locale.text = mock_return('translated')
-    token = 'myToken'
-    self.account_repository.get_user_account_registration_by_email().token = token
-    self.link_factory.create_endpoint_external_link = mock_return('myRegistrationLink')
-    result = self.controller.initiate_registration(valid_email, self.locale)
-    self.link_factory.create_endpoint_external_link.assert_called_with('authentication.get_register_form', token=token)
+    locale = Mock()
+    locale.text.return_value = 'translated'
+    self.account_repository.create_account_registration().token = 'myToken'
+    self.link_factory.create_endpoint_external_link.return_value = 'myLink'
+
+    result = self.controller.initiate_registration(valid_email, locale)
+
+    self.link_factory.create_endpoint_external_link.assert_called_with('authentication.get_register_form', token='myToken')
 
   def test_initiate_registration_dispatches_registration_link_when_valid_email(self):
-    self.locale.text = mock_return('translated message: ')
-    link = 'myLink'
-    self.link_factory.create_endpoint_external_link = mock_return(link)
-    result = self.controller.initiate_registration(valid_email, self.locale)
-    self.mail_dispatcher.dispatch.assert_called_with(valid_email, 'Birding Registration', f'translated message: {link}')
+    locale = Mock()
+    locale.text.return_value = 'translated message: '
+    self.link_factory.create_endpoint_external_link.return_value = 'myLink'
+
+    result = self.controller.initiate_registration(valid_email, locale)
+
+    self.mail_dispatcher.dispatch.assert_called_with(valid_email, 'Birding Registration', 'translated message: myLink')
 
   def test_initiate_registration_returns_registration_when_success(self):
-    self.locale.text = mock_return('translated')
-    registration = self.account_repository.get_user_account_registration_by_email()
-    registration.email = valid_email
-    self.link_factory.create_endpoint_external_link = mock_return('myLink')
-    self.account_repository.get_user_account_registration_by_email = mock_return(registration)
-    result = self.controller.initiate_registration(valid_email, self.locale)
+    locale = Simple(text=mock_return('translated'))
+    registration = self.account_repository.create_account_registration()
+    self.link_factory.create_endpoint_external_link.return_value = 'myLink'
+
+    result = self.controller.initiate_registration(valid_email, locale)
+
     self.assertIs(result, registration)
 
   def test_perform_registration_request_associated_registration_missing(self):

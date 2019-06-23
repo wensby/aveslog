@@ -14,14 +14,16 @@ class AccountRegistrationController:
   def initiate_registration(self, raw_email, locale):
     if EmailAddress.is_valid(raw_email):
       email = EmailAddress(raw_email)
-      self.account_repository.put_user_account_registration(email.address)
-      registration = self.account_repository.get_user_account_registration_by_email(email.address)
-      token = registration.token
-      link = self.link_factory.create_endpoint_external_link('authentication.get_register_form', token=token)
-      message = self.create_registration_mail_message(link, locale)
-      self.mail_dispatcher.dispatch(email.address, 'Birding Registration', message)
+      registration = self.account_repository.create_account_registration(email.address)
+      self.__send_registration_email(email, registration, locale)
       return registration
     return 'invalid email'
+
+  def __send_registration_email(self, email_address, registration, locale):
+    token = registration.token
+    link = self.link_factory.create_endpoint_external_link('authentication.get_register_form', token=token)
+    message = self.create_registration_mail_message(link, locale)
+    self.mail_dispatcher.dispatch(email_address.address, 'Birding Registration', message)
 
   def create_registration_mail_message(self, link, locale):
     message = (
