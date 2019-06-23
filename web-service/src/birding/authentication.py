@@ -11,9 +11,9 @@ class AccountRegistrationController:
     self.link_factory = link_factory
     self.person_repository = person_repository
 
-  def initiate_registration(self, email, locale):
-    if EmailAddress.is_valid(email):
-      email = EmailAddress(email)
+  def initiate_registration(self, raw_email, locale):
+    if EmailAddress.is_valid(raw_email):
+      email = EmailAddress(raw_email)
       self.account_repository.put_user_account_registration(email.address)
       registration = self.account_repository.get_user_account_registration_by_email(email.address)
       token = registration.token
