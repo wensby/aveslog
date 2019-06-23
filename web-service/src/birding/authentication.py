@@ -21,6 +21,7 @@ class AccountRegistrationController:
       message = self.create_registration_mail_message(link, locale)
       self.mail_dispatcher.dispatch(email.address, 'Birding Registration', message)
       return registration
+    return 'invalid email'
 
   def create_registration_mail_message(self, link, locale):
     message = (

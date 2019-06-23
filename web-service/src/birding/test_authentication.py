@@ -22,9 +22,9 @@ class TestAccountRegistrationController(TestCase):
         self.account_repository, self.mail_dispatcher, self.link_factory, 
         self.person_repository)
 
-  def test_initiate_registration_none_when_invalid_email(self):
+  def test_initiate_registration_when_invalid_email(self):
     result = self.controller.initiate_registration('invalid@email', self.locale)
-    self.assertIsNone(result)
+    self.assertEqual(result, 'invalid email')
 
   def test_initiate_registration_puts_user_account_registration_when_valid_email(self):
     self.locale.text = mock_return('translated')
