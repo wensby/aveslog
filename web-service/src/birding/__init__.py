@@ -5,7 +5,7 @@ from flask import request
 from flask import after_this_request
 from flask import redirect
 from flask import url_for
-from .database import DatabaseConnectionFactory
+from .database import DatabaseFactory
 from .account import AccountRepository
 from .account import PasswordHasher
 from .account import Credentials
@@ -44,9 +44,9 @@ def create_app(test_config=None):
 
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
-  database_connection_factory = DatabaseConnectionFactory(app.logger)
+  database_connection_factory = DatabaseFactory(app.logger)
   database_connection_details = create_database_connection_details()
-  database = database_connection_factory.create_connection(**database_connection_details)
+  database = database_connection_factory.create_database(**database_connection_details)
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
   token_factory = TokenFactory()

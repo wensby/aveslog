@@ -1,34 +1,26 @@
-import psycopg2
+from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
-class DatabaseConnectionFactory:
+class DatabaseFactory:
 
   def __init__(self, logger):
     self.logger = logger
 
-  def create_connection(self, host, dbname, user, password):
-    connection = self.connect(host, dbname, user, password)
-    self.logger.info('Database connection established')
-    return Database(connection)
+  def create_database(self, host, dbname, user, password):
+    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host, database=dbname)
+    self.logger.info(f'Database ({dbname}) connection pool created')
+    return Database(self.logger, pool)
 
-  @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
-  def connect(self, host, dbname, user, password):
-    kwargs = {
-        'host': host,
-        'dbname': dbname,
-        'user': user,
-        'password': password
-    }
-    self.logger.info('Connecting to database ' + dbname)
-    return psycopg2.connect(**kwargs)
 
 class Database:
 
-  def __init__(self, connection):
-    self.connection = connection
+  def __init__(self, logger, connection_pool):
+    self.logger = logger
+    self.connection_pool = connection_pool
 
   def query(self, query, vars=None):
-    cursor = self.connection.cursor()
+    connection = self.__get_connection()
+    cursor = connection.cursor()
     cursor.execute(query, vars)
     try:
       rows = cursor.fetchall()
@@ -36,9 +28,16 @@ class Database:
       rows = []
     status = cursor.statusmessage
     result = QueryResult(status, rows)
-    self.connection.commit()
+    connection.commit()
     cursor.close()
+    self.logger.info('Releasing database connection')
+    self.connection_pool.putconn(connection)
     return result
+
+  @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
+  def __get_connection(self):
+    self.logger.info('Getting database connection')
+    return self.connection_pool.getconn()
 
 class QueryResult:
 
