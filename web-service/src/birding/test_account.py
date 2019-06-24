@@ -4,7 +4,10 @@ from base64 import b64encode
 from unittest import TestCase
 from unittest.mock import Mock, call
 from types import SimpleNamespace as Simple
-from account import Authenticator, Credentials, UserAccount, HashedPassword
+from account import Authenticator
+from account import Credentials
+from account import UserAccount
+from account import HashedPassword
 from account import PasswordHasher
 from account import PasswordRepository
 from account import PasswordResetToken
