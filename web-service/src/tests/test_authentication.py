@@ -1,16 +1,15 @@
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
-from .authentication import AccountRegistrationController
-from .authentication import AccountRegistrationRequest
-from .authentication import PasswordResetController
-from .authentication import Authenticator
-from .account import AccountRepository
-from .person import PersonRepository
-from .test_util import mock_return
-from .mail import MailServerDispatcher
-from .mail import EmailAddress
-from .link import LinkFactory
+from birding.authentication import AccountRegistrationController
+from birding.authentication import PasswordResetController
+from birding.authentication import Authenticator
+from birding.account import AccountRepository, Username, Password
+from birding.person import PersonRepository
+from birding.mail import MailServerDispatcher
+from birding.mail import EmailAddress
+from birding.link import LinkFactory
+from tests.test_util import mock_return
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
@@ -91,7 +90,7 @@ class TestAccountRegistrationController(TestCase):
 
     result = self.controller.initiate_registration(valid_email, locale)
 
-    self.mail_dispatcher.dispatch.assert_called_with(valid_email, 'Birding Registration', 'translated message: myLink')
+    self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email), 'Birding Registration', 'translated message: myLink')
 
   def test_initiate_registration_returns_registration_when_success(self):
     locale = Simple(text=mock_return('translated'))
@@ -104,47 +103,41 @@ class TestAccountRegistrationController(TestCase):
     self.assertIs(result, registration)
 
   def test_perform_registration_request_associated_registration_missing(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.find_account_registration = mock_return(None)
-    result = self.controller.perform_registration_request(request)
+    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
     self.assertEqual(result, 'associated registration missing')
 
   def test_perform_registration_request_username_taken(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.find_user_account = mock_return('uh-oh!')
-    result = self.controller.perform_registration_request(request)
-    self.account_repository.find_user_account.assert_called_with(valid_username)
+    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    self.account_repository.find_user_account.assert_called_with(Username(valid_username))
     self.assertEqual(result, 'username taken')
 
   def test_perform_registration_request_creates_account(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
-    self.account_repository.find_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(request)
-    self.account_repository.put_new_user_account.assert_called_with(valid_email, valid_username, valid_password)
+    self.account_repository.find_user_account.return_value = None
+    self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    self.account_repository.put_new_user_account.assert_called_with(EmailAddress(valid_email), Username(valid_username), Password(valid_password))
 
   def test_perform_registration_request_removes_registration_on_success(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
     registration = self.account_repository.find_account_registration()
     self.account_repository.find_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(request)
+    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.remove_account_registration_by_id.assert_called_with(registration.id)
     self.assertEqual(result, 'success')
 
   def test_perform_registration_request_initializes_account_person_on_success(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
     account = self.account_repository.put_new_user_account()
     person = self.person_repository.add_person()
     self.account_repository.find_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(request)
+    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
     self.person_repository.add_person.assert_called_with(account.username)
     self.account_repository.set_user_account_person.assert_called_with(account, person)
     self.assertEqual(result, 'success')
 
   def test_person_registration_request_failure_when_account_creation_fails(self):
-    request = AccountRegistrationRequest(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.find_user_account = mock_return(None)
     self.account_repository.put_new_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(request)
+    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
     self.assertEqual(result, 'failure')
 
 class TestPasswordResetController(TestCase):
@@ -169,7 +162,7 @@ class TestPasswordResetController(TestCase):
 
     self.controller.initiate_password_reset(valid_email, locale)
 
-    self.account_repository.find_account_by_email.assert_called_with(valid_email)
+    self.account_repository.find_account_by_email.assert_called_with(EmailAddress(valid_email))
     self.password_repository.create_password_reset_token.assert_called_with(account)
 
   def test_initiate_password_reset_not_create_token_when_account_not_present(self):
@@ -177,7 +170,7 @@ class TestPasswordResetController(TestCase):
 
     self.controller.initiate_password_reset(valid_email, None)
 
-    self.account_repository.find_account_by_email.assert_called_with(valid_email)
+    self.account_repository.find_account_by_email.assert_called_with(EmailAddress(valid_email))
     self.password_repository.create_password_reset_token.assert_not_called()
 
   def test_initiate_password_reset_dispatches_email_with_link(self):
@@ -186,7 +179,7 @@ class TestPasswordResetController(TestCase):
 
     self.controller.initiate_password_reset(valid_email, locale)
 
-    self.mail_dispatcher.dispatch.assert_called_with(valid_email, 'Birding Password Reset', 'translated: myLink')
+    self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email), 'Birding Password Reset', 'translated: myLink')
 
   def test_initiate_password_reset_creates_link_for_correct_endpoint(self):
     locale = Simple(text=mock_return('translated: '))

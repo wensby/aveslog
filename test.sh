@@ -28,6 +28,6 @@ if ! [ -z "$SETUP" ]; then
   pip install -q -r web-service/requirements.txt
 fi
 
-cd web-service/src/birding
-python -m unittest discover -t ..
+cd web-service/src
+python -m unittest discover -s tests
 deactivate

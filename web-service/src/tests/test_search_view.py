@@ -1,9 +1,9 @@
 from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
-from .test_util import mock_return
-from .search_view import BirdSearchViewFactory
-from .search_view import BirdSearchResultItem
+from tests.test_util import mock_return
+from birding.search_view import BirdSearchViewFactory
+from birding.search_view import BirdSearchResultItem
 
 class TestBirdSearchViewFactory(TestCase):
 

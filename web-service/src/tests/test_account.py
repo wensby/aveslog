@@ -1,21 +1,14 @@
-import os
+import unittest
 from hashlib import pbkdf2_hmac
-from base64 import b64encode
 from unittest import TestCase
 from unittest.mock import Mock, call
 from types import SimpleNamespace as Simple
-from account import Credentials
-from account import Account
-from account import HashedPassword
-from .account import PasswordHasher
-from account import PasswordRepository
-from account import PasswordResetToken
-from .account import TokenFactory
-from account import AccountRepository
-from .database import Database
-from test_util import mock_return
 from binascii import hexlify
-from .mail import EmailAddress
+
+from birding.account import Account, PasswordRepository, PasswordResetToken, PasswordHasher, TokenFactory, \
+  AccountRepository
+from birding.database import Database
+from birding.mail import EmailAddress
 
 class TestAccountRepository(TestCase):
 

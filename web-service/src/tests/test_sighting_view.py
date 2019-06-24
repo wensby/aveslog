@@ -1,9 +1,9 @@
 from unittest import TestCase
 from unittest.mock import Mock, ANY
-from .sighting_view import SightingViewFactory
-from .sighting_view import SightingItem
-from .sighting_view import SightingCreationView
-from .test_util import mock_return
+from birding.sighting_view import SightingViewFactory
+from birding.sighting_view import SightingItem
+from birding.sighting_view import SightingCreationView
+from tests.test_util import mock_return
 from types import SimpleNamespace as Simple
 from datetime import datetime
 

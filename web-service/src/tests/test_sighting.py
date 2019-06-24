@@ -1,8 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock
-from .sighting import SightingRepository
-from .sighting import Sighting
-from .test_util import mock_return
+from birding.sighting import SightingRepository
+from birding.sighting import Sighting
 from datetime import datetime
 
 class TestSightingRepository(TestCase):

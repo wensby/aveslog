@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import Mock
-from localization import Locale, LocaleDeterminer, Language
+
+from birding.localization import Locale, Language, LocaleDeterminer
+
 
 class TestLocale(unittest.TestCase):
 

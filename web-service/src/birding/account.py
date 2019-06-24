@@ -17,6 +17,14 @@ class Username:
       raise Exception(f'Username format invalid: {raw_username}')
     self.raw = raw_username
 
+  def __eq__(self, other):
+    if isinstance(other, Username):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __repr__(self) -> str:
+    return f'Username<{self.raw}>'
+
 class Password:
 
   regex = re.compile('^.{8,128}$')
@@ -29,6 +37,12 @@ class Password:
     if not self.is_valid(raw_password):
       raise Exception(f'Username format invalid: {raw_password}')
     self.raw = raw_password
+
+  def __eq__(self, other):
+    if isinstance(other, Password):
+      return self.__dict__ == other.__dict__
+    return False
+
 
 class Account:
 

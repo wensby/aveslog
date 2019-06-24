@@ -1,12 +1,12 @@
+import unittest
 from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
-from search import BirdSearcher, BirdMatch
-from search import BirdSearchController
-from search import StringMatcher
-from bird import Bird
-from localization import Language
-from test_util import mock_return
+
+from birding import BirdSearchController, StringMatcher, BirdSearcher
+from birding.bird import Bird
+from birding.search import BirdMatch
+from tests.test_util import mock_return
 
 picapica = Bird(1, 'Pica pica')
 
