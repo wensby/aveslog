@@ -11,7 +11,8 @@ from flask import session
 from flask import url_for
 from .render import render_page
 from .account import Credentials
-from .authentication import AccountRegistrationRequest
+from .account import Username
+from .account import Password
 
 def require_login(view):
   @wraps(view)
@@ -22,7 +23,7 @@ def require_login(view):
       return redirect(url_for('authentication.get_login'))
   return wrapped_view
 
-def require_logged_out(view):
+def require_logout(view):
   @wraps(view)
   def wrapped_view(**kwargs):
     if g.logged_in_account:
@@ -38,22 +39,69 @@ def create_authentication_blueprint(account_repository, person_repo, authenticat
   def load_logged_in_account():
     account_id = session.get('account_id')
     if account_id:
-      g.logged_in_account = account_repository.get_user_account_by_id(account_id)
+      g.logged_in_account = account_repository.find_account_by_id(account_id)
     else:
       g.logged_in_account = None
 
-  @blueprint.route('/register/request')
-  @require_logged_out
+  @blueprint.route('/register')
+  @require_logout
   def get_register_request():
     return render_page('registration_request.html')
   
+  @blueprint.route('/register', methods=['POST'])
+  @require_logout
+  def post_register_request():
+    email = request.form['email']
+    result = account_registration_controller.initiate_registration(email, g.locale)
+    flash(g.locale.text(u'An email containing your registration form link has been sent to your email address.'), 'success')
+    return redirect(url_for('authentication.get_register_request'))
+  
+  @blueprint.route('/register/<token>')
+  @require_logout
+  def get_register_form(token):
+    registration = account_repository.find_account_registration_by_token(token)
+    if registration:
+      g.render_context['user_account_registration'] = registration
+      return render_page('register.html')
+    else:
+      flash(g.locale.text('This registration link is no longer valid, please request a new one.'))
+      return redirect(url_for('authentication.get_register_request'))
+  
+  @blueprint.route('/register/<token>', methods=['POST'])
+  @require_logout
+  def post_register_form(token):
+    if not token == request.form['token']:
+      flash(g.locale.text('Account registraion failure: Registration token discrepancy'), 'danger')
+      return redirect(url_for('authentication.get_register_form', token=token))
+    response = account_registration_controller.perform_registration_request(
+        request.form['email'],
+        request.form['token'],
+        request.form['username'],
+        request.form['password']
+    )
+    if response == 'success':
+      flash(g.locale.text('User account created succesfully'), 'success')
+      return redirect(url_for('authentication.get_login'))
+    elif response == 'associated registration missing':
+      flash(g.locale.text('Registration form no longer valid'), 'danger')
+      return redirect(url_for('authentication.get_login'))
+    elif response == 'username taken':
+      flash(g.locale.text('Username already taken'), 'danger')
+      return redirect(url_for('authentication.get_register_form', token=token))
+    elif response == 'failure':
+      flash(g.locale.text('User account registration failed'), 'danger')
+      return redirect(url_for('authentication.get_register_form', token=token))
+    else:
+      flash(g.locale.text('User account registration failed'), 'danger')
+      return redirect(url_for('authentication.get_register_form', token=token))
+
   @blueprint.route('/password-reset')
-  @require_logged_out
+  @require_logout
   def get_password_reset_request():
     return render_page('password_reset_request.html')
 
   @blueprint.route('/password-reset', methods=['POST'])
-  @require_logged_out
+  @require_logout
   def post_password_reset_request():
     email = request.form['email']
     password_reset_controller.initiate_password_reset(email, g.locale)
@@ -61,13 +109,13 @@ def create_authentication_blueprint(account_repository, person_repo, authenticat
     return redirect(url_for('authentication.get_password_reset_request'))
 
   @blueprint.route('/password-reset/<token>')
-  @require_logged_out
+  @require_logout
   def get_password_reset_form(token):
     g.render_context['password_reset_token'] = token
     return render_page('password_reset_form.html')
 
   @blueprint.route('/password-reset/<token>', methods=['POST'])
-  @require_logged_out
+  @require_logout
   def post_password_reset_form(token):
     token = request.form['token']
     password = request.form['password']
@@ -79,67 +127,21 @@ def create_authentication_blueprint(account_repository, person_repo, authenticat
       flash(u"Something went wrong", 'danger')
       return redirect(url_for('authentication.get_password_reset_form', token=token))
 
-  @blueprint.route('/register/request', methods=['POST'])
-  @require_logged_out
-  def post_register_request():
-    email = request.form['email']
-    locale = g.locale
-    account_registration_controller.initiate_registration(email, locale)
-    flash(g.locale.text(u'An email containing your registration form link has been sent to your email address.'), 'success')
-    return redirect(url_for('authentication.get_register_request'))
-  
-  @blueprint.route('/register/form/<token>')
-  @require_logged_out
-  def get_register_form(token):
-    registration = account_repository.find_account_registration_by_token(token)
-    if registration:
-      g.render_context['user_account_registration'] = registration
-      return render_page('register.html')
-    else:
-      flash('This registration link is no longer valid, please request a new one.')
-      return redirect(url_for('authentication.get_register_request'))
-  
-  @blueprint.route('/register/form/<token>', methods=['POST'])
-  @require_logged_out
-  def post_register_form(token):
-    if not token == request.form['token']:
-      flash(u'Account registraion failure: Registration token discrepancy', 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
-    registration_request = AccountRegistrationRequest(
-        request.form['email'],
-        request.form['token'],
-        request.form['username'],
-        request.form['password']
-    )
-    response = account_registration_controller.perform_registration_request(registration_request)
-    if response == 'success':
-      flash(u'User account created succesfully', 'success')
-      return redirect(url_for('authentication.get_login'))
-    elif response == 'associated registration missing':
-      flash(u'Registration form no longer valid', 'danger')
-      return redirect(url_for('authentication.get_login'))
-    elif response == 'username taken':
-      flash(u'Username already taken', 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
-    elif response == 'failure':
-      flash(u'User account registration failed', 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
-    else:
-      flash(u'User account registration failed', 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
 
   @blueprint.route('/login')
-  @require_logged_out
+  @require_logout
   def get_login():
     return render_page('login.html')
   
   @blueprint.route('/login', methods=['POST'])
-  @require_logged_out
+  @require_logout
   def post_login():
     posted_username = request.form['username']
     posted_password = request.form['password']
-    if Credentials.is_valid(posted_username, posted_password):
-      credentials = Credentials(posted_username, posted_password)
+    if Username.is_valid(posted_username) and Password.is_valid(posted_password):
+      username = Username(posted_username)
+      password = Password(posted_password)
+      credentials = Credentials(username, password)
       account = authenticator.get_authenticated_user_account(credentials)
       if account:
         session['account_id'] = account.id

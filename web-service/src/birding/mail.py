@@ -7,15 +7,25 @@ class EmailAddress:
 
   pattern = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
-  def __init__(self, address):
-    if EmailAddress.is_valid(address):
-      self.address = address
-    else:
-      raise Exception(f"Invalid email address format: {address}")
-
   @classmethod
   def is_valid(cls, address):
-    return EmailAddress.pattern.match(address)
+    return cls.pattern.match(address)
+
+  def __init__(self, raw_address):
+    if EmailAddress.is_valid(raw_address):
+      self.raw = raw_address
+    else:
+      raise Exception(f"Invalid email address format: {raw_address}")
+
+  def __eq__(self, other):
+    if isinstance(other, EmailAddress):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __repr__(self):
+    return ('EmailAddress<'
+        f'raw={self.raw}, '
+        '>')
 
 class MailDispatcherFactory:
 
@@ -40,7 +50,7 @@ class MailDebugDispatcher:
     self.app = app
 
   def dispatch(self, recipient, subject, body):
-    self.app.logger.info('dispatching mail to %s: %s - %s', recipient, subject, body)
+    self.app.logger.info('dispatching mail to %s: %s - %s', recipient.raw, subject, body)
 
 class MailServerDispatcher:
 
@@ -55,5 +65,5 @@ class MailServerDispatcher:
     self.mail = Mail(app)
 
   def dispatch(self, recipient, subject, body):
-    message = Message(subject, recipients=[recipient], body=body, sender=self.sender)
+    message = Message(subject, recipients=[recipient.raw], body=body, sender=self.sender)
     self.mail.send(message)

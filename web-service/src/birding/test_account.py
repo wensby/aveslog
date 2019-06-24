@@ -4,45 +4,56 @@ from base64 import b64encode
 from unittest import TestCase
 from unittest.mock import Mock, call
 from types import SimpleNamespace as Simple
-from account import Authenticator
 from account import Credentials
-from account import UserAccount
+from account import Account
 from account import HashedPassword
-from account import PasswordHasher
+from .account import PasswordHasher
 from account import PasswordRepository
 from account import PasswordResetToken
-from account import TokenFactory
+from .account import TokenFactory
+from account import AccountRepository
+from .database import Database
 from test_util import mock_return
 from binascii import hexlify
+from .mail import EmailAddress
 
-class TestAuthenticator(TestCase):
+class TestAccountRepository(TestCase):
 
   def setUp(self):
-    self.repository = Mock()
-    self.hasher = Mock()
-    self.credentials = Credentials('username', 'password')
-    self.account = UserAccount(1, 'username', 'email@wow.com', 1, 1)
-    self.hashed_password = HashedPassword(1, 'salt', 'hashed-password')
+    self.database = Mock(spec=Database)
+    self.password_hasher = Mock(spec=PasswordHasher)
+    self.token_factory = Mock(spec=TokenFactory)
+    self.repository = AccountRepository(
+        self.database, 
+        self.password_hasher,
+        self.token_factory,
+    )
 
-  def test_get_authenticated_user_account_when_correct_password(self):
-    self.repository.find_user_account = mock_return(self.account)
-    self.repository.find_hashed_password = mock_return(self.hashed_password)
-    self.hasher.hash_password = Mock(return_value='hashed-password')
-    authenticator = Authenticator(self.repository, self.hasher)
+  def test_find_account_by_id_queries_database_correctly(self):
+    self.database.query().rows = []
+    result = self.repository.find_account_by_id(4)
+    self.database.query.assert_called_with('SELECT id, username, email, person_id, locale_id FROM user_account WHERE id = %s;', (4,))
 
-    authenticated = authenticator.get_authenticated_user_account(self.credentials)
+  def test_find_account_by_id_parses_account_correctly_when_present(self):
+    self.database.query().rows = [[4, 'username', 'e@mail.com', 8, 15]]
+    result = self.repository.find_account_by_id(4)
+    self.assertEqual(result, Account(4, 'username', 'e@mail.com', 8, 15))
 
-    self.assertEqual(authenticated, self.account)
+  def test_create_account_registration_queries_database_correctly(self):
+    email = EmailAddress('e@mail.com')
+    token = self.token_factory.create_token()
+    self.database.query.side_effect = [Simple(rows=[[4, 'e@mail.com', 'myToken']])]
 
-  def test_get_authenticated_user_account_none_when_wrong_password(self):
-    self.repository.find_user_account = mock_return(self.account)
-    self.repository.find_hashed_password = mock_return(self.hashed_password)
-    self.hasher.hash_password = Mock(return_value='wrong_hash')
-    authenticator = Authenticator(self.repository, self.hasher)
+    self.repository.create_account_registration(email)
 
-    authenticated = authenticator.get_authenticated_user_account(self.credentials)
+    self.database.query.assert_has_calls([
+        call('INSERT INTO user_account_registration (email, token) VALUES (%s, %s) RETURNING id, email, token;', (email.raw, token)),
+    ])
 
-    self.assertIsNone(authenticated)
+  def test_find_account_registration_by_token_queries_database_correctly(self):
+    self.database.query().rows = []
+    self.repository.find_account_registration_by_token('myToken')
+    self.database.query.assert_called_with('SELECT id, email, token FROM user_account_registration WHERE token LIKE %s;', ('myToken',))
 
 class TestPasswordHasher(TestCase):
 

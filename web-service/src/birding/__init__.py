@@ -6,10 +6,10 @@ from flask import after_this_request
 from flask import redirect
 from flask import url_for
 from .database import DatabaseConnectionFactory
-from .account import UserAccountRepository
+from .account import AccountRepository
 from .account import PasswordHasher
 from .account import Credentials
-from .account import Authenticator
+from .authentication import Authenticator
 from .account import PasswordRepository
 from .account import TokenFactory
 from .mail import MailDispatcherFactory
@@ -48,7 +48,8 @@ def create_app(test_config=None):
   database = database_connection_factory.create_connection(**database_connection_details)
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
-  account_repository = UserAccountRepository(database, hasher)
+  token_factory = TokenFactory()
+  account_repository = AccountRepository(database, hasher, token_factory)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   person_repository = PersonRepository(database)
@@ -68,7 +69,6 @@ def create_app(test_config=None):
   account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory, person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
-  token_factory = TokenFactory()
   password_repository = PasswordRepository(token_factory, database, hasher)
   password_reset_controller = PasswordResetController(account_repository, password_repository, link_factory, mail_dispatcher)
 
