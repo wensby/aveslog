@@ -1,7 +1,4 @@
 from functools import wraps
-import re
-import os
-
 from flask import Blueprint
 from flask import flash
 from flask import g
@@ -32,7 +29,7 @@ def require_logout(view):
       return view(**kwargs)
   return wrapped_view
 
-def create_authentication_blueprint(account_repository, person_repo, authenticator, account_registration_controller, password_reset_controller):
+def create_authentication_blueprint(account_repository, authenticator, account_registration_controller, password_reset_controller):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
   
   @blueprint.before_app_request

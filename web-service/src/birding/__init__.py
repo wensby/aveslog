@@ -37,6 +37,7 @@ from .authentication import SaltFactory
 from .link import LinkFactory
 from .bird_view import BirdViewFactory
 
+
 def create_app(test_config=None):
   app = Flask(__name__, instance_relative_config=True)
   configure_app(app, test_config)
@@ -66,17 +67,20 @@ def create_app(test_config=None):
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, picture_repository)
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
-  account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory, person_repository)
+  account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory,
+                                                                  person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
   password_repository = PasswordRepository(token_factory, database, hasher)
-  password_reset_controller = PasswordResetController(account_repository, password_repository, link_factory, mail_dispatcher)
+  password_reset_controller = PasswordResetController(
+    account_repository, password_repository, link_factory, mail_dispatcher)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_blueprint(
-      account_repository, person_repository, authenticator,
-      account_registration_controller,
-      password_reset_controller,
+    account_repository,
+    authenticator,
+    account_registration_controller,
+    password_reset_controller,
   )
   search_blueprint = create_search_blueprint(bird_search_controller, bird_search_view_factory)
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
@@ -95,11 +99,11 @@ def create_app(test_config=None):
     # initialize render context dictionary
     g.render_context = dict()
     detect_user_locale()
-  
+
   def detect_user_locale():
     locale = locale_determiner.determine_locale_from_request(request)
     update_locale_context(locale)
-  
+
   def update_locale_context(locale):
     previously_set = request.cookies.get(user_locale_cookie_key, None)
     # when the response exists, set a cookie with the language if it is new
@@ -107,7 +111,7 @@ def create_app(test_config=None):
       set_locale_cookie_after_this_request(locale)
     g.locale = locale
     g.render_context['locale'] = locale
-  
+
   def set_locale_cookie_after_this_request(locale):
     @after_this_request
     def remember_language(response):
@@ -131,6 +135,7 @@ def create_app(test_config=None):
   app.logger.info('Flask app constructed')
   return app
 
+
 def configure_app(app, test_config):
   if not os.path.isdir(app.instance_path):
     os.makedirs(app.instance_path)
@@ -141,10 +146,11 @@ def configure_app(app, test_config):
   if not app.config['SECRET_KEY']:
     raise Exception('Flask secret key not set')
 
+
 def create_database_connection_details():
   return {
-      'host': os.environ.get('DATABASE_HOST'),
-      'dbname': os.environ.get('DATABASE_NAME'),
-      'user': os.environ.get('DATABASE_USER'),
-      'password': os.environ.get('DATABASE_PASSWORD')
+    'host': os.environ.get('DATABASE_HOST'),
+    'dbname': os.environ.get('DATABASE_NAME'),
+    'user': os.environ.get('DATABASE_USER'),
+    'password': os.environ.get('DATABASE_PASSWORD')
   }
