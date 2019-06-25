@@ -8,7 +8,6 @@ from flask import url_for
 from .database import DatabaseFactory
 from .account import AccountRepository
 from .account import PasswordHasher
-from .account import Credentials
 from .authentication import Authenticator
 from .account import PasswordRepository
 from .account import TokenFactory
