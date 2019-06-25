@@ -7,20 +7,20 @@
         <div class="card">
           <div class="row no-gutters">
             <div class="col-sm-4" id="card-bird-thumbnail-col">
-              <a href="{{ url_for('bird.get_bird', bird_id=sighting.bird.id|string) }}">
+              <a href="{{ url_for('bird.get_bird', bird_id=sighting.bird_id|string) }}">
                 {% if sighting.thumbnail_picture %}
-                  <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename=sighting.thumbnail_picture.filepath)}}" alt="Card image cap">
+                  <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename=sighting.thumbnail_picture)}}" alt="Card image cap">
                 {% else %}
                   <img class="img-fluid card-bird-thumbnail" src="{{url_for('static', filename='placeholder-bird.png')}}" alt="Card image cap">
                 {% endif %}
               </a>
             </div>
             <div class="card-body">
-              {% if locale.name(sighting.bird) %}
-              <h5 class="card-title">{{ locale.name(sighting.bird) }}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">{{ sighting.bird.binomial_name }}</h6>
+              {% if locale.name(sighting.bird_binomial_name) %}
+              <h5 class="card-title">{{ locale.name(sighting.bird_binomial_name) }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ sighting.bird_binomial_name }}</h6>
               {% else %}
-              <h5 class="card-title">{{ sighting.bird.binomial_name }}</h5>
+              <h5 class="card-title">{{ sighting.bird_binomial_name }}</h5>
               {% endif %}
               <p class="card-text">{{ sighting.time }}</p>
             </div>

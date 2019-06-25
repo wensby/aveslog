@@ -1,6 +1,9 @@
 import json
 import os
 
+from .bird import Bird
+
+
 class LocalesFactory:
 
   def __init__(self, database, locales_directory_path):
@@ -52,8 +55,9 @@ class Locale:
     return translated
 
   def name(self, bird):
-    if self.bird_dictionary and bird.binomial_name in self.bird_dictionary:
-      return self.bird_dictionary[bird.binomial_name]
+    binomial_name = bird.binomial_name if isinstance(bird, Bird) else bird
+    if self.bird_dictionary and binomial_name in self.bird_dictionary:
+      return self.bird_dictionary[binomial_name]
 
 class BirdDictionaryFactory:
 

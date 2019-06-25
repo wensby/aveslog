@@ -1,6 +1,10 @@
 from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
+def read_script_file(filename):
+  with open(f'birding/resources/{filename}', 'r') as file:
+    return file.read()
+
 class DatabaseFactory:
 
   def __init__(self, logger):

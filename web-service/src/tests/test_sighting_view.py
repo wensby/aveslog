@@ -1,8 +1,10 @@
 from unittest import TestCase
 from unittest.mock import Mock, ANY
+
 from birding.sighting_view import SightingViewFactory
 from birding.sighting_view import SightingItem
 from birding.sighting_view import SightingCreationView
+from birding.database import read_script_file
 from tests.test_util import mock_return
 from types import SimpleNamespace as Simple
 from datetime import datetime
@@ -11,30 +13,34 @@ class TestSightingViewFactory(TestCase):
 
   def setUp(self):
     self.bird_repository = Mock()
-    self.picture_repository = Mock()
-    self.factory = SightingViewFactory(
-        self.bird_repository, self.picture_repository)
+    self.database = Mock()
+    self.factory = SightingViewFactory(self.bird_repository, self.database)
 
   def test_create_sighting_items_returns_empty_list_when_no_sightings(self):
-    items = self.factory.create_sighting_items([])
-    self.assertListEqual(items, [])
+    self.database.query().rows = []
+    result = self.factory.create_sighting_items(account=Simple(person_id=4))
+    self.assertListEqual(result, [])
 
   def test_create_sighting_items_returns_correct_sighting_item(self):
     now = datetime.now()
-    date = now.date()
-    time = now.time()
-    sighting = Simple(id=4, bird_id=8, sighting_date=date, sighting_time=time)
-    bird = Simple(id=8)
-    picture = Simple(id=15)
-    thumbnail = Simple(bird_id=8, picture_id=15)
-    self.bird_repository.get_bird_by_id = mock_return(bird)
-    self.bird_repository.bird_thumbnails = mock_return([thumbnail])
-    self.picture_repository.pictures = mock_return([picture])
+    self.database.query().rows = [
+      [4, 8, 'Pica pica', now.date(), now.time(), 'myPictureUrl1'],
+      [15, 16, 'Ardea cinerea', now.date(), now.time(), 'myPictureUrl2'],
+    ]
 
-    items = self.factory.create_sighting_items([sighting])
+    result = self.factory.create_sighting_items(account=Simple(person_id=23))
 
-    time = f'{date.isoformat()} {time.isoformat()}'
-    self.assertListEqual(items, [SightingItem(4, bird, time, picture)])
+    time = f'{now.date().isoformat()} {now.time().isoformat()}'
+    expected_items = [
+      SightingItem(4, 8, 'Pica pica', time, 'myPictureUrl1'),
+      SightingItem(15, 16, 'Ardea cinerea', time, 'myPictureUrl2'),
+    ]
+    self.assertListEqual(result, expected_items)
+
+  def test_create_sighting_items_queries_database_correctly(self):
+    self.database.query().rows = []
+    self.factory.create_sighting_items(account=Simple(person_id=4))
+    self.database.query.assert_called_with(read_script_file('select_sighting_item_data.sql'), (4, ))
 
   def test_create_sighting_creation_view_when_valid_bird_id(self):
     self.bird_repository.get_bird_by_id = mock_return('White wagtail')

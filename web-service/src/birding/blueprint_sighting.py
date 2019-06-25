@@ -20,9 +20,8 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   @blueprint.route('/')
   @require_login
   def get_sightings_index():
-    person_id = g.logged_in_account.person_id
-    sightings = sighting_repository.get_sightings_by_person_id(person_id)
-    g.render_context['sightings'] = view_factory.create_sighting_items(sightings)
+    items = view_factory.create_sighting_items(g.logged_in_account)
+    g.render_context['sightings'] = items
     return render_page('sighting/sightings.html')
 
   @blueprint.route('/', methods=['POST'])

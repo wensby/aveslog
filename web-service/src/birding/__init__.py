@@ -65,7 +65,7 @@ def create_app(test_config=None):
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
-  sighting_view_factory = SightingViewFactory(bird_repository, picture_repository)
+  sighting_view_factory = SightingViewFactory(bird_repository, database)
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
   account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory,
                                                                   person_repository)
