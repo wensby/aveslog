@@ -2,10 +2,11 @@
 *.pyc
 deploy/deploy.sh
 deploy/rsync-exclude-list.txt
-docker/docker-compose.dev.yml
-docker/docker-compose.prod.yml.tmpl
+web-service/testDockerfile
+web-service/run_tests.sh
 web-service/venv
 web-service/src/instance
 web-service/src/venv
 web-service/src/birding/static/image
+database/testDockerfile
 .idea/
