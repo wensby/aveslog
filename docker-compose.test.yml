@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  test-web-service:
+    image: test-web-service
+    container_name: test-web-service
+    depends_on:
+      - test-database-service
+    build:
+      dockerfile: testDockerfile
+      context: ./web-service
+    networks:
+      - test
+    volumes:
+      - ./web-service/src:/src
+    environment:
+      EXTERNAL_HOST: myExternalHost
+      DATABASE_HOST: test-database-service
+      DATABASE_NAME: birding-database
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: docker
+    # start container with tail to keep it from stopping
+    command: ["tail", "-F", "anything"]
+
+  test-database-service:
+    image: test-database-service
+    container_name: test-database-service
+    build:
+      dockerfile: testDockerfile
+      context: ./database
+    networks:
+      - test
+    volumes:
+      - ./volumes/test-database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: birding-database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+
+networks:
+  test:
+    driver: bridge

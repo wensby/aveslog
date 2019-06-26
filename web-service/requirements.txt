@@ -3,3 +3,4 @@ Flask-Mail
 psycopg2-binary
 retrying
 gunicorn
+testing.postgresql

@@ -13,9 +13,10 @@ class LocalesFactory:
   def create_locales(self):
     locales = dict()
     language_codes = self.__get_locale_codes()
-    languages = map(lambda x: Language(x), language_codes)
-    for language in languages:
-      locales[language] = self.create_locale(language)
+    if language_codes:
+      languages = map(lambda x: Language(x), language_codes)
+      for language in languages:
+          locales[language] = self.create_locale(language)
     return locales
 
   def __get_locale_codes(self):

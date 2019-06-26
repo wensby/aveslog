@@ -6,8 +6,8 @@ POSITIONAL=()
 while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
-    -s|--setup) # Setup environment, used first time, or on changes
-      SETUP="$1"
+    -f|--force-recreate)
+      FORCE_RECREATE="$1"
       shift # past argument
       ;;
     *)
@@ -16,18 +16,15 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
-if ! [ -z "$SETUP" ]; then
-  python3.7 -m venv web-service/venv
+RUNNING=$(docker-compose -f docker-compose.test.yml ps -q test-web-service)
+if [ -z "$RUNNING" ] || [ -n "$FORCE_RECREATE" ]; then
+  echo "Recreating test containers"
+  docker-compose -f docker-compose.test.yml down
+  # Destroy test database, forcing creation of new one
+  rm -rf volumes/test-database
+  docker-compose -f docker-compose.test.yml up --build --detach
 fi
 
-source web-service/venv/bin/activate
-
-if ! [ -z "$SETUP" ]; then
-  pip install -q --upgrade pip
-  pip install -q -r web-service/requirements.txt
-fi
-
-cd web-service/src
-python -m unittest discover -s tests
-deactivate
+docker exec -i -t test-web-service /run_tests.sh

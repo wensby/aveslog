@@ -1,4 +1,4 @@
 FROM postgres
 VOLUME /var/lib/postgresql/data
-COPY *.sql /docker-entrypoint-initdb.d/
+COPY 0index.sql /docker-entrypoint-initdb.d/
 COPY schema/ /schema
