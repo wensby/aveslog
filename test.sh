@@ -27,4 +27,4 @@ if [ -z "$RUNNING" ] || [ -n "$FORCE_RECREATE" ]; then
   docker-compose -f docker-compose.test.yml up --build --detach
 fi
 
-docker exec -i -t test-web-service /run_tests.sh
+time docker exec -i -t test-web-service /run_tests.sh
