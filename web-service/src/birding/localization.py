@@ -107,7 +107,7 @@ class LocaleDeterminer:
     if not locale:
       locale = self.__determine_from_headers(request.headers)
     if not locale:
-      locale = self.locales[next(iter(self.locales))]
+      locale = next(iter(self.locales.values()), Locale(None, dict(), None))
     return locale
 
   def __determine_from_cookies(self, cookies):

@@ -46,6 +46,7 @@ def create_app(test_config=None):
   database_connection_factory = DatabaseFactory(app.logger)
   database_connection_details = create_database_connection_details()
   database = database_connection_factory.create_database(**database_connection_details)
+  app.db = database
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
   token_factory = TokenFactory()
@@ -106,7 +107,7 @@ def create_app(test_config=None):
   def update_locale_context(locale):
     previously_set = request.cookies.get(user_locale_cookie_key, None)
     # when the response exists, set a cookie with the language if it is new
-    if not previously_set or previously_set is not locale.language.iso_639_1_code:
+    if locale.language and (not previously_set or previously_set is not locale.language.iso_639_1_code):
       set_locale_cookie_after_this_request(locale)
     g.locale = locale
     g.render_context['locale'] = locale
