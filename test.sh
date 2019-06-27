@@ -10,6 +10,10 @@ while [[ $# -gt 0 ]]; do
       FORCE_RECREATE="$1"
       shift # past argument
       ;;
+    -c|--coverage)
+      COVERAGE="$1"
+      shift # past argument
+      ;;
     *)
       POSITIONAL+=("$1")
       shift # past argument
@@ -27,4 +31,11 @@ if [ -z "$RUNNING" ] || [ -n "$FORCE_RECREATE" ]; then
   docker-compose -f docker-compose.test.yml up --build --detach
 fi
 
-time docker exec -i -t test-web-service /run_tests.sh
+if [ -n "$COVERAGE" ]; then
+  rm -rf htmlcov
+  time docker exec -i -t test-web-service /run_tests.sh -c
+  docker cp test-web-service:/src/htmlcov ./
+  open htmlcov/index.html
+else
+  time docker exec -i -t test-web-service /run_tests.sh
+fi

@@ -27,3 +27,6 @@ is accessed through volumes, instead of copied into the containters.
 
 If you wish to force a recreation of the test-containers, you can just use the
 -f --force-recreate flag to the test script.
+
+You can run the tests with coverage, which will, upon completion, copy over the
+html report from the container to the current worker directory and open it up.
