@@ -144,6 +144,3 @@ class TestPasswordRepository(TestCase):
   def test_remove_password_reset_token_queries_database_correctly(self):
     self.repository.remove_password_reset_token('myToken')
     self.database.query.assert_called_with('DELETE FROM password_reset_token WHERE token LIKE %s;', ('myToken',))
-
-if __name__ == '__main__':
-  unittest.main()

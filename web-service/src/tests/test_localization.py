@@ -56,6 +56,3 @@ class TestLocaleDeterminer(unittest.TestCase):
     determiner = LocaleDeterminer(locales, 'cookie-key')
     locale = determiner.determine_locale_from_request(self.request)
     self.assertTrue(locale == swedish_locale)
-
-if __name__ == '__main__':
-  unittest.main()

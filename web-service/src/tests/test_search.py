@@ -99,6 +99,3 @@ class TestStringMatcher(TestCase):
 
   def test_string_with_one_out_of_two_matching_chars_returns_half(self):
     self.assertEqual(StringMatcher().match('ab', 'ac'), 0.5)
-
-if __name__ == '__main__':
-  unittest.main()
