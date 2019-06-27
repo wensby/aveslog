@@ -13,6 +13,7 @@ from .account import PasswordRepository
 from .account import TokenFactory
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
+from .blueprint_home import create_home_blueprint
 from .blueprint_authentication import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
 from .blueprint_sighting import create_sighting_blueprint
@@ -26,7 +27,6 @@ from .search import BirdSearcher
 from .search import BirdSearchController
 from .search import StringMatcher
 from .sighting import SightingRepository
-from .render import render_page
 from .picture import PictureRepository
 from .search_view import BirdSearchViewFactory
 from .sighting_view import SightingViewFactory
@@ -76,6 +76,7 @@ def create_app(test_config=None):
     account_repository, password_repository, link_factory, mail_dispatcher)
 
   # Create and register blueprints
+  home_blueprint = create_home_blueprint()
   authentication_blueprint = create_authentication_blueprint(
     account_repository,
     authenticator,
@@ -87,6 +88,7 @@ def create_app(test_config=None):
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(account_repository, authenticator, password_repository)
   bird_blueprint = create_bird_blueprint(bird_view_factory)
+  app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(search_blueprint)
   app.register_blueprint(sighting_blueprint)
@@ -127,10 +129,6 @@ def create_app(test_config=None):
       locale = locales[language]
       update_locale_context(locale)
       return redirect(url_for('index'))
-
-  @app.route('/')
-  def index():
-    return render_page('index.html')
 
   app.logger.info('Flask app constructed')
   return app
