@@ -25,3 +25,8 @@ class BirdPageView:
     self.bird = bird
     self.cover_picture = cover_picture
     self.thumbnail_picture = thumbnail_picture
+
+  def __eq__(self, other):
+    if isinstance(other, BirdPageView):
+      return self.__dict__ == other.__dict__
+    return False
