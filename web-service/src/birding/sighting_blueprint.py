@@ -1,6 +1,3 @@
-import os.path
-import json
-
 from flask import Blueprint
 from flask import url_for
 from flask import request
@@ -11,6 +8,7 @@ from .sighting import SightingPost
 from .time import parse_date
 from .time import parse_time
 from .render import render_page
+
 
 def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   view_factory = sighting_view_factory
@@ -45,7 +43,8 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   def get_sighting(sighting_id):
     sighting = sighting_repository.find_sighting(sighting_id)
     if sighting and sighting.person_id == g.logged_in_account.person_id:
-      g.render_context['sighting_view'] = view_factory.create_sighting_view(sighting)
+      g.render_context['sighting_view'] = view_factory.create_sighting_view(
+        sighting)
       return render_page('sighting/sighting.html')
     else:
       return redirect(url_for('index'))
@@ -60,15 +59,12 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
         return redirect(url_for('sighting.get_sightings_index'))
     return redirect(url_for('index'))
 
-  def create_post_sighting_response(success, status_code):
-    headers = {'ContentType':'application/json'}
-    return json.dumps({'success':success}), status_code, headers
-  
   def create_sighting_post(form):
     bird_id = int(form['birdId'])
     person_id = g.logged_in_account.person_id
     date = parse_date(form['dateInput'])
-    time = parse_time(form['timeTimeInput']) if 'timeTimeInput' in form else None
+    time = parse_time(
+      form['timeTimeInput']) if 'timeTimeInput' in form else None
     return SightingPost(person_id, bird_id, date, time)
 
   return blueprint

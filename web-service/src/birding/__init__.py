@@ -16,7 +16,7 @@ from .person import PersonRepository
 from .blueprint_home import create_home_blueprint
 from .blueprint_authentication import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
-from .blueprint_sighting import create_sighting_blueprint
+from .sighting_blueprint import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint
 from .blueprint_settings import create_settings_blueprint
 from .blueprint_bird import create_bird_blueprint
