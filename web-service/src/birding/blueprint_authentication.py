@@ -24,7 +24,7 @@ def require_logout(view):
   @wraps(view)
   def wrapped_view(**kwargs):
     if g.logged_in_account:
-      return redirect(url_for('index'))
+      return redirect(url_for('home.index'))
     else:
       return view(**kwargs)
   return wrapped_view

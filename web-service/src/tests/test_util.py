@@ -21,4 +21,16 @@ class AppTestCase(TestCase):
   def setUp(self) -> None:
     test_config = {'TESTING': True, 'SECRET_KEY': 'wowsosecret'}
     self.app = birding.create_app(test_config=test_config)
+    self.database = self.app.db
     self.app.test_client_class = TestClient
+    self.app_context = self.app.test_request_context()
+    self.app_context.push()
+    self.client = self.app.test_client()
+
+  def populate_session(self, key, value):
+    with self.client.session_transaction() as session:
+      session[key] = value
+
+  def tearDown(self) -> None:
+    self.database.query('DELETE FROM user_account;')
+    self.app_context.pop()
