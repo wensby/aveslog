@@ -27,11 +27,3 @@ class TestSightingBlueprint(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     html = HTML(html=response.data)
     self.assertFalse(html.find('.card'))
-
-  def db_insert_account(self, account_id):
-    self.app.db.query(
-      'INSERT INTO user_account '
-      '(id, username, email, person_id, locale_id) '
-      'VALUES '
-      '(%s, %s, %s, %s, %s);',
-      (account_id, 'myUsername', 'myEmail', None, None))

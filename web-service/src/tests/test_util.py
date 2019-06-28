@@ -31,6 +31,14 @@ class AppTestCase(TestCase):
     with self.client.session_transaction() as session:
       session[key] = value
 
+  def db_insert_account(self, account_id):
+    self.app.db.query(
+      'INSERT INTO user_account '
+      '(id, username, email, person_id, locale_id) '
+      'VALUES '
+      '(%s, %s, %s, %s, %s);',
+      (account_id, 'myUsername', 'myEmail', None, None))
+
   def tearDown(self) -> None:
     self.database.query('DELETE FROM user_account;')
     self.app_context.pop()
