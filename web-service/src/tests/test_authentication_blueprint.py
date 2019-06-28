@@ -35,17 +35,9 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertIn(url_for('authentication.get_login'), html.links)
 
   def test_get_register_request_redirect_when_logged_in(self):
-    self.insert_db_user_account(4)
+    self.db_insert_account(4)
     self.populate_session('account_id', 4)
     response = self.client.get(url_for('authentication.get_register_request'))
     self.assertEqual(response.status_code, HTTPStatus.FOUND)
     html = HTML(html=response.data)
     self.assertListEqual(list(html.links), [url_for('home.index')])
-
-  def insert_db_user_account(self, account_id):
-    self.database.query(
-      'INSERT INTO user_account '
-      '(id, username, email, person_id, locale_id) '
-      'VALUES '
-      '(%s, %s, %s, %s, %s);',
-      (account_id, 'myUsername', 'myEmail', None, None))
