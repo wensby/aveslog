@@ -4,11 +4,11 @@ from flask import g
 from flask import request
 from flask import flash
 from .render import render_page
-from .account import Credentials
 from .account import Password
 from .blueprint_authentication import require_login
 
-def create_settings_blueprint(account_repository, authenticator, password_repository):
+
+def create_settings_blueprint(authenticator, password_repository):
   blueprint = Blueprint('settings', __name__, url_prefix='/settings')
 
   @blueprint.route('/')
@@ -46,7 +46,7 @@ def create_settings_blueprint(account_repository, authenticator, password_reposi
   def is_posted_new_password_valid(form):
     newpassword = form['newPasswordInput']
     newpasswordverification = form['newPasswordVerificationInput']
-    return newpassword == newpasswordverification and Password.is_valid(newpassword)
+    return newpassword == newpasswordverification and Password.is_valid(
+      newpassword)
 
   return blueprint
-
