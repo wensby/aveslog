@@ -9,12 +9,14 @@ import birding
 def mock_return(value):
   return Mock(return_value=value)
 
+
 class TestClient(FlaskClient):
 
   def open(self, *args, **kwargs):
     headers = kwargs.pop('headers', Headers())
     kwargs['headers'] = headers
     return super().open(*args, **kwargs)
+
 
 class AppTestCase(TestCase):
 
