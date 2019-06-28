@@ -43,6 +43,14 @@ class TestAuthenticationBlueprint(AppTestCase):
 
     response = self.client.get(url_for('authentication.get_register_request'))
 
-    self.assertEqual(response.status_code, HTTPStatus.FOUND)
-    html = HTML(html=response.data)
-    self.assertListEqual(list(html.links), [url_for('home.index')])
+    self.assertRedirect(response, 'home.index')
+
+  def test_post_register_request_flashes_success(self):
+    url = url_for('authentication.post_register_request')
+    self.client.post(url, data={'email': 'my@email.com'})
+    self.assertTrue(self.get_flashed_messages('success'))
+
+  def test_post_register_request_redirects_to_get_register_request(self):
+    url = url_for('authentication.post_register_request')
+    response = self.client.post(url, data={'email': 'my@email.com'})
+    self.assertRedirect(response, 'authentication.get_register_request')

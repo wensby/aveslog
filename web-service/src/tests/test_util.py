@@ -1,6 +1,10 @@
+from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock
+
+from flask import url_for
 from flask.testing import FlaskClient
+from requests_html import HTML
 from werkzeug.datastructures import Headers
 
 import birding
@@ -41,6 +45,17 @@ class AppTestCase(TestCase):
       '(%s, %s, %s, %s, %s);',
       (account_id, 'myUsername', 'myEmail', None, None))
 
+  def get_flashed_messages(self, category):
+    with self.client.session_transaction() as session:
+      flash_message = dict(session['_flashes']).get(category)
+    return flash_message
+
+  def assertRedirect(self, response, endpoint):
+    self.assertEqual(response.status_code, HTTPStatus.FOUND)
+    html = HTML(html=response.data)
+    self.assertListEqual(list(html.links), [url_for(endpoint)])
+
   def tearDown(self) -> None:
     self.database.query('DELETE FROM user_account;')
+    self.database.query('DELETE FROM user_account_registration;')
     self.app_context.pop()
