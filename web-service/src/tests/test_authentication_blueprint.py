@@ -89,7 +89,7 @@ class TestAuthenticationBlueprint(AppTestCase):
 
   def test_post_register_form_flashes_success_when_account_created(self):
     self.db_insert_registration('my@email.com', 'myToken')
-    response = self.__post_register_form(
+    self.__post_register_form(
       'myToken', 'my@email.com', 'myToken', 'myUsername', 'myPassword')
     self.assertEqual(
       self.get_flashed_messages('success'),
