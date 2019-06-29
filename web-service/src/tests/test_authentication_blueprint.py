@@ -120,7 +120,10 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertTrue(HTML(html=response.data).xpath(xpath, first=True))
 
   def __post_register_form(self, token, email, form_token, username, password):
-    response = self.client.post(
-      url_for('authentication.post_register_form', token=token),
-      data={'email': email, 'token': form_token, 'username': username, 'password': password})
-    return response
+    url = url_for('authentication.post_register_form', token=token)
+    data = {
+      'email': email,
+      'token': form_token,
+      'username': username,
+      'password': password}
+    return self.client.post(url, data=data)
