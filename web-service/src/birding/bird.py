@@ -7,6 +7,14 @@ class Bird:
     self.id = id
     self.binomial_name = binomial_name
 
+  def __eq__(self, other):
+    if isinstance(other, Bird):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __hash__(self):
+    return hash((self.id, self.binomial_name))
+
 class BirdThumbnail:
 
   def __init__(self, bird_id, picture_id):

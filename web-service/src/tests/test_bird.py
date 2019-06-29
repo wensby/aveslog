@@ -43,3 +43,8 @@ class TestBirdRepository(TestCase):
     self.database.query.return_value = Simple(rows=[])
     self.repository.fetchonebird('query', (1,))
     self.database.query.assert_called_with('query', (1,))
+
+  def test_fetchonebird_parses_result_correctly(self):
+    self.database.query.return_value = Simple(rows=[[4, 'Pica pica']])
+    result = self.repository.fetchonebird('query', (4,))
+    self.assertEqual(result, Bird(4, 'Pica pica'))
