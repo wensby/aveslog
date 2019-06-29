@@ -24,7 +24,7 @@ class PersonRepository:
     return Person(row[0], row[1])
 
   def get_person_by_name(self, name):
-    return self.fetchoneperson('SELECT id, name FROM person WHERE name like %s;', (name,))
+    return self.fetchoneperson('SELECT id, name FROM person WHERE name LIKE %s;', (name,))
 
   def get_people(self):
     rows = self.database.query('SELECT * FROM person;').rows
