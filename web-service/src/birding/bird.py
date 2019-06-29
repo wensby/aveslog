@@ -17,6 +17,15 @@ class BirdThumbnail:
   def fromrow(cls, row):
     return cls(row[0], row[1])
 
+  def __repr__(self):
+    return \
+      f'BirdThumbnail<bird_id={self.bird_id}, picture_id={self.picture_id}>'
+
+  def __eq__(self, other):
+    if isinstance(other, BirdThumbnail):
+      return self.__dict__ == other.__dict__
+    return False
+
 class BirdRepository:
 
   def __init__(self, database):
