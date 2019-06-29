@@ -77,7 +77,7 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
         request.form['password']
     )
     if response == 'success':
-      flash(g.locale.text('User account created succesfully'), 'success')
+      flash(g.locale.text('User account created successfully'), 'success')
       return redirect(url_for('authentication.get_login'))
     elif response == 'associated registration missing':
       flash(g.locale.text('Registration form no longer valid'), 'danger')

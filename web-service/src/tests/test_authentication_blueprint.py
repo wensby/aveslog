@@ -79,6 +79,22 @@ class TestAuthenticationBlueprint(AppTestCase):
     response = self.__get_register_form('registrationToken123')
     self.__assertRegistrationFormPresent(response)
 
+  def test_post_register_form_redirects_to_home_when_logged_in(self):
+    self.db_insert_account(4, None)
+    self.set_logged_in(4)
+
+    response = self.__post_register_form('myToken', None, None, None, None)
+
+    self.assertRedirect(response, 'home.index')
+
+  def test_post_register_form_flashes_success_when_account_created(self):
+    self.db_insert_registration('my@email.com', 'myToken')
+    response = self.__post_register_form(
+      'myToken', 'my@email.com', 'myToken', 'myUsername', 'myPassword')
+    self.assertEqual(
+      self.get_flashed_messages('success'),
+      'User account created successfully')
+
   def __get_register_form(self, token):
     return self.client.get(
       url_for('authentication.get_register_form', token=token)
@@ -95,3 +111,9 @@ class TestAuthenticationBlueprint(AppTestCase):
       "and .//input[@id = 'tocCheckbox'] "
       "and .//button[@type = 'submit']]")
     self.assertTrue(HTML(html=response.data).xpath(xpath, first=True))
+
+  def __post_register_form(self, token, email, form_token, username, password):
+    response = self.client.post(
+      url_for('authentication.post_register_form', token=token),
+      data={'email': email, 'token': form_token, 'username': username, 'password': password})
+    return response
