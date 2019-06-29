@@ -43,13 +43,13 @@ class AppTestCase(TestCase):
     self.database.query(
       'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, 'name'))
 
-  def db_insert_account(self, account_id, person_id):
+  def db_insert_account(self, account_id, username, person_id):
     self.app.db.query(
       'INSERT INTO user_account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
-      (account_id, 'myUsername', 'myEmail', person_id, None))
+      (account_id, username, 'myEmail', person_id, None))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())

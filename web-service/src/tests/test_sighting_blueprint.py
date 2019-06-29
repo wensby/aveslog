@@ -9,7 +9,7 @@ from test_util import AppTestCase
 class TestSightingBlueprint(AppTestCase):
 
   def test_get_sightings_index_contains_logout_link_when_logged_in(self):
-    self.db_insert_account(4, None)
+    self.db_insert_account(4, 'myUsername', None)
     self.set_logged_in(4)
 
     response = self.client.get(url_for('sighting.get_sightings_index'))
@@ -19,7 +19,7 @@ class TestSightingBlueprint(AppTestCase):
     self.assertIn(url_for('authentication.logout'), html.links)
 
   def test_get_sightings_index_contains_no_sightings_when_logged_in(self):
-    self.db_insert_account(4, None)
+    self.db_insert_account(4, 'myUsername', None)
     self.set_logged_in(4)
 
     response = self.client.get(url_for('sighting.get_sightings_index'))
@@ -35,7 +35,7 @@ class TestSightingBlueprint(AppTestCase):
   def test_post_sighting_redirects_to_sightings_index_when_logged_in(self):
     self.db_insert_bird(4)
     self.db_insert_person(8)
-    self.db_insert_account(15, 8)
+    self.db_insert_account(15, 'myUsername', 8)
     self.set_logged_in(15)
 
     response = self.__post_sighting(4, '2016-02-03')
