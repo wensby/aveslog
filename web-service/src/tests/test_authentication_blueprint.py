@@ -95,6 +95,13 @@ class TestAuthenticationBlueprint(AppTestCase):
       self.get_flashed_messages('success'),
       'User account created successfully')
 
+  def test_post_register_form_flashes_danger_when_token_discrepancy(self):
+    self.__post_register_form(
+      'myToken', 'my@email.com', 'myToken2', 'myUsername', 'myPassword')
+    self.assertEqual(
+      self.get_flashed_messages('danger'),
+      'Account registraion failure: Registration token discrepancy')
+
   def __get_register_form(self, token):
     return self.client.get(
       url_for('authentication.get_register_form', token=token)
