@@ -39,6 +39,5 @@ class TestSettingsBlueprint(AppTestCase):
       url_for('settings.post_password_settings'), data={
         'oldPasswordInput': password,
         'newPasswordInput': new_password,
-        'newPasswordVerificationInput': new_password,
       })
     return response

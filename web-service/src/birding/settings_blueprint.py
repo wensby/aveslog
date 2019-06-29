@@ -41,12 +41,6 @@ def create_settings_blueprint(authenticator, password_repository):
   def is_password_change_valid(account, form):
     oldpassword = request.form['oldPasswordInput']
     if authenticator.is_account_password_correct(account, oldpassword):
-      return is_posted_new_password_valid(form)
-
-  def is_posted_new_password_valid(form):
-    newpassword = form['newPasswordInput']
-    newpasswordverification = form['newPasswordVerificationInput']
-    return newpassword == newpasswordverification and Password.is_valid(
-      newpassword)
+      return Password.is_valid(form['newPasswordInput'])
 
   return blueprint
