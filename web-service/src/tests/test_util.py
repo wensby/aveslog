@@ -39,13 +39,17 @@ class AppTestCase(TestCase):
     with self.client.session_transaction() as session:
       session[key] = value
 
-  def db_insert_account(self, account_id):
+  def db_insert_person(self, person_id):
+    self.database.query(
+      'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, 'name'))
+
+  def db_insert_account(self, account_id, person_id):
     self.app.db.query(
       'INSERT INTO user_account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
-      (account_id, 'myUsername', 'myEmail', None, None))
+      (account_id, 'myUsername', 'myEmail', person_id, None))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
@@ -61,10 +65,18 @@ class AppTestCase(TestCase):
       'INSERT INTO user_account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
 
+  def db_insert_bird(self, bird_id):
+    self.database.query(
+      'INSERT INTO bird (id, binomial_name) '
+      'VALUES (%s, %s);', (bird_id, 'exampleBinomialName'))
+
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
       if '_flashes' in session:
         return dict(session['_flashes']).get(category)
+
+  def set_logged_in(self, account_id):
+    self.populate_session('account_id', account_id)
 
   def assertRedirect(self, response, endpoint):
     self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -74,5 +86,8 @@ class AppTestCase(TestCase):
   def tearDown(self) -> None:
     self.database.query('DELETE FROM hashed_password;')
     self.database.query('DELETE FROM user_account;')
+    self.database.query('DELETE FROM sighting;')
+    self.database.query('DELETE FROM bird;')
+    self.database.query('DELETE FROM person;')
     self.database.query('DELETE FROM user_account_registration;')
     self.app_context.pop()

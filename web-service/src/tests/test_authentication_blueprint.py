@@ -38,8 +38,8 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertIn(url_for('authentication.get_login'), html.links)
 
   def test_get_register_request_redirect_when_logged_in(self):
-    self.db_insert_account(4)
-    self.populate_session('account_id', 4)
+    self.db_insert_account(4, None)
+    self.set_logged_in(4)
 
     response = self.client.get(url_for('authentication.get_register_request'))
 
@@ -56,8 +56,8 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertRedirect(response, 'authentication.get_register_request')
 
   def test_get_register_form_redirects_when_logged_in(self):
-    self.db_insert_account(4)
-    self.populate_session('account_id', 4)
+    self.db_insert_account(4, None)
+    self.set_logged_in(4)
 
     response = self.__get_register_form('myToken')
 
