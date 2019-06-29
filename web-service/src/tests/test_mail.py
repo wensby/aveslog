@@ -10,3 +10,7 @@ class TestEmailAddress(TestCase):
 
   def test_eq_false_when_different_type(self):
     self.assertNotEqual(EmailAddress('my@email.com'), 'my@email.com')
+
+  def test_repr(self):
+    self.assertEqual(
+      repr(EmailAddress('my@mail.com')), 'EmailAddress<my@mail.com>')

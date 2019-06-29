@@ -23,9 +23,7 @@ class EmailAddress:
     return False
 
   def __repr__(self):
-    return ('EmailAddress<'
-        f'raw={self.raw}, '
-        '>')
+    return (f'EmailAddress<{self.raw}>')
 
 class MailDispatcherFactory:
 
