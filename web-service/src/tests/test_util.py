@@ -56,6 +56,11 @@ class AppTestCase(TestCase):
       'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
       'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
 
+  def db_insert_registration(self, email, token):
+    self.app.db.query(
+      'INSERT INTO user_account_registration (id, email, token) '
+      'VALUES (%s, %s, %s);', (4, email, token))
+
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
       if '_flashes' in session:

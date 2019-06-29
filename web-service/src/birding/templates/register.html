@@ -19,7 +19,7 @@
     {% endwith %}
     <div class="row">
       <div class="col">
-        <form class="needs-validation" method="post" novalidate>
+        <form id="registrationForm" class="needs-validation" method="post" novalidate>
           <div class="form-group">
             <label for="emailInput">{{ locale.text('Email address') }}</label>
             <input class="form-control" id="emailInput" type="text" name="email" readonly placeholder="{{user_account_registration.email}}" value="{{ user_account_registration.email }}">

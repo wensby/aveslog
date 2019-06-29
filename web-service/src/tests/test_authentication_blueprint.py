@@ -54,3 +54,44 @@ class TestAuthenticationBlueprint(AppTestCase):
     url = url_for('authentication.post_register_request')
     response = self.client.post(url, data={'email': 'my@email.com'})
     self.assertRedirect(response, 'authentication.get_register_request')
+
+  def test_get_register_form_redirects_when_logged_in(self):
+    self.db_insert_account(4)
+    self.populate_session('account_id', 4)
+
+    response = self.__get_register_form('myToken')
+
+    self.assertRedirect(response, 'home.index')
+
+  def test_get_register_form_redirects_when_registration_absent(self):
+    response = self.__get_register_form('myToken')
+    self.assertRedirect(response, 'authentication.get_register_request')
+
+  def test_get_register_form_flashes_when_registration_absent(self):
+    self.__get_register_form('myToken')
+    self.assertEqual(
+      self.get_flashed_messages(),
+      'This registration link is no longer valid, please request a new one.'
+    )
+
+  def test_get_register_form_contains_form_when_registration_present(self):
+    self.db_insert_registration('my@email.com', 'registrationToken123')
+    response = self.__get_register_form('registrationToken123')
+    self.__assertRegistrationFormPresent(response)
+
+  def __get_register_form(self, token):
+    return self.client.get(
+      url_for('authentication.get_register_form', token=token)
+    )
+
+  def __assertRegistrationFormPresent(self, response):
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    xpath = (
+      ".//form[@id = 'registrationForm' "
+      "and .//input[@name = 'email'] "
+      "and .//input[@name = 'username'] "
+      "and .//input[@name = 'password'] "
+      "and .//input[@name = 'confirmPassword'] "
+      "and .//input[@id = 'tocCheckbox'] "
+      "and .//button[@type = 'submit']]")
+    self.assertTrue(HTML(html=response.data).xpath(xpath, first=True))
