@@ -3,7 +3,7 @@ from flask import url_for
 from flask import request
 from flask import redirect
 from flask import g
-from .blueprint_authentication import require_login
+from .authentication_blueprint import require_login
 from .sighting import SightingPost
 from .time import parse_date
 from .time import parse_time

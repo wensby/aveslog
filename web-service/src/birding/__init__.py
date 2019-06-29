@@ -14,7 +14,7 @@ from .account import TokenFactory
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
 from .blueprint_home import create_home_blueprint
-from .blueprint_authentication import create_authentication_blueprint
+from .authentication_blueprint import create_authentication_blueprint
 from .blueprint_search import create_search_blueprint
 from .sighting_blueprint import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint

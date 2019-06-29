@@ -4,7 +4,7 @@ from flask import request
 from flask import flash
 from .render import render_page
 from .account import Password
-from .blueprint_authentication import require_login
+from .authentication_blueprint import require_login
 
 
 def create_settings_blueprint(authenticator, password_repository):

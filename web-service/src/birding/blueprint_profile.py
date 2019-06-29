@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask import session
 from flask import g
 from .render import render_page
-from .blueprint_authentication import require_login
+from .authentication_blueprint import require_login
 
 def create_profile_blueprint(account_repo):
   blueprint = Blueprint('profile', __name__)
