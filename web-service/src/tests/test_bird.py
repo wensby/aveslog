@@ -25,5 +25,8 @@ class TestBirdThumbnail(TestCase):
   def test_eq(self):
     self.assertEqual(BirdThumbnail(4, 8), BirdThumbnail(4, 8))
 
-  def test_eq_false(self):
+  def test_eq_false_when_different_bird_thumbnail(self):
     self.assertNotEqual(BirdThumbnail(4, 8), BirdThumbnail(4, 9))
+
+  def test_eq_false_when_different_type(self):
+    self.assertNotEqual(BirdThumbnail(4, 8), 'BirdThumbnail(4, 8)')
