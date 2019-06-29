@@ -1,7 +1,9 @@
 from unittest import TestCase
+from unittest.mock import Mock
 
-from birding.bird import Bird, BirdThumbnail
+from birding.bird import Bird, BirdThumbnail, BirdRepository
 
+from types import SimpleNamespace as Simple
 
 class TestBird(TestCase):
 
@@ -30,3 +32,14 @@ class TestBirdThumbnail(TestCase):
 
   def test_eq_false_when_different_type(self):
     self.assertNotEqual(BirdThumbnail(4, 8), 'BirdThumbnail(4, 8)')
+
+class TestBirdRepository(TestCase):
+
+  def setUp(self) -> None:
+    self.database = Mock()
+    self.repository = BirdRepository(self.database)
+
+  def test_fetchonebird_queries_database_correctly(self):
+    self.database.query.return_value = Simple(rows=[])
+    self.repository.fetchonebird('query', (1,))
+    self.database.query.assert_called_with('query', (1,))
