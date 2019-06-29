@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask import session
 from flask import g
 from flask import request
 from flask import flash
@@ -26,21 +25,18 @@ def create_settings_blueprint(authenticator, password_repository):
   @blueprint.route('/password', methods=['POST'])
   @require_login
   def post_password_settings():
+    old_password = request.form['oldPasswordInput']
+    new_password = request.form['newPasswordInput']
     account = g.logged_in_account
-    username = account.username
-    g.render_context['username'] = username
-    oldpassword = request.form['oldPasswordInput']
-    if is_password_change_valid(account, request.form):
-      newpassword = request.form['newPasswordInput']
-      password_repository.update_password(account.id, newpassword)
+    if is_password_change_valid(account, old_password, new_password):
+      password_repository.update_password(account.id, new_password)
       flash('success')
     else:
       flash('failure')
     return render_page('settings/password.html')
 
-  def is_password_change_valid(account, form):
-    oldpassword = request.form['oldPasswordInput']
-    if authenticator.is_account_password_correct(account, oldpassword):
-      return Password.is_valid(form['newPasswordInput'])
+  def is_password_change_valid(account, old_password, new_password):
+    if authenticator.is_account_password_correct(account, old_password):
+      return Password.is_valid(new_password)
 
   return blueprint
