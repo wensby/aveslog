@@ -8,6 +8,8 @@ from requests_html import HTML
 from werkzeug.datastructures import Headers
 
 import birding
+from birding.account import PasswordHasher
+from birding.authentication import SaltFactory
 
 
 def mock_return(value):
@@ -45,10 +47,19 @@ class AppTestCase(TestCase):
       '(%s, %s, %s, %s, %s);',
       (account_id, 'myUsername', 'myEmail', None, None))
 
-  def get_flashed_messages(self, category):
+  def db_insert_password(self, account_id, password):
+    password_hasher = PasswordHasher(SaltFactory())
+    salt_hashed_password = password_hasher.create_salt_hashed_password(password)
+    salt = salt_hashed_password[0]
+    hashed_password = salt_hashed_password[1]
+    self.app.db.query(
+      'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+      'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
+
+  def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
-      flash_message = dict(session['_flashes']).get(category)
-    return flash_message
+      if '_flashes' in session:
+        return dict(session['_flashes']).get(category)
 
   def assertRedirect(self, response, endpoint):
     self.assertEqual(response.status_code, HTTPStatus.FOUND)
@@ -56,6 +67,7 @@ class AppTestCase(TestCase):
     self.assertListEqual(list(html.links), [url_for(endpoint)])
 
   def tearDown(self) -> None:
+    self.database.query('DELETE FROM hashed_password;')
     self.database.query('DELETE FROM user_account;')
     self.database.query('DELETE FROM user_account_registration;')
     self.app_context.pop()
