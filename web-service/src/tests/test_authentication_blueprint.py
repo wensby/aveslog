@@ -92,8 +92,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.__post_register_form(
       'myToken', 'my@email.com', 'myToken', 'myUsername', 'myPassword')
     self.assertEqual(
-      self.get_flashed_messages('success'),
-      'User account created successfully')
+      self.get_flashed_messages('success'), 'User account created successfully')
 
   def test_post_register_form_flashes_danger_when_token_discrepancy(self):
     self.__post_register_form(
@@ -101,6 +100,12 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertEqual(
       self.get_flashed_messages('danger'),
       'Account registraion failure: Registration token discrepancy')
+
+  def test_post_register_form_flashes_danger_when_registration_absent(self):
+    self.__post_register_form(
+      'myToken', 'my@email.com', 'myToken', 'myUsername', 'myPassword')
+    self.assertEqual(
+      self.get_flashed_messages('danger'), 'Registration form no longer valid')
 
   def __get_register_form(self, token):
     return self.client.get(
