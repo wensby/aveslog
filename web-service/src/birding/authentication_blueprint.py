@@ -70,7 +70,7 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
     if not token == request.form['token']:
       flash(g.locale.text('Account registraion failure: Registration token discrepancy'), 'danger')
       return redirect(url_for('authentication.get_register_form', token=token))
-    response = account_registration_controller.perform_registration_request(
+    response = account_registration_controller.perform_registration(
         request.form['email'],
         request.form['token'],
         request.form['username'],

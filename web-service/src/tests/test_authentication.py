@@ -105,34 +105,34 @@ class TestAccountRegistrationController(TestCase):
 
     self.assertIs(result, registration)
 
-  def test_perform_registration_request_associated_registration_missing(self):
+  def test_perform_registration_associated_registration_missing(self):
     self.account_repository.find_account_registration = mock_return(None)
-    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.assertEqual(result, 'associated registration missing')
 
-  def test_perform_registration_request_username_taken(self):
+  def test_perform_registration_username_taken(self):
     self.account_repository.find_user_account = mock_return('uh-oh!')
-    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.find_user_account.assert_called_with(Username(valid_username))
     self.assertEqual(result, 'username taken')
 
-  def test_perform_registration_request_creates_account(self):
+  def test_perform_registration_creates_account(self):
     self.account_repository.find_user_account.return_value = None
-    self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.account_factory.create_account.assert_called_with(EmailAddress(valid_email), Username(valid_username), Password(valid_password))
 
-  def test_perform_registration_request_removes_registration_on_success(self):
+  def test_perform_registration_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
     self.account_repository.find_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.account_repository.remove_account_registration_by_id.assert_called_with(registration.id)
     self.assertEqual(result, 'success')
 
-  def test_perform_registration_request_initializes_account_person_on_success(self):
+  def test_perform_registration_initializes_account_person_on_success(self):
     account = self.account_factory.create_account()
     person = self.person_repository.add_person()
     self.account_repository.find_user_account = mock_return(None)
-    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.person_repository.add_person.assert_called_with(account.username)
     self.account_repository.set_user_account_person.assert_called_with(account, person)
     self.assertEqual(result, 'success')
@@ -140,7 +140,7 @@ class TestAccountRegistrationController(TestCase):
   def test_person_registration_request_failure_when_account_creation_fails(self):
     self.account_repository.find_user_account = mock_return(None)
     self.account_factory.create_account = mock_return(None)
-    result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
+    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
     self.assertEqual(result, 'failure')
 
 class TestPasswordResetController(TestCase):

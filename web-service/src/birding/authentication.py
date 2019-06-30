@@ -54,7 +54,7 @@ class AccountRegistrationController:
         'Here is your link to the registration form: ')
     return locale.text(message) + link
 
-  def perform_registration_request(self, raw_email, registration_token, raw_username, raw_password):
+  def perform_registration(self, raw_email, registration_token, raw_username, raw_password):
     email = EmailAddress(raw_email)
     registration = self.__find_associated_registration(email, registration_token)
     if not registration:
