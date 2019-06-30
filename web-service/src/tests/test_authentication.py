@@ -137,12 +137,6 @@ class TestAccountRegistrationController(TestCase):
     self.account_repository.set_user_account_person.assert_called_with(account, person)
     self.assertEqual(result, 'success')
 
-  def test_person_registration_request_failure_when_account_creation_fails(self):
-    self.account_repository.find_user_account = mock_return(None)
-    self.account_factory.create_account = mock_return(None)
-    result = self.controller.perform_registration(valid_email, 'myToken', valid_username, valid_password)
-    self.assertEqual(result, 'failure')
-
 class TestPasswordResetController(TestCase):
 
   def setUp(self):

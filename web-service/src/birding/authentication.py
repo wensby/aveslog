@@ -63,18 +63,13 @@ class AccountRegistrationController:
     if self.account_repository.find_user_account(username):
       return 'username taken'
     password = Password(raw_password)
-    account = self.__create_account(email, username, password)
-    if account:
-      self.__remove_registration(registration.id)
-      self.__initialize_account_person(account)
-      return 'success'
-    return 'failure'
+    account = self.account_factory.create_account(email, username, password)
+    self.__remove_registration(registration.id)
+    self.__initialize_account_person(account)
+    return 'success'
 
   def __find_associated_registration(self, email, token):
     return self.account_repository.find_account_registration(email, token)
-
-  def __create_account(self, email, username, password):
-    return self.account_factory.create_account(email, username, password)
 
   def __remove_registration(self, registration_id):
     self.account_repository.remove_account_registration_by_id(registration_id)

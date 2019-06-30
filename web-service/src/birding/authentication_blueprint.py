@@ -76,21 +76,15 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
         request.form['username'],
         request.form['password']
     )
-    if response == 'success':
-      flash(g.locale.text('User account created successfully'), 'success')
-      return redirect(url_for('authentication.get_login'))
-    elif response == 'associated registration missing':
+    if response == 'associated registration missing':
       flash(g.locale.text('Registration form no longer valid'), 'danger')
       return redirect(url_for('authentication.get_login'))
     elif response == 'username taken':
       flash(g.locale.text('Username already taken'), 'danger')
       return redirect(url_for('authentication.get_register_form', token=token))
-    elif response == 'failure':
-      flash(g.locale.text('User account registration failed'), 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
-    else:
-      flash(g.locale.text('User account registration failed'), 'danger')
-      return redirect(url_for('authentication.get_register_form', token=token))
+    assert response == 'success'
+    flash(g.locale.text('User account created successfully'), 'success')
+    return redirect(url_for('authentication.get_login'))
 
   @blueprint.route('/password-reset')
   @require_logout
