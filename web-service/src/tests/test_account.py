@@ -7,8 +7,10 @@ from binascii import hexlify
 from birding.account import Account, PasswordRepository, PasswordResetToken, \
   PasswordHasher, TokenFactory, \
   AccountRepository, Username, Password
-from birding.database import Database, Transaction
+from birding.database import Database
 from birding.mail import EmailAddress
+
+from test_util import mock_database_transaction
 
 class TestAccountRepository(TestCase):
 
@@ -49,33 +51,29 @@ class TestAccountRepository(TestCase):
     self.database.query.assert_called_with('SELECT id, email, token FROM user_account_registration WHERE token LIKE %s;', ('myToken',))
 
   def test_put_new_user_account_queries_database_correctly(self):
-    email = EmailAddress('my@email.com')
-    username = Username('myUsername')
-    password = Password('myPassword')
-    transaction = Mock(spec=Transaction)
-    transaction.__enter__ = Mock(return_value=transaction)
-    transaction.__exit__ = Mock(return_value=None)
-    self.database.transaction.return_value = transaction
-
     self.password_hasher.create_salt_hashed_password.return_value = (
       'mySalt', 'mySaltedHash')
-    transaction.execute.side_effect = [
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.side_effect = [
       Simple(rows=[]),
       Simple(rows=[[1, 'myUsername', 'my@email.com', None, None]]),
-      Simple()
-    ]
+      Simple()]
 
-    self.repository.put_new_user_account(email, username, password)
+    self.repository.put_new_user_account(
+      EmailAddress('my@email.com'),
+      Username('myUsername'),
+      Password('myPassword'))
 
-    transaction.execute.assert_has_calls([
-      call('SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw, )),
+    self.database.transaction().execute.assert_has_calls([
+      call('SELECT 1 FROM user_account WHERE username LIKE %s;',
+           ('myUsername',)),
       call('INSERT INTO user_account (username, email) '
            'VALUES (%s, %s) '
            'RETURNING id, username, email, person_id, locale_id;',
-           (username.raw, email.raw)),
+           ('myUsername', 'my@email.com')),
       call('INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
-           'VALUES (%s, %s, %s);', (1, 'mySalt', 'mySaltedHash')),
-    ])
+           'VALUES (%s, %s, %s);', (1, 'mySalt', 'mySaltedHash'))])
+
 
 class TestPasswordHasher(TestCase):
 
