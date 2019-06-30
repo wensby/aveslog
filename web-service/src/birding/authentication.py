@@ -1,7 +1,7 @@
 import os
 from base64 import b64encode
 from .mail import EmailAddress
-from .account import Username
+from .account import Username, AccountFactory
 from .account import Password
 
 class Authenticator:
@@ -25,7 +25,8 @@ class Authenticator:
 
 class AccountRegistrationController:
 
-  def __init__(self, account_repository, mail_dispatcher, link_factory, person_repository):
+  def __init__(self, account_factory: AccountFactory, account_repository, mail_dispatcher, link_factory, person_repository):
+    self.account_factory = account_factory
     self.account_repository = account_repository
     self.mail_dispatcher = mail_dispatcher
     self.link_factory = link_factory
@@ -73,7 +74,7 @@ class AccountRegistrationController:
     return self.account_repository.find_account_registration(email, token)
 
   def __create_account(self, email, username, password):
-    return self.account_repository.put_new_user_account(email, username, password)
+    return self.account_factory.create_account(email, username, password)
 
   def __remove_registration(self, registration_id):
     self.account_repository.remove_account_registration_by_id(registration_id)

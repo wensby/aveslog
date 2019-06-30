@@ -6,7 +6,7 @@ from flask import after_this_request
 from flask import redirect
 from flask import url_for
 from .database import DatabaseFactory
-from .account import AccountRepository
+from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
 from .authentication import Authenticator
 from .account import PasswordRepository
@@ -67,7 +67,8 @@ def create_app(test_config=None):
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, database)
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
-  account_registration_controller = AccountRegistrationController(account_repository, mail_dispatcher, link_factory,
+  account_factory = AccountFactory(database, hasher)
+  account_registration_controller = AccountRegistrationController(account_factory, account_repository, mail_dispatcher, link_factory,
                                                                   person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)

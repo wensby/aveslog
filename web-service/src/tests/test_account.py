@@ -6,7 +6,7 @@ from binascii import hexlify
 
 from birding.account import Account, PasswordRepository, PasswordResetToken, \
   PasswordHasher, TokenFactory, \
-  AccountRepository, Username, Password
+  AccountRepository, Username, Password, AccountFactory
 from birding.database import Database
 from birding.mail import EmailAddress
 
@@ -50,29 +50,28 @@ class TestAccountRepository(TestCase):
     self.repository.find_account_registration_by_token('myToken')
     self.database.query.assert_called_with('SELECT id, email, token FROM user_account_registration WHERE token LIKE %s;', ('myToken',))
 
-  def test_put_new_user_account_queries_database_correctly(self):
+class TestAccountFactory(TestCase):
+
+  def setUp(self) -> None:
+    self.database = Mock()
+    self.password_hasher = Mock()
+    self.factory = AccountFactory(self.database, self.password_hasher)
+
+  def test_create_account_returns_account_when_success(self):
+    username = Username('alice')
+    email = EmailAddress('alice@email.com')
+    password = Password('password')
     self.password_hasher.create_salt_hashed_password.return_value = (
       'mySalt', 'mySaltedHash')
     self.database.transaction.return_value = mock_database_transaction()
     self.database.transaction().execute.side_effect = [
       Simple(rows=[]),
-      Simple(rows=[[1, 'myUsername', 'my@email.com', None, None]]),
+      Simple(rows=[[4, 'alice', 'alice@email.com', None, None]]),
       Simple()]
 
-    self.repository.put_new_user_account(
-      EmailAddress('my@email.com'),
-      Username('myUsername'),
-      Password('myPassword'))
+    result = self.factory.create_account(email, username, password)
 
-    self.database.transaction().execute.assert_has_calls([
-      call('SELECT 1 FROM user_account WHERE username LIKE %s;',
-           ('myUsername',)),
-      call('INSERT INTO user_account (username, email) '
-           'VALUES (%s, %s) '
-           'RETURNING id, username, email, person_id, locale_id;',
-           ('myUsername', 'my@email.com')),
-      call('INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
-           'VALUES (%s, %s, %s);', (1, 'mySalt', 'mySaltedHash'))])
+    self.assertEqual(result, Account(4, 'alice', 'alice@email.com', None, None))
 
 
 class TestPasswordHasher(TestCase):

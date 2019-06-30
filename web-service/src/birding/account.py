@@ -71,6 +71,35 @@ class Account:
         f'locale_id={self.locale_id}, '
         '>')
 
+class AccountFactory:
+
+  def __init__(self, database, hasher):
+    self.database = database
+    self.hasher = hasher
+
+  def create_account(self, email, username, password):
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw,))
+      if len(result.rows) > 0:
+        return
+      result = transaction.execute(
+        ('INSERT INTO user_account (username, email) '
+         'VALUES (%s, %s) '
+         'RETURNING id, username, email, person_id, locale_id;'),
+        (username.raw, email.raw))
+      account = next(map(Account.fromrow, result.rows))
+      if not account:
+        return
+      salt_hashed_password = self.hasher.create_salt_hashed_password(password)
+      salt = salt_hashed_password[0]
+      hash = salt_hashed_password[1]
+      transaction.execute(
+        'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+        'VALUES (%s, %s, %s);', (account.id, salt, hash))
+      return account
+
+
 class AccountRegistration:
 
   def __init__(self, id, email, token):
@@ -169,28 +198,6 @@ class AccountRepository:
              'WHERE user_account_id = %s;')
     result = self.database.query(query, (user_account.id,))
     return next(map(HashedPassword.fromrow, result.rows), None)
-
-  def put_new_user_account(self, email, username, password):
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw,))
-      if len(result.rows) > 0:
-        return
-      result = transaction.execute(
-        ('INSERT INTO user_account (username, email) '
-         'VALUES (%s, %s) '
-         'RETURNING id, username, email, person_id, locale_id;'),
-        (username.raw, email.raw))
-      account = next(map(Account.fromrow, result.rows))
-      if not account:
-        return
-      salt_hashed_password = self.hasher.create_salt_hashed_password(password)
-      salt = salt_hashed_password[0]
-      hash = salt_hashed_password[1]
-      transaction.execute(
-        'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
-        'VALUES (%s, %s, %s);', (account.id, salt, hash))
-      return account
 
   def set_user_account_person(self, account, person):
     query = ('UPDATE user_account '

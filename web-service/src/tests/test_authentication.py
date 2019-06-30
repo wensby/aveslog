@@ -4,7 +4,8 @@ from types import SimpleNamespace as Simple
 from birding.authentication import AccountRegistrationController
 from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
-from birding.account import AccountRepository, Username, Password
+from birding.account import AccountRepository, Username, Password, \
+  AccountFactory
 from birding.person import PersonRepository
 from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
@@ -45,11 +46,13 @@ class TestAuthenticator(TestCase):
 class TestAccountRegistrationController(TestCase):
 
   def setUp(self):
+    self.account_factory = Mock(spec=AccountFactory)
     self.account_repository = Mock(spec=AccountRepository)
     self.mail_dispatcher = Mock(spec=MailServerDispatcher)
     self.link_factory = Mock(spec=LinkFactory)
     self.person_repository = Mock(spec=PersonRepository)
     self.controller = AccountRegistrationController(
+        self.account_factory,
         self.account_repository,
         self.mail_dispatcher,
         self.link_factory,
@@ -116,7 +119,7 @@ class TestAccountRegistrationController(TestCase):
   def test_perform_registration_request_creates_account(self):
     self.account_repository.find_user_account.return_value = None
     self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
-    self.account_repository.put_new_user_account.assert_called_with(EmailAddress(valid_email), Username(valid_username), Password(valid_password))
+    self.account_factory.create_account.assert_called_with(EmailAddress(valid_email), Username(valid_username), Password(valid_password))
 
   def test_perform_registration_request_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
@@ -126,7 +129,7 @@ class TestAccountRegistrationController(TestCase):
     self.assertEqual(result, 'success')
 
   def test_perform_registration_request_initializes_account_person_on_success(self):
-    account = self.account_repository.put_new_user_account()
+    account = self.account_factory.create_account()
     person = self.person_repository.add_person()
     self.account_repository.find_user_account = mock_return(None)
     result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
@@ -136,7 +139,7 @@ class TestAccountRegistrationController(TestCase):
 
   def test_person_registration_request_failure_when_account_creation_fails(self):
     self.account_repository.find_user_account = mock_return(None)
-    self.account_repository.put_new_user_account = mock_return(None)
+    self.account_factory.create_account = mock_return(None)
     result = self.controller.perform_registration_request(valid_email, 'myToken', valid_username, valid_password)
     self.assertEqual(result, 'failure')
 
