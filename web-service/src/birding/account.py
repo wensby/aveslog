@@ -171,21 +171,25 @@ class AccountRepository:
     return next(map(HashedPassword.fromrow, result.rows), None)
 
   def put_new_user_account(self, email, username, password):
-    if self.find_user_account(username):
-      return None
-    query = ('INSERT INTO user_account (username, email) '
-             'VALUES (%s, %s);')
-    self.database.query(query, (username.raw, email.raw))
-    account = self.find_user_account(username)
-    if not account:
-      return
-    salt = b64encode(os.urandom(16)).decode('utf-8')
-    hash = self.hasher.hash_password(password.raw, salt)
-    query = ('INSERT '
-             'INTO hashed_password (user_account_id, salt, salted_hash) '
-             'VALUES (%s, %s, %s);')
-    self.database.query(query, (account.id, salt, hash))
-    if self.find_hashed_password(account):
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw,))
+      if len(result.rows) > 0:
+        return
+      result = transaction.execute(
+        ('INSERT INTO user_account (username, email) '
+         'VALUES (%s, %s) '
+         'RETURNING id, username, email, person_id, locale_id;'),
+        (username.raw, email.raw))
+      account = next(map(Account.fromrow, result.rows))
+      if not account:
+        return
+      salt_hashed_password = self.hasher.create_salt_hashed_password(password)
+      salt = salt_hashed_password[0]
+      hash = salt_hashed_password[1]
+      transaction.execute(
+        'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+        'VALUES (%s, %s, %s);', (account.id, salt, hash))
       return account
 
   def set_user_account_person(self, account, person):
@@ -205,7 +209,7 @@ class PasswordHasher:
     return (salt, hash)
 
   def hash_password(self, password, salt):
-    encoded_password = password.encode()
+    encoded_password = password.raw.encode()
     encoded_salt = salt.encode()
     binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
     return binascii.hexlify(binary_hash).decode()

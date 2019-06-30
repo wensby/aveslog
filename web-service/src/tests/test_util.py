@@ -8,7 +8,7 @@ from requests_html import HTML
 from werkzeug.datastructures import Headers
 
 import birding
-from birding.account import PasswordHasher
+from birding.account import PasswordHasher, Password
 from birding.authentication import SaltFactory
 
 
@@ -53,7 +53,8 @@ class AppTestCase(TestCase):
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
-    salt_hashed_password = password_hasher.create_salt_hashed_password(password)
+    p = Password(password)
+    salt_hashed_password = password_hasher.create_salt_hashed_password(p)
     salt = salt_hashed_password[0]
     hashed_password = salt_hashed_password[1]
     self.app.db.query(

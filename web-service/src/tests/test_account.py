@@ -1,13 +1,13 @@
-import unittest
 from hashlib import pbkdf2_hmac
 from unittest import TestCase
 from unittest.mock import Mock, call
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
-from birding.account import Account, PasswordRepository, PasswordResetToken, PasswordHasher, TokenFactory, \
-  AccountRepository
-from birding.database import Database
+from birding.account import Account, PasswordRepository, PasswordResetToken, \
+  PasswordHasher, TokenFactory, \
+  AccountRepository, Username, Password
+from birding.database import Database, Transaction
 from birding.mail import EmailAddress
 
 class TestAccountRepository(TestCase):
@@ -17,7 +17,7 @@ class TestAccountRepository(TestCase):
     self.password_hasher = Mock(spec=PasswordHasher)
     self.token_factory = Mock(spec=TokenFactory)
     self.repository = AccountRepository(
-        self.database, 
+        self.database,
         self.password_hasher,
         self.token_factory,
     )
@@ -48,6 +48,35 @@ class TestAccountRepository(TestCase):
     self.repository.find_account_registration_by_token('myToken')
     self.database.query.assert_called_with('SELECT id, email, token FROM user_account_registration WHERE token LIKE %s;', ('myToken',))
 
+  def test_put_new_user_account_queries_database_correctly(self):
+    email = EmailAddress('my@email.com')
+    username = Username('myUsername')
+    password = Password('myPassword')
+    transaction = Mock(spec=Transaction)
+    transaction.__enter__ = Mock(return_value=transaction)
+    transaction.__exit__ = Mock(return_value=None)
+    self.database.transaction.return_value = transaction
+
+    self.password_hasher.create_salt_hashed_password.return_value = (
+      'mySalt', 'mySaltedHash')
+    transaction.execute.side_effect = [
+      Simple(rows=[]),
+      Simple(rows=[[1, 'myUsername', 'my@email.com', None, None]]),
+      Simple()
+    ]
+
+    self.repository.put_new_user_account(email, username, password)
+
+    transaction.execute.assert_has_calls([
+      call('SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw, )),
+      call('INSERT INTO user_account (username, email) '
+           'VALUES (%s, %s) '
+           'RETURNING id, username, email, person_id, locale_id;',
+           (username.raw, email.raw)),
+      call('INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+           'VALUES (%s, %s, %s);', (1, 'mySalt', 'mySaltedHash')),
+    ])
+
 class TestPasswordHasher(TestCase):
 
   def setUp(self):
@@ -59,7 +88,7 @@ class TestPasswordHasher(TestCase):
     password = 'myPassword'
     self.salt_factory.create_salt.return_value = salt
 
-    result = self.password_hasher.create_salt_hashed_password(password)
+    result = self.password_hasher.create_salt_hashed_password(Password(password))
 
     expected_hashed_password = hexlify(pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)).decode()
     self.assertEqual(result, (salt, expected_hashed_password))
@@ -67,7 +96,7 @@ class TestPasswordHasher(TestCase):
   def test_hash_password(self):
     hasher = PasswordHasher(Mock())
     hash = '0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5'
-    self.assertTrue(hasher.hash_password('password', 'salt') == hash)
+    self.assertTrue(hasher.hash_password(Password('password'), 'salt') == hash)
 
 class TestPasswordRepository(TestCase):
 

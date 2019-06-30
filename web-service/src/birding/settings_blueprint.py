@@ -29,14 +29,15 @@ def create_settings_blueprint(authenticator, password_repository):
     new_password = request.form['newPasswordInput']
     account = g.logged_in_account
     if is_password_change_valid(account, old_password, new_password):
-      password_repository.update_password(account.id, new_password)
+      password_repository.update_password(account.id, Password(new_password))
       flash('success')
     else:
       flash('failure')
     return render_page('settings/password.html')
 
   def is_password_change_valid(account, old_password, new_password):
-    if authenticator.is_account_password_correct(account, old_password):
-      return Password.is_valid(new_password)
+    if Password.is_valid(old_password) and Password.is_valid(new_password):
+      return authenticator.is_account_password_correct(
+        account, Password(old_password))
 
   return blueprint
