@@ -49,13 +49,18 @@ class AppTestCase(TestCase):
     self.database.query(
       'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, 'name'))
 
-  def db_insert_account(self, account_id, username, person_id):
+  def db_insert_locale(self, locale_id, code):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
+
+  def db_insert_account(self, account_id, username, person_id, locale_id):
     self.app.db.query(
       'INSERT INTO user_account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
-      (account_id, username, 'myEmail', person_id, None))
+      (account_id, username, 'myEmail', person_id, locale_id))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
@@ -72,10 +77,10 @@ class AppTestCase(TestCase):
       'INSERT INTO user_account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
 
-  def db_insert_bird(self, bird_id):
+  def db_insert_bird(self, bird_id, binomial_name):
     self.database.query(
       'INSERT INTO bird (id, binomial_name) '
-      'VALUES (%s, %s);', (bird_id, 'exampleBinomialName'))
+      'VALUES (%s, %s);', (bird_id, binomial_name))
 
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
@@ -97,4 +102,6 @@ class AppTestCase(TestCase):
     self.database.query('DELETE FROM bird;')
     self.database.query('DELETE FROM person;')
     self.database.query('DELETE FROM user_account_registration;')
+    with self.database.transaction() as transaction:
+      transaction.execute('DELETE FROM locale;')
     self.app_context.pop()

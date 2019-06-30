@@ -13,7 +13,7 @@ class TestSettingsBlueprint(AppTestCase):
     self.assertRedirect(response, 'authentication.get_login')
 
   def test_post_password_settings_flashes_success_when_accurate_old_pwd(self):
-    self.db_insert_account(4, 'myUsername', None)
+    self.db_insert_account(4, 'myUsername', None, None)
     self.db_insert_password(4, 'password')
     self.set_logged_in(4)
 
@@ -24,7 +24,7 @@ class TestSettingsBlueprint(AppTestCase):
     self.assertIn('success', html.full_text)
 
   def test_post_password_settings_flashes_failure_when_inaccurate_old_pwd(self):
-    self.db_insert_account(4, 'myUsername', None)
+    self.db_insert_account(4, 'myUsername', None, None)
     self.db_insert_password(4, 'myPassword')
     self.set_logged_in(4)
 

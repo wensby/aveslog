@@ -38,7 +38,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertIn(url_for('authentication.get_login'), html.links)
 
   def test_get_register_request_redirect_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None)
+    self.db_insert_account(4, 'myUsername', None, None)
     self.set_logged_in(4)
 
     response = self.client.get(url_for('authentication.get_register_request'))
@@ -56,7 +56,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertRedirect(response, 'authentication.get_register_request')
 
   def test_get_register_form_redirects_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None)
+    self.db_insert_account(4, 'myUsername', None, None)
     self.set_logged_in(4)
 
     response = self.__get_register_form('myToken')
@@ -80,7 +80,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.__assertRegistrationFormPresent(response)
 
   def test_post_register_form_redirects_to_home_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None)
+    self.db_insert_account(4, 'myUsername', None, None)
     self.set_logged_in(4)
 
     response = self.__post_register_form('myToken', None, None, None, None)
@@ -108,7 +108,7 @@ class TestAuthenticationBlueprint(AppTestCase):
       self.get_flashed_messages('danger'), 'Registration form no longer valid')
 
   def test_post_register_form_flashes_danger_when_username_taken(self):
-    self.db_insert_account(4, 'myTakenUsername', None)
+    self.db_insert_account(4, 'myTakenUsername', None, None)
     self.db_insert_registration('my@email.com', 'token')
 
     self.__post_register_form(
