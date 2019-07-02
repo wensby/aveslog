@@ -1,8 +1,57 @@
 import json
 import os
 
+from birding.database import Database
 from .bird import Bird
 
+class LocaleLoader:
+
+  def __init__(self, locales_directory_path):
+    self.locales_directory_path = locales_directory_path
+
+  def load_locale(self, lang_iso):
+    language_dictionary = None
+    bird_dictionary = None
+    dictionary_filepath = (
+        f'{self.locales_directory_path}{lang_iso}/{lang_iso}.json')
+    if os.path.exists(dictionary_filepath):
+      with open(dictionary_filepath, 'r') as file:
+        language_dictionary = json.load(file)
+    language = Language(lang_iso)
+    bird_dictionary_filepath = (
+        f'{self.locales_directory_path}/{lang_iso}/{lang_iso}-bird-names.json')
+    if os.path.exists(bird_dictionary_filepath):
+      with open(bird_dictionary_filepath, 'r') as file:
+        bird_dictionary = json.load(file)
+    return Locale(language, language_dictionary, bird_dictionary)
+
+class LocaleRepository:
+
+  def __init__(self, locales_directory_path, locale_loader: LocaleLoader, database: Database):
+    self.locales_directory_path = locales_directory_path
+    self.locale_loader = locale_loader
+    self.database = database
+
+  def available_locale_codes(self):
+    def is_length_2(x):
+      return len(x) == 2
+    def locales_directory_subdirectories():
+      path = self.locales_directory_path
+      return filter(lambda x: os.path.isdir(path + x), os.listdir(path))
+    return list(filter(is_length_2, locales_directory_subdirectories()))
+
+  def enabled_locale_codes(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT id, code FROM locale;')
+      return list(map(lambda x: x[0], result.rows))
+
+  def find_locale_by_id(self, id):
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT code FROM locale WHERE id = %s;', (id, ))
+      return self.find_locale(result.rows[0][0])
+
+  def find_locale(self, code):
+    return self.locale_loader.load_locale(code)
 
 class LocalesFactory:
 
@@ -47,7 +96,10 @@ class Locale:
     self.bird_dictionary = bird_dictionary
 
   def text(self, text, variables=None):
-    translated = self.dictionary[text] if text in self.dictionary else text
+    if self.dictionary:
+      translated = self.dictionary[text] if text in self.dictionary else text
+    else:
+      translated = text
     if variables:
       i = 0
       while '{{}}' in translated:
@@ -98,35 +150,27 @@ class LanguageRepositoryFactory:
 
 class LocaleDeterminer:
 
-  def __init__(self, locales, user_locale_cookie_key):
-    self.locales = locales
+  def __init__(self, available_locale_codes: list, user_locale_cookie_key):
+    self.available_locale_codes = available_locale_codes
     self.user_locale_cookie_key = user_locale_cookie_key
 
   def determine_locale_from_request(self, request):
-    locale = self.__determine_from_cookies(request.cookies)
-    if not locale:
-      locale = self.__determine_from_headers(request.headers)
-    if not locale:
-      locale = next(iter(self.locales.values()), Locale(None, dict(), None))
-    return locale
+    locale_code = self.__determine_from_cookies(request.cookies)
+    if not locale_code:
+      locale_code = self.__determine_from_headers(request.headers)
+    if not locale_code:
+      locale_code = next(iter(self.available_locale_codes))
+    return locale_code
 
   def __determine_from_cookies(self, cookies):
     cookie_locale_code = cookies.get(self.user_locale_cookie_key)
-    if cookie_locale_code in self.__available_locale_codes():
-      return self.__from_code(cookie_locale_code)
+    if cookie_locale_code in self.available_locale_codes:
+      return cookie_locale_code
 
   def __determine_from_headers(self, headers):
     if 'Accept-Language' in headers:
       header = headers['Accept-Language']
       requested_codes = list(map(lambda c: c.split(';')[0], header.split(',')))
-      available_codes = self.__available_locale_codes()
+      available_codes = self.available_locale_codes
       matching_codes = filter(lambda c: c in available_codes, requested_codes)
-      return self.__from_code(next(matching_codes, None))
-
-  def __available_locale_codes(self):
-    return list(map(lambda x: x.iso_639_1_code, self.locales.keys()))
-
-  def __from_code(self, code):
-    language = next(filter(lambda l: l.iso_639_1_code == code, self.locales), None)
-    if language:
-      return self.locales[language]
+      return next(matching_codes, None)

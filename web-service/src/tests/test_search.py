@@ -37,10 +37,12 @@ class TestBirdSearcher(TestCase):
 
   def setUp(self):
     self.string_matcher = StringMatcher()
+    self.locale_repository = Mock()
 
   def test_search_returns_list_of_bird_matches(self):
     bird_repository = Simple(birds=[picapica])
-    searcher = BirdSearcher(bird_repository, dict(), self.string_matcher)
+    self.locale_repository.available_locale_codes.return_value = []
+    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
 
     matches = searcher.search('Pica pica')
 
@@ -49,8 +51,9 @@ class TestBirdSearcher(TestCase):
   def test_search_finds_bird_by_binomial_name(self):
     swedish_locale = Simple(bird_dictionary=None)
     bird_repository = Simple(birds=[picapica])
-    locales = { 'swedish': swedish_locale }
-    searcher = BirdSearcher(bird_repository, locales, self.string_matcher)
+    self.locale_repository.available_locale_codes.return_value = 'se'
+    self.locale_repository.find_locale.return_value = swedish_locale
+    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
     
     matches = searcher.search('Pica pica')
 
@@ -59,8 +62,9 @@ class TestBirdSearcher(TestCase):
   def test_search_finds_bird_by_swedish_name(self):
     bird_repository = Simple(birds=[picapica])
     swedish_locale = Simple(bird_dictionary={'Pica pica': 'Skata'})
-    locales = { 'swedish': swedish_locale }
-    searcher = BirdSearcher(bird_repository, locales, self.string_matcher)
+    self.locale_repository.available_locale_codes.return_value = ['se']
+    self.locale_repository.find_locale.return_value = swedish_locale
+    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
 
     matches = searcher.search('Skata')
 
@@ -68,7 +72,7 @@ class TestBirdSearcher(TestCase):
 
   def test_search_finds_nothing_with_only_empty_string_name_query(self):
     bird_repository = Simple(birds=[picapica])
-    searcher = BirdSearcher(bird_repository, {}, self.string_matcher)
+    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
 
     matches = searcher.search('')
 

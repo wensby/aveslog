@@ -31,14 +31,6 @@ def require_logout(view):
 
 def create_authentication_blueprint(account_repository, authenticator, account_registration_controller, password_reset_controller):
   blueprint = Blueprint('authentication', __name__, url_prefix='/authentication')
-  
-  @blueprint.before_app_request
-  def load_logged_in_account():
-    account_id = session.get('account_id')
-    if account_id:
-      g.logged_in_account = account_repository.find_account_by_id(account_id)
-    else:
-      g.logged_in_account = None
 
   @blueprint.route('/register')
   @require_logout

@@ -135,7 +135,7 @@ class AccountRepository:
     self.hasher = password_hasher
     self.token_factory = token_factory
 
-  def find_account_by_id(self, id):
+  def find_account_by_id(self, id) -> Account:
     query = (
         'SELECT id, username, email, person_id, locale_id '
         'FROM user_account '

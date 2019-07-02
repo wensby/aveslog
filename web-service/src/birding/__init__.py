@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, session
 from flask import g
 from flask import request
 from flask import after_this_request
@@ -20,8 +20,9 @@ from .sighting_blueprint import create_sighting_blueprint
 from .blueprint_profile import create_profile_blueprint
 from .settings_blueprint import create_settings_blueprint
 from .blueprint_bird import create_bird_blueprint
-from .localization import LocaleDeterminer
+from .localization import LocaleDeterminer, LocaleRepository, Language
 from .localization import LocalesFactory
+from .localization import LocaleLoader
 from .bird import BirdRepository
 from .search import BirdSearcher
 from .search import BirdSearchController
@@ -56,12 +57,13 @@ def create_app(test_config=None):
   person_repository = PersonRepository(database)
   authenticator = Authenticator(account_repository, hasher)
   localespath = os.path.join(app.root_path, 'locales/')
-  locales_factory = LocalesFactory(database, localespath)
-  locales = locales_factory.create_locales()
-  locale_determiner = LocaleDeterminer(locales, user_locale_cookie_key)
+  locale_loader = LocaleLoader(localespath)
+  locale_repository = LocaleRepository(localespath, locale_loader, database)
+  available_locale_codes = locale_repository.available_locale_codes()
+  locale_determiner = LocaleDeterminer(available_locale_codes, user_locale_cookie_key)
   bird_repository = BirdRepository(database)
   string_matcher = StringMatcher()
-  bird_searcher = BirdSearcher(bird_repository, locales, string_matcher)
+  bird_searcher = BirdSearcher(bird_repository, locale_repository, string_matcher)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
@@ -99,12 +101,24 @@ def create_app(test_config=None):
 
   @app.before_request
   def before_request():
+    load_logged_in_account()
     # initialize render context dictionary
     g.render_context = dict()
     detect_user_locale()
 
+  def load_logged_in_account():
+    account_id = session.get('account_id')
+    if account_id:
+      g.logged_in_account = account_repository.find_account_by_id(account_id)
+    else:
+      g.logged_in_account = None
+
   def detect_user_locale():
-    locale = locale_determiner.determine_locale_from_request(request)
+    if g.logged_in_account and g.logged_in_account.locale_id:
+      locale = locale_repository.find_locale_by_id(g.logged_in_account.locale_id)
+    else:
+      locale_code = locale_determiner.determine_locale_from_request(request)
+      locale = locale_loader.load_locale(locale_code)
     update_locale_context(locale)
 
   def update_locale_context(locale):
@@ -124,10 +138,9 @@ def create_app(test_config=None):
   @app.route('/language')
   def language():
     language_code = request.args.get('l')
-    languages = list(filter(lambda l: l.iso_639_1_code == language_code, locales))
-    if languages:
-      language = languages[0]
-      locale = locales[language]
+    available_codes = locale_repository.available_locale_codes()
+    if language_code in available_codes:
+      locale = locale_loader.load_locale(language_code)
       update_locale_context(locale)
       return redirect(url_for('index'))
 

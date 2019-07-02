@@ -37,22 +37,22 @@ class TestLocaleDeterminer(unittest.TestCase):
     self.request.cookies = dict()
     self.request.headers = {'Accept-Language': header_value}
     locales = { english: english_locale, swedish: swedish_locale }
-    determiner = LocaleDeterminer(locales, 'cookie-key')
+    determiner = LocaleDeterminer(['en'], 'cookie-key')
     locale = determiner.determine_locale_from_request(self.request)
-    self.assertTrue(locale == english_locale)
+    self.assertEqual(locale, 'en')
 
   def test_determine_locale_from_request_defaults_to_english(self):
     self.request.cookies = dict()
     self.request.headers = dict()
     locales = { english: english_locale }
-    determiner = LocaleDeterminer(locales, 'cookie-key')
+    determiner = LocaleDeterminer(['en'], 'cookie-key')
     locale = determiner.determine_locale_from_request(self.request)
-    self.assertTrue(locale == english_locale)
+    self.assertEqual(locale, 'en')
 
   def test_determine_locale_from_request_by_cookie(self):
     self.request.cookies = {'cookie-key': 'sv'}
     self.request.headers = {'Accept-Language': 'en'}
     locales = { english: english_locale, swedish: swedish_locale }
-    determiner = LocaleDeterminer(locales, 'cookie-key')
+    determiner = LocaleDeterminer(['en', 'sv'], 'cookie-key')
     locale = determiner.determine_locale_from_request(self.request)
-    self.assertTrue(locale == swedish_locale)
+    self.assertEqual(locale, 'sv')

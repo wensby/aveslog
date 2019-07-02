@@ -1,5 +1,8 @@
 from difflib import SequenceMatcher
 
+from birding import LocaleRepository
+
+
 class BirdSearchController:
 
   def __init__(self, bird_searcher):
@@ -12,9 +15,9 @@ class BirdSearchController:
 
 class BirdSearcher:
 
-  def __init__(self, bird_repository, locales, string_matcher):
+  def __init__(self, bird_repository, locale_repository: LocaleRepository, string_matcher):
     self.bird_repository = bird_repository
-    self.locales = locales
+    self.locale_repository = locale_repository
     self.string_matcher = string_matcher
 
   def search(self, name=None):
@@ -38,8 +41,8 @@ class BirdSearcher:
   def search_by_language_names(self, name):
     matches = dict()
     birds = self.bird_repository.birds
-    locales = self.locales
-    dictionaries = [v.bird_dictionary for k, v in locales.items() if v.bird_dictionary]
+    locales = [self.locale_repository.find_locale(x) for x in self.locale_repository.available_locale_codes()]
+    dictionaries = [locale.bird_dictionary for locale in locales if locale.bird_dictionary]
     for dictionary in dictionaries:
       for bird in birds:
         binomial_name = bird.binomial_name
