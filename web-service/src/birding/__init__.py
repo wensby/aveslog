@@ -102,8 +102,7 @@ def create_app(test_config=None):
   @app.before_request
   def before_request():
     load_logged_in_account()
-    # initialize render context dictionary
-    g.render_context = dict()
+    init_render_context()
     detect_user_locale()
 
   def load_logged_in_account():
@@ -112,6 +111,9 @@ def create_app(test_config=None):
       g.logged_in_account = account_repository.find_account_by_id(account_id)
     else:
       g.logged_in_account = None
+
+  def init_render_context():
+    g.render_context = dict()
 
   def detect_user_locale():
     if g.logged_in_account and g.logged_in_account.locale_id:
