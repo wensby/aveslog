@@ -1,41 +1,42 @@
 import os
+
 from flask import Flask, session
-from flask import g
-from flask import request
 from flask import after_this_request
+from flask import g
 from flask import redirect
+from flask import request
 from flask import url_for
-from .database import DatabaseFactory
+
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
-from .authentication import Authenticator
 from .account import PasswordRepository
 from .account import TokenFactory
-from .mail import MailDispatcherFactory
-from .person import PersonRepository
-from .blueprint_home import create_home_blueprint
-from .authentication_blueprint import create_authentication_blueprint
-from .blueprint_search import create_search_blueprint
-from .sighting_blueprint import create_sighting_blueprint
-from .blueprint_profile import create_profile_blueprint
-from .settings_blueprint import create_settings_blueprint
-from .blueprint_bird import create_bird_blueprint
-from .localization import LocaleDeterminer, LocaleRepository, Language
-from .localization import LocalesFactory
-from .localization import LocaleLoader
-from .bird import BirdRepository
-from .search import BirdSearcher
-from .search import BirdSearchController
-from .search import StringMatcher
-from .sighting import SightingRepository
-from .picture import PictureRepository
-from .search_view import BirdSearchViewFactory
-from .sighting_view import SightingViewFactory
 from .authentication import AccountRegistrationController
+from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
-from .link import LinkFactory
+from .authentication_blueprint import create_authentication_blueprint
+from .bird import BirdRepository
 from .bird_view import BirdViewFactory
+from .blueprint_bird import create_bird_blueprint
+from .blueprint_home import create_home_blueprint
+from .blueprint_profile import create_profile_blueprint
+from .blueprint_search import create_search_blueprint
+from .database import DatabaseFactory
+from .link import LinkFactory
+from .localization import LocaleDeterminer, LocaleRepository
+from .localization import LocaleLoader
+from .mail import MailDispatcherFactory
+from .person import PersonRepository
+from .picture import PictureRepository
+from .search import BirdSearchController
+from .search import BirdSearcher
+from .search import StringMatcher
+from .search_view import BirdSearchViewFactory
+from .settings_blueprint import create_settings_blueprint
+from .sighting import SightingRepository
+from .sighting_blueprint import create_sighting_blueprint
+from .sighting_view import SightingViewFactory
 
 
 def create_app(test_config=None):
