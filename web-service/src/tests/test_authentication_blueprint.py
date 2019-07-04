@@ -125,6 +125,14 @@ class TestAuthenticationBlueprint(AppTestCase):
 
     self.assertSessionContains('account_id', 4)
 
+  def test_logout_redirects_home(self):
+    self.db_insert_account(4, 'myUsername', None, None)
+    self.set_logged_in(4)
+
+    response = self.client.get(url_for('authentication.logout'))
+
+    self.assertRedirect(response, 'home.index')
+
   def __get_register_form(self, token):
     return self.client.get(
       url_for('authentication.get_register_form', token=token)

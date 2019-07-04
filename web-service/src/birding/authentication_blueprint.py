@@ -134,6 +134,6 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
   @blueprint.route('/logout')
   def logout():
     session.pop('account_id', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('home.index'))
 
   return blueprint
