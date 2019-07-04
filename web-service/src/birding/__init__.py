@@ -145,7 +145,7 @@ def create_app(test_config=None):
     if language_code in available_codes:
       locale = locale_loader.load_locale(language_code)
       update_locale_context(locale)
-      return redirect(url_for('index'))
+      return redirect(url_for('home.index'))
 
   app.logger.info('Flask app constructed')
   return app
