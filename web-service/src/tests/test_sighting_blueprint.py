@@ -42,6 +42,16 @@ class TestSightingBlueprint(AppTestCase):
 
     self.assertRedirect(response, 'sighting.get_sightings_index')
 
+  def test_get_create_ok(self):
+    self.db_insert_bird(4, 'Pica pica')
+    self.db_insert_person(8)
+    self.db_insert_account(15, 'myUsername', 8, None)
+    self.set_logged_in(15)
+
+    response = self.client.get(url_for('sighting.create', birdid=4))
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+
   def __post_sighting(self, bird_id, dateInput):
     data = { 'birdId': bird_id, 'dateInput': dateInput }
     return self.client.post(url_for('sighting.post_sighting'), data=data)
