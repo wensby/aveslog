@@ -1,12 +1,11 @@
 import os
 
 from flask import Flask, session
-from flask import after_this_request
 from flask import g
-from flask import redirect
 from flask import request
-from flask import url_for
 
+from birding.localization_blueprint import create_localization_blueprint, \
+  update_locale_context
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
 from .account import PasswordRepository
@@ -92,6 +91,9 @@ def create_app(test_config=None):
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(authenticator, password_repository)
   bird_blueprint = create_bird_blueprint(bird_view_factory)
+  localization_blueprint = create_localization_blueprint(
+    locale_repository, locale_loader, user_locale_cookie_key)
+  app.register_blueprint(localization_blueprint)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(search_blueprint)
@@ -122,30 +124,7 @@ def create_app(test_config=None):
     else:
       locale_code = locale_determiner.determine_locale_from_request(request)
       locale = locale_loader.load_locale(locale_code)
-    update_locale_context(locale)
-
-  def update_locale_context(locale):
-    previously_set = request.cookies.get(user_locale_cookie_key, None)
-    # when the response exists, set a cookie with the language if it is new
-    if locale.language and (not previously_set or previously_set is not locale.language.iso_639_1_code):
-      set_locale_cookie_after_this_request(locale)
-    g.locale = locale
-    g.render_context['locale'] = locale
-
-  def set_locale_cookie_after_this_request(locale):
-    @after_this_request
-    def remember_language(response):
-      response.set_cookie(user_locale_cookie_key, locale.language.iso_639_1_code)
-      return response
-
-  @app.route('/language')
-  def language():
-    language_code = request.args.get('l')
-    available_codes = locale_repository.available_locale_codes()
-    if language_code in available_codes:
-      locale = locale_loader.load_locale(language_code)
-      update_locale_context(locale)
-      return redirect(url_for('home.index'))
+    update_locale_context(locale, user_locale_cookie_key)
 
   app.logger.info('Flask app constructed')
   return app
