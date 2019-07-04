@@ -117,6 +117,14 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertEqual(self.get_flashed_messages('danger'),
                      'Username already taken')
 
+  def test_post_login_sets_session_account_id_when_correct_credentials(self):
+    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_password(4, 'myPassword')
+
+    self.__post_login_form('myUsername', 'myPassword')
+
+    self.assertSessionContains('account_id', 4)
+
   def __get_register_form(self, token):
     return self.client.get(
       url_for('authentication.get_register_form', token=token)
@@ -141,4 +149,9 @@ class TestAuthenticationBlueprint(AppTestCase):
       'token': form_token,
       'username': username,
       'password': password}
+    return self.client.post(url, data=data)
+
+  def __post_login_form(self, username, password):
+    url = url_for('authentication.post_login')
+    data = { 'username': username, 'password': password }
     return self.client.post(url, data=data)

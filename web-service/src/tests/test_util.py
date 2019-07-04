@@ -45,6 +45,11 @@ class AppTestCase(TestCase):
     with self.client.session_transaction() as session:
       session[key] = value
 
+  def assertSessionContains(self, key, value):
+    with self.client.session_transaction() as session:
+      self.assertIn(key, session)
+      self.assertEqual(session[key], value)
+
   def db_insert_person(self, person_id):
     self.database.query(
       'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, 'name'))

@@ -128,7 +128,7 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
       account = authenticator.get_authenticated_user_account(credentials)
       if account:
         session['account_id'] = account.id
-        return redirect(url_for('index'))
+        return redirect(url_for('home.index'))
     return redirect(url_for('authentication.get_login'))
   
   @blueprint.route('/logout')

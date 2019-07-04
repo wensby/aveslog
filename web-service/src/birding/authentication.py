@@ -18,7 +18,7 @@ class Authenticator:
       return self.hasher.hash_password(password, salt) == expected_hash
 
   def get_authenticated_user_account(self, credentials):
-    password = credentials.password.raw
+    password = credentials.password
     account = self.account_repository.find_user_account(credentials.username)
     if account and self.is_account_password_correct(account, password):
       return account
