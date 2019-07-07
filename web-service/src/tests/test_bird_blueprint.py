@@ -48,3 +48,8 @@ class TestBirdBlueprint(AppTestCase):
     response = self.client.get('/bird/pica_pica', headers=headers)
 
     self.assertOkHtmlResponseWithoutText(response, 'Skata')
+
+  def test_search_contains_match(self):
+    self.db_insert_bird(4, 'Pica pica')
+    response = self.client.get('/bird/search?query=pica+pica')
+    self.assertOkHtmlResponseWithText(response, 'Pica pica')
