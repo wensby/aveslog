@@ -1,11 +1,10 @@
 from hashlib import pbkdf2_hmac
-from base64 import b64encode, b64decode
 import binascii
 import os
 import re
 
-class Username:
 
+class Username:
   regex = re.compile('^[A-Za-z0-9_.-]{5,32}$')
 
   @classmethod
@@ -25,8 +24,8 @@ class Username:
   def __repr__(self) -> str:
     return f'Username<{self.raw}>'
 
-class Password:
 
+class Password:
   regex = re.compile('^.{8,128}$')
 
   @classmethod
@@ -64,12 +63,13 @@ class Account:
 
   def __repr__(self):
     return ('Account<'
-        f'id={self.id}, '
-        f'username={self.username}, '
-        f'email={self.email}, '
-        f'person_id={self.person_id}, '
-        f'locale_id={self.locale_id}, '
-        '>')
+            f'id={self.id}, '
+            f'username={self.username}, '
+            f'email={self.email}, '
+            f'person_id={self.person_id}, '
+            f'locale_id={self.locale_id}, '
+            '>')
+
 
 class AccountFactory:
 
@@ -111,11 +111,13 @@ class AccountRegistration:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
 
+
 class Credentials:
 
   def __init__(self, username, password):
     self.username = username
     self.password = password
+
 
 class HashedPassword:
 
@@ -128,6 +130,7 @@ class HashedPassword:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
 
+
 class AccountRepository:
 
   def __init__(self, database, password_hasher, token_factory):
@@ -137,9 +140,9 @@ class AccountRepository:
 
   def find_account_by_id(self, id) -> Account:
     query = (
-        'SELECT id, username, email, person_id, locale_id '
-        'FROM user_account '
-        'WHERE id = %s;')
+      'SELECT id, username, email, person_id, locale_id '
+      'FROM user_account '
+      'WHERE id = %s;')
     result = self.database.query(query, (id,))
     return next(map(Account.fromrow, result.rows), None)
 
@@ -151,9 +154,9 @@ class AccountRepository:
   def create_account_registration(self, email):
     token = self.token_factory.create_token()
     query = (
-        'INSERT INTO user_account_registration (email, token) '
-        'VALUES (%s, %s) '
-        'RETURNING id, email, token;')
+      'INSERT INTO user_account_registration (email, token) '
+      'VALUES (%s, %s) '
+      'RETURNING id, email, token;')
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
@@ -205,6 +208,7 @@ class AccountRepository:
              'WHERE id = %s;')
     self.database.query(query, (person.id, account.id))
 
+
 class PasswordHasher:
 
   def __init__(self, salt_factory):
@@ -221,6 +225,7 @@ class PasswordHasher:
     binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
     return binascii.hexlify(binary_hash).decode()
 
+
 class PasswordRepository:
 
   def __init__(self, token_factory, database, password_hasher):
@@ -231,27 +236,27 @@ class PasswordRepository:
   def create_password_reset_token(self, account):
     token = self.token_factory.create_token()
     query = (
-        'INSERT INTO password_reset_token (user_account_id, token) '
-        'VALUES (%s, %s) '
-        'ON CONFLICT (user_account_id) '
-        'DO UPDATE SET token = excluded.token;')
+      'INSERT INTO password_reset_token (user_account_id, token) '
+      'VALUES (%s, %s) '
+      'ON CONFLICT (user_account_id) '
+      'DO UPDATE SET token = excluded.token;')
     result = self.database.query(query, (account.id, token))
     if 'INSERT' in result.status:
       return self.find_password_reset_token(account)
 
   def find_password_reset_token(self, account):
     query = (
-        'SELECT user_account_id, token '
-        'FROM password_reset_token '
-        'WHERE user_account_id = %s;')
+      'SELECT user_account_id, token '
+      'FROM password_reset_token '
+      'WHERE user_account_id = %s;')
     result = self.database.query(query, (account.id,))
     return next(map(PasswordResetToken.fromrow, result.rows), None)
 
   def find_password_reset_account_id(self, token):
     query = (
-        'SELECT user_account_id '
-        'FROM password_reset_token '
-        'WHERE token LIKE %s;')
+      'SELECT user_account_id '
+      'FROM password_reset_token '
+      'WHERE token LIKE %s;')
     result = self.database.query(query, (token,))
     return next(map(lambda row: row[0], result.rows), None)
 
@@ -266,9 +271,10 @@ class PasswordRepository:
 
   def remove_password_reset_token(self, token):
     query = (
-        'DELETE FROM password_reset_token '
-        'WHERE token LIKE %s;')
+      'DELETE FROM password_reset_token '
+      'WHERE token LIKE %s;')
     self.database.query(query, (token,))
+
 
 class PasswordResetToken:
 
@@ -282,14 +288,15 @@ class PasswordResetToken:
 
   def __repr__(self):
     return ('PasswordResetToken<'
-      f'user_account_id={self.user_account_id}, '
-      f'token={self.token}'
-      '>')
+            f'user_account_id={self.user_account_id}, '
+            f'token={self.token}'
+            '>')
 
   def __eq__(self, other):
     if isinstance(other, PasswordResetToken):
       return self.__dict__ == other.__dict__
     return False
+
 
 class TokenFactory:
 
