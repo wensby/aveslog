@@ -106,10 +106,10 @@ class AppTestCase(TestCase):
   def set_logged_in(self, account_id):
     self.populate_session('account_id', account_id)
 
-  def assertRedirect(self, response, endpoint):
+  def assertRedirect(self, response, endpoint, **values):
     self.assertEqual(response.status_code, HTTPStatus.FOUND)
     html = HTML(html=response.data)
-    self.assertListEqual(list(html.links), [url_for(endpoint)])
+    self.assertListEqual(list(html.links), [url_for(endpoint, **values)])
 
   def assertOkHtmlResponse(self, response):
     self.assertEqual(response.status_code, HTTPStatus.OK)

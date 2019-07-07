@@ -222,3 +222,26 @@ class TestPasswordResetForm(AppTestCase):
       "and .//input[@id = 'passwordInput'] "
       "and .//input[@id = 'confirmPasswordInput'] "
       "and .//button[@type = 'submit']]")
+
+  def test_post_password_reset_form_when_success(self):
+    self.db_insert_account(4, 'hulot', 'hulot@mail.com', None, None)
+    self.db_insert_password(4, 'oldPassword')
+    self.db_insert_password_reset_token(4, 'myToken')
+    data = {'token': 'myToken', 'password': 'newPassword'}
+
+    response = self.client.post(
+      '/authentication/password-reset/myToken', data=data)
+
+    self.assertRedirect(response, 'authentication.get_login')
+    self.assertFlashedMessage('success', 'Your password has been reset.')
+
+  def test_post_password_reset_form_when_token_missing(self):
+    data = {'token': 'myMissingToken', 'password': 'newPassword'}
+
+    response = self.client.post(
+      '/authentication/password-reset/myMissingToken', data=data)
+
+    self.assertRedirect(
+      response,
+      'authentication.get_password_reset_form', token='myMissingToken')
+    self.assertFlashedMessage('danger', 'Something went wrong')

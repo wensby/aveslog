@@ -107,7 +107,7 @@ class PasswordResetController:
   def perform_password_reset(self, token, password):
     account_id = self.password_repository.find_password_reset_account_id(token)
     if account_id:
-      self.password_repository.update_password(account_id, password)
+      self.password_repository.update_password(account_id, Password(password))
       self.password_repository.remove_password_reset_token(token)
       return 'success'
 

@@ -195,7 +195,8 @@ class TestPasswordResetController(TestCase):
     result = self.controller.perform_password_reset(token, valid_password)
 
     self.password_repository.find_password_reset_account_id.assert_called_with(token)
-    self.password_repository.update_password.assert_called_with(4, valid_password)
+    self.password_repository.update_password.assert_called_with(
+      4, Password(valid_password))
     self.assertEqual(result, 'success')
 
   def test_perform_password_reset_removes_password_reset_token_on_success(self):
