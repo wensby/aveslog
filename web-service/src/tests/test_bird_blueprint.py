@@ -4,6 +4,11 @@ from flask import url_for
 
 class TestBirdBlueprint(AppTestCase):
 
+  def test_get_bird_by_binomial_name_contains_binomial_name(self):
+    self.db_insert_bird(4, 'Pica pica')
+    response = self.client.get('/bird/pica_pica')
+    self.assertOkHtmlResponseWithText(response, 'Pica pica')
+
   def test_get_bird_contains_bird_binomial_name(self):
     self.db_insert_bird(4, 'Pica pica')
     response = self.client.get(url_for('bird.get_bird', bird_id='4'))

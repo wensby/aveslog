@@ -64,7 +64,7 @@ class BirdRepository:
     return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
 
   def get_bird_by_binomial_name(self, binomial_name):
-    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE binomial_name like %s;", (name,))
+    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE binomial_name ILIKE %s;", (binomial_name,))
 
   @property
   def birds(self):

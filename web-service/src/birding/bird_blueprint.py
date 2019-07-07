@@ -11,10 +11,17 @@ def create_bird_blueprint(bird_view_factory, bird_search_controller,
 
   blueprint = Blueprint('bird', __name__, url_prefix='/bird')
 
+  @blueprint.route('/<binomial_name>')
+  def get_bird_by_binomial_name(binomial_name : str):
+    reformatted = binomial_name.replace('_', ' ')
+    view = view_factory.create_bird_page_view(binomial_name=reformatted)
+    g.render_context['view'] = view
+    return render_page('bird.html')
+
   @blueprint.route('/')
   def get_bird():
     bird_id = int(request.args.get('bird_id'))
-    view = view_factory.create_bird_page_view(bird_id)
+    view = view_factory.create_bird_page_view(bird_id=bird_id)
     g.render_context['view'] = view
     return render_page('bird.html')
 

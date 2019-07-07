@@ -21,7 +21,7 @@ class TestBirdViewFactory(TestCase):
     picture = Simple(id=thumbnail_picture.picture_id)
     self.picture_repository.pictures.return_value = [picture]
 
-    page_view = self.factory.create_bird_page_view(4)
+    page_view = self.factory.create_bird_page_view(bird_id=4)
 
     self.assertEqual(page_view, BirdPageView(bird, picture, picture))
     self.bird_repository.get_bird_by_id.assert_called_with(4)
