@@ -21,6 +21,11 @@ class TestUsername(TestCase):
     self.assertRaises(Exception, Username, 'abcde@')
     self.assertRaises(Exception, Username, (''.join(['a'] * 33)))
 
+  def test_eq_false_when_another_type(self):
+    self.assertNotEqual(Username('hulot'), 'hulot')
+
+  def test_repr(self):
+    self.assertEqual(repr(Username('hulot')), 'Username(hulot)')
 
 class TestAccountRepository(TestCase):
 

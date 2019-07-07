@@ -22,7 +22,7 @@ class Username:
     return False
 
   def __repr__(self) -> str:
-    return f'Username<{self.raw}>'
+    return f'{self.__class__.__name__}({self.raw})'
 
 
 class Password:
