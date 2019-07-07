@@ -164,7 +164,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     data = { 'username': username, 'password': password }
     return self.client.post(url, data=data)
 
-class TestPasswordReset(AppTestCase):
+class TestPasswordResetLinkRequest(AppTestCase):
 
   def test_get_password_reset_shows_correct_form(self):
     response = self.client.get('/authentication/password-reset')
