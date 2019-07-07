@@ -172,3 +172,9 @@ class TestPasswordReset(AppTestCase):
                   "and .//input[@id = 'emailInput'] "
                   "and .//button[@type = 'submit']]")
     self.assertOkHtmlResponseWith(response, form_xpath)
+
+  def test_get_password_reset_redirects_when_logged_in(self):
+    self.db_insert_account(4, 'Donald Duck', None, None)
+    self.set_logged_in(4)
+    response = self.client.get('/authentication/password-reset')
+    self.assertRedirect(response, 'home.index')
