@@ -92,6 +92,12 @@ class AppTestCase(TestCase):
       'INSERT INTO bird (id, binomial_name) '
       'VALUES (%s, %s);', (bird_id, binomial_name))
 
+  def db_insert_password_reset_token(self, account_id, token):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'INSERT INTO password_reset_token (user_account_id, token) '
+        'VALUES (%s, %s);', (account_id, token))
+
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
       if '_flashes' in session:

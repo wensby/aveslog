@@ -206,3 +206,19 @@ class TestPasswordResetLinkRequest(AppTestCase):
       "An email has been sent. If you have't received it in a few minutes, "
       "please check your spam folder.")
     self.assertEqual(len(self.db_get_password_reset_token_rows()), 0)
+
+
+class TestPasswordResetForm(AppTestCase):
+
+  def test_get_password_reset_form_shows_correct_form(self):
+    self.db_insert_account(4, 'hulot', 'hulot@mail.com', None, None)
+    self.db_insert_password_reset_token(4, 'myToken')
+
+    response = self.client.get('/authentication/password-reset/myToken')
+
+    self.assertOkHtmlResponseWith(
+      response,
+      ".//form[@method = 'post' "
+      "and .//input[@id = 'passwordInput'] "
+      "and .//input[@id = 'confirmPasswordInput'] "
+      "and .//button[@type = 'submit']]")
