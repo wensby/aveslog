@@ -20,7 +20,6 @@ from .bird_view import BirdViewFactory
 from .bird_blueprint import create_bird_blueprint
 from .blueprint_home import create_home_blueprint
 from .blueprint_profile import create_profile_blueprint
-from .search_blueprint import create_search_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
