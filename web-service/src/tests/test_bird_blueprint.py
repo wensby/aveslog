@@ -12,7 +12,7 @@ class TestBirdBlueprint(AppTestCase):
     self.assertFileExist('birding/locales/sv/sv-bird-names.json')
     self.db_insert_bird(4, 'Pica pica')
     self.db_insert_locale(8, 'sv')
-    self.db_insert_account(15, 'alice', None, 8)
+    self.db_insert_account(15, 'alice', 'my@email.com', None, 8)
     self.set_logged_in(15)
 
     response = self.client.get('/bird/pica_pica')
@@ -23,7 +23,7 @@ class TestBirdBlueprint(AppTestCase):
     self.assertFileExist('birding/locales/sv/sv-bird-names.json')
     self.db_insert_bird(4, 'Pica pica')
     self.db_insert_locale(8, 'sv')
-    self.db_insert_account(15, 'alice', None, None)
+    self.db_insert_account(15, 'alice', 'my@email.com', None, None)
     self.set_logged_in(15)
 
     response = self.client.get('/bird/pica_pica')

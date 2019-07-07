@@ -38,7 +38,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertIn(url_for('authentication.get_login'), html.links)
 
   def test_get_register_request_redirect_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
     response = self.client.get(url_for('authentication.get_register_request'))
@@ -56,7 +56,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertRedirect(response, 'authentication.get_register_request')
 
   def test_get_register_form_redirects_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
     response = self.__get_register_form('myToken')
@@ -80,7 +80,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.__assertRegistrationFormPresent(response)
 
   def test_post_register_form_redirects_to_home_when_logged_in(self):
-    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
     response = self.__post_register_form('myToken', None, None, None, None)
@@ -108,7 +108,7 @@ class TestAuthenticationBlueprint(AppTestCase):
       self.get_flashed_messages('danger'), 'Registration form no longer valid')
 
   def test_post_register_form_flashes_danger_when_username_taken(self):
-    self.db_insert_account(4, 'myTakenUsername', None, None)
+    self.db_insert_account(4, 'myTakenUsername', 'my@email.com', None, None)
     self.db_insert_registration('my@email.com', 'token')
 
     self.__post_register_form(
@@ -118,7 +118,7 @@ class TestAuthenticationBlueprint(AppTestCase):
                      'Username already taken')
 
   def test_post_login_sets_session_account_id_when_correct_credentials(self):
-    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.db_insert_password(4, 'myPassword')
 
     self.__post_login_form('myUsername', 'myPassword')
@@ -126,7 +126,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertSessionContains('account_id', 4)
 
   def test_logout_redirects_home(self):
-    self.db_insert_account(4, 'myUsername', None, None)
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
     response = self.client.get(url_for('authentication.logout'))
@@ -174,7 +174,35 @@ class TestPasswordResetLinkRequest(AppTestCase):
     self.assertOkHtmlResponseWith(response, form_xpath)
 
   def test_get_password_reset_redirects_when_logged_in(self):
-    self.db_insert_account(4, 'Donald Duck', None, None)
+    self.db_insert_account(4, 'Donald Duck', 'my@email.com', None, None)
     self.set_logged_in(4)
     response = self.client.get('/authentication/password-reset')
     self.assertRedirect(response, 'home.index')
+
+  def test_post_password_reset_link_request_when_user_exist(self):
+    self.db_insert_account(4, 'desmond', 'my@email.com', None, None)
+    data = {'email': 'my@email.com'}
+
+    response = self.client.post('/authentication/password-reset', data=data)
+
+    self.assertRedirect(
+      response, 'authentication.get_password_reset_link_request')
+    self.assertFlashedMessage(
+      'success',
+      "An email has been sent. If you have't received it in a few minutes, "
+      "please check your spam folder.")
+    self.assertEqual(len(self.db_get_password_reset_token_rows()), 1)
+
+  def test_post_password_reset_link_request_when_user_missing(self):
+    self.db_insert_account(4, 'desmond', 'my@email.com', None, None)
+    data = {'email': 'another@email.com'}
+
+    response = self.client.post('/authentication/password-reset', data=data)
+
+    self.assertRedirect(
+      response, 'authentication.get_password_reset_link_request')
+    self.assertFlashedMessage(
+      'success',
+      "An email has been sent. If you have't received it in a few minutes, "
+      "please check your spam folder.")
+    self.assertEqual(len(self.db_get_password_reset_token_rows()), 0)

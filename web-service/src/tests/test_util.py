@@ -63,13 +63,14 @@ class AppTestCase(TestCase):
       transaction.execute(
         'INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
 
-  def db_insert_account(self, account_id, username, person_id, locale_id):
+  def db_insert_account(self, account_id, username, email, person_id,
+        locale_id):
     self.app.db.query(
       'INSERT INTO user_account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
-      (account_id, username, 'myEmail', person_id, locale_id))
+      (account_id, username, email, person_id, locale_id))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
@@ -122,6 +123,7 @@ class AppTestCase(TestCase):
 
   def tearDown(self) -> None:
     with self.database.transaction() as transaction:
+      transaction.execute('DELETE FROM password_reset_token;')
       transaction.execute('DELETE FROM hashed_password;')
       transaction.execute('DELETE FROM user_account;')
       transaction.execute('DELETE FROM sighting;')
@@ -130,3 +132,12 @@ class AppTestCase(TestCase):
       transaction.execute('DELETE FROM user_account_registration;')
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()
+
+  def assertFlashedMessage(self, category, message):
+    self.assertEqual(self.get_flashed_messages(category), message)
+
+  def db_get_password_reset_token_rows(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT * FROM password_reset_token;')
+      rows = result.rows
+    return rows
