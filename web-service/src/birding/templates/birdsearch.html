@@ -7,7 +7,7 @@
         <div class="card">
           <div class="card-horizontal">
             <div class="img-square-wrapper">
-              <a href="{{ url_for('bird.get_bird', bird_id=item.bird.id|string) }}">
+              <a href="{{ url_for('bird.get_bird', binomial_name=item.bird.binomial_name) }}">
                 {% if item.thumbnail_picture %}
                   <img style="max-height: 150px;" src="{{url_for('static', filename=item.thumbnail_picture.filepath)}}" alt="Card image">
                 {% else %}
