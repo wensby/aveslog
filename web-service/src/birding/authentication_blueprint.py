@@ -81,7 +81,7 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
   @blueprint.route('/password-reset')
   @require_logout
   def get_password_reset_request():
-    return render_page('password_reset_request.html')
+    return render_page('password_reset_link_request.html')
 
   @blueprint.route('/password-reset', methods=['POST'])
   @require_logout

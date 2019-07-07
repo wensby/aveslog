@@ -148,7 +148,7 @@ class TestAuthenticationBlueprint(AppTestCase):
       "and .//input[@name = 'confirmPassword'] "
       "and .//input[@id = 'tocCheckbox'] "
       "and .//button[@type = 'submit']]")
-    self.assertTrue(HTML(html=response.data).xpath(xpath, first=True))
+    self.assertOkHtmlResponseWith(response, xpath)
 
   def __post_register_form(self, token, email, form_token, username, password):
     url = url_for('authentication.post_register_form', token=token)
@@ -163,3 +163,12 @@ class TestAuthenticationBlueprint(AppTestCase):
     url = url_for('authentication.post_login')
     data = { 'username': username, 'password': password }
     return self.client.post(url, data=data)
+
+class TestPasswordReset(AppTestCase):
+
+  def test_get_password_reset_shows_correct_form(self):
+    response = self.client.get('/authentication/password-reset')
+    form_xpath = (".//form[@id = 'passwordResetLinkRequestForm' "
+                  "and .//input[@id = 'emailInput'] "
+                  "and .//button[@type = 'submit']]")
+    self.assertOkHtmlResponseWith(response, form_xpath)

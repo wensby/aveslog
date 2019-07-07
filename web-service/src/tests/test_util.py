@@ -116,6 +116,10 @@ class AppTestCase(TestCase):
     html = self.assertOkHtmlResponse(response)
     self.assertNotIn(member, html.full_text)
 
+  def assertOkHtmlResponseWith(self, response, xpath):
+    html = self.assertOkHtmlResponse(response)
+    self.assertTrue(html.xpath(xpath, first=True))
+
   def tearDown(self) -> None:
     with self.database.transaction() as transaction:
       transaction.execute('DELETE FROM hashed_password;')
