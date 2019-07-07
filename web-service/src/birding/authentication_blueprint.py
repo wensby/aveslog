@@ -85,7 +85,7 @@ def create_authentication_blueprint(account_repository, authenticator, account_r
 
   @blueprint.route('/password-reset', methods=['POST'])
   @require_logout
-  def post_password_reset_request():
+  def post_password_reset_link_request():
     email = request.form['email']
     password_reset_controller.initiate_password_reset(email, g.locale)
     flash(g.locale.text(u"An email has been sent. If you have't received it in a few minutes, please check your spam folder."), 'success')
