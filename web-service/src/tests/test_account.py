@@ -13,6 +13,15 @@ from birding.mail import EmailAddress
 from test_util import mock_database_transaction
 
 
+class TestUsername(TestCase):
+
+  def test_construction_throws_exception_when_invalid_format(self):
+    self.assertRaises(Exception, Username, '')
+    self.assertRaises(Exception, Username, '1234')
+    self.assertRaises(Exception, Username, 'abcde@')
+    self.assertRaises(Exception, Username, (''.join(['a'] * 33)))
+
+
 class TestAccountRepository(TestCase):
 
   def setUp(self):
@@ -184,7 +193,7 @@ class TestPasswordRepository(TestCase):
 
   def test_update_password_queries_database_correctly(self):
     self.password_hasher.create_salt_hashed_password.return_value = (
-    'mySalt', 'myHashedPassword')
+      'mySalt', 'myHashedPassword')
     self.repository.update_password(4, 'myNewPassword')
     self.database.query.assert_called_with(
       'UPDATE hashed_password SET salt = %s, salted_hash = %s WHERE user_account_id = %s;',
