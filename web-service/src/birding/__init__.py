@@ -17,10 +17,10 @@ from .authentication import SaltFactory
 from .authentication_blueprint import create_authentication_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
-from .blueprint_bird import create_bird_blueprint
+from .bird_blueprint import create_bird_blueprint
 from .blueprint_home import create_home_blueprint
 from .blueprint_profile import create_profile_blueprint
-from .blueprint_search import create_search_blueprint
+from .search_blueprint import create_search_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
@@ -85,17 +85,15 @@ def create_app(test_config=None):
     account_registration_controller,
     password_reset_controller,
   )
-  search_blueprint = create_search_blueprint(bird_search_controller, bird_search_view_factory)
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
   profile_blueprint = create_profile_blueprint(account_repository)
   settings_blueprint = create_settings_blueprint(authenticator, password_repository)
-  bird_blueprint = create_bird_blueprint(bird_view_factory)
+  bird_blueprint = create_bird_blueprint(bird_view_factory, bird_search_controller, bird_search_view_factory)
   localization_blueprint = create_localization_blueprint(
     locale_repository, locale_loader, user_locale_cookie_key)
   app.register_blueprint(localization_blueprint)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
-  app.register_blueprint(search_blueprint)
   app.register_blueprint(sighting_blueprint)
   app.register_blueprint(profile_blueprint)
   app.register_blueprint(settings_blueprint)

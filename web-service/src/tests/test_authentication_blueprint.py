@@ -16,7 +16,7 @@ class TestAuthenticationBlueprint(AppTestCase):
     form = html.find('form#birdSearchForm', first=True)
     self.assertTrue(form)
     self.assertIn(('method', 'get'), form.attrs.items())
-    self.assertIn(('action', url_for('search.bird_search')), form.attrs.items())
+    self.assertIn(('action', url_for('bird.search')), form.attrs.items())
     self.assertEqual(len(form.find("input[name='query']")), 1)
     self.assertEqual(len(form.find("button[type='submit']")), 1)
 
