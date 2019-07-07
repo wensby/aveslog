@@ -1,3 +1,4 @@
+import os
 from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock
@@ -40,6 +41,9 @@ class AppTestCase(TestCase):
     self.app_context = self.app.test_request_context()
     self.app_context.push()
     self.client = self.app.test_client()
+
+  def assertFileExist(self, path):
+    self.assertTrue(os.path.exists(path))
 
   def populate_session(self, key, value):
     with self.client.session_transaction() as session:
@@ -100,13 +104,25 @@ class AppTestCase(TestCase):
     html = HTML(html=response.data)
     self.assertListEqual(list(html.links), [url_for(endpoint)])
 
+  def assertOkHtmlResponse(self, response):
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    return HTML(html=response.data)
+
+  def assertOkHtmlResponseWithText(self, response, member):
+    html = self.assertOkHtmlResponse(response)
+    self.assertIn(member, html.full_text)
+
+  def assertOkHtmlResponseWithoutText(self, response, member):
+    html = self.assertOkHtmlResponse(response)
+    self.assertNotIn(member, html.full_text)
+
   def tearDown(self) -> None:
-    self.database.query('DELETE FROM hashed_password;')
-    self.database.query('DELETE FROM user_account;')
-    self.database.query('DELETE FROM sighting;')
-    self.database.query('DELETE FROM bird;')
-    self.database.query('DELETE FROM person;')
-    self.database.query('DELETE FROM user_account_registration;')
     with self.database.transaction() as transaction:
+      transaction.execute('DELETE FROM hashed_password;')
+      transaction.execute('DELETE FROM user_account;')
+      transaction.execute('DELETE FROM sighting;')
+      transaction.execute('DELETE FROM bird;')
+      transaction.execute('DELETE FROM person;')
+      transaction.execute('DELETE FROM user_account_registration;')
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()
