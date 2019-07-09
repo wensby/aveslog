@@ -1,12 +1,20 @@
-# birding
-Tiny birding web application for learning purposes
+# Birding
+
+Dockerized, PostgreSQL database-backed, Python Flask web application for
+birding. The main purpose behind this project is for exploring, learning and
+improving my knowledge in some fundamental technologies such as Docker,
+PostgreSQL, Python, and Bootstrap.
 
 ## Running the app locally
+
 ### Starting
+
 The whole app can be run locally using the local-dev-docker.sh script. This
 script can also be run with a specific service name as argument, to rebuild and
 restart only the specified service.
+
 ### Mail
+
 As to not send real emails when testing the application locally, the dispatched
 emails are instead logged in the birding-web-service container through the flask
 app logging utility. The fact that no MAIL\_SERVER environment variable is set
