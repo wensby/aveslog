@@ -33,14 +33,17 @@ class TestClient(FlaskClient):
 
 class AppTestCase(TestCase):
 
-  def setUp(self) -> None:
+  @classmethod
+  def setUpClass(cls):
     test_config = {'TESTING': True, 'SECRET_KEY': 'wowsosecret'}
-    self.app = birding.create_app(test_config=test_config)
-    self.database = self.app.db
-    self.app.test_client_class = TestClient
-    self.app_context = self.app.test_request_context()
+    cls._app = birding.create_app(test_config=test_config)
+    cls._app.test_client_class = TestClient
+
+  def setUp(self) -> None:
+    self.database = self._app.db
+    self.app_context = self._app.test_request_context()
     self.app_context.push()
-    self.client = self.app.test_client()
+    self.client = self._app.test_client()
 
   def assertFileExist(self, path):
     self.assertTrue(os.path.exists(path))
@@ -65,7 +68,7 @@ class AppTestCase(TestCase):
 
   def db_insert_account(self, account_id, username, email, person_id,
         locale_id):
-    self.app.db.query(
+    self.database.query(
       'INSERT INTO user_account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
@@ -78,12 +81,12 @@ class AppTestCase(TestCase):
     salt_hashed_password = password_hasher.create_salt_hashed_password(p)
     salt = salt_hashed_password[0]
     hashed_password = salt_hashed_password[1]
-    self.app.db.query(
+    self.database.query(
       'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
       'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
 
   def db_insert_registration(self, email, token):
-    self.app.db.query(
+    self.database.query(
       'INSERT INTO user_account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
 
