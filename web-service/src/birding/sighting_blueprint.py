@@ -17,7 +17,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
 
   @blueprint.route('/')
   @require_login
-  def get_sightings_index():
+  def get_sightings():
     items = view_factory.create_sighting_items(g.logged_in_account)
     g.render_context['sightings'] = items
     return render_page('sighting/sightings.html')
@@ -27,9 +27,9 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   def post_sighting():
     sighting_post = create_sighting_post(request.form)
     if sighting_repository.add_sighting(sighting_post):
-      return redirect(url_for('sighting.get_sightings_index'))
+      return redirect(url_for('sighting.get_sightings'))
     else:
-      return redirect(url_for('sighting.get_sightings_index'))
+      return redirect(url_for('sighting.get_sightings'))
 
   @blueprint.route('/create/<birdid>')
   @require_login
@@ -56,7 +56,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
     if sighting and sighting.person_id == g.logged_in_account.person_id:
       if request.form['action'] == 'Delete':
         sighting_repository.delete_sighting(sighting_id)
-        return redirect(url_for('sighting.get_sightings_index'))
+        return redirect(url_for('sighting.get_sightings'))
     return redirect(url_for('index'))
 
   def create_sighting_post(form):

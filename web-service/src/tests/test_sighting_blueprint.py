@@ -8,21 +8,21 @@ from test_util import AppTestCase
 
 class TestSightingBlueprint(AppTestCase):
 
-  def test_get_sightings_index_contains_logout_link_when_logged_in(self):
+  def test_get_sightings_contains_logout_link_when_logged_in(self):
     self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
-    response = self.client.get(url_for('sighting.get_sightings_index'))
+    response = self.client.get('/sighting/')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     html = HTML(html=response.data)
     self.assertIn(url_for('authentication.logout'), html.links)
 
-  def test_get_sightings_index_contains_no_sightings_when_logged_in(self):
+  def test_get_sightings_contains_no_sightings_when_logged_in(self):
     self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
-    response = self.client.get(url_for('sighting.get_sightings_index'))
+    response = self.client.get('/sighting/')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     html = HTML(html=response.data)
@@ -40,7 +40,7 @@ class TestSightingBlueprint(AppTestCase):
 
     response = self.__post_sighting(4, '2016-02-03')
 
-    self.assertRedirect(response, 'sighting.get_sightings_index')
+    self.assertRedirect(response, 'sighting.get_sightings')
 
   def __post_sighting(self, bird_id, dateInput):
     data = {'birdId': bird_id, 'dateInput': dateInput}
