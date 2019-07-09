@@ -27,6 +27,18 @@ class TestUsername(TestCase):
   def test_repr(self):
     self.assertEqual(repr(Username('hulot')), 'Username(hulot)')
 
+
+class TestPassword(TestCase):
+
+  def test_construction_throws_exception_when_invalid_format(self):
+    self.assertRaises(Exception, Password, '')
+    self.assertRaises(Exception, Password, '1234567')
+    self.assertRaises(Exception, Password, ('').join(['a'] * 129))
+
+  def test_eq_false_when_another_type(self):
+    self.assertNotEqual(Password('12345678'), '12345678')
+
+
 class TestAccountRepository(TestCase):
 
   def setUp(self):
