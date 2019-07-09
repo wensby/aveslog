@@ -26,10 +26,8 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
   @require_login
   def post_create(birdid):
     sighting_post = create_sighting_post(request.form)
-    if sighting_repository.add_sighting(sighting_post):
-      return redirect(url_for('sighting.get_sightings'))
-    else:
-      return redirect(url_for('sighting.get_sightings'))
+    sighting_repository.add_sighting(sighting_post)
+    return redirect(url_for('sighting.get_sightings'))
 
   @blueprint.route('/create/<birdid>')
   @require_login
