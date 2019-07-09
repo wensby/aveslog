@@ -98,3 +98,38 @@ class TestSightingPage(AppTestCase):
       ".//*[contains(., 'Pica pica') "
       "and .//form[@method = 'post' and .//button[@type = 'submit' "
       "and @value = 'Delete']]]")
+
+  def test_post_delete_sighting_redirects_to_login_when_logged_out(self):
+    self.db_insert_person(4)
+    self.db_insert_bird(8, 'Pica pica')
+    self.db_insert_sighting(15, 4, 8, date(2019, 7, 9), time(19, 10))
+
+    response = self.client.post('/sighting/15', data={'action': 'Delete'})
+
+    self.assertRedirect(response, 'authentication.get_login')
+
+  def test_post_delete_sighting_redirects_home_when_wrong_account(self):
+    # When sighting exist but wrong account logged in
+    self.db_insert_person(4)
+    self.db_insert_account(8, 'hulot', 'hulot@tati.com', 4, None)
+    self.db_insert_bird(15, 'Pica pica')
+    self.db_insert_sighting(16, 4, 15, date(2019, 7, 9), time(19, 10))
+    self.set_logged_in(8)
+
+    response = self.client.post('/sighting/23', data={'action': 'Delete'})
+
+    self.assertRedirect(response, 'home.index')
+    self.assertEqual(len(self.db_get_sighting_rows()), 1)
+
+  def test_post_delete_sighting_when_success(self):
+    # When sighting exist and correct account logged in
+    self.db_insert_person(4)
+    self.db_insert_account(8, 'hulot', 'hulot@tati.com', 4, None)
+    self.db_insert_bird(15, 'Pica pica')
+    self.db_insert_sighting(16, 4, 15, date(2019, 7, 9), time(19, 10))
+    self.set_logged_in(8)
+
+    response = self.client.post('/sighting/16', data={'action': 'Delete'})
+
+    self.assertRedirect(response, 'sighting.get_sightings')
+    self.assertEqual(len(self.db_get_sighting_rows()), 0)

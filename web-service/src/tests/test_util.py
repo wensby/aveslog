@@ -159,3 +159,8 @@ class AppTestCase(TestCase):
       result = transaction.execute('SELECT * FROM password_reset_token;')
       rows = result.rows
     return rows
+
+  def db_get_sighting_rows(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT * FROM sighting;')
+      return result.rows
