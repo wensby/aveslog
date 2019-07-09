@@ -79,23 +79,6 @@ class Locale:
     else:
       return binomial_name
 
-class BirdDictionaryFactory:
-
-  def __init__(self, locales_directory_path):
-    self.locales_directory_path = locales_directory_path
-
-  def create_dictionary(self, language):
-    filepath = self.locales_directory_path + 'bird-names-by-language.json'
-    with open(filepath, 'r') as jsonfile:
-      bird_names_by_language = json.load(jsonfile)
-      if language.iso_639_1_code in bird_names_by_language:
-        return bird_names_by_language[language.iso_639_1_code]
-    bird_name_filename = 'bird-names-' + language.iso_639_1_code + '.json'
-    bird_name_filepath = self.locales_directory_path + bird_name_filename
-    if os.path.isfile(bird_name_filepath):
-      with open(bird_name_filepath, 'r') as jsonfile:
-        return json.load(jsonfile)
-
 
 class LocaleDeterminerFactory:
 
