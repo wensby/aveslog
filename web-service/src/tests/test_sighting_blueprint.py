@@ -53,5 +53,5 @@ class TestSightingBlueprint(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
 
   def __post_sighting(self, bird_id, dateInput):
-    data = { 'birdId': bird_id, 'dateInput': dateInput }
+    data = {'birdId': bird_id, 'dateInput': dateInput}
     return self.client.post(url_for('sighting.post_sighting'), data=data)
