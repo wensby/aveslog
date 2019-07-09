@@ -22,9 +22,9 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
     g.render_context['sightings'] = items
     return render_page('sighting/sightings.html')
 
-  @blueprint.route('/', methods=['POST'])
+  @blueprint.route('/create/<birdid>', methods=['POST'])
   @require_login
-  def post_sighting():
+  def post_create(birdid):
     sighting_post = create_sighting_post(request.form)
     if sighting_repository.add_sighting(sighting_post):
       return redirect(url_for('sighting.get_sightings'))
@@ -33,7 +33,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
 
   @blueprint.route('/create/<birdid>')
   @require_login
-  def create(birdid):
+  def get_create(birdid):
     view = view_factory.create_sighting_creation_view(birdid)
     g.render_context['view'] = view
     return render_page('sighting/create.html')

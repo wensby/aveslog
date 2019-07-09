@@ -37,24 +37,24 @@ class TestCreateSightingForm(AppTestCase):
     self.db_insert_account(15, 'myUsername', 'my@email.com', 8, None)
     self.set_logged_in(15)
 
-    response = self.client.get(url_for('sighting.create', birdid=4))
+    response = self.client.get('/sighting/create/4')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
 
-  def test_post_sighting_redirects_to_login_when_logged_out(self):
-    response = self.__post_sighting(4, '2008-01-05')
+  def test_post_create_redirects_to_login_when_logged_out(self):
+    response = self.__post_create(4, '2008-01-05')
     self.assertRedirect(response, 'authentication.get_login')
 
-  def test_post_sighting_redirects_to_sightings_index_when_logged_in(self):
+  def test_post_create_redirects_to_sightings_index_when_logged_in(self):
     self.db_insert_bird(4, 'Pica pica')
     self.db_insert_person(8)
     self.db_insert_account(15, 'myUsername', 'my@email.com', 8, None)
     self.set_logged_in(15)
 
-    response = self.__post_sighting(4, '2016-02-03')
+    response = self.__post_create(4, '2016-02-03')
 
     self.assertRedirect(response, 'sighting.get_sightings')
 
-  def __post_sighting(self, bird_id, dateInput):
-    data = {'birdId': bird_id, 'dateInput': dateInput}
-    return self.client.post(url_for('sighting.post_sighting'), data=data)
+  def __post_create(self, bird_id, date_input):
+    data = {'birdId': bird_id, 'dateInput': date_input}
+    return self.client.post(f'/sighting/create/{bird_id}', data=data)
