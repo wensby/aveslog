@@ -101,6 +101,15 @@ class AppTestCase(TestCase):
         'INSERT INTO password_reset_token (user_account_id, token) '
         'VALUES (%s, %s);', (account_id, token))
 
+  def db_insert_sighting(self,
+        sighting_id, person_id, bird_id, sighting_date, sighting_time):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'INSERT INTO '
+        'sighting (id, person_id, bird_id, sighting_date, sighting_time) '
+        'VALUES (%s, %s, %s, %s, %s);',
+        (sighting_id, person_id, bird_id, sighting_date, sighting_time))
+
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
       if '_flashes' in session:

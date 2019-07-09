@@ -76,6 +76,8 @@ class Locale:
     binomial_name = bird.binomial_name if isinstance(bird, Bird) else bird
     if self.bird_dictionary and binomial_name in self.bird_dictionary:
       return self.bird_dictionary[binomial_name]
+    else:
+      return binomial_name
 
 class BirdDictionaryFactory:
 

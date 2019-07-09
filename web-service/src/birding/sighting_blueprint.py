@@ -45,7 +45,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
         sighting)
       return render_page('sighting/sighting.html')
     else:
-      return redirect(url_for('index'))
+      return redirect(url_for('home.index'))
 
   @blueprint.route('/<sighting_id>', methods=['POST'])
   @require_login
@@ -55,7 +55,7 @@ def create_sighting_blueprint(sighting_repository, sighting_view_factory):
       if request.form['action'] == 'Delete':
         sighting_repository.delete_sighting(sighting_id)
         return redirect(url_for('sighting.get_sightings'))
-    return redirect(url_for('index'))
+    return redirect(url_for('home.index'))
 
   def create_sighting_post(form):
     bird_id = int(form['birdId'])
