@@ -17,12 +17,9 @@ class SightingItem:
     return False
 
   def __repr__(self):
-    return ('SightingItem('
-            f'sighting_id={self.sighting_id}, '
-            f'bird_id={self.bird_id}, '
-            f'bird_binomial_name={self.bird_binomial_name}, '
-            f'time={self.time}, '
-            f'thumbnail_picture={self.thumbnail_picture})')
+    return (f'{self.__class__.__name__}({self.sighting_id}, '
+            f'{self.bird_id}, {self.bird_binomial_name}, '
+            f'{self.time}, {self.thumbnail_picture})')
 
 
 class SightingViewFactory:

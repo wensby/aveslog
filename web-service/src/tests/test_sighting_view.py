@@ -7,7 +7,18 @@ from birding.sighting_view import SightingCreationView
 from birding.database import read_script_file
 from tests.test_util import mock_return
 from types import SimpleNamespace as Simple
-from datetime import datetime
+from datetime import datetime, time
+
+
+class TestSightingItem(TestCase):
+
+  def test_eq_false_when_other_type(self):
+    item = SightingItem(4, 8, 'Pica pica', time(17, 7), None)
+    self.assertNotEqual(item, 'SightingItem(4, 8, Pica pica, 17:07:00, None)')
+
+  def test_repr(self):
+    result = repr(SightingItem(4, 8, 'Pica pica', time(17, 7), None))
+    self.assertEqual(result, 'SightingItem(4, 8, Pica pica, 17:07:00, None)')
 
 
 class TestSightingViewFactory(TestCase):
