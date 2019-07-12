@@ -1,11 +1,9 @@
-import json
-import psycopg2
-
 class Person:
 
   def __init__(self, id, name):
     self.id = id
     self.name = name
+
 
 class PersonRepository:
 
@@ -24,15 +22,8 @@ class PersonRepository:
     return Person(row[0], row[1])
 
   def get_person_by_name(self, name):
-    return self.fetchoneperson('SELECT id, name FROM person WHERE name LIKE %s;', (name,))
-
-  def get_people(self):
-    rows = self.database.query('SELECT * FROM person;').rows
-    people = []
-    for row in rows:
-      person = Person(row[0], row[1])
-      people.append(bird)
-    return people
+    return self.fetchoneperson(
+      'SELECT id, name FROM person WHERE name LIKE %s;', (name,))
 
   def add_person(self, name):
     self.database.query('INSERT INTO person (name) VALUES (%s);', (name,))
