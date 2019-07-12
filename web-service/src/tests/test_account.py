@@ -39,6 +39,21 @@ class TestPassword(TestCase):
     self.assertNotEqual(Password('12345678'), '12345678')
 
 
+class TestAccount(TestCase):
+
+  @classmethod
+  def setUpClass(cls) -> None:
+    cls.account = Account(4, 'hulot', 'hulot@mail.com', 8, 15)
+
+  def test_eq_false_when_another_type(self):
+    string_account = 'Account(4, hulot, hulot@email.com, 8, 15)'
+    self.assertNotEqual(self.account, string_account)
+
+  def test_repr(self):
+    representation = repr(self.account)
+    self.assertEqual(representation, 'Account(4, hulot, hulot@mail.com, 8, 15)')
+
+
 class TestAccountRepository(TestCase):
 
   def setUp(self):

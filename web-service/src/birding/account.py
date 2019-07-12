@@ -62,13 +62,8 @@ class Account:
     return False
 
   def __repr__(self):
-    return ('Account<'
-            f'id={self.id}, '
-            f'username={self.username}, '
-            f'email={self.email}, '
-            f'person_id={self.person_id}, '
-            f'locale_id={self.locale_id}, '
-            '>')
+    return (f'Account({self.id}, {self.username}, {self.email}, '
+            f'{self.person_id}, {self.locale_id})')
 
 
 class AccountFactory:
