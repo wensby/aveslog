@@ -19,7 +19,7 @@ from .bird import BirdRepository
 from .bird_view import BirdViewFactory
 from .bird_blueprint import create_bird_blueprint
 from .blueprint_home import create_home_blueprint
-from .blueprint_profile import create_profile_blueprint
+from .profile_blueprint import create_profile_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
@@ -85,7 +85,7 @@ def create_app(test_config=None):
     password_reset_controller,
   )
   sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
-  profile_blueprint = create_profile_blueprint(account_repository)
+  profile_blueprint = create_profile_blueprint()
   settings_blueprint = create_settings_blueprint(authenticator, password_repository)
   bird_blueprint = create_bird_blueprint(bird_view_factory, bird_search_controller, bird_search_view_factory)
   localization_blueprint = create_localization_blueprint(
