@@ -13,7 +13,7 @@ class Sighting:
     return False
 
   def __repr__(self):
-    return str(self.__dict__)
+    return f'{self.__class__.__name__}({self.id}, {self.person_id}, {self.bird_id}, {self.sighting_date}, {self.sighting_time})'
 
 
 class SightingRepository:
