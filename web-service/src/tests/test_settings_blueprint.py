@@ -6,7 +6,33 @@ from requests_html import HTML
 from test_util import AppTestCase
 
 
-class TestSettingsBlueprint(AppTestCase):
+class TestSettingsPage(AppTestCase):
+
+  def test_settings_index_renders_correctly(self):
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
+    self.set_logged_in(4)
+
+    response = self.client.get('/settings/')
+
+    self.assertOkHtmlResponseWith(
+      response, f".//a[@href = '{url_for('settings.get_password_settings')}']")
+
+
+class TestPasswordSettingsPage(AppTestCase):
+
+  def test_password_settings_page_renders_correctly(self):
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
+    self.set_logged_in(4)
+
+    response = self.client.get('/settings/password')
+
+    self.assertOkHtmlResponseWith(
+      response,
+      ".//form[@method = 'post' "
+      "and .//input[@name = 'oldPasswordInput'] "
+      "and .//input[@name = 'newPasswordInput'] "
+      "and .//input[@name = 'newPasswordVerificationInput'] "
+      "and .//button[@type = 'submit']]")
 
   def test_post_password_settings_redirect_to_login_when_not_logged_in(self):
     response = self.client.post(url_for('settings.post_password_settings'))
