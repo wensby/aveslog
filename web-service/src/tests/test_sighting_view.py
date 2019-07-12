@@ -9,6 +9,7 @@ from tests.test_util import mock_return
 from types import SimpleNamespace as Simple
 from datetime import datetime
 
+
 class TestSightingViewFactory(TestCase):
 
   def setUp(self):
@@ -40,7 +41,8 @@ class TestSightingViewFactory(TestCase):
   def test_create_sighting_items_queries_database_correctly(self):
     self.database.query().rows = []
     self.factory.create_sighting_items(account=Simple(person_id=4))
-    self.database.query.assert_called_with(read_script_file('select_sighting_item_data.sql'), (4, ))
+    self.database.query.assert_called_with(
+      read_script_file('select_sighting_item_data.sql'), (4,))
 
   def test_create_sighting_creation_view_when_valid_bird_id(self):
     self.bird_repository.get_bird_by_id = mock_return('White wagtail')
