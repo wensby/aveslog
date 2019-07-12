@@ -3,7 +3,8 @@ from birding.database import read_script_file
 
 class SightingItem:
 
-  def __init__(self, sighting_id, bird_id, bird_binomial_name, time, thumbnail_picture):
+  def __init__(self, sighting_id, bird_id, bird_binomial_name, time,
+        thumbnail_picture):
     self.sighting_id = sighting_id
     self.bird_id = bird_id
     self.bird_binomial_name = bird_binomial_name
@@ -17,11 +18,12 @@ class SightingItem:
 
   def __repr__(self):
     return ('SightingItem('
-        f'sighting_id={self.sighting_id}, '
-        f'bird_id={self.bird_id}, '
-        f'bird_binomial_name={self.bird_binomial_name}, '
-        f'time={self.time}, '
-        f'thumbnail_picture={self.thumbnail_picture})')
+            f'sighting_id={self.sighting_id}, '
+            f'bird_id={self.bird_id}, '
+            f'bird_binomial_name={self.bird_binomial_name}, '
+            f'time={self.time}, '
+            f'thumbnail_picture={self.thumbnail_picture})')
+
 
 class SightingViewFactory:
 
@@ -53,11 +55,13 @@ class SightingViewFactory:
     if bird:
       return SightingCreationView(bird)
 
+
 class SightingView:
 
   def __init__(self, sighting, bird):
     self.sighting = sighting
     self.bird = bird
+
 
 class SightingCreationView:
 
