@@ -155,13 +155,6 @@ class AccountRepository:
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def get_user_account_registration_by_email(self, email):
-    query = ('SELECT id, email, token '
-             'FROM user_account_registration '
-             'WHERE email LIKE %s;')
-    result = self.database.query(query, (email.raw,))
-    return next(map(AccountRegistration.fromrow, result.rows), None)
-
   def find_account_registration(self, email, token):
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
