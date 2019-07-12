@@ -123,6 +123,30 @@ class TestAccountFactory(TestCase):
 
     self.assertEqual(result, Account(4, 'alice', 'alice@email.com', None, None))
 
+  def test_create_account_fails_when_username_already_taken(self):
+    email = EmailAddress('hulot@mail.com')
+    username = Username('hulot')
+    password = Password('mypassword')
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.return_value = Simple(rows=[[1]])
+
+    result = self.factory.create_account(email, username, password)
+
+    self.assertIsNone(result)
+
+  def test_create_account_fails_when_inserting_account_fails(self):
+    email = EmailAddress('hulot@mail.com')
+    username = Username('hulot')
+    password = Password('mypassword')
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.side_effect = [
+      Simple(rows=[]),
+      Simple(rows=[])]
+
+    result = self.factory.create_account(email, username, password)
+
+    self.assertIsNone(result)
+
 
 class TestPasswordHasher(TestCase):
 

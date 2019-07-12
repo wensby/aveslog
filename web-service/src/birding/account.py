@@ -83,7 +83,7 @@ class AccountFactory:
          'VALUES (%s, %s) '
          'RETURNING id, username, email, person_id, locale_id;'),
         (username.raw, email.raw))
-      account = next(map(Account.fromrow, result.rows))
+      account = next(map(Account.fromrow, result.rows), None)
       if not account:
         return
       salt_hashed_password = self.hasher.create_salt_hashed_password(password)
