@@ -101,6 +101,9 @@ class TestAccountRepository(TestCase):
 
 
 class TestAccountFactory(TestCase):
+  username = Username('alice')
+  email = EmailAddress('alice@email.com')
+  password = Password('password')
 
   def setUp(self) -> None:
     self.database = Mock()
@@ -108,9 +111,6 @@ class TestAccountFactory(TestCase):
     self.factory = AccountFactory(self.database, self.password_hasher)
 
   def test_create_account_returns_account_when_success(self):
-    username = Username('alice')
-    email = EmailAddress('alice@email.com')
-    password = Password('password')
     self.password_hasher.create_salt_hashed_password.return_value = (
       'mySalt', 'mySaltedHash')
     self.database.transaction.return_value = mock_database_transaction()
@@ -119,31 +119,28 @@ class TestAccountFactory(TestCase):
       Simple(rows=[[4, 'alice', 'alice@email.com', None, None]]),
       Simple()]
 
-    result = self.factory.create_account(email, username, password)
+    result = self.factory.create_account(
+      self.email, self.username, self.password)
 
     self.assertEqual(result, Account(4, 'alice', 'alice@email.com', None, None))
 
   def test_create_account_fails_when_username_already_taken(self):
-    email = EmailAddress('hulot@mail.com')
-    username = Username('hulot')
-    password = Password('mypassword')
     self.database.transaction.return_value = mock_database_transaction()
     self.database.transaction().execute.return_value = Simple(rows=[[1]])
 
-    result = self.factory.create_account(email, username, password)
+    result = self.factory.create_account(
+      self.email, self.username, self.password)
 
     self.assertIsNone(result)
 
   def test_create_account_fails_when_inserting_account_fails(self):
-    email = EmailAddress('hulot@mail.com')
-    username = Username('hulot')
-    password = Password('mypassword')
     self.database.transaction.return_value = mock_database_transaction()
     self.database.transaction().execute.side_effect = [
       Simple(rows=[]),
       Simple(rows=[])]
 
-    result = self.factory.create_account(email, username, password)
+    result = self.factory.create_account(
+      self.email, self.username, self.password)
 
     self.assertIsNone(result)
 
