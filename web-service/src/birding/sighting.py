@@ -1,6 +1,3 @@
-from pathlib import Path
-import json
-
 class Sighting:
 
   def __init__(self, id, person_id, bird_id, sighting_date, sighting_time):
@@ -12,11 +9,12 @@ class Sighting:
 
   def __eq__(self, other):
     if isinstance(other, Sighting):
-        return self.__dict__ == other.__dict__
+      return self.__dict__ == other.__dict__
     return False
 
   def __repr__(self):
     return str(self.__dict__)
+
 
 class SightingRepository:
 
@@ -49,19 +47,20 @@ class SightingRepository:
 
   def add_sighting(self, sighting_post):
     query = (
-        'INSERT INTO '
-        '  sighting (person_id, bird_id, sighting_date, sighting_time) '
-        'VALUES '
-        '  (%s, %s, %s, %s);'
+      'INSERT INTO '
+      '  sighting (person_id, bird_id, sighting_date, sighting_time) '
+      'VALUES '
+      '  (%s, %s, %s, %s);'
     )
     args = (
-        sighting_post.person_id,
-        sighting_post.bird_id,
-        sighting_post.date,
-        sighting_post.time,
+      sighting_post.person_id,
+      sighting_post.bird_id,
+      sighting_post.date,
+      sighting_post.time,
     )
     result = self.database.query(query, args)
     return 'INSERT 0 1' in result.status
+
 
 class SightingPost:
 
