@@ -67,4 +67,4 @@ class SightingCreationView:
     return False
 
   def __repr__(self):
-    return f'SightingCreationView<bird={self.bird}>'
+    return f'{self.__class__.__name__}({self.bird})'

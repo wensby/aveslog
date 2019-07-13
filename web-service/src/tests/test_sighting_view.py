@@ -1,6 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock, ANY
 
+from birding.bird import Bird
 from birding.sighting_view import SightingViewFactory
 from birding.sighting_view import SightingItem
 from birding.sighting_view import SightingCreationView
@@ -63,3 +64,14 @@ class TestSightingViewFactory(TestCase):
     self.assertEqual(result, SightingCreationView('White wagtail'))
     self.bird_repository.get_bird_by_id.assert_called_with(1)
     self.bird_repository.get_bird_by_id.assert_called_once_with(ANY)
+
+
+class TestSightingCreationView(TestCase):
+
+  def test_eq_false_when_other_type(self):
+    view = SightingCreationView(Bird(4, 'Pica pica'))
+    self.assertNotEqual(view, 'SightingCreationView(Bird(4, Pica pica))')
+
+  def test_repr(self):
+    view = SightingCreationView(Bird(4, 'Pica pica'))
+    self.assertEqual(repr(view), 'SightingCreationView(Bird(4, Pica pica))')
