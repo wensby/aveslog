@@ -6,6 +6,19 @@ from requests_html import HTML
 from test_util import AppTestCase
 
 
+class TestLoginPage(AppTestCase):
+
+  def test_login_page_contains_expected_content(self):
+    response = self.client.get('/authentication/login')
+    self.assertOkHtmlResponseWith(
+      response,
+      ".//form[@method = 'post' "
+      "and .//input[@name = 'username'] "
+      "and .//input[@name = 'password'] "
+      f"and .//a[@href = '{url_for('authentication.get_register_request')}'] "
+      "and .//button[@type = 'submit']]")
+
+
 class TestAuthenticationBlueprint(AppTestCase):
 
   def test_get_register_request_contains_bird_search(self):
@@ -161,8 +174,9 @@ class TestAuthenticationBlueprint(AppTestCase):
 
   def __post_login_form(self, username, password):
     url = url_for('authentication.post_login')
-    data = { 'username': username, 'password': password }
+    data = {'username': username, 'password': password}
     return self.client.post(url, data=data)
+
 
 class TestPasswordResetLinkRequest(AppTestCase):
 
