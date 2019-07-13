@@ -9,6 +9,11 @@ class Picture:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
 
+  def __eq__(self, other):
+    if isinstance(other, Picture):
+      return self.__dict__ == other.__dict__
+    return False
+
 
 class PictureRepository:
 
