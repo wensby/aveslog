@@ -5,6 +5,7 @@ from birding.bird import Bird, BirdThumbnail, BirdRepository
 
 from types import SimpleNamespace as Simple
 
+
 class TestBird(TestCase):
 
   def test_construction(self):
@@ -32,6 +33,7 @@ class TestBirdThumbnail(TestCase):
 
   def test_eq_false_when_different_type(self):
     self.assertNotEqual(BirdThumbnail(4, 8), 'BirdThumbnail(4, 8)')
+
 
 class TestBirdRepository(TestCase):
 
