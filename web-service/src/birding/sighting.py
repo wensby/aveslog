@@ -35,13 +35,6 @@ class SightingRepository:
     result = self.database.query(query, (sighting_id,))
     return 'DELETE' in result.status
 
-  def get_sightings_by_person_id(self, id):
-    query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
-             'FROM sighting '
-             'WHERE person_id = %s;')
-    result = self.database.query(query, (id,))
-    return list(map(self.sighting_from_row, result.rows))
-
   def sighting_from_row(self, row):
     return Sighting(row[0], row[1], row[2], row[3], row[4])
 
