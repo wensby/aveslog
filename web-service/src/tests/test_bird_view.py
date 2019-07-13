@@ -11,8 +11,8 @@ class TestBirdViewFactory(TestCase):
     self.picture_repository = Mock()
     self.bird_repository = Mock()
     self.factory = BirdViewFactory(
-        self.bird_repository,
-        self.picture_repository,
+      self.bird_repository,
+      self.picture_repository,
     )
 
   def test_create_bird_page_view_returns_correct_page_view(self):
@@ -27,3 +27,4 @@ class TestBirdViewFactory(TestCase):
     self.bird_repository.get_bird_by_id.assert_called_with(4)
     self.bird_repository.bird_thumbnail.assert_called_with(bird)
     self.picture_repository.pictures.assert_called()
+ 
