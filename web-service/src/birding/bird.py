@@ -12,6 +12,9 @@ class Bird:
       return self.__dict__ == other.__dict__
     return False
 
+  def __repr__(self):
+    return f'{self.__class__.__name__}({self.id}, {self.binomial_name})'
+
   def __hash__(self):
     return hash((self.id, self.binomial_name))
 

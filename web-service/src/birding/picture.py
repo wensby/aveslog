@@ -9,6 +9,10 @@ class Picture:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
 
+  def __repr__(self):
+    return (
+      f'{self.__class__.__name__}({self.id}, {self.filepath}, {self.credit})')
+
   def __eq__(self, other):
     if isinstance(other, Picture):
       return self.__dict__ == other.__dict__

@@ -1,9 +1,31 @@
 from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
+
+from birding.bird import Bird
+from birding.picture import Picture
 from tests.test_util import mock_return
 from birding.search_view import BirdSearchViewFactory
 from birding.search_view import BirdSearchResultItem
+
+
+class TestBirdSearchResultItem(TestCase):
+  bird = Bird(4, 'Pica pica')
+  thumbnail_picture = Picture(8, 'filepath', 'credit')
+
+  def test_eq_false_when_other_type(self):
+    item = BirdSearchResultItem(self.bird, self.thumbnail_picture)
+    self.assertNotEqual(
+      item,
+      'BirdSearchResultItem(Bird(4, Pica pica), Picture(8, filepath, credit))')
+
+  def test_repr(self):
+    item = BirdSearchResultItem(
+      Bird(4, 'Pica pica'),
+      Picture(8, 'filepath', 'credit'))
+    self.assertEqual(
+      repr(item),
+      'BirdSearchResultItem(Bird(4, Pica pica), Picture(8, filepath, credit))')
 
 
 class TestBirdSearchViewFactory(TestCase):

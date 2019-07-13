@@ -11,7 +11,7 @@ class BirdSearchResultItem:
       return False
 
   def __repr__(self):
-    return "<BirdSearchResultItem bird:%s thumbnail_picture:%s>" % (self.bird, self.thumbnail_picture)
+    return f'{self.__class__.__name__}({self.bird}, {self.thumbnail_picture})'
 
 class BirdSearchViewFactory:
 
