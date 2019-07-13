@@ -1,4 +1,5 @@
 from birding.database import read_script_file
+from birding.time import format_date_time
 
 
 class SightingItem:
@@ -34,13 +35,8 @@ class SightingViewFactory:
     return list(map(self.__create_item, result.rows))
 
   def __create_item(self, row):
-    time = self.__create_sighting_time(row[3], row[4])
+    time = format_date_time(row[3], row[4])
     return SightingItem(row[0], row[1], row[2], time, row[5])
-
-  def __create_sighting_time(self, date, time):
-    if time:
-      return f'{date.isoformat()} {time.isoformat()}'
-    return date.isoformat()
 
   def create_sighting_view(self, sighting):
     bird = self.bird_repository.get_bird_by_id(sighting.bird_id)

@@ -8,3 +8,8 @@ def parse_time(time_string):
   if time_string:
     return time.fromisoformat(time_string)
 
+
+def format_date_time(date, time=None):
+  if time:
+    return f'{date.isoformat()} {time.isoformat()}'
+  return date.isoformat()
