@@ -11,6 +11,9 @@ class TestBird(TestCase):
   def test_construction(self):
     Bird(4, 'Pica pica')
 
+  def test_eq_false_when_other_type(self):
+    self.assertNotEqual(Bird(4, 'Pica pica'), 'Bird(4, Pica pica)')
+
 
 class TestBirdThumbnail(TestCase):
 
