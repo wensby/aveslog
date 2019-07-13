@@ -5,12 +5,15 @@ from tests.test_util import mock_return
 from birding.search_view import BirdSearchViewFactory
 from birding.search_view import BirdSearchResultItem
 
+
 class TestBirdSearchViewFactory(TestCase):
 
   def setUp(self):
     self.picture_repository = Mock()
     self.bird_repository = Mock()
-    self.factory = BirdSearchViewFactory(self.picture_repository, self.bird_repository)
+    self.factory = BirdSearchViewFactory(
+      self.picture_repository,
+      self.bird_repository)
 
   def test_create_search_result_items_returns_items_based_on_query_match(self):
     bird_a = Simple(id=1)
