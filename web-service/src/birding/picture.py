@@ -9,6 +9,7 @@ class Picture:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
 
+
 class PictureRepository:
 
   def __init__(self, database):
