@@ -1,5 +1,6 @@
 from test_util import AppTestCase
 
+
 class TestLocalizationBlueprint(AppTestCase):
 
   def test_get_language_redirects_home(self):
