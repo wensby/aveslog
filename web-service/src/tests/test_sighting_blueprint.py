@@ -33,6 +33,19 @@ class TestSightingsHomePage(AppTestCase):
     self.assertOkHtmlResponseWith(
       response, ".//*[count(.//*[text() = 'Pica pica']) = 2]")
 
+  def test_page_swedish_when_logged_in_account_uses_swedish_locale(self):
+    self.assertFileExist('birding/locales/sv/sv-bird-names.json')
+    self.db_insert_person(1)
+    self.db_insert_locale(1, 'sv')
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, 1)
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(1, 1, 1, date(2019, 7, 14), time(13))
+    self.set_logged_in(1)
+
+    response = self.client.get('/sighting/')
+
+    self.assertOkHtmlResponseWithText(response, 'Skata')
+
 
 class TestCreateSightingForm(AppTestCase):
 
