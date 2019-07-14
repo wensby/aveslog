@@ -20,6 +20,18 @@ class TestSightingsHomePage(AppTestCase):
     self.assertIn(url_for('authentication.logout'), html.links)
     self.assertFalse(html.find('.card'))
 
+  def test_page_contains_expected_content_when_sightings_present(self):
+    self.db_insert_person(4)
+    self.db_insert_account(8, 'hulot', 'hulot@mail.com', 4, None)
+    self.db_insert_bird(15, 'Pica pica')
+    self.db_insert_sighting(16, 4, 15, date(2019, 7, 14), None)
+    self.db_insert_sighting(23, 4, 15, date(2019, 7, 14), time(13))
+    self.set_logged_in(8)
+
+    response = self.client.get('/sighting/')
+
+    self.assertOkHtmlResponseWith(response, ".//*[count(.//*[text() = 'Pica pica']) = 2]")
+
 
 class TestCreateSightingForm(AppTestCase):
 
