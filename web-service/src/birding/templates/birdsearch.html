@@ -23,7 +23,7 @@
               <h5 class="card-title">{{ item.bird.binomial_name }}</h5>
               {% endif %}
               {% if g.logged_in_account %}
-                <a href="{{ url_for('sighting.create', birdid=item.bird.id) }}" class="btn btn-primary">{{ locale.text('Add new sighting') }}</a>
+                <a href="{{ url_for('sighting.get_create', birdid=item.bird.id) }}" class="btn btn-primary">{{ locale.text('Add new sighting') }}</a>
               {% endif %}
             </div>
           </div>

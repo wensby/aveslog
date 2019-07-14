@@ -1,6 +1,22 @@
 from test_util import AppTestCase
 
 
+class TestBirdSearchPage(AppTestCase):
+
+  def test_search_match_when_logged_out(self):
+    self.db_insert_bird(4, 'Pica pica')
+    response = self.client.get('/bird/search?query=pica+pica')
+    self.assertOkHtmlResponseWithText(response, 'Pica pica')
+
+  def test_search_match_when_logged_in(self):
+    self.db_insert_bird(4, 'Ardea cinerea')
+    self.db_insert_account(8, 'alice', 'my@email.com', None, None)
+    self.set_logged_in(8)
+
+    response = self.client.get('/bird/search?query=Ardea+cinerea')
+
+    self.assertOkHtmlResponseWithText(response, 'Ardea cinerea')
+
 class TestBirdBlueprint(AppTestCase):
 
   def test_get_bird_contains_bird_binomial_name(self):
@@ -51,8 +67,3 @@ class TestBirdBlueprint(AppTestCase):
     response = self.client.get('/bird/pica_pica', headers=headers)
 
     self.assertOkHtmlResponseWithoutText(response, 'Skata')
-
-  def test_search_contains_match(self):
-    self.db_insert_bird(4, 'Pica pica')
-    response = self.client.get('/bird/search?query=pica+pica')
-    self.assertOkHtmlResponseWithText(response, 'Pica pica')
