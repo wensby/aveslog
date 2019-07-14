@@ -8,7 +8,8 @@ class TestBirdBlueprint(AppTestCase):
     response = self.client.get('/bird/pica_pica')
     self.assertOkHtmlResponseWithText(response, 'Pica pica')
 
-  def test_get_bird_contains_bird_locale_name_when_locale_available_and_set_on_logged_in_account(self):
+  def test_get_bird_contains_bird_locale_name_when_locale_available_and_set_on_logged_in_account(
+        self):
     self.assertFileExist('birding/locales/sv/sv-bird-names.json')
     self.db_insert_bird(4, 'Pica pica')
     self.db_insert_locale(8, 'sv')
@@ -30,7 +31,8 @@ class TestBirdBlueprint(AppTestCase):
 
     self.assertOkHtmlResponseWithoutText(response, 'Skata')
 
-  def test_get_bird_contains_locale_bird_name_when_locale_available_enabled_and_in_request_headers(self):
+  def test_get_bird_contains_locale_bird_name_when_locale_available_enabled_and_in_request_headers(
+        self):
     self.assertFileExist('birding/locales/sv/sv-bird-names.json')
     self.db_insert_bird(4, 'Pica pica')
     self.db_insert_locale(8, 'sv')
@@ -40,7 +42,8 @@ class TestBirdBlueprint(AppTestCase):
 
     self.assertOkHtmlResponseWithText(response, 'Skata')
 
-  def test_get_bird_not_contains_locale_bird_name_when_locale_available_and_in_request_headers_but_not_in_database(self):
+  def test_get_bird_not_contains_locale_bird_name_when_locale_available_and_in_request_headers_but_not_in_database(
+        self):
     self.assertFileExist('birding/locales/sv/sv-bird-names.json')
     self.db_insert_bird(4, 'Pica pica')
     headers = {'Accept-Language': 'sv'}
