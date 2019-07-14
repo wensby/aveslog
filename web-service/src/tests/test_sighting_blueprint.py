@@ -30,7 +30,8 @@ class TestSightingsHomePage(AppTestCase):
 
     response = self.client.get('/sighting/')
 
-    self.assertOkHtmlResponseWith(response, ".//*[count(.//*[text() = 'Pica pica']) = 2]")
+    self.assertOkHtmlResponseWith(
+      response, ".//*[count(.//*[text() = 'Pica pica']) = 2]")
 
 
 class TestCreateSightingForm(AppTestCase):
