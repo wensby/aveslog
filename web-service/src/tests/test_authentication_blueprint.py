@@ -18,6 +18,22 @@ class TestLoginPage(AppTestCase):
       f"and .//a[@href = '{url_for('authentication.get_register_request')}'] "
       "and .//button[@type = 'submit']]")
 
+  def test_submit_login_when_correct_credentials(self):
+    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
+    self.db_insert_password(4, 'myPassword')
+
+    self.__submit_login('myUsername', 'myPassword')
+
+    self.assertSessionContains('account_id', 4)
+
+  def test_submit_login_when_invalid_credentials(self):
+    response = self.__submit_login('abcd', 'abcd')
+    self.assertRedirect(response, 'authentication.get_login')
+
+  def __submit_login(self, username, password):
+    data = {'username': username, 'password': password}
+    return self.client.post(url_for('authentication.post_login'), data=data)
+
 
 class TestAuthenticationBlueprint(AppTestCase):
 
@@ -130,14 +146,6 @@ class TestAuthenticationBlueprint(AppTestCase):
     self.assertEqual(self.get_flashed_messages('danger'),
                      'Username already taken')
 
-  def test_post_login_sets_session_account_id_when_correct_credentials(self):
-    self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
-    self.db_insert_password(4, 'myPassword')
-
-    self.__post_login_form('myUsername', 'myPassword')
-
-    self.assertSessionContains('account_id', 4)
-
   def test_logout_redirects_home(self):
     self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
@@ -170,11 +178,6 @@ class TestAuthenticationBlueprint(AppTestCase):
       'token': form_token,
       'username': username,
       'password': password}
-    return self.client.post(url, data=data)
-
-  def __post_login_form(self, username, password):
-    url = url_for('authentication.post_login')
-    data = {'username': username, 'password': password}
     return self.client.post(url, data=data)
 
 
