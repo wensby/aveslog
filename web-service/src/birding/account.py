@@ -275,10 +275,7 @@ class PasswordResetToken:
     return cls(row[0], row[1])
 
   def __repr__(self):
-    return ('PasswordResetToken<'
-            f'user_account_id={self.user_account_id}, '
-            f'token={self.token}'
-            '>')
+    return f'{self.__class__.__name__}({self.user_account_id}, {self.token})'
 
   def __eq__(self, other):
     if isinstance(other, PasswordResetToken):

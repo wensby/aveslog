@@ -256,3 +256,14 @@ class TestPasswordRepository(TestCase):
     self.repository.remove_password_reset_token('myToken')
     self.database.query.assert_called_with(
       'DELETE FROM password_reset_token WHERE token LIKE %s;', ('myToken',))
+
+
+class TestPasswordResetToken(TestCase):
+
+  def test_repr(self):
+    token = PasswordResetToken(4, 'token')
+    self.assertEqual(repr(token), 'PasswordResetToken(4, token)')
+
+  def test_eq_false_when_other_type(self):
+    token = PasswordResetToken(4, 'token')
+    self.assertNotEqual(token, 'PasswordResetToken(4, token)')
