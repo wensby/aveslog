@@ -9,7 +9,7 @@ from requests_html import HTML
 from werkzeug.datastructures import Headers
 
 import birding
-from birding.account import PasswordHasher, Password
+from birding.account import PasswordHasher, Password, Account
 from birding.authentication import SaltFactory
 from birding.database import Transaction
 
@@ -109,6 +109,13 @@ class AppTestCase(TestCase):
         'sighting (id, person_id, bird_id, sighting_date, sighting_time) '
         'VALUES (%s, %s, %s, %s, %s);',
         (sighting_id, person_id, bird_id, sighting_date, sighting_time))
+
+  def db_get_account(self, account_id) -> Account:
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT * FROM user_account WHERE id = %s;',
+        (account_id,), Account.fromrow)
+      return next(iter(result.rows), None)
 
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
