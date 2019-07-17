@@ -17,11 +17,13 @@ from birding.database import Transaction
 def mock_return(value):
   return Mock(return_value=value)
 
+
 def mock_database_transaction():
   transaction = Mock(spec=Transaction)
   transaction.__enter__ = Mock(return_value=transaction)
   transaction.__exit__ = Mock(return_value=None)
   return transaction
+
 
 class TestClient(FlaskClient):
 
