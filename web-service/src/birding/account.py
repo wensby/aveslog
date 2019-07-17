@@ -3,6 +3,8 @@ import binascii
 import os
 import re
 
+from birding.database import Database
+
 
 class Username:
   regex = re.compile('^[A-Za-z0-9_.-]{5,32}$')
@@ -128,7 +130,7 @@ class HashedPassword:
 
 class AccountRepository:
 
-  def __init__(self, database, password_hasher, token_factory):
+  def __init__(self, database : Database, password_hasher, token_factory):
     self.database = database
     self.hasher = password_hasher
     self.token_factory = token_factory
