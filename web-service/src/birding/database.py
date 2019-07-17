@@ -65,13 +65,15 @@ class Transaction:
   def __get_connection(self):
     return self.connection_pool.getconn()
 
-  def execute(self, query, vars=None):
+  def execute(self, query, vars=None, mapper=None):
     self.cursor.execute(query, vars)
     try:
       rows = self.cursor.fetchall()
     except:
       rows = []
     status = self.cursor.statusmessage
+    if mapper:
+      rows = list(map(mapper, rows))
     return QueryResult(status, rows)
 
 class QueryResult:
