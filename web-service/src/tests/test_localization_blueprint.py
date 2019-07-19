@@ -15,3 +15,11 @@ class TestLocalization(AppTestCase):
     self.client.get('/language?l=sv')
 
     self.assertEqual(self.db_get_account(1).locale_id, 1)
+
+  def test_saves_locales_misses_after_request(self):
+    self.db_insert_locale(1, 'xx')
+    headers = {'Accept-Language': 'xx'}
+
+    self.client.get('/', headers=headers)
+
+    self.assertFileExist('test-logs/locales-misses/xx.txt')

@@ -71,8 +71,9 @@ class LoadedLocale:
 
 class LocaleLoader:
 
-  def __init__(self, locales_directory_path):
+  def __init__(self, locales_directory_path, locales_misses_repository: dict):
     self.locales_directory_path = locales_directory_path
+    self.locales_misses_repository = locales_misses_repository
 
   def load_locale(self, locale: Locale) -> LoadedLocale:
     language_dictionary = None
@@ -87,7 +88,8 @@ class LocaleLoader:
     if os.path.exists(bird_dictionary_filepath):
       with open(bird_dictionary_filepath, 'r') as file:
         bird_dictionary = json.load(file)
-    return LoadedLocale(locale, language_dictionary, bird_dictionary, None)
+    return LoadedLocale(locale, language_dictionary, bird_dictionary,
+                        self.locales_misses_repository)
 
 
 class LocaleRepository:
@@ -143,10 +145,8 @@ class LocaleDeterminerFactory:
     self.locale_repository = locale_repository
 
   def create_locale_determiner(self):
-    available = self.locale_repository.available_locale_codes()
     enabled = self.locale_repository.enabled_locale_codes()
-    locale_codes = list(filter(lambda locale: locale in enabled, available))
-    return LocaleDeterminer(self.user_locale_cookie_key, locale_codes)
+    return LocaleDeterminer(self.user_locale_cookie_key, enabled)
 
 
 class LocaleDeterminer:

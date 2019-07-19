@@ -57,7 +57,8 @@ def create_app(test_config=None):
   person_repository = PersonRepository(database)
   authenticator = Authenticator(account_repository, hasher)
   localespath = os.path.join(app.root_path, 'locales/')
-  locale_loader = LocaleLoader(localespath)
+  locales_misses_repository = {}
+  locale_loader = LocaleLoader(localespath, locales_misses_repository)
   locale_repository = LocaleRepository(localespath, locale_loader, database)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key, locale_repository)
   bird_repository = BirdRepository(database)
@@ -106,6 +107,18 @@ def create_app(test_config=None):
     load_logged_in_account()
     init_render_context()
     detect_user_locale()
+
+  @app.after_request
+  def after_request(response):
+    locales_misses_dir_path = os.path.join(app.config['LOGS_DIR_PATH'], 'locales-misses')
+    if not os.path.isdir(locales_misses_dir_path):
+      os.makedirs(locales_misses_dir_path)
+    for locale, misses in locales_misses_repository.items():
+      with open(f'{locales_misses_dir_path}/{locale.code}.txt', 'a+') as file:
+        for miss in misses:
+          file.write(miss + '\n')
+    locales_misses_repository.clear()
+    return response
 
   def load_logged_in_account():
     account_id = session.get('account_id')
