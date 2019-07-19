@@ -78,9 +78,11 @@ class LocaleLoader:
         bird_dictionary = json.load(file)
     return LoadedLocale(locale, language_dictionary, bird_dictionary, None)
 
+
 class LocaleRepository:
 
-  def __init__(self, locales_directory_path, locale_loader: LocaleLoader, database: Database):
+  def __init__(self, locales_directory_path, locale_loader: LocaleLoader,
+        database: Database):
     self.locales_directory_path = locales_directory_path
     self.locale_loader = locale_loader
     self.database = database
@@ -88,9 +90,11 @@ class LocaleRepository:
   def available_locale_codes(self):
     def is_length_2(x):
       return len(x) == 2
+
     def locales_directory_subdirectories():
       path = self.locales_directory_path
       return filter(lambda x: os.path.isdir(path + x), os.listdir(path))
+
     return list(filter(is_length_2, locales_directory_subdirectories()))
 
   def enabled_locale_codes(self):
@@ -123,7 +127,7 @@ class LocaleDeterminerFactory:
 
   def __init__(self,
         user_locale_cookie_key: str,
-        locale_repository : LocaleRepository):
+        locale_repository: LocaleRepository):
     self.user_locale_cookie_key = user_locale_cookie_key
     self.locale_repository = locale_repository
 
@@ -132,6 +136,7 @@ class LocaleDeterminerFactory:
     enabled = self.locale_repository.enabled_locale_codes()
     locale_codes = list(filter(lambda locale: locale in enabled, available))
     return LocaleDeterminer(self.user_locale_cookie_key, locale_codes)
+
 
 class LocaleDeterminer:
 
