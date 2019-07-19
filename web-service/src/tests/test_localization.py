@@ -36,7 +36,7 @@ class TestLoadedLocale(TestCase):
                                 ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
-  def test_records_translation_miss_in_misses_repository_when_one_miss(self):
+  def test_records_miss_when_one_miss(self):
     misses_repository = {}
     loaded_locale = LoadedLocale(self.locale, {}, {}, misses_repository)
 
