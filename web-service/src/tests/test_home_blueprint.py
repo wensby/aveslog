@@ -8,6 +8,7 @@ class TestHomePage(AppTestCase):
     response = self.client.get(url_for('home.index'))
     html = self.assertOkHtmlResponse(response)
     self.assertIn(url_for('authentication.get_login'), html.links)
+    self.assertIn(url_for('settings.get_settings_index'), html.links)
     bird_search_form = html.find('form[action="/bird/search"]', first=True)
     self.assertTrue(bird_search_form)
     self.assertEqual(len(bird_search_form.find('input[name="query"]')), 1)

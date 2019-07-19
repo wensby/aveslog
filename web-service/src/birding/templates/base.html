@@ -47,9 +47,6 @@
               <div class="nav-item">
                 <a class="nav-link" href="/sighting">{{ locale.text('Sightings') }}</a>
               </div>
-              <div class="nav-item">
-                <a class="nav-link" href="/settings">{{ locale.text('Settings') }}</a>
-              </div>
             {% endif %}
             <div class="nav-item">
               {% if g.logged_in_account %}
@@ -57,6 +54,9 @@
               {% else %}
                 <a class="nav-link" href="/authentication/login">{{ locale.text('Login') }}</a>
               {% endif %}
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="{{ url_for('settings.get_settings_index') }}">{{ locale.text('Settings') }}</a>
             </div>
             <div class="nav-item">
               <a class="nav-link" href="/language?l=en">English</a>
