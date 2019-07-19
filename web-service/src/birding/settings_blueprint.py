@@ -11,6 +11,7 @@ from .render import render_page
 from .account import Password, AccountRepository
 from .authentication_blueprint import require_login
 
+
 def update_locale_context(user_locale_cookie_key, loaded_locale: LoadedLocale):
   previously_set_code = request.cookies.get(user_locale_cookie_key, None)
   # when the response exists, set a cookie with the language if it is new
@@ -20,12 +21,14 @@ def update_locale_context(user_locale_cookie_key, loaded_locale: LoadedLocale):
   g.locale = loaded_locale
   g.render_context['locale'] = loaded_locale
 
+
 def set_locale_cookie_after_this_request(locale: Locale,
       user_locale_cookie_key):
   @after_this_request
   def set_locale_cookie(response):
     response.set_cookie(user_locale_cookie_key, locale.code)
     return response
+
 
 def create_settings_blueprint(authenticator, password_repository,
       locale_repository: LocaleRepository,
