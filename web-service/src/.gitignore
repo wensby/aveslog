@@ -10,6 +10,7 @@ instance/
 .coverage
 htmlcov/
 test-logs
+logs
 
 dist/
 build/

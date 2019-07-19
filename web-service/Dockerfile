@@ -12,4 +12,5 @@ WORKDIR /src
 
 ENV FLASK_APP=birding
 
+VOLUME /src/logs
 CMD ["gunicorn", "-c", "gunicorn_config.py", "birding:create_app()"]

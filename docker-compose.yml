@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
       context: ./web-service
     image: birding-web-service
+    volumes:
+      - ./web-service/src/logs:/src/logs
     container_name: birding-web-service
     restart: always
     networks:
