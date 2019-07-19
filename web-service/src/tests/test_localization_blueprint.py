@@ -1,7 +1,7 @@
 from test_util import AppTestCase
 
 
-class TestLocalizationBlueprint(AppTestCase):
+class TestLocalization(AppTestCase):
 
   def test_get_language_redirects_home(self):
     response = self.client.get('/language?l=sv')
