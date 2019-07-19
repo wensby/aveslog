@@ -16,12 +16,18 @@ class TestSettingsPage(AppTestCase):
 
     html = self.assertOkHtmlResponse(response)
     self.assertIn(url_for('settings.get_password_settings'), html.links)
+    self.assertIn(url_for('localization.language', l='en'), html.links)
+    self.assertIn(url_for('localization.language', l='sv'), html.links)
+    self.assertIn(url_for('localization.language', l='ko'), html.links)
 
   def test_page_contains_expected_content_when_logged_out(self):
     response = self.client.get('/settings/')
 
     html = self.assertOkHtmlResponse(response)
     self.assertNotIn(url_for('settings.get_password_settings'), html.links)
+    self.assertIn(url_for('localization.language', l='en'), html.links)
+    self.assertIn(url_for('localization.language', l='sv'), html.links)
+    self.assertIn(url_for('localization.language', l='ko'), html.links)
 
 
 class TestPasswordSettingsPage(AppTestCase):
