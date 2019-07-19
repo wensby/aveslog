@@ -4,7 +4,7 @@ from test_util import AppTestCase
 from requests_html import HTML
 
 
-class TestHomeBlueprint(AppTestCase):
+class TestHomePage(AppTestCase):
 
   def test_get_home_contains_login_link_when_logged_out(self):
     response = self.client.get(url_for('home.index'))
