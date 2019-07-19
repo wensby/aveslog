@@ -9,9 +9,13 @@ class TestProfilePage(AppTestCase):
 
     response = self.client.get('/profile/hulot')
 
-    self.assertOkHtmlResponseWithText(response, 'hulot')
+    html = self.assertOkHtmlResponse(response)
+    self.assertIn('hulot', html.text)
 
   def test_profile_contains_expected_content_when_logged_out(self):
     self.db_insert_account(4, 'hulot', 'hulot@mail.com', None, None)
+
     response = self.client.get('/profile/hulot')
-    self.assertOkHtmlResponseWithText(response, 'hulot')
+
+    html = self.assertOkHtmlResponse(response)
+    self.assertIn('hulot', html.text)
