@@ -1,7 +1,5 @@
 from datetime import date, time
 
-from flask import url_for
-
 from test_util import AppTestCase
 
 
