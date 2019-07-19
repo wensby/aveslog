@@ -17,6 +17,12 @@ class TestSettingsPage(AppTestCase):
     self.assertOkHtmlResponseWith(
       response, f".//a[@href = '{url_for('settings.get_password_settings')}']")
 
+  def test_page_contains_expected_content_when_logged_out(self):
+    response = self.client.get('/settings/')
+
+    html = self.assertOkHtmlResponse(response)
+    self.assertNotIn(url_for('settings.get_password_settings'), html.links)
+
 
 class TestPasswordSettingsPage(AppTestCase):
 

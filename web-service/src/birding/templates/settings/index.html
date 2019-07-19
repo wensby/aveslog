@@ -3,6 +3,8 @@
 {% block content %}
   <div class="container">
     <h1>{{ locale.text('Settings') }}</h1>
-    <a href="/settings/password">Change Password</a>
+    {% if g.logged_in_account %}
+      <a href="/settings/password">Change Password</a>
+    {% endif %}
   </div>
 {% endblock %}

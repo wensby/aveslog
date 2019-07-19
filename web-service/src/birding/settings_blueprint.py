@@ -11,9 +11,7 @@ def create_settings_blueprint(authenticator, password_repository):
   blueprint = Blueprint('settings', __name__, url_prefix='/settings')
 
   @blueprint.route('/')
-  @require_login
   def get_settings_index():
-    g.render_context['username'] = g.logged_in_account.username
     return render_page('settings/index.html')
 
   @blueprint.route('/password')
