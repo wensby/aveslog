@@ -35,6 +35,7 @@ class TestLoadedLocale(unittest.TestCase):
     self.assertIn(Locale(1, 'en'), misses_repository)
     self.assertIn('missing translation', misses_repository.get(Locale(1, 'en')))
 
+
 english_locale = Mock()
 swedish_locale = Mock()
 
