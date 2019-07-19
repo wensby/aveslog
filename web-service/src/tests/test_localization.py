@@ -9,6 +9,9 @@ class TestLocale(TestCase):
   def test_eq_false_when_other_type(self):
     self.assertNotEqual(Locale(1, 'en'), 'Locale(1, en)')
 
+  def test_eq_true_when_other_equal_instance(self):
+    self.assertEqual(Locale(1, 'en'), Locale(1, 'en'))
+
   def test_repr(self):
     self.assertEqual(repr(Locale(1, 'en')), 'Locale(1, en)')
 
