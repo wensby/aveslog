@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="container">
-    <h1>{{ username }}</h1>
+<h1>{{ username }}</h1>
+<div class="row">
+  <div class="col">
+    <p>{{ g.locale.text('Life List Count') }}:</p>
+    <p id="lifeListCount">{{ life_list_count }}</p>
   </div>
+</div>
 {% endblock %}

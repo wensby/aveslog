@@ -94,7 +94,8 @@ def create_app(test_config=None):
   )
   sighting_blueprint = create_sighting_blueprint(sighting_repository,
                                                  sighting_view_factory)
-  profile_blueprint = create_profile_blueprint()
+  profile_blueprint = create_profile_blueprint(
+    account_repository, sighting_repository)
   settings_blueprint = create_settings_blueprint(authenticator,
                                                  password_repository,
                                                  locale_repository,
