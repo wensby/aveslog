@@ -50,13 +50,16 @@ class LoadedLocale:
     if translation:
       return replace_text_variables(translation, variables)
     else:
-      if not self.misses_repository is None:
-        self.misses_repository.setdefault(self.locale, set()).add(text)
+      self.__record_text_miss(text)
       return replace_text_variables(text, variables)
 
   def __find_translation(self, text: str):
     if self.dictionary and text in self.dictionary:
       return self.dictionary[text]
+
+  def __record_text_miss(self, text):
+    if not self.misses_repository is None:
+      self.misses_repository.setdefault(self.locale, set()).add(text)
 
   def name(self, bird):
     binomial_name = bird.binomial_name if isinstance(bird, Bird) else bird
