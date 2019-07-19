@@ -1,10 +1,10 @@
-import unittest
+from unittest import TestCase
 from unittest.mock import Mock
 
 from birding.localization import Locale, LocaleDeterminer, LoadedLocale
 
 
-class TestLoadedLocale(unittest.TestCase):
+class TestLoadedLocale(TestCase):
   locale = Locale(1, 'en')
 
   def test_text_returns_argument_when_not_in_dictionary(self):
@@ -41,7 +41,7 @@ english_locale = Mock()
 swedish_locale = Mock()
 
 
-class TestLocaleDeterminer(unittest.TestCase):
+class TestLocaleDeterminer(TestCase):
 
   def setUp(self):
     self.request = Mock()
