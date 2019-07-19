@@ -8,6 +8,7 @@ web-service/run_tests.sh
 web-service/venv
 web-service/src/instance
 web-service/src/test-logs
+web-service/src/htmlcov
 web-service/src/logs
 web-service/src/venv
 web-service/src/birding/static/image
