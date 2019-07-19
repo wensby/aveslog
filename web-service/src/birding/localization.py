@@ -5,6 +5,15 @@ from birding.database import Database
 from .bird import Bird
 
 
+def replace_text_variables(text: str, variables: list = None):
+  if variables:
+    i = 0
+    while '{{}}' in text:
+      text = text.replace('{{}}', variables[i], 1)
+      i += 1
+  return text
+
+
 class Locale:
 
   def __init__(self, locale_id: int, code: str):
@@ -39,19 +48,11 @@ class LoadedLocale:
   def text(self, text, variables=None):
     translation = self.__find_translation(text)
     if translation:
-      return self.__replace_variables(translation, variables)
+      return replace_text_variables(translation, variables)
     else:
       if not self.misses_repository is None:
         self.misses_repository.setdefault(self.locale, set()).add(text)
-      return self.__replace_variables(text, variables)
-
-  def __replace_variables(self, text: str, variables: list = None):
-    if variables:
-      i = 0
-      while '{{}}' in text:
-        text = text.replace('{{}}', variables[i], 1)
-        i += 1
-    return text
+      return replace_text_variables(text, variables)
 
   def __find_translation(self, text: str):
     if self.dictionary and text in self.dictionary:
