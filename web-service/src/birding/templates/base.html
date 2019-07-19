@@ -42,7 +42,7 @@
           <nav class="sidebar nav flex-column border-left" id="sidebarList">
             {% if g.logged_in_account %}
               <div class="nav-item">
-                <a class="nav-link" href="/profile">{{ locale.text('Profile') }}</a>
+                <a class="nav-link" href="{{ url_for('profile.get_profile', username=g.logged_in_account.username) }}">{{ locale.text('Profile') }}</a>
               </div>
               <div class="nav-item">
                 <a class="nav-link" href="/sighting">{{ locale.text('Sightings') }}</a>
