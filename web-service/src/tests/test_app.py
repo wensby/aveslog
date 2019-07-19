@@ -3,6 +3,7 @@ import shutil
 from unittest import TestCase
 
 import birding
+from test_util import AppTestCase
 
 
 class TestAppCreation(TestCase):
@@ -51,3 +52,14 @@ class TestAppCreation(TestCase):
     }
     birding.create_app(test_config=test_config)
     self.assertIn('test-logs', os.listdir('.'))
+
+
+class TestGeneralFunctionality(AppTestCase):
+
+  def test_saves_locales_misses_after_request(self):
+    self.db_insert_locale(1, 'xx')
+    headers = {'Accept-Language': 'xx'}
+
+    self.client.get('/', headers=headers)
+
+    self.assertFileExist('test-logs/locales-misses/xx.txt')

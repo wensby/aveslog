@@ -16,18 +16,31 @@ class TestSettingsPage(AppTestCase):
 
     html = self.assertOkHtmlResponse(response)
     self.assertIn(url_for('settings.get_password_settings'), html.links)
-    self.assertIn(url_for('localization.language', l='en'), html.links)
-    self.assertIn(url_for('localization.language', l='sv'), html.links)
-    self.assertIn(url_for('localization.language', l='ko'), html.links)
+    self.assertIn(url_for('settings.language', l='en'), html.links)
+    self.assertIn(url_for('settings.language', l='sv'), html.links)
+    self.assertIn(url_for('settings.language', l='ko'), html.links)
 
   def test_page_contains_expected_content_when_logged_out(self):
     response = self.client.get('/settings/')
 
     html = self.assertOkHtmlResponse(response)
     self.assertNotIn(url_for('settings.get_password_settings'), html.links)
-    self.assertIn(url_for('localization.language', l='en'), html.links)
-    self.assertIn(url_for('localization.language', l='sv'), html.links)
-    self.assertIn(url_for('localization.language', l='ko'), html.links)
+    self.assertIn(url_for('settings.language', l='en'), html.links)
+    self.assertIn(url_for('settings.language', l='sv'), html.links)
+    self.assertIn(url_for('settings.language', l='ko'), html.links)
+
+  def test_get_language_redirects_to_settings_page(self):
+    response = self.client.get('/settings/language/sv')
+    self.assertRedirect(response, 'settings.get_settings_index')
+
+  def test_get_language_when_logged_in(self):
+    self.db_insert_locale(1, 'sv')
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', None, None)
+    self.set_logged_in(1)
+
+    self.client.get('/settings/language/sv')
+
+    self.assertEqual(self.db_get_account(1).locale_id, 1)
 
 
 class TestPasswordSettingsPage(AppTestCase):

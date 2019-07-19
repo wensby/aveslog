@@ -4,8 +4,6 @@ from flask import Flask, session
 from flask import g
 from flask import request
 
-from birding.localization_blueprint import create_localization_blueprint, \
-  update_locale_context
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
 from .account import PasswordRepository
@@ -33,7 +31,7 @@ from .search import BirdSearchController
 from .search import BirdSearcher
 from .search import StringMatcher
 from .search_view import BirdSearchViewFactory
-from .settings_blueprint import create_settings_blueprint
+from .settings_blueprint import create_settings_blueprint, update_locale_context
 from .sighting import SightingRepository
 from .sighting_blueprint import create_sighting_blueprint
 from .sighting_view import SightingViewFactory
@@ -98,14 +96,14 @@ def create_app(test_config=None):
                                                  sighting_view_factory)
   profile_blueprint = create_profile_blueprint()
   settings_blueprint = create_settings_blueprint(authenticator,
-                                                 password_repository)
+                                                 password_repository,
+                                                 locale_repository,
+                                                 account_repository,
+                                                 locale_loader,
+                                                 user_locale_cookie_key)
   bird_blueprint = create_bird_blueprint(bird_view_factory,
                                          bird_search_controller,
                                          bird_search_view_factory)
-  localization_blueprint = create_localization_blueprint(
-    locale_repository, locale_loader, user_locale_cookie_key,
-    account_repository)
-  app.register_blueprint(localization_blueprint)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(sighting_blueprint)
