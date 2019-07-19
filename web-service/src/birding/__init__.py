@@ -152,6 +152,8 @@ def configure_app(app, test_config):
     app.config.from_pyfile('config.py', silent=True)
   if not app.config['SECRET_KEY']:
     raise Exception('Flask secret key not set')
+  if not os.path.isdir(app.config['LOGS_DIR_PATH']):
+    os.makedirs(app.config['LOGS_DIR_PATH'])
 
 
 def create_database_connection_details():

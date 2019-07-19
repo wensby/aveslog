@@ -29,7 +29,11 @@ class TestMailDispatcherFactory(TestCase):
     os.environ['MAIL_USE_SSL'] = 'true'
 
   def test_app_construction_with_mail_server_environment_variables(self):
-    test_config = {'TESTING': True, 'SECRET_KEY': 'wowsosecret'}
+    test_config = {
+      'TESTING': True,
+      'SECRET_KEY': 'wowsosecret',
+      'LOGS_DIR_PATH': 'test-logs'
+    }
     birding.create_app(test_config=test_config)
 
   def tearDown(self) -> None:
@@ -43,7 +47,11 @@ class TestMailDispatcherFactory(TestCase):
 class TestMailServerDispatcher(TestCase):
 
   def setUp(self) -> None:
-    test_config = {'TESTING': True, 'SECRET_KEY': 'wowsosecret'}
+    test_config = {
+      'TESTING': True,
+      'SECRET_KEY': 'wowsosecret',
+      'LOGS_DIR_PATH': 'test-logs'
+    }
     app = birding.create_app(test_config=test_config)
     self.dispatcher = MailServerDispatcher(app, None, None, 'myUsername', None, None, None)
     self.app_context = app.test_request_context()

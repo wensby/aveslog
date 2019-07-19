@@ -37,7 +37,11 @@ class AppTestCase(TestCase):
 
   @classmethod
   def setUpClass(cls):
-    test_config = {'TESTING': True, 'SECRET_KEY': 'wowsosecret'}
+    test_config = {
+      'TESTING': True,
+      'SECRET_KEY': 'wowsosecret',
+      'LOGS_DIR_PATH': 'test-logs'
+    }
     cls._app = birding.create_app(test_config=test_config)
     cls._app.test_client_class = TestClient
 
