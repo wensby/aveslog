@@ -15,21 +15,33 @@ class Locale:
   def from_row(cls, row):
     return cls(row[0], row[1])
 
+  def __repr__(self):
+    return f'{self.__class__.__name__}({self.id}, {self.code})'
+
+  def __eq__(self, other):
+    if isinstance(other, self.__class__):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __hash__(self):
+    return hash(self.id) ^ hash(self.code)
+
 
 class LoadedLocale:
 
-  def __init__(self,
-        locale: Locale,
-        dictionary: dict,
-        bird_dictionary: dict):
+  def __init__(self, locale: Locale, dictionary: dict, bird_dictionary: dict,
+        misses_repository: dict):
     self.locale = locale
     self.dictionary = dictionary
     self.bird_dictionary = bird_dictionary
+    self.misses_repository = misses_repository
 
   def text(self, text, variables=None):
-    if self.dictionary:
-      translated = self.dictionary[text] if text in self.dictionary else text
+    if self.dictionary and text in self.dictionary:
+      translated = self.dictionary[text]
     else:
+      if not self.misses_repository is None:
+        self.misses_repository[self.locale] = text
       translated = text
     if variables:
       i = 0
@@ -64,7 +76,7 @@ class LocaleLoader:
     if os.path.exists(bird_dictionary_filepath):
       with open(bird_dictionary_filepath, 'r') as file:
         bird_dictionary = json.load(file)
-    return LoadedLocale(locale, language_dictionary, bird_dictionary)
+    return LoadedLocale(locale, language_dictionary, bird_dictionary, None)
 
 class LocaleRepository:
 

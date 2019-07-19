@@ -125,7 +125,8 @@ def create_app(test_config=None):
         update_locale_context(user_locale_cookie_key, loaded_locale)
       else:
         update_locale_context(
-          user_locale_cookie_key, LoadedLocale(Locale(None, None), None, None))
+          user_locale_cookie_key,
+          LoadedLocale(Locale(None, None), None, None, None))
     else:
       locale_determiner = locale_determiner_factory.create_locale_determiner()
       locale_code = locale_determiner.determine_locale_from_request(request)
@@ -135,7 +136,8 @@ def create_app(test_config=None):
         update_locale_context(user_locale_cookie_key, loaded_locale)
       else:
         update_locale_context(
-          user_locale_cookie_key, LoadedLocale(Locale(None, None), None, None))
+          user_locale_cookie_key,
+          LoadedLocale(Locale(None, None), None, None, None))
 
   app.logger.info('Flask app constructed')
   return app

@@ -7,25 +7,33 @@ from birding.localization import Locale, LocaleDeterminer, LoadedLocale
 class TestLoadedLocale(unittest.TestCase):
 
   def test_text_returns_argument_when_not_in_dictionary(self):
-    loaded_locale = LoadedLocale(Locale(1, 'en'), dict(), None)
+    loaded_locale = LoadedLocale(Locale(1, 'en'), dict(), None, None)
     text = "I'm not in there"
     result = loaded_locale.text(text)
     self.assertTrue(result == text)
 
   def test_text_returns_translation_when_present_in_dictionary(self):
-    loaded_locale = LoadedLocale(Locale(1, 'en'),
-                                 {"I'm in there": 'Jag är där inne'}, None)
+    loaded_locale = LoadedLocale(
+      Locale(1, 'en'), {"I'm in there": 'Jag är där inne'}, None, None)
     result = loaded_locale.text("I'm in there")
     self.assertTrue(result == 'Jag är där inne')
 
   def test_text_replaces_variables_if_perfect_match_with_placeholders(self):
     loaded_locale = LoadedLocale(Locale(1, 'en'), {
       "Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.",
-      "Monday": "Måndag"}, None)
+      "Monday": "Måndag"}, None, None)
     result = loaded_locale.text("Hello {{}}! It is {{}} today.",
                                 ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
+  def test_records_translation_miss_in_misses_repository_when_one_miss(self):
+    misses_repository = {}
+    loaded_locale = LoadedLocale(Locale(1, 'en'), {}, {}, misses_repository)
+
+    loaded_locale.text('missing translation')
+
+    self.assertIn(Locale(1, 'en'), misses_repository)
+    self.assertIn('missing translation', misses_repository.get(Locale(1, 'en')))
 
 english_locale = Mock()
 swedish_locale = Mock()
