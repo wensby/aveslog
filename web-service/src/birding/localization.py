@@ -136,6 +136,24 @@ class LocaleRepository:
       return result.rows
 
 
+class LocalesMissesLogger:
+
+  def __init__(self, locales_misses_repository: dict, logs_directory_path: str):
+    self.misses_repository = locales_misses_repository
+    self.logs_directory_path = logs_directory_path
+
+  def log_misses(self):
+    locales_misses_dir_path = os.path.join(
+      self.logs_directory_path, 'locales-misses')
+    if not os.path.isdir(locales_misses_dir_path):
+      os.makedirs(locales_misses_dir_path)
+    for locale, misses in self.misses_repository.items():
+      with open(f'{locales_misses_dir_path}/{locale.code}.txt', 'a+') as file:
+        for miss in misses:
+          file.write(miss + '\n')
+    self.misses_repository.clear()
+
+
 class LocaleDeterminerFactory:
 
   def __init__(self,

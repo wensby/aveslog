@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, request, redirect, url_for, after_this_request, g
 
 from birding.localization import LocaleRepository, LoadedLocale, Locale, \

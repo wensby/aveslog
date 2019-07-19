@@ -22,7 +22,8 @@ from .blueprint_home import create_home_blueprint
 from .profile_blueprint import create_profile_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
-from .localization import LocaleRepository, LocaleDeterminerFactory
+from .localization import LocaleRepository, LocaleDeterminerFactory, \
+  LocalesMissesLogger
 from .localization import LoadedLocale
 from .localization import LocaleLoader, Locale
 from .mail import MailDispatcherFactory
@@ -78,6 +79,8 @@ def create_app(test_config=None):
   password_repository = PasswordRepository(token_factory, database, hasher)
   password_reset_controller = PasswordResetController(
     account_repository, password_repository, link_factory, mail_dispatcher)
+  locales_misses_logger = LocalesMissesLogger(
+    locales_misses_repository, app.config['LOGS_DIR_PATH'])
 
   # Create and register blueprints
   home_blueprint = create_home_blueprint()
@@ -110,14 +113,7 @@ def create_app(test_config=None):
 
   @app.after_request
   def after_request(response):
-    locales_misses_dir_path = os.path.join(app.config['LOGS_DIR_PATH'], 'locales-misses')
-    if not os.path.isdir(locales_misses_dir_path):
-      os.makedirs(locales_misses_dir_path)
-    for locale, misses in locales_misses_repository.items():
-      with open(f'{locales_misses_dir_path}/{locale.code}.txt', 'a+') as file:
-        for miss in misses:
-          file.write(miss + '\n')
-    locales_misses_repository.clear()
+    locales_misses_logger.log_misses()
     return response
 
   def load_logged_in_account():
