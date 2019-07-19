@@ -1,6 +1,6 @@
 from difflib import SequenceMatcher
 
-from birding import LocaleRepository
+from birding import LocaleRepository, LocaleLoader
 
 
 class BirdSearchController:
@@ -15,10 +15,12 @@ class BirdSearchController:
 
 class BirdSearcher:
 
-  def __init__(self, bird_repository, locale_repository: LocaleRepository, string_matcher):
+  def __init__(self, bird_repository, locale_repository: LocaleRepository,
+        string_matcher, locale_loader: LocaleLoader):
     self.bird_repository = bird_repository
     self.locale_repository = locale_repository
     self.string_matcher = string_matcher
+    self.locale_loader = locale_loader
 
   def search(self, name=None):
     result_builder = ResultBuilder()
@@ -41,15 +43,19 @@ class BirdSearcher:
   def search_by_language_names(self, name):
     matches = dict()
     birds = self.bird_repository.birds
-    locales = [self.locale_repository.find_locale(x) for x in self.locale_repository.available_locale_codes()]
-    dictionaries = [locale.bird_dictionary for locale in locales if locale.bird_dictionary]
-    for dictionary in dictionaries:
+    for dictionary in self.__get_bird_dictionaries():
       for bird in birds:
         binomial_name = bird.binomial_name
         if binomial_name in dictionary and name.lower() in dictionary[binomial_name].lower():
           match = self.string_matcher.match(name, dictionary[binomial_name])
           matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches
+
+  def __get_bird_dictionaries(self):
+    locales = self.locale_repository.locales
+    loaded_locales = map(self.locale_loader.load_locale, locales)
+    return [l.bird_dictionary for l in loaded_locales if l.bird_dictionary]
+
 
 class ResultBuilder:
 

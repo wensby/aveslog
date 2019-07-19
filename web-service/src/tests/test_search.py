@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from birding import BirdSearchController, StringMatcher, BirdSearcher
+from birding import Locale, LoadedLocale
 from birding.bird import Bird
 from birding.search import BirdMatch
 from tests.test_util import mock_return
@@ -38,33 +39,42 @@ class TestBirdSearcher(TestCase):
   def setUp(self):
     self.string_matcher = StringMatcher()
     self.locale_repository = Mock()
+    self.locale_loader = Mock()
 
   def test_search_returns_list_of_bird_matches(self):
     bird_repository = Simple(birds=[picapica])
-    self.locale_repository.available_locale_codes.return_value = []
-    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
+    self.locale_repository.locales = []
+    searcher = BirdSearcher(bird_repository, self.locale_repository,
+                            self.string_matcher, self.locale_loader)
 
     matches = searcher.search('Pica pica')
 
     self.assertIsInstance(matches[0], BirdMatch)
 
   def test_search_finds_bird_by_binomial_name(self):
-    swedish_locale = Simple(bird_dictionary=None)
+    swedish_locale = Locale(1, 'sv')
+    swedish_loaded_locale = LoadedLocale(swedish_locale, None, None)
     bird_repository = Simple(birds=[picapica])
-    self.locale_repository.available_locale_codes.return_value = 'se'
+    self.locale_repository.locales = [swedish_locale]
     self.locale_repository.find_locale.return_value = swedish_locale
-    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
-    
+    self.locale_loader.load_locale.return_value = swedish_loaded_locale
+    searcher = BirdSearcher(bird_repository, self.locale_repository,
+                            self.string_matcher, self.locale_loader)
+
     matches = searcher.search('Pica pica')
 
     self.assertEqual(len(matches), 1)
 
   def test_search_finds_bird_by_swedish_name(self):
     bird_repository = Simple(birds=[picapica])
-    swedish_locale = Simple(bird_dictionary={'Pica pica': 'Skata'})
-    self.locale_repository.available_locale_codes.return_value = ['se']
+    swedish_locale = Locale(1, 'sv')
+    swedish_loaded_locale = LoadedLocale(
+      swedish_locale, None, {'Pica pica': 'Skata'})
+    self.locale_repository.locales = [swedish_locale]
     self.locale_repository.find_locale.return_value = swedish_locale
-    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
+    self.locale_loader.load_locale.return_value = swedish_loaded_locale
+    searcher = BirdSearcher(bird_repository, self.locale_repository,
+                            self.string_matcher, self.locale_loader)
 
     matches = searcher.search('Skata')
 
@@ -72,7 +82,8 @@ class TestBirdSearcher(TestCase):
 
   def test_search_finds_nothing_with_only_empty_string_name_query(self):
     bird_repository = Simple(birds=[picapica])
-    searcher = BirdSearcher(bird_repository, self.locale_repository, self.string_matcher)
+    searcher = BirdSearcher(bird_repository, self.locale_repository,
+                            self.string_matcher, self.locale_loader)
 
     matches = searcher.search('')
 
@@ -91,7 +102,7 @@ class TestBirdMatch(TestCase):
     self.assertIs(match.bird, bird)
 
 class TestStringMatcher(TestCase):
-  
+
   def test_equal_strings_return_1(self):
     self.assertEqual(StringMatcher().match('test', 'test'), 1)
 

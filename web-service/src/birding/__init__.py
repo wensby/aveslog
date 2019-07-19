@@ -23,6 +23,7 @@ from .profile_blueprint import create_profile_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
+from .localization import LoadedLocale
 from .localization import LocaleLoader, Locale
 from .mail import MailDispatcherFactory
 from .person import PersonRepository
@@ -61,7 +62,8 @@ def create_app(test_config=None):
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key, locale_repository)
   bird_repository = BirdRepository(database)
   string_matcher = StringMatcher()
-  bird_searcher = BirdSearcher(bird_repository, locale_repository, string_matcher)
+  bird_searcher = BirdSearcher(
+    bird_repository, locale_repository, string_matcher, locale_loader)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
   bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
@@ -89,7 +91,8 @@ def create_app(test_config=None):
   settings_blueprint = create_settings_blueprint(authenticator, password_repository)
   bird_blueprint = create_bird_blueprint(bird_view_factory, bird_search_controller, bird_search_view_factory)
   localization_blueprint = create_localization_blueprint(
-    locale_repository, locale_loader, user_locale_cookie_key)
+    locale_repository, locale_loader, user_locale_cookie_key,
+    account_repository)
   app.register_blueprint(localization_blueprint)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
@@ -118,17 +121,21 @@ def create_app(test_config=None):
     if g.logged_in_account:
       if g.logged_in_account.locale_id:
         locale = locale_repository.find_locale_by_id(g.logged_in_account.locale_id)
-        update_locale_context(user_locale_cookie_key, locale)
+        loaded_locale = locale_loader.load_locale(locale)
+        update_locale_context(user_locale_cookie_key, loaded_locale)
       else:
-        update_locale_context(user_locale_cookie_key, Locale(None, None, None))
+        update_locale_context(
+          user_locale_cookie_key, LoadedLocale(Locale(None, None), None, None))
     else:
       locale_determiner = locale_determiner_factory.create_locale_determiner()
       locale_code = locale_determiner.determine_locale_from_request(request)
       if locale_code:
-        locale = locale_loader.load_locale(locale_code)
-        update_locale_context(user_locale_cookie_key, locale)
+        locale = locale_repository.find_locale_by_code(locale_code)
+        loaded_locale = locale_loader.load_locale(locale)
+        update_locale_context(user_locale_cookie_key, loaded_locale)
       else:
-        update_locale_context(user_locale_cookie_key, Locale(None, None, None))
+        update_locale_context(
+          user_locale_cookie_key, LoadedLocale(Locale(None, None), None, None))
 
   app.logger.info('Flask app constructed')
   return app

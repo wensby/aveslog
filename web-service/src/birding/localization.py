@@ -4,59 +4,25 @@ import os
 from birding.database import Database
 from .bird import Bird
 
-class LocaleLoader:
-
-  def __init__(self, locales_directory_path):
-    self.locales_directory_path = locales_directory_path
-
-  def load_locale(self, lang_iso):
-    language_dictionary = None
-    bird_dictionary = None
-    dictionary_filepath = (
-        f'{self.locales_directory_path}{lang_iso}/{lang_iso}.json')
-    if os.path.exists(dictionary_filepath):
-      with open(dictionary_filepath, 'r') as file:
-        language_dictionary = json.load(file)
-    bird_dictionary_filepath = (
-        f'{self.locales_directory_path}/{lang_iso}/{lang_iso}-bird-names.json')
-    if os.path.exists(bird_dictionary_filepath):
-      with open(bird_dictionary_filepath, 'r') as file:
-        bird_dictionary = json.load(file)
-    return Locale(lang_iso, language_dictionary, bird_dictionary)
-
-class LocaleRepository:
-
-  def __init__(self, locales_directory_path, locale_loader: LocaleLoader, database: Database):
-    self.locales_directory_path = locales_directory_path
-    self.locale_loader = locale_loader
-    self.database = database
-
-  def available_locale_codes(self):
-    def is_length_2(x):
-      return len(x) == 2
-    def locales_directory_subdirectories():
-      path = self.locales_directory_path
-      return filter(lambda x: os.path.isdir(path + x), os.listdir(path))
-    return list(filter(is_length_2, locales_directory_subdirectories()))
-
-  def enabled_locale_codes(self):
-    with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT id, code FROM locale;')
-      return list(map(lambda x: x[1], result.rows))
-
-  def find_locale_by_id(self, id):
-    with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT code FROM locale WHERE id = %s;', (id, ))
-      return self.find_locale(result.rows[0][0])
-
-  def find_locale(self, code):
-    return self.locale_loader.load_locale(code)
-
 
 class Locale:
 
-  def __init__(self, code, dictionary, bird_dictionary):
+  def __init__(self, locale_id: int, code: str):
+    self.id = locale_id
     self.code = code
+
+  @classmethod
+  def from_row(cls, row):
+    return cls(row[0], row[1])
+
+
+class LoadedLocale:
+
+  def __init__(self,
+        locale: Locale,
+        dictionary: dict,
+        bird_dictionary: dict):
+    self.locale = locale
     self.dictionary = dictionary
     self.bird_dictionary = bird_dictionary
 
@@ -78,6 +44,67 @@ class Locale:
       return self.bird_dictionary[binomial_name]
     else:
       return binomial_name
+
+
+class LocaleLoader:
+
+  def __init__(self, locales_directory_path):
+    self.locales_directory_path = locales_directory_path
+
+  def load_locale(self, locale: Locale) -> LoadedLocale:
+    language_dictionary = None
+    bird_dictionary = None
+    dictionary_filepath = (
+      f'{self.locales_directory_path}{locale.code}/{locale.code}.json')
+    if os.path.exists(dictionary_filepath):
+      with open(dictionary_filepath, 'r') as file:
+        language_dictionary = json.load(file)
+    bird_dictionary_filepath = (
+      f'{self.locales_directory_path}/{locale.code}/{locale.code}-bird-names.json')
+    if os.path.exists(bird_dictionary_filepath):
+      with open(bird_dictionary_filepath, 'r') as file:
+        bird_dictionary = json.load(file)
+    return LoadedLocale(locale, language_dictionary, bird_dictionary)
+
+class LocaleRepository:
+
+  def __init__(self, locales_directory_path, locale_loader: LocaleLoader, database: Database):
+    self.locales_directory_path = locales_directory_path
+    self.locale_loader = locale_loader
+    self.database = database
+
+  def available_locale_codes(self):
+    def is_length_2(x):
+      return len(x) == 2
+    def locales_directory_subdirectories():
+      path = self.locales_directory_path
+      return filter(lambda x: os.path.isdir(path + x), os.listdir(path))
+    return list(filter(is_length_2, locales_directory_subdirectories()))
+
+  def enabled_locale_codes(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT id, code FROM locale;')
+      return list(map(lambda x: x[1], result.rows))
+
+  def find_locale_by_id(self, id) -> Locale:
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT code FROM locale WHERE id = %s;',
+                                   (id,))
+      return self.find_locale_by_code(result.rows[0][0])
+
+  def find_locale_by_code(self, code) -> Locale:
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT id, code FROM locale WHERE code LIKE %s;', (code,),
+        Locale.from_row)
+      return next(iter(result.rows), None)
+
+  @property
+  def locales(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT id, code FROM locale;', mapper=Locale.from_row)
+      return result.rows
 
 
 class LocaleDeterminerFactory:

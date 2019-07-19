@@ -1,25 +1,27 @@
 import unittest
 from unittest.mock import Mock
 
-from birding.localization import Locale, LocaleDeterminer
+from birding.localization import Locale, LocaleDeterminer, LoadedLocale
 
 
-class TestLocale(unittest.TestCase):
+class TestLoadedLocale(unittest.TestCase):
 
   def test_text_returns_argument_when_not_in_dictionary(self):
-    locale = Locale('en', dict(), None)
+    loaded_locale = LoadedLocale(Locale(1, 'en'), dict(), None)
     text = "I'm not in there"
-    result = locale.text(text)
+    result = loaded_locale.text(text)
     self.assertTrue(result == text)
 
   def test_text_returns_translation_when_present_in_dictionary(self):
-    locale = Locale('en', {"I'm in there": 'Jag är där inne'}, None)
-    result = locale.text("I'm in there")
+    loaded_locale = LoadedLocale(Locale(1, 'en'), {"I'm in there": 'Jag är där inne'}, None)
+    result = loaded_locale.text("I'm in there")
     self.assertTrue(result == 'Jag är där inne')
 
   def test_text_replaces_variables_if_perfect_match_with_placeholders(self):
-    locale = Locale('en', {"Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.", "Monday": "Måndag"}, None)
-    result = locale.text("Hello {{}}! It is {{}} today.", ['Lukas', locale.text("Monday")])
+    loaded_locale = LoadedLocale(Locale(1, 'en'), {
+      "Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.",
+      "Monday": "Måndag"}, None)
+    result = loaded_locale.text("Hello {{}}! It is {{}} today.", ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
 english_locale = Mock()
