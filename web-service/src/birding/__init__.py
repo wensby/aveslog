@@ -47,7 +47,8 @@ def create_app(test_config=None):
   user_locale_cookie_key = 'user_locale'
   database_connection_factory = DatabaseFactory(app.logger)
   database_connection_details = create_database_connection_details()
-  database = database_connection_factory.create_database(**database_connection_details)
+  database = database_connection_factory.create_database(
+    **database_connection_details)
   app.db = database
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
@@ -61,19 +62,22 @@ def create_app(test_config=None):
   locales_misses_repository = {}
   locale_loader = LocaleLoader(localespath, locales_misses_repository)
   locale_repository = LocaleRepository(localespath, locale_loader, database)
-  locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key, locale_repository)
+  locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
+                                                      locale_repository)
   bird_repository = BirdRepository(database)
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository, locale_repository, string_matcher, locale_loader)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
-  bird_search_view_factory = BirdSearchViewFactory(picture_repository, bird_repository)
+  bird_search_view_factory = BirdSearchViewFactory(picture_repository,
+                                                   bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, database)
   link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
   account_factory = AccountFactory(database, hasher)
-  account_registration_controller = AccountRegistrationController(account_factory, account_repository, mail_dispatcher, link_factory,
-                                                                  person_repository)
+  account_registration_controller = AccountRegistrationController(
+    account_factory, account_repository, mail_dispatcher, link_factory,
+    person_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
   password_repository = PasswordRepository(token_factory, database, hasher)
@@ -90,10 +94,14 @@ def create_app(test_config=None):
     account_registration_controller,
     password_reset_controller,
   )
-  sighting_blueprint = create_sighting_blueprint(sighting_repository, sighting_view_factory)
+  sighting_blueprint = create_sighting_blueprint(sighting_repository,
+                                                 sighting_view_factory)
   profile_blueprint = create_profile_blueprint()
-  settings_blueprint = create_settings_blueprint(authenticator, password_repository)
-  bird_blueprint = create_bird_blueprint(bird_view_factory, bird_search_controller, bird_search_view_factory)
+  settings_blueprint = create_settings_blueprint(authenticator,
+                                                 password_repository)
+  bird_blueprint = create_bird_blueprint(bird_view_factory,
+                                         bird_search_controller,
+                                         bird_search_view_factory)
   localization_blueprint = create_localization_blueprint(
     locale_repository, locale_loader, user_locale_cookie_key,
     account_repository)
@@ -129,7 +137,8 @@ def create_app(test_config=None):
   def detect_user_locale():
     if g.logged_in_account:
       if g.logged_in_account.locale_id:
-        locale = locale_repository.find_locale_by_id(g.logged_in_account.locale_id)
+        locale = locale_repository.find_locale_by_id(
+          g.logged_in_account.locale_id)
         loaded_locale = locale_loader.load_locale(locale)
         update_locale_context(user_locale_cookie_key, loaded_locale)
       else:
