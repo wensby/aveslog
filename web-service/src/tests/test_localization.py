@@ -45,6 +45,18 @@ class TestLoadedLocale(TestCase):
     self.assertIn(self.locale, misses_repository)
     self.assertIn('missing translation', misses_repository.get(self.locale))
 
+  def test_records_all_misses_when_several_misses(self):
+    misses_repository = {}
+    loaded_locale = LoadedLocale(self.locale, {}, {}, misses_repository)
+
+    loaded_locale.text('missing translation')
+    loaded_locale.text('another one')
+
+    self.assertIn(self.locale, misses_repository)
+    locale_misses = misses_repository.get(self.locale)
+    self.assertIn('missing translation', locale_misses)
+    self.assertIn('another one', locale_misses)
+
 
 english_locale = Mock()
 swedish_locale = Mock()

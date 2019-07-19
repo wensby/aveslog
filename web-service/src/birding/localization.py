@@ -41,7 +41,7 @@ class LoadedLocale:
       translated = self.dictionary[text]
     else:
       if not self.misses_repository is None:
-        self.misses_repository[self.locale] = text
+        self.misses_repository.setdefault(self.locale, set()).add(text)
       translated = text
     if variables:
       i = 0
