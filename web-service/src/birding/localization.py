@@ -142,22 +142,34 @@ class LocalesMissesLogger:
     self.misses_repository = locales_misses_repository
     self.logs_directory_path = logs_directory_path
 
-  def log_misses(self):
-    locales_misses_dir_path = os.path.join(
-      self.logs_directory_path, 'locales-misses')
-    if not os.path.isdir(locales_misses_dir_path):
-      os.makedirs(locales_misses_dir_path)
+  def log_misses(self) -> None:
+    os.makedirs(self.__locales_misses_dir_path(), exist_ok=True)
     for locale, misses in self.misses_repository.items():
-      locales_misses_file_path = f'{locales_misses_dir_path}/{locale.code}.txt'
-      new_misses = misses
-      if os.path.isfile(locales_misses_file_path):
-        with open(locales_misses_file_path, 'r') as file:
-          old_misses = map(str.rstrip, file.readlines())
-          new_misses = [miss for miss in misses if miss not in old_misses]
-      with open(locales_misses_file_path, 'a+') as file:
-        for miss in new_misses:
-          file.write(miss + '\n')
+      self.__log_misses(locale, misses)
     self.misses_repository.clear()
+
+  def __log_misses(self, locale, misses) -> None:
+    old_misses = self.__old_misses(locale)
+    new_misses = [miss for miss in misses if miss not in old_misses]
+    self.__append_misses_file(locale, new_misses)
+
+  def __old_misses(self, locale: Locale) -> list:
+    if os.path.isfile(self.misses_file_path(locale)):
+      with open(self.misses_file_path(locale), 'r') as file:
+        return list(map(str.rstrip, file.readlines()))
+    else:
+      return []
+
+  def __append_misses_file(self, locale: Locale, misses: list) -> None:
+    with open(self.misses_file_path(locale), 'a+') as file:
+      for miss in misses:
+        file.write(miss + '\n')
+
+  def misses_file_path(self, locale: Locale) -> str:
+    return os.path.join(self.__locales_misses_dir_path(), f'{locale.code}.txt')
+
+  def __locales_misses_dir_path(self) -> str:
+    return os.path.join(self.logs_directory_path, 'locales-misses')
 
 
 class LocaleDeterminerFactory:
