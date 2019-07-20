@@ -42,7 +42,7 @@ def create_authentication_blueprint(account_repository, authenticator,
   @blueprint.route('/register')
   @require_logout
   def get_register_request():
-    return render_page('registration_request.html')
+    return render_page('authentication/registration_request.html')
 
   @blueprint.route('/register', methods=['POST'])
   @require_logout
@@ -61,7 +61,7 @@ def create_authentication_blueprint(account_repository, authenticator,
     registration = account_repository.find_account_registration_by_token(token)
     if registration:
       g.render_context['user_account_registration'] = registration
-      return render_page('register.html')
+      return render_page('authentication/register.html')
     else:
       flash(g.locale.text(
         'This registration link is no longer valid, please request a new one.'))
@@ -94,7 +94,7 @@ def create_authentication_blueprint(account_repository, authenticator,
   @blueprint.route('/password-reset')
   @require_logout
   def get_password_reset_link_request():
-    return render_page('password_reset_link_request.html')
+    return render_page('authentication/password_reset_link_request.html')
 
   @blueprint.route('/password-reset', methods=['POST'])
   @require_logout
@@ -110,7 +110,7 @@ def create_authentication_blueprint(account_repository, authenticator,
   @require_logout
   def get_password_reset_form(token):
     g.render_context['password_reset_token'] = token
-    return render_page('password_reset_form.html')
+    return render_page('authentication/password_reset_form.html')
 
   @blueprint.route('/password-reset/<token>', methods=['POST'])
   @require_logout
@@ -129,7 +129,7 @@ def create_authentication_blueprint(account_repository, authenticator,
   @blueprint.route('/login')
   @require_logout
   def get_login():
-    return render_page('login.html')
+    return render_page('authentication/login.html')
 
   @blueprint.route('/login', methods=['POST'])
   @require_logout
