@@ -15,7 +15,7 @@
             <img class="navbar-brand"src="{{ url_for('static', filename='logo-w-s.png') }}" style="width: 40px;">
           </a>
           {% if g.logged_in_account %}
-            <a class="text-light" href="/profile">{{ g.logged_in_account.username }}</a>
+            <a id="headerProfileLink" class="text-light" href="{{ url_for('profile.get_profile', username = g.logged_in_account.username) }}">{{ g.logged_in_account.username }}</a>
           {% endif %}
         </div>
         <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
