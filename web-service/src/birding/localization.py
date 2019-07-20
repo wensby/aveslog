@@ -148,8 +148,14 @@ class LocalesMissesLogger:
     if not os.path.isdir(locales_misses_dir_path):
       os.makedirs(locales_misses_dir_path)
     for locale, misses in self.misses_repository.items():
-      with open(f'{locales_misses_dir_path}/{locale.code}.txt', 'a+') as file:
-        for miss in misses:
+      locales_misses_file_path = f'{locales_misses_dir_path}/{locale.code}.txt'
+      new_misses = misses
+      if os.path.isfile(locales_misses_file_path):
+        with open(locales_misses_file_path, 'r') as file:
+          old_misses = map(str.rstrip, file.readlines())
+          new_misses = [miss for miss in misses if miss not in old_misses]
+      with open(locales_misses_file_path, 'a+') as file:
+        for miss in new_misses:
           file.write(miss + '\n')
     self.misses_repository.clear()
 
