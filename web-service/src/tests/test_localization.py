@@ -1,7 +1,11 @@
+import os
+import shutil
+import tempfile
 from unittest import TestCase
 from unittest.mock import Mock
 
 from birding.localization import Locale, LocaleDeterminer, LoadedLocale
+from birding.localization import LocalesMissesLogger
 
 
 class TestLocale(TestCase):
@@ -59,6 +63,28 @@ class TestLoadedLocale(TestCase):
     locale_misses = misses_repository.get(self.locale)
     self.assertIn('missing translation', locale_misses)
     self.assertIn('another one', locale_misses)
+
+
+class TestLocalesMissesLogger(TestCase):
+
+  def setUp(self) -> None:
+    self.temp_dir = tempfile.mkdtemp()
+
+  def test_creates_locales_file_if_not_present(self):
+    misses_repository = {Locale(1, 'sv'): ['shelter']}
+    self.assertFalse(self.is_swedish_misses_file_present())
+    logger = LocalesMissesLogger(misses_repository, self.temp_dir)
+
+    logger.log_misses()
+
+    self.assertTrue(self.is_swedish_misses_file_present())
+
+  def is_swedish_misses_file_present(self):
+    path = os.path.join(self.temp_dir, 'locales-misses/sv.txt')
+    return os.path.isfile(path)
+
+  def tearDown(self) -> None:
+    shutil.rmtree(self.temp_dir)
 
 
 english_locale = Mock()
