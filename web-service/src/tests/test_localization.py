@@ -72,13 +72,13 @@ class TestLocalesMissesLogger(TestCase):
     self.temp_dir = tempfile.mkdtemp()
 
   def test_creates_locales_file_if_not_present(self):
-    misses_repository = {Locale(1, 'sv'): ['shelter']}
-    self.assertFalse(self.is_swedish_misses_file_present())
+    misses_repository = {self.locale: ['shelter']}
+    self.assertFalse(self.is_misses_file_present(self.locale))
     logger = LocalesMissesLogger(misses_repository, self.temp_dir)
 
     logger.log_misses()
 
-    self.assertTrue(self.is_swedish_misses_file_present())
+    self.assertTrue(self.is_misses_file_present(self.locale))
 
   def test_only_adds_not_already_logged_misses(self):
     os.makedirs(self.locales_misses_dir_path())
@@ -92,8 +92,8 @@ class TestLocalesMissesLogger(TestCase):
     misses_file_lines = self.locales_misses_file_lines(self.locale)
     self.assertListEqual(misses_file_lines, ['alreadypresent\n', 'new\n'])
 
-  def is_swedish_misses_file_present(self) -> bool:
-    return os.path.isfile(self.misses_file_path(self.locale))
+  def is_misses_file_present(self, locale: Locale) -> bool:
+    return os.path.isfile(self.misses_file_path(locale))
 
   def locales_misses_dir_path(self) -> str:
     return os.path.join(self.temp_dir, 'locales-misses')
