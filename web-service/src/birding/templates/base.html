@@ -8,32 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <nav class="navbar navbar-dark fixed-top justify-content-md-center p-0 shadow bg-primary">
-      <div class="navbar-main d-flex col col-md-3 mr-0">
-        <div class="flex-grow-1 align-self-center">
-          <div id="navbarLogo"></div>
-          {% if g.logged_in_account %}
-            <a id="headerProfileLink" class="text-light" href="{{ url_for('profile.get_profile', username = g.logged_in_account.username) }}">{{ g.logged_in_account.username }}</a>
-          {% endif %}
-        </div>
-        <button class="navbar-toggler d-md-none" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
-      <div class="px-0 d-md-block col-md-9 col-lg-6 pr-md-2 pr-lg-0">
-        <form id="birdSearchForm" class="input-group input-group-lg" action="/bird/search" method="get">
-          <input aria-describedby="button-addon" class="form-control form-control-light" name="query" placeholder="{{ locale.text('Search bird') }}" aria-label="Search bird">
-          <div class="input-group-append">
-            <button class="btn btn-light rounded-0" type="submit" id="button-addon">{{locale.text('Search')}}</button>
-          </div>
-        </form>
-      </div>
-      <div class="d-none d-lg-block col-lg-3">
-      </div>
-      <div class="col-12 d-md-none collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto" id="collapsableMenuList"></ul>
-      </div>
-    </nav>
+    <div id="navbar"></div>
     <div class="container-fluid navbar-pushed">
       <div class="row">
         <div class="d-none d-md-block col-md-3 col-lg-2 pr-0">
@@ -73,15 +48,11 @@
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
     <!-- Load our React component. -->
-    <script src="{{ url_for('static', filename='script/base.js') }}"></script>
     <script>
-      (function() {
-        var sidebarList = document.getElementById('sidebarList');
-        var collapsableList = document.getElementById('collapsableMenuList');
-        sidebarList.childNodes.forEach(function(item) {
-          collapsableList.appendChild(item.cloneNode(true));
-        });
-      }());
+      {% if g.logged_in_account %}
+      window.username = '{{g.logged_in_account.username}}';
+      {% endif %}
+      window.sideMenuItems = document.getElementById('sidebarList').childNodes;
       (function() {
         'use strict'
         function setUpMenuOffClickCollapse() {
@@ -102,6 +73,7 @@
         window.addEventListener('load', setUpMenuOffClickCollapse, true);
       }());
     </script>
+    <script type="module" src="{{ url_for('static', filename='script/index.js') }}"></script>
     {% block scripts %}{% endblock %}
   </body>
 </html>
