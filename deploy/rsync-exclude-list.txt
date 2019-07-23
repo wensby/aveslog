@@ -6,6 +6,7 @@ web-service/testDockerfile
 web-service/test-requirements.txt
 web-service/run_tests.sh
 web-service/venv
+web-service/node_modules
 web-service/src/instance
 web-service/src/test-logs
 web-service/src/htmlcov
