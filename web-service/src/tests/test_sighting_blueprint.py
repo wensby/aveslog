@@ -1,24 +1,18 @@
 from datetime import date, time
 from http import HTTPStatus
 
-from flask import url_for
-from requests_html import HTML
-
 from test_util import AppTestCase
 
 
 class TestSightingsHomePage(AppTestCase):
 
-  def test_page_contains_expected_content_when_no_sightings(self):
+  def test_page_ok_when_no_sightings(self):
     self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
     self.set_logged_in(4)
 
     response = self.client.get('/sighting/')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    html = HTML(html=response.data)
-    self.assertIn(url_for('authentication.logout'), html.links)
-    self.assertFalse(html.find('.card'))
 
   def test_page_contains_expected_content_when_sightings_present(self):
     self.db_insert_person(4)

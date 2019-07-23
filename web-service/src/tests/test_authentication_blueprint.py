@@ -37,17 +37,10 @@ class TestLoginPage(AppTestCase):
 
 class TestAuthenticationBlueprint(AppTestCase):
 
-  def test_get_register_request_contains_bird_search(self):
+  def test_ok(self):
     response = self.client.get(url_for('authentication.get_register_request'))
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    html = HTML(html=response.data)
-    form = html.find('form#birdSearchForm', first=True)
-    self.assertTrue(form)
-    self.assertIn(('method', 'get'), form.attrs.items())
-    self.assertIn(('action', url_for('bird.search')), form.attrs.items())
-    self.assertEqual(len(form.find("input[name='query']")), 1)
-    self.assertEqual(len(form.find("button[type='submit']")), 1)
+    self.assertOkHtmlResponse(response)
 
   def test_get_register_request_contains_email_submit_form(self):
     response = self.client.get(url_for('authentication.get_register_request'))

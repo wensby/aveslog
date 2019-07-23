@@ -11,28 +11,7 @@
     <div id="navbar"></div>
     <div class="container-fluid navbar-pushed">
       <div class="row">
-        <div class="d-none d-md-block col-md-3 col-lg-2 pr-0">
-          <nav class="sidebar nav flex-column border-left" id="sidebarList">
-            {% if g.logged_in_account %}
-              <div class="nav-item">
-                <a class="nav-link" href="{{ url_for('profile.get_profile', username=g.logged_in_account.username) }}">{{ locale.text('Profile') }}</a>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link" href="/sighting">{{ locale.text('Sightings') }}</a>
-              </div>
-            {% endif %}
-            <div class="nav-item">
-              {% if g.logged_in_account %}
-                <a class="nav-link" href="/authentication/logout">{{ locale.text('Logout') }}</a>
-              {% else %}
-                <a class="nav-link" href="/authentication/login">{{ locale.text('Login') }}</a>
-              {% endif %}
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="{{ url_for('settings.get_settings_index') }}">{{ locale.text('Settings') }}</a>
-            </div>
-          </nav>
-        </div>
+        <div id="sidemenu" class="d-none d-md-block col-md-3 col-lg-2 pr-0"></div>
         <main role="main" class="col-12 col-md-9 col-lg-8">
           {% block content %}{% endblock %}
         </main>
@@ -49,10 +28,31 @@
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
     <!-- Load our React component. -->
     <script>
+      window.menuItems = [];
       {% if g.logged_in_account %}
       window.username = '{{g.logged_in_account.username}}';
+      window.menuItems.push({
+        href: '{{ url_for('profile.get_profile', username=g.logged_in_account.username) }}',
+        text: 'Profile'
+      });
+      window.menuItems.push({
+        href: '/sighting',
+        text: 'Sightings'
+      });
+      window.menuItems.push({
+        href: '/authentication/logout',
+        text: 'Logout'
+      });
+      {% else %}
+      window.menuItems.push({
+        href: '/authentication/login',
+        text: 'Login'
+      });
       {% endif %}
-      window.sideMenuItems = document.getElementById('sidebarList').childNodes;
+      window.menuItems.push({
+        href: '{{ url_for('settings.get_settings_index') }}',
+        text: 'Settings'
+      });
       (function() {
         'use strict'
         function setUpMenuOffClickCollapse() {
