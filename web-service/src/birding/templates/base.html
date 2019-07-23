@@ -12,7 +12,7 @@
       <div class="navbar-main d-flex col col-md-3 mr-0">
         <div class="flex-grow-1 align-self-center">
           <a href="/">
-            <img class="navbar-brand"src="{{ url_for('static', filename='birdlogo.png') }}" style="width: 50px;">
+            <img class="navbar-brand"src="{{ url_for('static', filename='birdlogo-50.png') }}" style="width: 50px;">
           </a>
           {% if g.logged_in_account %}
             <a id="headerProfileLink" class="text-light" href="{{ url_for('profile.get_profile', username = g.logged_in_account.username) }}">{{ g.logged_in_account.username }}</a>
