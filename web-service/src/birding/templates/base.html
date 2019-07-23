@@ -11,9 +11,7 @@
     <nav class="navbar navbar-dark fixed-top justify-content-md-center p-0 shadow bg-primary">
       <div class="navbar-main d-flex col col-md-3 mr-0">
         <div class="flex-grow-1 align-self-center">
-          <a href="/">
-            <img class="navbar-brand"src="{{ url_for('static', filename='birdlogo-50.png') }}" style="width: 50px;">
-          </a>
+          <div id="navbarLogo"></div>
           {% if g.logged_in_account %}
             <a id="headerProfileLink" class="text-light" href="{{ url_for('profile.get_profile', username = g.logged_in_account.username) }}">{{ g.logged_in_account.username }}</a>
           {% endif %}
@@ -74,6 +72,8 @@
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
     <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <!-- Load our React component. -->
+    <script src="{{ url_for('static', filename='script/base.js') }}"></script>
     <script>
       (function() {
         var sidebarList = document.getElementById('sidebarList');

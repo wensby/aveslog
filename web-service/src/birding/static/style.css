@@ -11,6 +11,14 @@ body {
   font-size: 1rem;
 }
 
+#navbarLogo {
+  display: inline;
+}
+
+#navbarLogoImage {
+  width: 50px;
+}
+
 .navbar .form-control {
   padding: .75rem 1rem;
   border-width: 0;
