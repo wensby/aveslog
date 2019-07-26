@@ -1,0 +1,73 @@
+.navbar .grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 64px 48px;
+  grid-template-areas:
+    "main button"
+    "search search";
+}
+
+.menu {
+  transition: max-height .3s;
+  padding-left: 15px;
+  width: 100%;
+  height: auto;
+  max-height: 0px;
+}
+
+.menu.collapsed {
+  visibility: hidden;
+}
+
+.menu.expanding, .menu.expanded, .menu.collapsing {
+  display: block;
+}
+
+.navbar .grid .navbar-main {
+  grid-area: main;
+}
+
+.navbar .grid .menu-button {
+  grid-area: button;
+  align-self: center;
+  justify-self: end;
+  padding: 7px;
+}
+
+.navbar .grid .search-bar-item {
+  grid-area: search;
+  align-self: center;
+}
+
+.navbar .grid .menu {
+  grid-area: menu;
+  align-self: center;
+  transition: position .5s;
+}
+
+@media only screen and (min-width : 768px) {
+  .navbar .grid {
+    grid: 64px/ 3fr 7fr;
+    padding-right: 7px;
+    grid-template-areas:
+      'main search';
+  }
+
+  .navbar .grid .menu-button {
+    display: none;
+  }
+
+  .menu {
+    display: none !important;
+  }
+}
+
+@media only screen and (min-width : 1224px) {
+  .navbar .grid {
+    grid: 64px / 1fr 750px 1fr;
+    padding-right: 0;
+    grid-template-areas:
+      "main search _";
+  }
+}
