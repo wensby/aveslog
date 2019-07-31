@@ -24,7 +24,7 @@ export default class SideMenu extends Component {
 
   render() {
     return (
-      <div className="d-none d-md-block col-md-3 col-lg-2 pr-0">
+      <div className="sidemenu">
         <nav className="sidebar nav flex-column border-left" id="sidebarList">
           {this.renderItems()}
         </nav>

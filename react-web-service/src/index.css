@@ -84,18 +84,6 @@ body {
   }
 }
 
-/* < md */
-.navbar-pushed {
-  padding-top: 122px; /* Space for fixed navbar */
-}
-
-/* => md */
-@media (min-width: 768px) {
-  .navbar-pushed {
-    padding-top: 74px; /* Space for fixed navbar */
-  }
-}
-
 .card-bird-thumbnail {
   object-fit: cover;
   object-position: 0% 15%;

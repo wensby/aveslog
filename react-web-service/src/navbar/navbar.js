@@ -6,44 +6,44 @@ import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import './navbar.css';
+import { useTranslation } from "react-i18next";
 
-class SearchBar extends Component {
+function SearchBar() {
+  const {t} = useTranslation();
 
-  renderTextInput() {
+  const renderTextInput = () => {
     return (
       <Form.Control
-          variant='light'
-          aria-describedby='button-addon'
-          name='query'
-          placeholder='Search bird'
-          aria-label='Search bird' />
+        variant='light'
+        aria-describedby='button-addon'
+        name='query'
+        placeholder={t('Search bird')}
+        aria-label='Search bird' />
     );
   }
 
-  renderButton() {
+  const renderButton = () => {
     return (
       <Button
           variant="light"
           className="rounded-0"
           type="submit"
           id="button-addon">
-        Search
+        {t('Search')}
       </Button>
     );
   }
 
-  render() {
-    return (
-      <Form id="birdSearchForm" action="/bird/search" method="get">
-        <InputGroup size="lg">
-          {this.renderTextInput()}
-          <InputGroup.Append>
-            {this.renderButton()}
-          </InputGroup.Append>
-        </InputGroup>
-      </Form>
-    );
-  }
+  return (
+    <Form id="birdSearchForm" action="/bird/search" method="get">
+      <InputGroup size="lg">
+        {renderTextInput()}
+        <InputGroup.Append>
+          {renderButton()}
+        </InputGroup.Append>
+      </InputGroup>
+    </Form>
+  );
 }
 
 function Brand() {

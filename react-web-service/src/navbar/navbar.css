@@ -49,9 +49,12 @@
 @media only screen and (min-width : 768px) {
   .navbar .grid {
     grid: 64px/ 3fr 7fr;
-    padding-right: 7px;
     grid-template-areas:
       'main search';
+  }
+
+  .navbar .grid .search-bar-item {
+    padding-right: 7px;
   }
 
   .navbar .grid .menu-button {
@@ -69,5 +72,9 @@
     padding-right: 0;
     grid-template-areas:
       "main search _";
+  }
+
+  .navbar .grid .search-bar-item {
+    padding-right: 0px;
   }
 }
