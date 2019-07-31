@@ -1,9 +1,9 @@
 # Birding
 
-Dockerized, PostgreSQL database-backed, Python Flask web application for
+Dockerized, PostgreSQL and Python Flask-backed, React web application for
 birding. The main purpose behind this project is for exploring, learning and
 improving my knowledge in some fundamental technologies such as Docker,
-PostgreSQL, Python, and Bootstrap.
+PostgreSQL, Python, React, JavaScript and Bootstrap.
 
 ## Running the app locally
 
