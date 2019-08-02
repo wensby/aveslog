@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+
+  react-web-service:
+    volumes:
+      - ./react-web-service:/app
+      - /app/node_modules
+    ports:
+      - '3003:3000'
+    environment:
+      NODE_ENV: development
+
   birding-web-service:
     ports:
      - "3002:3002"

@@ -1,15 +1,26 @@
 version: '3'
 
 services:
+
+  react-web-service:
+    expose:
+      - 3003
+  environment:
+    EXTERNAL_HOST: https://yourwebpagedomain.tld
+    VIRTUAL_HOST: yourwebpagedomain.tld
+    VIRTUAL_PORT: 3003
+    LETSENCRYPT_HOST: yourwebpagedomain.tld
+    LETSENCRYPT_EMAIL: email@domain.tld
+
   birding-web-service:
     expose:
       - 3000
     environment:
       FLASK_ENV: production
-      EXTERNAL_HOST: https://yourdomain.tld
-      VIRTUAL_HOST: yourdomain.tld
+      EXTERNAL_HOST: https://yourrestapidomain.tld
+      VIRTUAL_HOST: yourrestapidomain.tld
       VIRTUAL_PORT: 3000
-      LETSENCRYPT_HOST: yourdomain.tld
+      LETSENCRYPT_HOST: yourrestapidomain.tld
       LETSENCRYPT_EMAIL: email@domain.tld
       MAIL_SERVER: smtp.yourmailserver.tld
       MAIL_PORT: 465

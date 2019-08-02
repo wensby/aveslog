@@ -2,6 +2,16 @@ version: '3'
 
 services:
 
+  react-web-service:
+    container_name: react-web-service
+    build:
+      dockerfile: Dockerfile
+      context: ./react-web-service
+    image: react-web-service
+    restart: always
+    networks:
+      - default
+
   birding-web-service:
     build:
       dockerfile: Dockerfile

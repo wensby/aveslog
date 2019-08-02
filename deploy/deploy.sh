@@ -37,7 +37,7 @@ rsync -rav -e ssh --exclude-from ./deploy/rsync-exclude-list.txt \
   $remote_host:$remote_directory
 
 rsync -rav -e ssh --delete --exclude-from ./deploy/rsync-exclude-list.txt \
-  ./deploy ./web-service ./database ./backup \
+  ./deploy ./web-service ./database ./backup ./react-web-service \
   $remote_host:$remote_directory
 
 # Change to correct directory and run deploy production script on remote

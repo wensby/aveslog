@@ -13,5 +13,7 @@ web-service/src/htmlcov
 web-service/src/logs
 web-service/src/venv
 web-service/src/birding/static/image
+react-web-service/node_modules
+react-web-service/build
 database/testDockerfile
 .idea/
