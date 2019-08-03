@@ -1,7 +1,10 @@
+import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from birding.authentication import AccountRegistrationController
+from birding.authentication import AuthenticationTokenFactory
+from birding.authentication import AuthenticationTokenDecoder
 from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.account import AccountRepository, Username, Password, \
@@ -202,3 +205,46 @@ class TestPasswordResetController(TestCase):
   def test_perform_password_reset_removes_password_reset_token_on_success(self):
     result = self.controller.perform_password_reset('myToken', valid_password)
     self.password_repository.remove_password_reset_token.assert_called_with('myToken')
+
+class TestAuthenticationTokenFactory(TestCase):
+
+  def test_encode_token(self):
+    utc_now_supplier = lambda : datetime.datetime(2019, 8, 3, 20, 31)
+    factory = AuthenticationTokenFactory('secret', utc_now_supplier)
+
+    token = factory.create_authentication_token(1)
+
+    self.assertEqual(token, (
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjQyNjUsImlhdCI6MTU'
+      '2NDg2NDI2MCwic3ViIjoxfQ.benxSD7FPI8LLAGGtX5sqNfP-K9oUzggH4A7WVQwUGc'))
+
+class TestAuthenticationTokenDecoder(TestCase):
+
+  def test_decode_token(self):
+    factory = AuthenticationTokenFactory('secret', datetime.datetime.utcnow)
+    token = factory.create_authentication_token(1)
+    decoder = AuthenticationTokenDecoder('secret')
+
+    result = decoder.decode_authentication_token(token)
+
+    self.assertTrue(result.ok)
+    self.assertEqual(result.payload['sub'], 1)
+
+  def test_decode_expired_token(self):
+    utc_now_supplier = lambda: datetime.datetime(2008, 8, 3, 20, 31)
+    factory = AuthenticationTokenFactory('secret', utc_now_supplier)
+    token = factory.create_authentication_token(1)
+    decoder = AuthenticationTokenDecoder('secret')
+
+    result = decoder.decode_authentication_token(token)
+
+    self.assertFalse(result.ok)
+    self.assertEqual(result.error, 'signature-expired')
+
+  def test_decode_invalid_token(self):
+    decoder = AuthenticationTokenDecoder('secret')
+
+    result = decoder.decode_authentication_token('asdfasf.dsafasd.asdfasdf')
+
+    self.assertFalse(result.ok)
+    self.assertEqual(result.error, 'token-invalid')

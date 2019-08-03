@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from flask import Flask, session
@@ -9,10 +10,12 @@ from .account import PasswordHasher
 from .account import PasswordRepository
 from .account import TokenFactory
 from .authentication import AccountRegistrationController
+from .authentication import AuthenticationTokenFactory
 from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_blueprint import create_authentication_blueprint
+from .v2_authentication_blueprint import create_v2_authentication_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
 from .bird_blueprint import create_bird_blueprint
@@ -83,6 +86,8 @@ def create_app(test_config=None):
     account_repository, password_repository, link_factory, mail_dispatcher)
   locales_misses_logger = LocalesMissesLogger(
     locales_misses_repository, app.config['LOGS_DIR_PATH'])
+  authentication_token_factory = AuthenticationTokenFactory(
+    app.secret_key, datetime.datetime.utcnow)
 
   # Create and register blueprints
   home_blueprint = create_home_blueprint()
@@ -91,6 +96,10 @@ def create_app(test_config=None):
     authenticator,
     account_registration_controller,
     password_reset_controller,
+  )
+  v2_authentication_blueprint = create_v2_authentication_blueprint(
+    authenticator,
+    authentication_token_factory,
   )
   sighting_blueprint = create_sighting_blueprint(sighting_repository,
                                                  sighting_view_factory)
@@ -111,6 +120,7 @@ def create_app(test_config=None):
   app.register_blueprint(profile_blueprint)
   app.register_blueprint(settings_blueprint)
   app.register_blueprint(bird_blueprint)
+  app.register_blueprint(v2_authentication_blueprint)
 
   @app.before_request
   def before_request():

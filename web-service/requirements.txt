@@ -4,3 +4,4 @@ psycopg2-binary
 retrying
 gunicorn
 testing.postgresql
+pyjwt==1.4.2

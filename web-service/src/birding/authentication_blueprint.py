@@ -6,6 +6,8 @@ from flask import redirect
 from flask import request
 from flask import session
 from flask import url_for
+
+from .authentication import AuthenticationTokenFactory
 from .render import render_page
 from .account import Credentials
 from .account import Username
