@@ -7,6 +7,7 @@ import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
 import Login from './authentication.js'
 import Settings from './settings/settings'
+import Home from './home/home.js';
 import './App.css';
 import { useTranslation } from "react-i18next";
 
@@ -28,6 +29,7 @@ function Page() {
       <div className='main-grid navbar-pushed'>
         <SideMenu items={menuItems} />
         <main role="main" className="col-12 col-md-9 col-lg-8">
+          <Route path='/' exact component={Home} />
           <Route path="/authentication/login" exact component={Login} />
           <Route path='/settings/' exact component={Settings} />
         </main>
