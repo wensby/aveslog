@@ -13,7 +13,8 @@ services:
     networks:
       - test
     volumes:
-      - ./web-service/src:/src
+      - ./web-service/src/birding:/src/birding
+      - ./web-service/src/tests:/src/tests
     environment:
       EXTERNAL_HOST: myExternalHost
       DATABASE_HOST: test-database-service
