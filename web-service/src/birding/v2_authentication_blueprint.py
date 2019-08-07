@@ -16,10 +16,10 @@ def create_v2_authentication_blueprint(
   blueprint = Blueprint('v2authentication', __name__,
                         url_prefix='/v2/authentication')
 
-  @blueprint.route('/login', methods=['POST'])
-  def post_login():
-    username = request.form['username']
-    password = request.form['password']
+  @blueprint.route('/token')
+  def get_token():
+    username = request.args.get('username')
+    password = request.args.get('password')
     if Username.is_valid(username) and Password.is_valid(password):
       credentials = Credentials(Username(username), Password(password))
       account = authenticator.get_authenticated_user_account(credentials)
