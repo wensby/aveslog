@@ -12,7 +12,8 @@ class TestAppCreation(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     birding.create_app(test_config=test_config)
 
@@ -21,7 +22,8 @@ class TestAppCreation(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     birding.create_app(test_config=test_config)
     self.assertIn('instance', os.listdir('.'))
@@ -29,7 +31,8 @@ class TestAppCreation(TestCase):
   def test_creation_fails_if_no_secret_key(self):
     test_config = {
       'TESTING': True,
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     self.assertRaises(Exception, birding.create_app, test_config=test_config)
 
@@ -38,7 +41,8 @@ class TestAppCreation(TestCase):
       file.writelines([
         "SECRET_KEY = 'wowsosecret'\n",
         "TESTING = True\n",
-        "LOGS_DIR_PATH = 'test-logs'\n"
+        "LOGS_DIR_PATH = 'test-logs'\n",
+        "FRONTEND_HOST = 'http://localhost:3002'\n"
       ])
     self.assertTrue(os.path.exists('instance/config.py'))
     birding.create_app()
@@ -48,7 +52,8 @@ class TestAppCreation(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     birding.create_app(test_config=test_config)
     self.assertIn('test-logs', os.listdir('.'))

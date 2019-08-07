@@ -40,7 +40,8 @@ class AppTestCase(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     cls._app = birding.create_app(test_config=test_config)
     cls._app.test_client_class = TestClient

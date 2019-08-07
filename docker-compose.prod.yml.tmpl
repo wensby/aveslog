@@ -3,15 +3,20 @@ version: '3'
 services:
 
   react-web-service:
+    build:
+      context: ./react-web-service
+      dockerfile: Dockerfile-prod
+      args:
+        apiurl: https://yourrestapidomain.tld
     expose:
       - 3003
-  environment:
-    API_URL: https://yourrestapidomain.tld
-    EXTERNAL_HOST: https://yourwebpagedomain.tld
-    VIRTUAL_HOST: yourwebpagedomain.tld
-    VIRTUAL_PORT: 3003
-    LETSENCRYPT_HOST: yourwebpagedomain.tld
-    LETSENCRYPT_EMAIL: email@domain.tld
+    environment:
+      API_URL: https://yourrestapidomain.tld
+      EXTERNAL_HOST: https://yourwebpagedomain.tld
+      VIRTUAL_HOST: yourwebpagedomain.tld
+      VIRTUAL_PORT: 3003
+      LETSENCRYPT_HOST: yourwebpagedomain.tld
+      LETSENCRYPT_EMAIL: email@domain.tld
 
   birding-web-service:
     expose:
@@ -29,6 +34,7 @@ services:
       MAIL_PASSWORD: yourpassword
       MAIL_USE_TLS: 'false'
       MAIL_USE_SSL: 'true'
+      FRONTEND_HOST: https://yourwebpagedomain.tld
 
 networks:
   default:

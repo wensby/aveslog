@@ -1,9 +1,11 @@
 import datetime
+import logging
 import os
 
 from flask import Flask, session
 from flask import g
 from flask import request
+from flask_cors import CORS
 
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
@@ -181,6 +183,21 @@ def configure_app(app, test_config):
     raise Exception('Flask secret key not set')
   if not os.path.isdir(app.config['LOGS_DIR_PATH']):
     os.makedirs(app.config['LOGS_DIR_PATH'])
+  configure_cross_origin_resource_sharing(app)
+
+
+def configure_cross_origin_resource_sharing(app: Flask):
+  if 'FRONTEND_HOST' in app.config:
+    frontend_host = app.config['FRONTEND_HOST']
+  else:
+    frontend_host = os.environ['FRONTEND_HOST']
+  logging.getLogger('flask_cors').level = logging.DEBUG
+  CORS(app, resources={
+    r'/v2/*': {
+      'supports_credentials': True,
+      'origins': frontend_host
+    }
+  })
 
 
 def create_database_connection_details():

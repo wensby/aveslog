@@ -5,3 +5,4 @@ retrying
 gunicorn
 testing.postgresql
 pyjwt==1.4.2
+flask-cors

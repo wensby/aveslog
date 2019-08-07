@@ -21,6 +21,7 @@ services:
       DATABASE_NAME: birding-database
       DATABASE_USER: postgres
       DATABASE_PASSWORD: docker
+      FRONTEND_HOST: http://localhost:3003
     # start container with tail to keep it from stopping
     command: ["tail", "-F", "anything"]
 

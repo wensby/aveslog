@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Recreate config file
+rm -rf ./public/env-config.js
 rm -rf ./env-config.js
 touch ./env-config.js
 

@@ -32,7 +32,8 @@ class TestMailDispatcherFactory(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     birding.create_app(test_config=test_config)
 
@@ -50,7 +51,8 @@ class TestMailServerDispatcher(TestCase):
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs'
+      'LOGS_DIR_PATH': 'test-logs',
+      'FRONTEND_HOST': 'http://localhost:3002'
     }
     app = birding.create_app(test_config=test_config)
     self.dispatcher = MailServerDispatcher(app, None, None, 'myUsername', None, None, None)

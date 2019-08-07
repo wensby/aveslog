@@ -9,7 +9,7 @@ services:
     ports:
       - '3003:3000'
     environment:
-      API_URL: http://0.0.0.0:3002
+      API_URL: http://127.0.0.1:3002
       NODE_ENV: development
 
   birding-web-service:
@@ -18,3 +18,4 @@ services:
     environment:
       EXTERNAL_HOST: http://0.0.0.0:3002
       FLASK_ENV: development
+      FRONTEND_HOST: http://localhost:3003
