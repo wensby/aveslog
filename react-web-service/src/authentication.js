@@ -15,7 +15,9 @@ class Login extends Component {
     try {
       const { username, password } = this.state;
       const response = await fetch(`${window._env_.API_URL}/v2/authentication/token?username=${username}&password=${password}`);
-      console.log(JSON.stringify(await response.json()));
+      const jsonResponse = await response.json();
+      localStorage.setItem('authToken', jsonResponse.authToken);
+      this.props.history.push("/");
     } catch (e) {
       console.log(e);
     }
