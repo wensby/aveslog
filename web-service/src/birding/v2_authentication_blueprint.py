@@ -29,7 +29,7 @@ def create_v2_authentication_blueprint(
         response = {
           'status': 'success',
           'message': 'Successfully logged in.',
-          'auth_token': token
+          'authToken': token
         }
         return make_response(jsonify(response), HTTPStatus.OK)
     response = {
