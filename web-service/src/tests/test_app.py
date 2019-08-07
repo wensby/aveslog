@@ -17,6 +17,14 @@ class TestAppCreation(TestCase):
     }
     birding.create_app(test_config=test_config)
 
+  def test_creation_crashes_without_frontend_host(self):
+    test_config = {
+      'TESTING': True,
+      'SECRET_KEY': 'wowsosecret',
+      'LOGS_DIR_PATH': 'test-logs',
+    }
+    self.assertRaises(Exception, birding.create_app, test_config=test_config)
+
   def test_creation_creates_instance_directory(self):
     shutil.rmtree('instance')
     test_config = {
@@ -58,6 +66,9 @@ class TestAppCreation(TestCase):
     birding.create_app(test_config=test_config)
     self.assertIn('test-logs', os.listdir('.'))
 
+  def tearDown(self) -> None:
+    if 'FRONTEND_HOST' in os.environ:
+      del os.environ['FRONTEND_HOST']
 
 class TestGeneralFunctionality(AppTestCase):
 
