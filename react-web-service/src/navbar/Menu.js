@@ -12,13 +12,9 @@ export default function Menu(props) {
     )
   };
 
-  const renderItems = () => {
-    return props.items.map(renderItem);
-  };
-
   return (
     <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
-      {renderItems()}
+      {props.items.map(renderItem)}
     </Nav>
   );
 }

@@ -17,15 +17,11 @@ export default class SideMenu extends Component {
     );
   }
 
-  renderItems() {
-    return this.props.items.map(this.renderItem);
-  }
-
   render() {
     return (
       <div className="sidemenu">
         <nav className="sidebar nav flex-column border-left" id="sidebarList">
-          {this.renderItems()}
+          {this.props.items.map(this.renderItem)}
         </nav>
       </div>
     );
