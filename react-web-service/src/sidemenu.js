@@ -10,11 +10,7 @@ export default class SideMenu extends Component {
   }
 
   renderItem = (item, index) => {
-    return (
-      <div className="nav-item" key={index}>
-        {item}
-      </div>
-    );
+    return <div className="nav-item" key={index}>{item}</div>;
   }
 
   render() {
