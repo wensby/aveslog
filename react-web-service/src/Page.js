@@ -10,17 +10,31 @@ import Settings from './settings/settings'
 import Home from './home/home.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
+import Authentication from './authentication';
 
 class Page extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      authenticated: false,
+    };
   };
+
+  setAuthenticated = async () => {
+    this.setState({ authenticated: true });
+  }
+
+  onLogout = async () => {
+    await (new Authentication().logout());
+    this.setState({ authenticated: false });
+  }
 
   getMenuItems = () => {
     const { t } = this.props;
-    if (localStorage.getItem('authToken')) {
+    const { authenticated } = this.state;
+
+    if (authenticated) {
       return [
         <Link className="nav-link"
             to={`/profile/${this.state.username}`}>{t('Profile')}</Link>,
@@ -28,7 +42,7 @@ class Page extends Component {
             to={'/sighting/'}>{t('Sightings')}</Link>,
         <Link className="nav-link"
             to={'/settings/'}>{t('Settings')}</Link>,
-        <Link className="nav-link"
+        <Link className="nav-link" onClick={this.onLogout}
             to={'/authentication/logout'}>{t('Logout')}</Link>
       ];
     } else {
@@ -41,6 +55,10 @@ class Page extends Component {
     }
   }
 
+  renderLoginRoute = (props) => {
+    return <Login {...props} onAuthenticated={this.setAuthenticated} />
+  };
+
   render() {
     const menuItems = this.getMenuItems();
 
@@ -51,7 +69,8 @@ class Page extends Component {
           <SideMenu items={menuItems} />
           <main role="main" className="col-12 col-md-9 col-lg-8">
             <Route path='/' exact component={Home} />
-            <Route path="/authentication/login" exact component={Login} />
+            <Route path="/authentication/login" exact
+                render={this.renderLoginRoute} />
             <Route path='/settings/' exact component={Settings} />
           </main>
         </div>

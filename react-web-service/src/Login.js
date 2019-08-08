@@ -15,7 +15,8 @@ class Login extends Component {
   login = async () => {
     try {
       const { username, password } = this.state;
-      await Authentication.login(username, password);
+      await (new Authentication().login(username, password));
+      this.props.onAuthenticated();
       this.props.history.push("/");
     } catch (e) {
       console.log(e);

@@ -7,4 +7,8 @@ export default class Authentication {
     const jsonResponse = await response.json();
     localStorage.setItem('authToken', jsonResponse.authToken);
   }
+
+  async logout() {
+    localStorage.removeItem('authToken');
+  }
 }
