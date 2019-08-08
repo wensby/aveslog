@@ -22,15 +22,21 @@ class Page extends Component {
     const { t } = this.props;
     if (localStorage.getItem('authToken')) {
       return [
-        <Link className="nav-link" to={`/profile/${this.state.username}`}>{t('Profile')}</Link>,
-        <Link className="nav-link" to={'/sighting/'}>{t('Sightings')}</Link>,
-        <Link className="nav-link" to={'/settings/'}>{t('Settings')}</Link>,
-        <Link className="nav-link" to={'/authentication/logout'}>{t('Logout')}</Link>
+        <Link className="nav-link"
+            to={`/profile/${this.state.username}`}>{t('Profile')}</Link>,
+        <Link className="nav-link"
+            to={'/sighting/'}>{t('Sightings')}</Link>,
+        <Link className="nav-link"
+            to={'/settings/'}>{t('Settings')}</Link>,
+        <Link className="nav-link"
+            to={'/authentication/logout'}>{t('Logout')}</Link>
       ];
     } else {
       return [
-        <Link className="nav-link" to={'/settings/'}>{t('Settings')}</Link>,
-        <Link className="nav-link" to={'/authentication/login'}>{t('Login')}</Link>
+        <Link className="nav-link"
+            to={'/settings/'}>{t('Settings')}</Link>,
+        <Link className="nav-link"
+            to={'/authentication/login'}>{t('Login')}</Link>
       ];
     }
   }
