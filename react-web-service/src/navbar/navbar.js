@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Nav from 'react-bootstrap/Nav';
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import './navbar.css';
 import { useTranslation } from "react-i18next";
+import Menu from './Menu.js';
 
 function SearchBar() {
   const {t} = useTranslation();
@@ -56,42 +56,7 @@ function Brand() {
   );
 }
 
-class Menu extends Component {
-
-  constructor(props) {
-    super(props);
-    this.wrapperRef = React.createRef();
-  }
-
-  renderItems() {
-    let result = [];
-    for (let item of this.props.items) {
-      result.push(
-        <div className="nav-item" key={item.text}>
-          <Link
-              className="nav-link"
-              to={item.href}
-              onClick={() => {
-                this.props.onLinkClick();
-              }}>
-            {item.text}
-          </Link>
-        </div>
-      );
-    }
-    return result;
-  }
-
-  render() {
-    return (
-        <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
-          {this.renderItems()}
-        </Nav>
-    );
-  }
-}
-
-export default class Navbar extends React.Component {
+export default class Navbar extends Component {
 
   constructor(props) {
     super(props);

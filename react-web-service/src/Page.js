@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
-import Login from './authentication.js'
+import Login from './Login.js'
 import Settings from './settings/settings'
 import Home from './home/home.js';
 import './App.css';
