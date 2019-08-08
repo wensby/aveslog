@@ -12,8 +12,9 @@ class Login extends Component {
     };
   }
 
-  login = async () => {
+  login = async (event) => {
     try {
+      event.preventDefault();
       const { username, password } = this.state;
       await (new Authentication().login(username, password));
       this.props.onAuthenticated();
@@ -32,6 +33,7 @@ class Login extends Component {
           <div className="row">
             <div className="col">
               <div id="loginFormContainer">
+                <form onSubmit={this.login}>
                   <div className="form-row">
                     <div className="form-group col-6">
                       <label htmlFor="usernameInput">{t('Username')}</label>
@@ -44,8 +46,9 @@ class Login extends Component {
                   </div>
                   <div className="d-flex flex-row">
                     <a className="btn btn-secondary" href="/">{t('Register new account')}</a>
-                    <button onClick={this.login} className="btn btn-primary ml-auto">{t('Login')}</button>
+                    <button type='submit' className="btn btn-primary ml-auto">{t('Login')}</button>
                   </div>
+                </form>
                 <div className="row">
                   <a href="/">{t('Forgot your password?')}</a>
                 </div>
