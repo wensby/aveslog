@@ -173,7 +173,7 @@ export default class Navbar extends Component {
           style={style}>
         <Menu
             items={this.props.items}
-            onLinkClick={() => setTimeout(this.collapseMenu, 0)} />
+            onClick={() => setTimeout(this.collapseMenu, 0)} />
       </div>
     );
   }

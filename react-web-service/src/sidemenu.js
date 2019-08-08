@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
 
 export default class SideMenu extends Component {
 
@@ -10,16 +9,16 @@ export default class SideMenu extends Component {
     };
   }
 
+  renderItem = (item, index) => {
+    return (
+      <div className="nav-item" key={index}>
+        {item}
+      </div>
+    );
+  }
+
   renderItems() {
-    let result = []
-    for (let item of this.props.items) {
-      result.push(
-        <div className="nav-item" key={item.text}>
-          <Link className="nav-link" to={item.href}>{item.text}</Link>
-        </div>
-      );
-    }
-    return result;
+    return this.props.items.map(this.renderItem);
   }
 
   render() {

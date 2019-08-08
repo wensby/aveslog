@@ -1,34 +1,24 @@
-import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import './navbar.css';
 
-export default class Menu extends Component {
+export default function Menu(props) {
 
-  renderItems() {
-    let result = [];
-    for (let item of this.props.items) {
-      result.push(
-        <div className="nav-item" key={item.text}>
-          <Link
-              className="nav-link"
-              to={item.href}
-              onClick={() => {
-                this.props.onLinkClick();
-              }}>
-            {item.text}
-          </Link>
-        </div>
-      );
-    }
-    return result;
-  }
-
-  render() {
+  const renderItem = (item, index) => {
     return (
-        <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
-          {this.renderItems()}
-        </Nav>
-    );
-  }
+      <div className="nav-item" key={index} onClick={props.onClick}>
+        {item}
+      </div>
+    )
+  };
+
+  const renderItems = () => {
+    return props.items.map(renderItem);
+  };
+
+  return (
+    <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
+      {renderItems()}
+    </Nav>
+  );
 }

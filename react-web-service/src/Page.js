@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
 import Login from './Login.js'
@@ -22,15 +22,15 @@ class Page extends Component {
     const { t } = this.props;
     if (localStorage.getItem('authToken')) {
       return [
-        { href: `/profile/${this.state.username}`, text: t('Profile') },
-        { href: '/sighting/', text: t('Sightings') },
-        { href: '/authentication/logout', text: t('Logout') },
-        { href: '/settings/', text: t('Settings') }
+        <Link className="nav-link" to={`/profile/${this.state.username}`}>{t('Profile')}</Link>,
+        <Link className="nav-link" to={'/sighting/'}>{t('Sightings')}</Link>,
+        <Link className="nav-link" to={'/authentication/logout'}>{t('Logout')}</Link>,
+        <Link className="nav-link" to={'/settings/'}>{t('Settings')}</Link>
       ];
     } else {
       return [
-        { href: '/authentication/login', text: t('Login') },
-        { href: '/settings/', text: t('Settings') }
+        <Link className="nav-link" to={'/authentication/login'}>{t('Login')}</Link>,
+        <Link className="nav-link" to={'/settings/'}>{t('Settings')}</Link>
       ];
     }
   }
