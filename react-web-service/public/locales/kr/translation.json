@@ -6,5 +6,8 @@
   "Username": "사용자 이름",
   "Password": "비밀번호",
   "Register new account": "새로운 계정을 만들기",
-  "Forgot your password?": "비밀번호 까먹었어?"
+  "Forgot your password?": "비밀번호 까먹었어?",
+  "Profile": "프로필",
+  "Sightings": "관찰",
+  "Logout": "로그아웃"
 }

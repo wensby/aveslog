@@ -6,5 +6,8 @@
   "Username": "Användarnamn",
   "Password": "Lösenord",
   "Register new account": "Registrera nytt konto",
-  "Forgot your password?": "Glömt lösenordet?"
+  "Forgot your password?": "Glömt lösenordet?",
+  "Profile": "Profil",
+  "Sightings": "Observationer",
+  "Logout": "Logga ut"
 }

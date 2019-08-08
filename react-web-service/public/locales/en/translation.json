@@ -6,5 +6,8 @@
   "Username": "Username",
   "Password": "Password",
   "Register new account": "Register new account",
-  "Forgot your password?": "Forgot your password?"
+  "Forgot your password?": "Forgot your password?",
+  "Profile": "Profile",
+  "Sightings": "Sightings",
+  "Logout": "Logout"
 }
