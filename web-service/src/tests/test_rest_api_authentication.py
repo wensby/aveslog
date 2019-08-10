@@ -16,7 +16,7 @@ class TestLogin(AppTestCase):
     data = json.loads(response.data.decode('utf-8'))
     self.assertEqual(data['status'], 'success')
     self.assertEqual(data['message'], 'Successfully logged in.')
-    self.assertIn('auth_token', data)
+    self.assertIn('authToken', data)
 
   def test_get_token_when_incorrect_credentials(self):
     self.db_insert_account(4, 'myUsername', 'my@email.com', None, None)
