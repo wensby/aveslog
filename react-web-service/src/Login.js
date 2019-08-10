@@ -12,7 +12,7 @@ class Login extends Component {
     };
   }
 
-  login = async (event) => {
+  handleLoginFormSubmit = async (event) => {
     try {
       event.preventDefault();
       const { username, password } = this.state;
@@ -33,7 +33,7 @@ class Login extends Component {
           <div className="row">
             <div className="col">
               <div id="loginFormContainer">
-                <form onSubmit={this.login}>
+                <form onSubmit={this.handleLoginFormSubmit}>
                   <div className="form-row">
                     <div className="form-group col-6">
                       <label htmlFor="usernameInput">{t('Username')}</label>
