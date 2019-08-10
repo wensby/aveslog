@@ -59,6 +59,11 @@ class Page extends Component {
     return <Login {...props} onAuthenticated={this.setAuthenticated} />
   };
 
+  renderHomeRoute = props => {
+    const { authenticated } = this.state;
+    return <Home {...props} authenticated={authenticated} />
+  };
+
   render() {
     const menuItems = this.getMenuItems();
 
@@ -68,7 +73,8 @@ class Page extends Component {
         <div className='main-grid navbar-pushed'>
           <SideMenu items={menuItems} />
           <main role="main" className="col-12 col-md-9 col-lg-8">
-            <Route path='/' exact component={Home} />
+            <Route path='/' exact
+                render={this.renderHomeRoute} />
             <Route path="/authentication/login" exact
                 render={this.renderLoginRoute} />
             <Route path='/settings/' exact component={Settings} />
