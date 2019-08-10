@@ -11,6 +11,7 @@ import Home from './home/home.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
 import Authentication from './authentication';
+import AccountService from './account/AccountService';
 
 class Page extends Component {
 
@@ -18,11 +19,16 @@ class Page extends Component {
     super(props);
     this.state = {
       authenticated: false,
+      account: null,
     };
   };
 
   setAuthenticated = async () => {
-    this.setState({ authenticated: true });
+    const account = await (new AccountService().get_account(localStorage.getItem('authToken')));
+    this.setState({
+      authenticated: true,
+      account: account
+    });
   }
 
   onLogout = async () => {
@@ -37,7 +43,7 @@ class Page extends Component {
     if (authenticated) {
       return [
         <Link className="nav-link"
-            to={`/profile/${this.state.username}`}>{t('Profile')}</Link>,
+            to={`/profile/${this.state.account.username}`}>{t('Profile')}</Link>,
         <Link className="nav-link"
             to={'/sighting/'}>{t('Sightings')}</Link>,
         <Link className="nav-link"
@@ -69,7 +75,7 @@ class Page extends Component {
 
     return (
       <Router>
-        <Navbar items={menuItems} />
+        <Navbar items={menuItems} authenticated={this.state.authenticated} account={this.state.account} />
         <div className='main-grid navbar-pushed'>
           <SideMenu items={menuItems} />
           <main role="main" className="col-12 col-md-9 col-lg-8">

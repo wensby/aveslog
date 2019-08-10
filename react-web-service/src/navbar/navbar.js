@@ -138,12 +138,25 @@ export default class Navbar extends Component {
     document.removeEventListener('click', this.onDocumentClick);
   }
 
-  renderBrand() {
+  renderMainArea() {
     return (
       <div className='navbar-main d-flex mr-0 flex-grow-1 align-self-center'>
-        <Brand />
+        <div className='flex-grow-1 align-self-center'>
+          <Brand />
+          {this.renderUsername()}
+        </div>
       </div>
     );
+  }
+
+  renderUsername() {
+    if (this.props.authenticated && this.props.account) {
+      return (
+        <Link className='text-light' to={`/profile/${this.props.account.username}`}>
+          {this.props.account.username}
+        </Link>
+      )
+    }
   }
 
   renderMenuButton() {
@@ -184,7 +197,7 @@ export default class Navbar extends Component {
           ref={this.setFullNavbarRef}
           className="navbar navbar-dark shadow p-0 bg-primary fixed-top">
         <div ref={this.setGridRef} className='grid'>
-          {this.renderBrand()}
+          {this.renderMainArea()}
           {this.renderMenuButton()}
           {this.renderSearch()}
         </div>
