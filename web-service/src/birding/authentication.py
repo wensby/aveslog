@@ -1,6 +1,7 @@
 import datetime
 import os
 from base64 import b64encode
+from datetime import timedelta
 
 import jwt
 
@@ -126,9 +127,12 @@ class AuthenticationTokenFactory:
     self.secret = secret
     self.utc_now_supplier = utc_now_supplier
 
-  def create_authentication_token(self, account_id: int) -> str:
+  def create_authentication_token(self,
+        account_id: int,
+        expiration: timedelta=timedelta(days=0, seconds=5)
+  ) -> str:
     payload = {
-      'exp': self.utc_now_supplier() + datetime.timedelta(days=0, seconds=5),
+      'exp': self.utc_now_supplier() + expiration,
       'iat': self.utc_now_supplier(),
       'sub': account_id
     }
@@ -148,7 +152,7 @@ class AuthenticationTokenDecoder:
 
   def decode_authentication_token(self, token: str) -> DecodeResult:
     try:
-      payload = jwt.decode(token, self.secret)
+      payload = jwt.decode(token, self.secret, algorithms=['HS256'])
       return DecodeResult(payload)
     except jwt.ExpiredSignatureError:
       return DecodeResult({}, error='signature-expired')

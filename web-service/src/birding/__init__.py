@@ -12,12 +12,14 @@ from .account import PasswordHasher
 from .account import PasswordRepository
 from .account import TokenFactory
 from .authentication import AccountRegistrationController
+from .authentication import AuthenticationTokenDecoder
 from .authentication import AuthenticationTokenFactory
 from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_blueprint import create_authentication_blueprint
 from .v2_authentication_blueprint import create_v2_authentication_blueprint
+from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
 from .bird_blueprint import create_bird_blueprint
@@ -90,6 +92,7 @@ def create_app(test_config=None):
     locales_misses_repository, app.config['LOGS_DIR_PATH'])
   authentication_token_factory = AuthenticationTokenFactory(
     app.secret_key, datetime.datetime.utcnow)
+  authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
 
   # Create and register blueprints
   home_blueprint = create_home_blueprint()
@@ -103,6 +106,8 @@ def create_app(test_config=None):
     authenticator,
     authentication_token_factory,
   )
+  account_rest_api = create_account_rest_api_blueprint(
+    authentication_token_decoder, account_repository)
   sighting_blueprint = create_sighting_blueprint(sighting_repository,
                                                  sighting_view_factory)
   profile_blueprint = create_profile_blueprint(
@@ -123,6 +128,7 @@ def create_app(test_config=None):
   app.register_blueprint(settings_blueprint)
   app.register_blueprint(bird_blueprint)
   app.register_blueprint(v2_authentication_blueprint)
+  app.register_blueprint(account_rest_api)
 
   @app.before_request
   def before_request():
