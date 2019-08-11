@@ -38,12 +38,12 @@ class Page extends Component {
 
   getMenuItems = () => {
     const { t } = this.props;
-    const { authenticated } = this.state;
+    const { authenticated, account } = this.state;
 
     if (authenticated) {
       return [
         <Link className="nav-link"
-            to={`/profile/${this.state.account.username}`}>{t('Profile')}</Link>,
+            to={`/profile/${account.username}`}>{t('Profile')}</Link>,
         <Link className="nav-link"
             to={'/sighting/'}>{t('Sightings')}</Link>,
         <Link className="nav-link"
