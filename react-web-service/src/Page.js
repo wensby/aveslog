@@ -5,12 +5,12 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
-import Login from './Login.js'
+import Login from './authentication/Login.js'
 import Settings from './settings/settings'
 import Home from './home/home.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
-import Authentication from './authentication';
+import Authentication from './authentication/authentication';
 import AccountService from './account/AccountService';
 
 class Page extends Component {
