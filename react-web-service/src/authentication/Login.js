@@ -10,13 +10,14 @@ class Login extends Component {
       username: '',
       password: '',
     };
+    this.authentication = new Authentication();
   }
 
   handleLoginFormSubmit = async (event) => {
     try {
       event.preventDefault();
       const { username, password } = this.state;
-      await (new Authentication().login(username, password));
+      await this.authentication.login(username, password);
       this.props.onAuthenticated();
       this.props.history.push("/");
     } catch (e) {
