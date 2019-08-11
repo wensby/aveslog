@@ -10,5 +10,6 @@
   "Profile": "프로필",
   "Sightings": "관찰",
   "It's birding time!": "탐조 시간이다!",
+  "Login failed.": "사용자 이름과 비밀번호가 일치하지 않습니다.",
   "Logout": "로그아웃"
 }
