@@ -67,11 +67,25 @@ class Login extends Component {
                   <div className="form-row">
                     <div className="form-group col-6">
                       <label htmlFor="usernameInput">{t('Username')}</label>
-                      <input onChange={(event) => this.setState({username: event.target.value})} id="usernameInput" className="form-control" type="text" name="username" placeholder={t('Username')}/>
+                      <input
+                        value={this.state.username}
+                        onChange={(event) => this.setState({username: event.target.value})}
+                        id="usernameInput"
+                        className="form-control"
+                        type="text"
+                        name="username"
+                        placeholder={t('Username')}/>
                     </div>
                     <div className="form-group col-6">
                       <label htmlFor="passwordInput">{t('Password')}</label>
-                      <input onChange={(event) => this.setState({password: event.target.value})} id="passwordInput" className="form-control" type="password" name="password" placeholder={t('Password')}/>
+                      <input
+                        value={this.state.password}
+                        onChange={(event) => this.setState({password: event.target.value})}
+                        id="passwordInput"
+                        className="form-control"
+                        type="password"
+                        name="password"
+                        placeholder={t('Password')}/>
                     </div>
                   </div>
                   <div className="d-flex flex-row">
