@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
 import Authentication from './authentication.js'
+import {Link} from 'react-router-dom';
 
 class Login extends Component {
 
@@ -94,7 +95,9 @@ class Login extends Component {
                   </div>
                 </form>
                 <div className="row">
-                  <a href="/">{t('Forgot your password?')}</a>
+                  <Link to="/authentication/password-reset">
+                    {t('Forgot your password?')}
+                  </Link>
                 </div>
               </div>
             </div>

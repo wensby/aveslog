@@ -7,6 +7,10 @@ export default class Authentication {
     return await response.json();
   }
 
+  async post_password_reset(email) {
+    return {status: 'failure'};
+  }
+
   async logout() {
     localStorage.removeItem('authToken');
   }

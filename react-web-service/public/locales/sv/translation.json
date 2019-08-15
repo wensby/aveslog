@@ -11,5 +11,11 @@
   "Sightings": "Observationer",
   "It's birding time!": "Det är dags att fågelskåda!",
   "Login failed.": "Inloggningen misslyckades.",
+  "Password Reset": "Återställ lösenordet",
+  "password-reset-email-prompt-message": "Var god ange ditt kontos email så skickar vi en länk för att återställa ditt lösenord.",
+  "Email": "Email",
+  "Send": "Skicka",
+  "password-reset-email-submit-success-message": "Vi har skickat ett email till den angivna email-adressen med en länk för att återställa ditt lösenord.",
+  "password-reset-email-submit-failure-message": "E-post addressen du angivit verkar inte vara förknippat med något konto.",
   "Logout": "Logga ut"
 }

@@ -11,5 +11,11 @@
   "Sightings": "Sightings",
   "It's birding time!": "It's birding time!",
   "Login failed.": "Login failed.",
+  "Password Reset": "Password Reset",
+  "password-reset-email-prompt-message": "Enter your account's email address, and we'll send you an email with a link to reset your password.",
+  "Email": "Email",
+  "Send": "Send",
+  "password-reset-email-submit-success-message": "An email has been sent. If you have't received it in a few minutes, please check your spam folder.",
+  "password-reset-email-submit-failure-message": "The provided email doesn't seem to be linked with any account.",
   "Logout": "Logout"
 }
