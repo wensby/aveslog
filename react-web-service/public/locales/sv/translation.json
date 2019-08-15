@@ -17,5 +17,12 @@
   "Send": "Skicka",
   "password-reset-email-submit-success-message": "Vi har skickat ett email till den angivna email-adressen med en länk för att återställa ditt lösenord.",
   "password-reset-email-submit-failure-message": "E-post addressen du angivit verkar inte vara förknippat med något konto.",
+  "Registration": "Registrering",
+  "Email address": "E-postadress",
+  "Enter email": "E-post",
+  "Continue": "Fortsätt",
+  "Back to login": "Tillbaka till login",
+  "registration-email-submit-failure-message": "E-postaddressen upptagen.",
+  "register-link-request-prompt-message": "Var god ange din e-postadress för att få en länk till ditt registreringsformulär.",
   "Logout": "Logga ut"
 }

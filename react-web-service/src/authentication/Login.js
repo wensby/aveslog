@@ -90,7 +90,10 @@ class Login extends Component {
                     </div>
                   </div>
                   <div className="d-flex flex-row">
-                    <a className="btn btn-secondary" href="/">{t('Register new account')}</a>
+                    <Link
+                      to="/authentication/register"
+                      className="btn btn-secondary">
+                      {t('Register new account')}</Link>
                     <button type='submit' className="btn btn-primary ml-auto">{t('Login')}</button>
                   </div>
                 </form>

@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
 import Login from './authentication/Login.js'
+import Register from './authentication/Register.js'
 import PasswordReset from './authentication/PasswordReset.js'
 import Settings from './settings/settings'
 import Home from './home/home.js';
@@ -75,6 +76,10 @@ class Page extends Component {
     return <PasswordReset {...props} />
   }
 
+  renderRegisterRoute = props => {
+    return <Register {...props} />
+  }
+
   render() {
     const menuItems = this.getMenuItems();
 
@@ -90,6 +95,8 @@ class Page extends Component {
                 render={this.renderLoginRoute} />
             <Route path="/authentication/password-reset" exact
                 render={this.renderPasswordResetRoute} />
+            <Route path="/authentication/register" exact
+                render={this.renderRegisterRoute} />
             <Route path='/settings/' exact component={Settings} />
           </main>
         </div>

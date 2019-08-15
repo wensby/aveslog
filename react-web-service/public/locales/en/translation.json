@@ -17,5 +17,12 @@
   "Send": "Send",
   "password-reset-email-submit-success-message": "An email has been sent. If you have't received it in a few minutes, please check your spam folder.",
   "password-reset-email-submit-failure-message": "The provided email doesn't seem to be linked with any account.",
+  "Registration": "Registration",
+  "Email address": "Email address",
+  "Enter email": "Enter email",
+  "Continue": "Continue",
+  "Back to login": "Back to login",
+  "registration-email-submit-failure-message": "The provided email address is already linked with an account.",
+  "register-link-request-prompt-message": "Please provide your email address to receive your registration form link.",
   "Logout": "Logout"
 }

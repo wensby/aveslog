@@ -11,6 +11,10 @@ export default class Authentication {
     return {status: 'failure'};
   }
 
+  async post_registration_email(email) {
+    return {status: 'failure'};
+  }
+
   async logout() {
     localStorage.removeItem('authToken');
   }
