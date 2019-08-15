@@ -72,7 +72,7 @@ class PasswordReset extends Component {
           <div className="col">
             <form onSubmit={this.handleFormSubmit}>
               <div className="form-group">
-                <label for="emailInput">{ t('Email address') }</label>
+                <label htmlFor="emailInput">{ t('Email address') }</label>
                 <input
                   value={email}
                   onChange={this.onEmailInputChanged}
