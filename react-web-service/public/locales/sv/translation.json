@@ -22,6 +22,7 @@
   "Enter email": "E-post",
   "Continue": "Fortsätt",
   "Back to login": "Tillbaka till login",
+  "registration-email-submit-success-message": "Vi har skickat din registrerings-länk till den angivna e-postadressen.",
   "registration-email-submit-failure-message": "E-postaddressen upptagen.",
   "register-link-request-prompt-message": "Var god ange din e-postadress för att få en länk till ditt registreringsformulär.",
   "Logout": "Logga ut"

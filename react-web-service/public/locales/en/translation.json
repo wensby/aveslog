@@ -22,6 +22,7 @@
   "Enter email": "Enter email",
   "Continue": "Continue",
   "Back to login": "Back to login",
+  "registration-email-submit-success-message": "We've sent you an email with your registration form link.",
   "registration-email-submit-failure-message": "The provided email address is already linked with an account.",
   "register-link-request-prompt-message": "Please provide your email address to receive your registration form link.",
   "Logout": "Logout"

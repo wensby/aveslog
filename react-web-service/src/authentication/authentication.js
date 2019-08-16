@@ -12,7 +12,17 @@ export default class Authentication {
   }
 
   async post_registration_email(email) {
-    return {status: 'failure'};
+    const url = `${window._env_.API_URL}/v2/authentication/registration`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'email': email,
+      })
+    })
+    return await response.json();
   }
 
   async logout() {

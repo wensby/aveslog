@@ -22,6 +22,7 @@
   "Enter email": "이메일",
   "Continue": "계속",
   "Back to login": "로그인 돌아가기",
+  "registration-email-submit-success-message": "이메일 보냈습니다.",
   "registration-email-submit-failure-message": "이메일은 이미 사용한 이메일입니다.",
   "register-link-request-prompt-message": "이메일를 입력하면 새로운 사용자 계정 만드는 린크를 보낼거예요.",
   "Logout": "로그아웃"
