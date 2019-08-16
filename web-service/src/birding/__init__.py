@@ -104,6 +104,9 @@ def create_app(test_config=None):
   )
   v2_authentication_blueprint = create_v2_authentication_blueprint(
     authenticator,
+    account_registration_controller,
+    locale_repository,
+    locale_loader,
     authentication_token_factory,
   )
   account_rest_api = create_account_rest_api_blueprint(

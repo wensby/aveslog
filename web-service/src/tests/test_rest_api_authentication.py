@@ -34,3 +34,41 @@ class TestLogin(AppTestCase):
     return self.client.get(
       f'/v2/authentication/token?username={username}&password={password}'
     )
+
+class TestRegister(AppTestCase):
+
+  def test_post_registration_email_when_email_not_taken(self):
+    self.db_insert_locale(1, 'en')
+
+    response = self.post_registration_email('hulot@mail.com')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'success')
+
+  def test_post_registration_email_when_email_invalid(self):
+    self.db_insert_locale(1, 'en')
+
+    response = self.post_registration_email('hulot')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'failure')
+    self.assertEqual(data['message'], 'Email invalid')
+
+  def test_post_registration_email_when_email_taken(self):
+    self.db_insert_locale(1, 'en')
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+
+    response = self.post_registration_email('hulot@mail.com')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'failure')
+    self.assertEqual(data['message'], 'Email taken')
+
+  def post_registration_email(self, email):
+    return self.client.post(
+      '/v2/authentication/registration',
+      json={'email': email})
