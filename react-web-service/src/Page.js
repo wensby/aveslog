@@ -93,7 +93,7 @@ class Page extends Component {
                 render={this.renderHomeRoute} />
             <Route path="/authentication/login" exact
                 render={this.renderLoginRoute} />
-            <Route path="/authentication/password-reset" exact
+            <Route path="/authentication/password-reset"
                 render={this.renderPasswordResetRoute} />
             <Route path="/authentication/register" exact
                 render={this.renderRegisterRoute} />
