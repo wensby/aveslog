@@ -91,14 +91,17 @@ class PasswordResetController:
     self.link_factory = link_factory
     self.mail_dispatcher = mail_dispatcher
 
-  def initiate_password_reset(self, raw_email, locale):
+  def initiate_password_reset(self, raw_email, locale, is_rest=False):
     email = EmailAddress(raw_email)
     account = self.account_repository.find_account_by_email(email)
     if not account:
       return False
     password_reset_token = self.password_repository.create_password_reset_token(account)
     token = password_reset_token.token
-    link = self.link_factory.create_endpoint_external_link('authentication.get_password_reset_form', token=token)
+    if is_rest:
+      link = self.link_factory.create_frontend_link(f'/authentication/password-reset/{token}')
+    else:
+      link = self.link_factory.create_endpoint_external_link('authentication.get_password_reset_form', token=token)
     message = self.__create_mail_message(link, locale)
     self.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
     return True

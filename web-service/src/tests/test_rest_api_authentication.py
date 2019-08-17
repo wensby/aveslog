@@ -35,6 +35,36 @@ class TestLogin(AppTestCase):
       f'/v2/authentication/token?username={username}&password={password}'
     )
 
+
+class TestPasswordReset(AppTestCase):
+
+  def test_post_password_reset_email_when_email_not_linked_with_account(self):
+    self.db_insert_locale(1, 'en')
+
+    response = self.post_password_reset_email('hulot@mail.com')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'failure')
+    self.assertEqual(data['message'], 'E-mail not associated with any account')
+
+  def test_post_password_reset_email_when_email_associated_with_account(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'bolas', 'bolas@mail.com', 1, None)
+    self.db_insert_locale(1, 'en')
+
+    response = self.post_password_reset_email('bolas@mail.com')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'success')
+    self.assertEqual(data['message'], 'Password reset link sent to e-mail')
+
+  def post_password_reset_email(self, email):
+    json = {'email': email}
+    return self.client.post('/v2/authentication/password-reset', json=json)
+
+
 class TestRegister(AppTestCase):
 
   def test_post_registration_email_when_email_not_taken(self):

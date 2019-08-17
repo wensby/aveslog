@@ -78,7 +78,10 @@ def create_app(test_config=None):
   bird_search_view_factory = BirdSearchViewFactory(picture_repository,
                                                    bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, database)
-  link_factory = LinkFactory(os.environ['EXTERNAL_HOST'])
+  link_factory = LinkFactory(
+    os.environ['EXTERNAL_HOST'],
+    app.config['FRONTEND_HOST'],
+  )
   account_factory = AccountFactory(database, hasher)
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,
@@ -104,6 +107,7 @@ def create_app(test_config=None):
   )
   v2_authentication_blueprint = create_v2_authentication_blueprint(
     authenticator,
+    password_reset_controller,
     account_registration_controller,
     locale_repository,
     locale_loader,
@@ -198,8 +202,11 @@ def configure_app(app, test_config):
 def configure_cross_origin_resource_sharing(app: Flask):
   if 'FRONTEND_HOST' in app.config:
     frontend_host = app.config['FRONTEND_HOST']
-  else:
+  elif 'FRONTEND_HOST' in os.environ:
     frontend_host = os.environ['FRONTEND_HOST']
+    app.config['FRONTEND_HOST'] = frontend_host
+  else:
+    raise Exception('FRONTEND_HOST not set in environment variables or config.')
   logging.getLogger('flask_cors').level = logging.DEBUG
   CORS(app, resources={
     r'/v2/*': {
