@@ -82,7 +82,7 @@ class Page extends Component {
   }
 
   renderAuthentication = props => {
-    return <Authentication {...props} />
+    return <Authentication {...props} onAuthenticated={this.setAuthenticated} />
   }
 
   render() {

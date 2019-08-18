@@ -5,10 +5,10 @@ import PasswordReset from './PasswordReset.js';
 import Login from './Login.js';
 import Register from './Register.js';
 
-function Authentication({ match }) {
+function Authentication({ match, onAuthenticated }) {
 
   const renderLogin = props => {
-    return <Login {...props} />;
+    return <Login {...props} onAuthenticated={onAuthenticated} />;
   };
 
   const renderRegistration = props => {
