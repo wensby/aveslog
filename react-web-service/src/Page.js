@@ -15,6 +15,7 @@ import { withTranslation } from 'react-i18next';
 import AuthenticationService from './authentication/AuthenticationService.js';
 import Authentication from './authentication/Authentication.js'
 import AccountService from './account/AccountService';
+import Bird from './bird/Bird.js';
 
 class Page extends Component {
 
@@ -98,6 +99,7 @@ class Page extends Component {
                 render={this.renderHomeRoute} />
             <Route path='/authentication' render={this.renderAuthentication} />
             <Route path='/settings/' exact component={Settings} />
+            <Route path='/bird' component={Bird} />
           </main>
         </div>
       </Router>

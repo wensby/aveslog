@@ -4,11 +4,12 @@
   "main": "server.js",
   "private": true,
   "dependencies": {
-    "express": "^4.16.4",
     "bootstrap": "^4.3.1",
+    "express": "^4.16.4",
     "i18next": "^17.0.7",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^3.0.0",
+    "query-string": "6.8.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.10",
     "react-dom": "^16.8.6",
