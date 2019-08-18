@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import Authentication from './authentication';
+import AuthenticationService from './AuthenticationService.js';
 
 class CreatePasswordReset extends Component {
 
@@ -10,7 +10,7 @@ class CreatePasswordReset extends Component {
       email: '',
       alert: null,
     }
-    this.authentication = new Authentication();
+    this.authentication = new AuthenticationService();
   }
 
   renderAlert = () => {

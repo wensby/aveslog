@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import Authentication from './authentication';
+import AuthenticationService from './AuthenticationService.js';
 import { Link } from 'react-router-dom'
 
 class PasswordReset extends Component {
@@ -11,7 +11,7 @@ class PasswordReset extends Component {
       email: '',
       alert: null,
     }
-    this.authentication = new Authentication();
+    this.authentication = new AuthenticationService();
   }
 
   renderAlert = () => {

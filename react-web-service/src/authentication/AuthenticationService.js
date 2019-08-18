@@ -1,4 +1,4 @@
-export default class Authentication {
+export default class AuthenticationService {
 
   async get_authentication_token(username, password) {
     const url = `${window._env_.API_URL}/v2/authentication/token`;

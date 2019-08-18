@@ -12,7 +12,7 @@ import Settings from './settings/settings'
 import Home from './home/home.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
-import Authentication from './authentication/authentication';
+import AuthenticationService from './authentication/AuthenticationService.js';
 import AccountService from './account/AccountService';
 
 class Page extends Component {
@@ -34,7 +34,7 @@ class Page extends Component {
   }
 
   onLogout = async () => {
-    await (new Authentication().logout());
+    await (new AuthenticationService().logout());
     this.setState({ authenticated: false });
   }
 

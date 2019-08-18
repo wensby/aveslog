@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next';
-import Authentication from './authentication.js'
+import AuthenticationService from './AuthenticationService.js'
 import {Link} from 'react-router-dom';
 
 class Login extends Component {
@@ -12,7 +12,7 @@ class Login extends Component {
       password: '',
       loginErrorMessage: null,
     };
-    this.authentication = new Authentication();
+    this.authentication = new AuthenticationService();
   }
 
   handleLoginFormSubmit = async (event) => {
