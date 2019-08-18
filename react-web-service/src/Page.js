@@ -13,6 +13,7 @@ import Home from './home/home.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
 import AuthenticationService from './authentication/AuthenticationService.js';
+import Authentication from './authentication/Authentication.js'
 import AccountService from './account/AccountService';
 
 class Page extends Component {
@@ -80,6 +81,10 @@ class Page extends Component {
     return <Register {...props} />
   }
 
+  renderAuthentication = props => {
+    return <Authentication {...props} />
+  }
+
   render() {
     const menuItems = this.getMenuItems();
 
@@ -91,12 +96,7 @@ class Page extends Component {
           <main role="main" className="col-12 col-md-9 col-lg-8">
             <Route path='/' exact
                 render={this.renderHomeRoute} />
-            <Route path="/authentication/login" exact
-                render={this.renderLoginRoute} />
-            <Route path="/authentication/password-reset"
-                render={this.renderPasswordResetRoute} />
-            <Route path="/authentication/register" exact
-                render={this.renderRegisterRoute} />
+            <Route path='/authentication' render={this.renderAuthentication} />
             <Route path='/settings/' exact component={Settings} />
           </main>
         </div>
