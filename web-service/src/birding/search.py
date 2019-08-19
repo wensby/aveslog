@@ -1,6 +1,6 @@
 from difflib import SequenceMatcher
 
-from birding import LocaleRepository, LocaleLoader
+from .localization import LocaleRepository, LocaleLoader
 
 
 class BirdSearchController:
