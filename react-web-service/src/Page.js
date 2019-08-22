@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Route, Link } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
 import Login from './authentication/Login.js'
@@ -90,7 +90,7 @@ class Page extends Component {
     const menuItems = this.getMenuItems();
 
     return (
-      <Router>
+      <div>
         <Navbar items={menuItems} authenticated={this.state.authenticated} account={this.state.account} />
         <div className='main-grid navbar-pushed'>
           <SideMenu items={menuItems} />
@@ -102,7 +102,7 @@ class Page extends Component {
             <Route path='/bird' component={Bird} />
           </main>
         </div>
-      </Router>
+      </div>
     );
   }
 }
