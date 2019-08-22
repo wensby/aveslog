@@ -94,7 +94,7 @@ class Page extends Component {
         <Navbar items={menuItems} authenticated={this.state.authenticated} account={this.state.account} />
         <div className='main-grid navbar-pushed'>
           <SideMenu items={menuItems} />
-          <main role="main" className="col-12 col-md-9 col-lg-8">
+          <main role="main">
             <Route path='/' exact
                 render={this.renderHomeRoute} />
             <Route path='/authentication' render={this.renderAuthentication} />
