@@ -45,13 +45,13 @@ class BirdQueryResult extends Component {
   }
 
   renderItemPicture = item => {
-    if (item.thumbnailPicture) {
-      return <img style="max-height: 150px;"
-        src={`/bird/${item.thumbnailPicture}`} alt="Card image" />;
+    if (item.thumbnail) {
+      return <img style={{maxHeight: '150px'}} src={item.thumbnail}
+        alt="Card image" />;
     }
     return (
-      <img style={{maxHeight: '150px'}} 
-        src='/placeholder-bird.png' alt="Card image cap" />
+      <img style={{maxHeight: '150px'}} src='/placeholder-bird.png'
+        alt="Card image cap" />
     );
   }
 
