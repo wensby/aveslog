@@ -24,6 +24,24 @@ class TestSearch(AppTestCase):
     self.assertEqual(data['status'], 'success')
     self.assertEqual(len(data['result']), 0)
 
+  def test_search_pica_pica_with_thumbnail(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', '')
+    self.db_insert_bird_thumbnail(1, 1)
+
+    response = self.client.get('/v2/bird?q=pica')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'success')
+    result = data['result']
+    self.assertEqual(len(result), 1)
+    self.assertEqual(result[0], {
+      'birdId': 1,
+      'binomialName': 'Pica pica',
+      'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg'
+    })
+
   def test_search_pica_pica(self):
     self.db_insert_bird(1, 'Pica pica')
 

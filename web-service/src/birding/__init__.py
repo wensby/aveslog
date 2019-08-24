@@ -129,7 +129,8 @@ def create_app(test_config=None):
   bird_blueprint = create_bird_blueprint(bird_view_factory,
                                          bird_search_controller,
                                          bird_search_view_factory)
-  v2_bird_blueprint = create_v2_bird_blueprint(bird_search_controller)
+  v2_bird_blueprint = create_v2_bird_blueprint(
+    bird_search_controller, bird_repository, picture_repository, link_factory)
   app.register_blueprint(v2_bird_blueprint)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)

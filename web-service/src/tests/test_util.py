@@ -102,6 +102,20 @@ class AppTestCase(TestCase):
       'INSERT INTO bird (id, binomial_name) '
       'VALUES (%s, %s);', (bird_id, binomial_name))
 
+  def db_insert_picture(self, picture_id, filepath, credit):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'INSERT INTO picture (id, filepath, credit) '
+        'VALUES (%s, %s, %s);', (picture_id, filepath, credit)
+      )
+
+  def db_insert_bird_thumbnail(self, bird_id, picture_id):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'INSERT INTO bird_thumbnail (bird_id, picture_id) '
+        'VALUES (%s, %s);', (bird_id, picture_id)
+      )
+
   def db_insert_password_reset_token(self, account_id, token):
     with self.database.transaction() as transaction:
       transaction.execute(
@@ -159,6 +173,8 @@ class AppTestCase(TestCase):
       transaction.execute('DELETE FROM hashed_password;')
       transaction.execute('DELETE FROM user_account;')
       transaction.execute('DELETE FROM sighting;')
+      transaction.execute('DELETE FROM bird_thumbnail;')
+      transaction.execute('DELETE FROM picture;')
       transaction.execute('DELETE FROM bird;')
       transaction.execute('DELETE FROM person;')
       transaction.execute('DELETE FROM user_account_registration;')
