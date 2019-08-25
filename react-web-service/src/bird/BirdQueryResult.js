@@ -47,10 +47,16 @@ class BirdQueryResult extends Component {
   };
   renderItemName = item => {
     const { t } = this.props;
-    return [
-      <h5 key='1' className="card-title">{t(`bird:${item.binomialName}`)}</h5>,
-      <h6 key='2' className="card-subtitle mb-2 text-muted">{item.binomialName}</h6>
-    ];
+    const localeName = t(`bird:${item.binomialName}`, {fallbackLng: []});
+    if (localeName != item.binomialName) {
+      return [
+        <h5 key='1' className="card-title">{localeName}</h5>,
+        <h6 key='2' className="card-subtitle mb-2 text-muted">{item.binomialName}</h6>
+      ];
+    }
+    else {
+      return <h5 key='1' className="card-title">{item.binomialName}</h5>;
+    }
   };
   renderAddSightingLink = item => {
     const { t } = this.props;
