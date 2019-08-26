@@ -5,9 +5,6 @@ import React, { Component } from 'react';
 import { Route, Link } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
-import Login from './authentication/Login.js'
-import Register from './authentication/Register.js'
-import PasswordReset from './authentication/PasswordReset.js'
 import Settings from './settings/settings'
 import Home from './home/home.js';
 import './App.css';
