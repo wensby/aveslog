@@ -65,22 +65,10 @@ class Page extends Component {
     }
   }
 
-  renderLoginRoute = (props) => {
-    return <Login {...props} onAuthenticated={this.setAuthenticated} />
-  };
-
   renderHomeRoute = props => {
     const { authenticated } = this.state;
     return <Home {...props} authenticated={authenticated} />
   };
-
-  renderPasswordResetRoute = props => {
-    return <PasswordReset {...props} />
-  }
-
-  renderRegisterRoute = props => {
-    return <Register {...props} />
-  }
 
   renderAuthentication = props => {
     return <Authentication {...props} onAuthenticated={this.setAuthenticated} />
