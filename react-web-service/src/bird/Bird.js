@@ -1,11 +1,13 @@
 import React from 'react';
-import { Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import BirdQueryResult from './BirdQueryResult';
+import BirdDetails from './BirdDetails.js';
 
 export default function Bird({ match }) {
   return (
-    <div>
+    <Switch>
       <Route path={`${match.path}/search`} component={BirdQueryResult}/>
-    </div>
+      <Route path={`${match.path}/:binomialName`} component={BirdDetails}/>
+    </Switch>
   );
 }

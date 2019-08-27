@@ -69,10 +69,11 @@ export default function BirdQueryResult(props) {
   };
 
   const renderItem = (item, index) => {
+    const formattedName = item.binomialName.toLowerCase().replace(' ', '-');
     return (<div key={index} className="card">
       <div className="card-horizontal">
         <div className="img-square-wrapper">
-          <Link to='/'>
+          <Link to={`/bird/${formattedName}`}>
             {renderItemPicture(item)}
           </Link>
         </div>
