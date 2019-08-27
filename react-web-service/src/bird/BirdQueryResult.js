@@ -1,66 +1,59 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import queryString from 'query-string';
 import BirdService from './BirdService.js';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
-class BirdQueryResult extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      query: '',
-      authenticated: false,
-      resultItems: [],
-    };
-    this.birdService = new BirdService();
-  }
-  componentDidMount() {
-    const query = this.getLocationQuery(this.props);
-    this.doSearch(query);
-  }
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const oldQuery = prevState.query;
-    const newQuery = this.getLocationQuery(this.props);
-    if (newQuery != oldQuery) {
-      this.doSearch(newQuery);
+export default function BirdQueryResult(props) {
+  const { t } = useTranslation();
+  const query = queryString.parse(props.location.search).q;
+  const [resultItems, setResultItems] = useState([]);
+  const [displayedQuery, setDisplayedQuery] = useState(null);
+
+  useEffect(() => {
+    const fetchResult = async () => {
+      if (query !== displayedQuery) {
+        const service = new BirdService();
+        const response = await service.queryBirds(query);
+        if (response.status === 'success') {
+          setResultItems(response.result);
+        }
+        setDisplayedQuery(query);
+      }
     }
-  }
-  async doSearch(query) {
-    const response = await this.birdService.queryBirds(query);
-    if (response.status === 'success') {
-      const result = response.result;
-      this.setState({
-        query: query,
-        resultItems: result,
-      });
-    }
-  }
-  getLocationQuery(props) {
-    const { location } = props;
-    return queryString.parse(location.search).q;
-  }
-  renderItemPicture = item => {
+    fetchResult();
+  }, [query, displayedQuery]);
+
+  const renderItemPicture = item => {
     if (item.thumbnail) {
-      return <img style={{ maxHeight: '150px' }} src={item.thumbnail} alt="Card image" />;
+      return (
+        <img style={{ maxHeight: '150px' }}
+          src={item.thumbnail} alt="Card" />
+        );
     }
-    return (<img style={{ maxHeight: '150px' }} src='/placeholder-bird.png' alt="Card image cap" />);
+    return (
+      <img style={{ maxHeight: '150px' }}
+        src='/placeholder-bird.png' alt="Card cap" />
+      );
   };
-  renderItemName = item => {
-    const { t } = this.props;
+
+  const renderItemName = item => {
     const localeName = t(`bird:${item.binomialName}`, {fallbackLng: []});
-    if (localeName != item.binomialName) {
+    if (localeName !== item.binomialName) {
       return [
         <h5 key='1' className="card-title">{localeName}</h5>,
-        <h6 key='2' className="card-subtitle mb-2 text-muted">{item.binomialName}</h6>
+        <h6 key='2' className="card-subtitle mb-2 text-muted">
+          {item.binomialName}
+        </h6>
       ];
     }
     else {
       return <h5 key='1' className="card-title">{item.binomialName}</h5>;
     }
   };
-  renderAddSightingLink = item => {
-    const { t } = this.props;
-    const { authenticated } = this.state;
+
+  const renderAddSightingLink = item => {
+    const { authenticated } = false;
     if (authenticated) {
       return <Link to='/' className="btn btn-primary">
         {t('Add new sighting')}
@@ -70,30 +63,30 @@ class BirdQueryResult extends Component {
       return null;
     }
   };
-  renderItem = (item, index) => {
+
+  const renderItem = (item, index) => {
     return (<div key={index} className="card">
       <div className="card-horizontal">
         <div className="img-square-wrapper">
           <Link to='/'>
-            {this.renderItemPicture(item)}
+            {renderItemPicture(item)}
           </Link>
         </div>
         <div className="card-body">
-          {this.renderItemName(item)}
-          {this.renderAddSightingLink(item)}
+          {renderItemName(item)}
+          {renderAddSightingLink(item)}
         </div>
       </div>
     </div>);
   };
-  renderItems = () => {
-    const { resultItems } = this.state;
-    return resultItems.map(this.renderItem);
+  
+  const renderItems = () => {
+    return resultItems.map(renderItem);
   };
-  render() {
-    return (<div className="text-break">
-      {this.renderItems()}
-    </div>);
-  }
-}
 
-export default withTranslation()(BirdQueryResult);
+  return (
+    <div className="text-break">
+      {renderItems()}
+    </div>
+  );
+}
