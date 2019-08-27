@@ -130,7 +130,12 @@ def create_app(test_config=None):
                                          bird_search_controller,
                                          bird_search_view_factory)
   bird_rest_api = create_bird_rest_api_blueprint(
-    bird_search_controller, bird_repository, picture_repository, link_factory)
+    bird_search_controller,
+    bird_repository,
+    picture_repository,
+    link_factory,
+    bird_view_factory
+  )
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)

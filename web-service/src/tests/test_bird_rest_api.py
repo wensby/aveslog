@@ -66,3 +66,23 @@ class TestSearch(AppTestCase):
     result = data['result']
     self.assertEqual(len(result), 1)
     self.assertEqual(result[0], { 'birdId': 1, 'binomialName': 'Pica pica' })
+
+
+class TestBird(AppTestCase):
+
+  def test_get_existing_bird(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', 'myCredit')
+    self.db_insert_bird_thumbnail(1, 1)
+
+    response = self.client.get('/v2/bird/pica-pica')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'result': {
+        'binomialName': 'Pica pica',
+        'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'thumbnailCredit': 'myCredit',
+      }
+    })
