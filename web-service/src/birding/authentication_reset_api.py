@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from flask import Blueprint
+from flask import Blueprint, Response
 from flask import make_response
 from flask import jsonify
 from flask import request
@@ -86,6 +86,21 @@ def create_authentication_rest_api_blueprint(
         'message': 'E-mail not associated with any account',
       }
       return make_response(jsonify(response), HTTPStatus.INTERNAL_SERVER_ERROR)
+
+  @blueprint.route('/password-reset/<string:token>', methods=['POST'])
+  def post_password_reset(token: str) -> Response:
+    password = request.json['password']
+    success = password_reset_controller.perform_password_reset(token, password)
+    if success:
+      return make_response(jsonify({
+        'status': 'success',
+        'message': 'Password reset successfully',
+      }), HTTPStatus.OK)
+    else:
+      return make_response(jsonify({
+        'status': 'failure',
+        'message': 'Password reset token not recognized',
+      }), HTTPStatus.INTERNAL_SERVER_ERROR)
 
   def initiate_password_reset(email) -> bool:
     locale = load_english_locale()

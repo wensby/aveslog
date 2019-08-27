@@ -1,6 +1,8 @@
 import json
 from http import HTTPStatus
 
+from flask import Response
+
 from test_util import AppTestCase
 
 
@@ -60,9 +62,37 @@ class TestPasswordReset(AppTestCase):
     self.assertEqual(data['status'], 'success')
     self.assertEqual(data['message'], 'Password reset link sent to e-mail')
 
+  def test_post_password_reset_when_password_reset_not_first_created(self):
+    response = self.post_password_reset('myToken', 'myNewPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'Password reset token not recognized'
+    })
+
+  def test_post_password_reset_when_ok(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password_reset_token(1, 'myToken')
+
+    response = self.post_password_reset('myToken', 'myNewPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'message': 'Password reset successfully',
+    })
+
   def post_password_reset_email(self, email):
     json = {'email': email}
     return self.client.post('/v2/authentication/password-reset', json=json)
+
+  def post_password_reset(self, token, password) -> Response:
+    return self.client.post(
+      f'/v2/authentication/password-reset/{token}',
+      json={'password': password}
+    )
 
 
 class TestRegister(AppTestCase):
