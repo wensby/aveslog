@@ -3,22 +3,26 @@ import { Link } from "react-router-dom";
 import queryString from 'query-string';
 import BirdService from './BirdService.js';
 import { useTranslation } from 'react-i18next';
+import './style.css';
 
 export default function BirdQueryResult(props) {
   const { t } = useTranslation();
   const query = queryString.parse(props.location.search).q;
   const [resultItems, setResultItems] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchResult = async () => {
       if (query !== displayedQuery) {
+        setLoading(true);
         const service = new BirdService();
         const response = await service.queryBirds(query);
         if (response.status === 'success') {
           setResultItems(response.result);
         }
         setDisplayedQuery(query);
+        setLoading(false);
       }
     }
     fetchResult();
@@ -84,9 +88,26 @@ export default function BirdQueryResult(props) {
     return resultItems.map(renderItem);
   };
 
+  const renderLoading = () => {
+    if (loading) {
+      return (
+        <div className='loading-overlay' >
+          <div className='lds-ring'>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="text-break">
+    <div className='bird-result-container text-break'>
       {renderItems()}
+      {renderLoading()}
     </div>
   );
 }
