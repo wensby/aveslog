@@ -6,11 +6,8 @@ export default class BirdService {
   }
 
   async getBird(binomialName) {
-    return {
-      name: binomialName,
-      binomialName: binomialName,
-      coverPictureUrl: binomialName,
-      thumbnailCredit: binomialName,
-    };
+    const url = `${window._env_.API_URL}/v2/bird/${binomialName}`;
+    const response = await fetch(url);
+    return await response.json();
   }
 }
