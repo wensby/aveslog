@@ -10,8 +10,7 @@ export default class BirdService {
   }
 
   async getBird(binomialName) {
-    const url = `${this.apiUrl}/v2/bird/${binomialName}`;
-    const response = await fetch(url);
+    const response = await fetch(`${this.apiUrl}/v2/bird/${binomialName}`);
     return await response.json();
   }
 }
