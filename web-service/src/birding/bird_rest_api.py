@@ -3,10 +3,10 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify, request
 
-from .search import BirdSearchController, BirdMatch
+from .bird import BirdRepository
 from .link import LinkFactory
 from .picture import PictureRepository
-from .bird import BirdRepository
+from .search import BirdSearchController
 
 
 def create_bird_rest_api_blueprint(
