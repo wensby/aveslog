@@ -2,6 +2,7 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 import { Route } from "react-router-dom";
 import CreatePasswordReset from './CreatePasswordReset.js';
+import PasswordResetForm from './PasswordResetForm.js';
 
 function PasswordReset({ match }) {
 
@@ -10,7 +11,7 @@ function PasswordReset({ match }) {
   };
 
   const renderPasswordResetForm = props => {
-    return <div>{props.match.params.token}</div>;
+    return <PasswordResetForm {...props} />;
   };
 
   return (

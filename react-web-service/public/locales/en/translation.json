@@ -25,5 +25,11 @@
   "registration-email-submit-success-message": "We've sent you an email with your registration form link.",
   "registration-email-submit-failure-message": "The provided email address is already linked with an account.",
   "register-link-request-prompt-message": "Please provide your email address to receive your registration form link.",
+  "button-submit-label": "Submit",
+  "password-reset-title": "Password Reset",
+  "password-reset-form-prompt-message": "Please provide your new password.",
+  "password-format-help-message": "Must be 8 to 128 character long.",
+  "new-password-confirm-password-label": "Confirm password",
+  "password-reset-success-alert-message": "Password reset successfully.",
   "Logout": "Logout"
 }

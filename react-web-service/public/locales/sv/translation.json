@@ -25,5 +25,11 @@
   "registration-email-submit-success-message": "Vi har skickat din registrerings-länk till den angivna e-postadressen.",
   "registration-email-submit-failure-message": "E-postaddressen upptagen.",
   "register-link-request-prompt-message": "Var god ange din e-postadress för att få en länk till ditt registreringsformulär.",
+  "button-submit-label": "Återställ",
+  "password-reset-title": "Återställ lösenord",
+  "password-reset-form-prompt-message": "Välj ett nytt lösenord.",
+  "password-format-help-message": "Måste vara 8 till 128 tecken lång.",
+  "new-password-confirm-password-label": "Bekräfta lösenordet",
+  "password-reset-success-alert-message": "Lösenordet återställt.",
   "Logout": "Logga ut"
 }

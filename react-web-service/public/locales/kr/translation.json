@@ -25,5 +25,11 @@
   "registration-email-submit-success-message": "이메일 보냈습니다.",
   "registration-email-submit-failure-message": "이메일은 이미 사용한 이메일입니다.",
   "register-link-request-prompt-message": "이메일를 입력하면 새로운 사용자 계정 만드는 린크를 보낼거예요.",
+  "button-submit-label": "제출",
+  "password-reset-title": "비밀번호 초기화",
+  "password-reset-form-prompt-message": "",
+  "password-format-help-message": "비밀번호가 8 ~ 128 자 여야합니다.",
+  "new-password-confirm-password-label": "비밀번호 확인",
+  "password-reset-success-alert-message": "비밀번호를 초기화됐습니다.",
   "Logout": "로그아웃"
 }
