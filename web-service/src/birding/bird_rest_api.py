@@ -9,7 +9,7 @@ from .picture import PictureRepository
 from .bird import BirdRepository
 
 
-def create_v2_bird_blueprint(
+def create_bird_rest_api_blueprint(
       controller: BirdSearchController,
       bird_repository: BirdRepository,
       picture_repository: PictureRepository,

@@ -19,7 +19,7 @@ from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_blueprint import create_authentication_blueprint
 from .authentication_reset_api import create_authentication_rest_api_blueprint
-from .rest_bird import create_v2_bird_blueprint
+from .bird_rest_api import create_bird_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
@@ -129,9 +129,9 @@ def create_app(test_config=None):
   bird_blueprint = create_bird_blueprint(bird_view_factory,
                                          bird_search_controller,
                                          bird_search_view_factory)
-  v2_bird_blueprint = create_v2_bird_blueprint(
+  bird_rest_api = create_bird_rest_api_blueprint(
     bird_search_controller, bird_repository, picture_repository, link_factory)
-  app.register_blueprint(v2_bird_blueprint)
+  app.register_blueprint(bird_rest_api)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(sighting_blueprint)
