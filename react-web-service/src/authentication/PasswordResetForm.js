@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AuthenticationService from './AuthenticationService.js';
 
 export default function PasswordResetForm(props) {
   const { t } = useTranslation();
+  const token = props.match.params.token;
   const [alert, setAlert] = useState(null);
+  const [password, setPassword] = useState('');
 
   const renderAlert = () => {
     if (alert) {
@@ -21,10 +24,21 @@ export default function PasswordResetForm(props) {
   const submitForm = async event => {
     try {
       event.preventDefault();
-      setAlert({
-        type: 'success',
-        message: 'password-reset-success-alert-message',
-      });
+      const service = new AuthenticationService();
+      const response = await service.postPasswordReset(token, password);
+      if (response.status === 'success') {
+        setAlert({
+          type: 'success',
+          message: 'password-reset-success-alert-message',
+        });
+      }
+      else {
+        setAlert({
+          type: 'danger',
+          message: 'password-reset-failure-alert-message',
+        });
+      }
+      setPassword('');
     }
     catch (err) {
       
@@ -43,6 +57,8 @@ export default function PasswordResetForm(props) {
               <label htmlFor='passwordInput'>{ t('Password') }</label>
               <input id='passwordInput'
                 className='form-control'
+                value={password}
+                onChange={event => setPassword(event.target.value)}
                 type='password'
                 name='password'
                 aria-describedby='passwordHelpBlock'

@@ -1,5 +1,9 @@
 export default class AuthenticationService {
 
+  constructor() {
+    this.apiUrl = window._env_.API_URL;
+  }
+
   async get_authentication_token(username, password) {
     const url = `${window._env_.API_URL}/v2/authentication/token`;
     const parameters = `?username=${username}&password=${password}`;
@@ -18,6 +22,22 @@ export default class AuthenticationService {
         body: JSON.stringify({
           'email': email,
         }),
+      }
+    );
+    return await response.json();
+  }
+
+  async postPasswordReset(token, password) {
+    const response = await fetch(
+      `${this.apiUrl}/v2/authentication/password-reset/${token}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'password': password
+        })
       }
     );
     return await response.json();

@@ -31,5 +31,6 @@
   "password-format-help-message": "Måste vara 8 till 128 tecken lång.",
   "new-password-confirm-password-label": "Bekräfta lösenordet",
   "password-reset-success-alert-message": "Lösenordet återställt.",
+  "password-reset-failure-alert-message": "Lösenordsåterställningen misslyckades.",
   "Logout": "Logga ut"
 }

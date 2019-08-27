@@ -31,5 +31,6 @@
   "password-format-help-message": "Must be 8 to 128 character long.",
   "new-password-confirm-password-label": "Confirm password",
   "password-reset-success-alert-message": "Password reset successfully.",
+  "password-reset-failure-alert-message": "Password reset failed.",
   "Logout": "Logout"
 }
