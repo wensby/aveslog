@@ -18,7 +18,7 @@ from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_blueprint import create_authentication_blueprint
-from .v2_authentication_blueprint import create_v2_authentication_blueprint
+from .authentication_reset_api import create_authentication_rest_api_blueprint
 from .rest_bird import create_v2_bird_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
@@ -106,7 +106,7 @@ def create_app(test_config=None):
     account_registration_controller,
     password_reset_controller,
   )
-  v2_authentication_blueprint = create_v2_authentication_blueprint(
+  v2_authentication_blueprint = create_authentication_rest_api_blueprint(
     authenticator,
     password_reset_controller,
     account_registration_controller,

@@ -14,7 +14,7 @@ from .account import Username
 from .account import Password
 
 
-def create_v2_authentication_blueprint(
+def create_authentication_rest_api_blueprint(
       authenticator: Authenticator,
       password_reset_controller: PasswordResetController,
       account_registration_controller: AccountRegistrationController,
