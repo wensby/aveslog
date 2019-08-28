@@ -13,6 +13,7 @@ import AuthenticationService from './authentication/AuthenticationService.js';
 import Authentication from './authentication/Authentication.js'
 import AccountService from './account/AccountService';
 import Bird from './bird/Bird.js';
+import Sighting from './sighting/Sighting.js';
 
 class Page extends Component {
 
@@ -46,7 +47,7 @@ class Page extends Component {
         <Link className="nav-link"
             to={`/profile/${account.username}`}>{t('Profile')}</Link>,
         <Link className="nav-link"
-            to={'/sighting/'}>{t('Sightings')}</Link>,
+            to={'/sighting'}>{t('Sightings')}</Link>,
         <Link className="nav-link"
             to={'/settings/'}>{t('Settings')}</Link>,
         <Link className="nav-link" onClick={this.onLogout}
@@ -85,6 +86,7 @@ class Page extends Component {
             <Route path='/authentication' render={this.renderAuthentication} />
             <Route path='/settings/' exact component={Settings} />
             <Route path='/bird' component={Bird} />
+            <Route path='/sighting' component={Sighting} />
           </main>
         </div>
       </div>
