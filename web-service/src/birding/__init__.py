@@ -137,7 +137,11 @@ def create_app(test_config=None):
     link_factory,
     bird_view_factory
   )
-  sighting_api = create_sighting_rest_api_blueprint()
+  sighting_api = create_sighting_rest_api_blueprint(
+    authentication_token_decoder,
+    account_repository,
+    sighting_view_factory,
+  )
   app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(home_blueprint)
