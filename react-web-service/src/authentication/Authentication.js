@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTranslation } from 'react-i18next';
-import { Route } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import PasswordReset from './PasswordReset.js';
 import Login from './Login.js';
 import Register from './Register.js';
@@ -21,11 +21,11 @@ function Authentication({ match, onAuthenticated }) {
 
   const path = match.path;
   return (
-    <div>
+    <Switch>
       <Route path={`${path}/login`} render={renderLogin}/>
       <Route path={`${path}/register`} render={renderRegistration}/>
       <Route path={`${path}/password-reset`} render={renderPasswordReset}/>
-    </div>
+    </Switch>
   );
 }
 
