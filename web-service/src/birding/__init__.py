@@ -7,6 +7,7 @@ from flask import g
 from flask import request
 from flask_cors import CORS
 
+from .sighting_rest_api import create_sighting_rest_api_blueprint
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
 from .account import PasswordRepository
@@ -136,6 +137,8 @@ def create_app(test_config=None):
     link_factory,
     bird_view_factory
   )
+  sighting_api = create_sighting_rest_api_blueprint()
+  app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(home_blueprint)
   app.register_blueprint(authentication_blueprint)
