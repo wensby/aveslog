@@ -145,7 +145,7 @@ class AuthenticationTokenFactory:
 
   def create_authentication_token(self,
         account_id: int,
-        expiration: timedelta = timedelta(days=0, seconds=5)
+        expiration: timedelta = timedelta(days=0, minutes=30)
   ) -> str:
     payload = {
       'exp': self.utc_now_supplier() + expiration,

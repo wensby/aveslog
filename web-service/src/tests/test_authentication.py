@@ -215,8 +215,8 @@ class TestAuthenticationTokenFactory(TestCase):
     token = factory.create_authentication_token(1)
 
     self.assertEqual(token, (
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjQyNjUsImlhdCI6MTU'
-      '2NDg2NDI2MCwic3ViIjoxfQ.benxSD7FPI8LLAGGtX5sqNfP-K9oUzggH4A7WVQwUGc'))
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjYwNjAsImlhdCI6MTU'
+      '2NDg2NDI2MCwic3ViIjoxfQ.WSvE-OCzvVPVayHicY1viqLYYA560cCK-9FOZ6NY2o0'))
 
 class TestAuthenticationTokenDecoder(TestCase):
 
