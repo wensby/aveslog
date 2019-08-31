@@ -43,15 +43,14 @@ def create_bird_rest_api_blueprint(
   def get_bird(binomial_name: str) -> Response:
     reformatted = binomial_name.replace('-', ' ')
     view = bird_view_factory.create_bird_page_view(binomial_name=reformatted)
-    result = create_result(view)
-    return make_response(jsonify({
-      'status': 'success',
-      'result': result,
-    }), HTTPStatus.OK)
+    return create_bird_response(view)
 
   @blueprint.route('/<int:bird_id>')
   def get_bird_by_id(bird_id: str) -> Response:
     view = bird_view_factory.create_bird_page_view(bird_id=bird_id)
+    return create_bird_response(view)
+
+  def create_bird_response(view: BirdPageView) -> Response:
     result = create_result(view)
     return make_response(jsonify({
       'status': 'success',
