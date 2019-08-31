@@ -49,6 +49,15 @@ def create_bird_rest_api_blueprint(
       'result': result,
     }), HTTPStatus.OK)
 
+  @blueprint.route('/<int:bird_id>')
+  def get_bird_by_id(bird_id: str) -> Response:
+    view = bird_view_factory.create_bird_page_view(bird_id=bird_id)
+    result = create_result(view)
+    return make_response(jsonify({
+      'status': 'success',
+      'result': result,
+    }), HTTPStatus.OK)
+
   def create_result(view: BirdPageView) -> dict:
     result = {'binomialName': view.bird.binomial_name}
     if view.cover_picture:

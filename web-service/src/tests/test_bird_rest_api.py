@@ -86,3 +86,20 @@ class TestBird(AppTestCase):
         'thumbnailCredit': 'myCredit',
       }
     })
+
+  def test_get_bird_by_id(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', 'myCredit')
+    self.db_insert_bird_thumbnail(1, 1)
+
+    response = self.client.get('/v2/bird/1')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'result': {
+        'binomialName': 'Pica pica',
+        'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'thumbnailCredit': 'myCredit',
+      }
+    })
