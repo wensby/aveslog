@@ -32,5 +32,6 @@
   "new-password-confirm-password-label": "Bekräfta lösenordet",
   "password-reset-success-alert-message": "Lösenordet återställt.",
   "password-reset-failure-alert-message": "Lösenordsåterställningen misslyckades.",
+  "sighting-item-edit-link": "Ändra",
   "Logout": "Logga ut"
 }

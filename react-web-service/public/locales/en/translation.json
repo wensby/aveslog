@@ -32,5 +32,6 @@
   "new-password-confirm-password-label": "Confirm password",
   "password-reset-success-alert-message": "Password reset successfully.",
   "password-reset-failure-alert-message": "Password reset failed.",
+  "sighting-item-edit-link": "Edit",
   "Logout": "Logout"
 }

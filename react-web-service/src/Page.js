@@ -27,6 +27,7 @@ class Page extends Component {
 
   setAuthenticated = async () => {
     const account = await (new AccountService().get_account(localStorage.getItem('authToken')));
+    localStorage.setItem('username', account.username);
     this.setState({
       authenticated: true,
       account: account

@@ -13,4 +13,9 @@ export default class BirdService {
     const response = await fetch(`${this.apiUrl}/v2/bird/${binomialName}`);
     return await response.json();
   }
+
+  async fetchBirdById(id) {
+    const response = await fetch(`${this.apiUrl}/v2/bird/${id}`);
+    return await response.json();
+  }
 }
