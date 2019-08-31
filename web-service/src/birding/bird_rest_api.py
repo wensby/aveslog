@@ -63,6 +63,7 @@ def create_bird_rest_api_blueprint(
       result['coverUrl'] = external_picture_url(view.cover_picture)
     if view.thumbnail_picture:
       result['thumbnailCredit'] = view.thumbnail_picture.credit
+      result['thumbnailUrl'] = external_picture_url(view.thumbnail_picture)
     return result
 
   def get_bird_thumbnail_url(bird_thumbnail):

@@ -84,6 +84,7 @@ class TestBird(AppTestCase):
         'binomialName': 'Pica pica',
         'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
         'thumbnailCredit': 'myCredit',
+        'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
       }
     })
 
@@ -101,5 +102,6 @@ class TestBird(AppTestCase):
         'binomialName': 'Pica pica',
         'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
         'thumbnailCredit': 'myCredit',
+        'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
       }
     })
