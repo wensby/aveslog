@@ -5,7 +5,7 @@ from flask import Blueprint, Response, make_response, jsonify, request
 
 from .account import AccountRepository, Account
 from .authentication import AuthenticationTokenDecoder
-from .sighting_view import SightingViewFactory
+from .sighting_view import SightingViewFactory, SightingItem
 
 
 def create_sighting_rest_api_blueprint(
@@ -33,14 +33,23 @@ def create_sighting_rest_api_blueprint(
     account_id = decode_result.payload['sub']
     return account_repository.find_account_by_id(account_id)
 
-  def get_sightings(account: Account) -> List[dict]:
-    return list(map(lambda item: {
+  def convert_sighting_item(item: SightingItem, person_id: int) -> dict:
+    result = {
       'sightingId': item.sighting_id,
-      'personId': account.person_id,
+      'personId': person_id,
       'birdId': item.bird_id,
-      'date': item.time.split()[0],
-      'time': item.time.split()[1],
-    }, sighting_view_factory.create_sighting_items(account)))
+    }
+    split_time = item.time.split()
+    if len(split_time) > 1:
+      result['date'] = split_time[0]
+      result['time'] = split_time[1]
+    else:
+      result['date'] = item.time
+    return result
+
+  def get_sightings(account: Account) -> List[dict]:
+    return list(map(lambda item: convert_sighting_item(item, account.person_id),
+                    sighting_view_factory.create_sighting_items(account)))
 
   def sightings_response(sightings: List[dict]) -> Response:
     return make_response(jsonify({
