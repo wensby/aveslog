@@ -2,7 +2,7 @@ import React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import './navbar.css';
 
-export default ({ onClick }) => {
+export default ({ onClick, items }) => {
 
   const renderItem = (item, index) => {
     return (
@@ -14,7 +14,7 @@ export default ({ onClick }) => {
 
   return (
     <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
-      {props.items.map(renderItem)}
+      {items.map(renderItem)}
     </Nav>
   );
 }
