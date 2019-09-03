@@ -13,7 +13,7 @@ function Brand() {
   return (
     <BootstrapNavbar.Brand>
       <Link to="/">
-        <img id='navbarLogoImage' src='/birdlogo-50.png' alt=''/>
+        <img id='navbarLogoImage' src='/birdlogo-50.png' alt='' />
       </Link>
     </BootstrapNavbar.Brand>
   );
@@ -21,15 +21,35 @@ function Brand() {
 
 export default () => {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
-  const {authenticated, account, unauthenticate} = useContext(AuthenticationContext);
+  const { authenticated, account, unauthenticate } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   let fullNavbarRef = null;
   let gridRef = null;
 
+  const isNavbarShowing = () => {
+    return menuCollapseState !== 'collapsed';
+  }
+
+  const onDocumentClick = event => {
+    if (isNavbarShowing()) {
+      if (isTargetOutsideNavbar(event.target)) {
+        collapseMenu();
+        event.preventDefault();
+      }
+      else if (isTargetInsideStaticPartOfNavbar(event.target)) {
+        collapseMenu();
+      }
+    }
+  };
+
+  const collapseMenu = () => {
+    setMenuCollapseState('collapsing');
+  }
+
   useEffect(() => {
     document.addEventListener('click', onDocumentClick, true);
     return () => document.removeEventListener('click', onDocumentClick);
-  }, []);
+  });
 
   useEffect(() => {
     if (menuCollapseState === 'expanding') {
@@ -65,44 +85,12 @@ export default () => {
     }
   };
 
-  const collapseMenu = () => {
-    setMenuCollapseState('collapsing');
-  }
-
-  const isMenuFullyCollapsed = () => {
-    return menuCollapseState === 'collapsed';
-  }
-
   const isTargetOutsideNavbar = target => {
     return fullNavbarRef && !fullNavbarRef.contains(target);
   }
 
-  const isTargetInsideStaticNavbar = target => {
+  const isTargetInsideStaticPartOfNavbar = target => {
     return gridRef && gridRef.contains(target);
-  }
-
-  const onDocumentClick = event => {
-    if (!isMenuFullyCollapsed()) {
-      const target = event.target;
-      if (isTargetOutsideNavbar(target)) {
-        collapseMenu();
-        event.preventDefault();
-      }
-      else if (isTargetInsideStaticNavbar(target)) {
-        collapseMenu();
-      }
-    }
-  };
-
-  const renderMainArea = () => {
-    return (
-      <div className='navbar-main d-flex mr-0 flex-grow-1 align-self-center'>
-        <div className='flex-grow-1 align-self-center'>
-          <Brand />
-          {renderUsername()}
-        </div>
-      </div>
-    );
   }
 
   const renderUsername = () => {
@@ -115,40 +103,40 @@ export default () => {
     }
   }
 
-  const renderMenuButton = () => {
-    return (
+  const renderStaticPart = () =>
+    <div ref={setGridRef} className='grid'>
+      <div className='navbar-main d-flex mr-0 flex-grow-1 align-self-center'>
+        <div className='flex-grow-1 align-self-center'>
+          <Brand />
+          {renderUsername()}
+        </div>
+      </div>
       <div className='menu-button'>
         <Button onClick={toggleNavbar} className='navbar-toggler'>
           <span className="navbar-toggler-icon"></span>
         </Button>
       </div>
-    );
-  }
-
-  const renderSearch = () => {
-    return (
       <div className='search-bar-item'>
         <SearchBar />
       </div>
+    </div>;
+
+  const renderExpandibleMenu = () => {
+    const items = getMenuItems(authenticated, account, unauthenticate, t);
+    const needMaxHeight = ['expanding', 'expanded'].indexOf(menuCollapseState) >= 0;
+    const style = needMaxHeight ? { maxHeight: `${items.length * 37}px` } : {};
+    return (
+      <div className={`menu ${menuCollapseState}`} style={style}>
+        <Menu items={items} onClick={() => setTimeout(collapseMenu, 0)} />
+      </div>
     );
   }
-
-  
-  const items = getMenuItems(authenticated, account, unauthenticate, t);
-  const needMaxHeight = ['expanding', 'expanded'].indexOf(menuCollapseState) >= 0; 
-  const style = needMaxHeight ? {maxHeight: `${items.length * 37}px`} : {};
 
   return (
     <div ref={setFullNavbarRef}
       className="navbar navbar-dark shadow p-0 bg-primary fixed-top">
-      <div ref={setGridRef} className='grid'>
-        {renderMainArea()}
-        {renderMenuButton()}
-        {renderSearch()}
-      </div>
-      <div className={`menu ${menuCollapseState}`} style={style}>
-        <Menu items={items} onClick={() => setTimeout(collapseMenu, 0)} />
-      </div>
+      {renderStaticPart()}
+      {renderExpandibleMenu()}
     </div>
   );
 }
