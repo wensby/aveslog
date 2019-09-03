@@ -1,25 +1,17 @@
-import React, { Component } from 'react';
-import { withTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 
-class CreatePasswordReset extends Component {
+export default () => {
+  const [email, setEmail] = useState('');
+  const [alert, setAlert] = useState(null);
+  const { t } = useTranslation();
+  const authentication = new AuthenticationService();
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '',
-      alert: null,
-    }
-    this.authentication = new AuthenticationService();
-  }
-
-  renderAlert = () => {
-    const { t } = this.props;
-    const { alert } = this.state;
-
+  const renderAlert = () => {
     if (alert) {
       return (
-        <div className={`alert alert-${alert.type}`} role="alert">
+        <div className={`alert alert-${alert.type}`} role='alert'>
           { t(alert.message) }
         </div>
       );
@@ -27,66 +19,56 @@ class CreatePasswordReset extends Component {
     return null;
   }
 
-  handleFormSubmit = async event => {
+  const handleFormSubmit = async event => {
     try {
       event.preventDefault();
-      const { email } = this.state;
-      const response = await this.authentication.postPasswordResetEmail(email);
+      const response = await authentication.postPasswordResetEmail(email);
       if (response.status === 'success') {
-        this.setState({
-          alert: {
-            type: 'success',
-            message: 'password-reset-email-submit-success-message'
-          },
-          email: '',
+        setAlert({
+          type: 'success',
+          message: 'password-reset-email-submit-success-message'
         });
+        setEmail('');
       }
       else {
-        this.setState({
-          alert: {
-            type: 'danger',
-            message: 'password-reset-email-submit-failure-message',
-          },
-          email: '',
+        setAlert({
+          type: 'danger',
+          message: 'password-reset-email-submit-failure-message'
         });
+        setEmail('');
       }
     } catch (e) {
       console.log(e);
     }
   }
 
-  render() {
-    const { t } = this.props;
-    return (
-      <div className="container">
-        <div className="row">
-          <div className="col">
-            <h1>{ t('Password Reset') }</h1>
-            <p>{ t('password-reset-email-prompt-message') }</p>
-            { this.renderAlert() }
-            <form onSubmit={this.handleFormSubmit}>
-              <div className="form-group">
-                <label htmlFor="emailInput">{ t('Email') }</label>
-                <input
-                  value={this.state.email}
-                  onChange={event => this.setState({email: event.target.value})}
-                  className='form-control'
-                  placeholder={ t('Email') }
-                  id="emailInput"
-                  name="email"
-                  type="text"/>
-              </div>
-              <button
-                className="btn btn-primary"
-                type="submit">
-                { t('Send') }
-                </button>
-            </form>
-          </div>
+  return (
+    <div className='container'>
+      <div className='row'>
+        <div className='col'>
+          <h1>{ t('Password Reset') }</h1>
+          <p>{ t('password-reset-email-prompt-message') }</p>
+          { renderAlert() }
+          <form onSubmit={handleFormSubmit}>
+            <div className='form-group'>
+              <label htmlFor='emailInput'>{ t('Email') }</label>
+              <input
+                value={email}
+                onChange={event => setEmail(event.target.value)}
+                className='form-control'
+                placeholder={ t('Email') }
+                id='emailInput'
+                name='email'
+                type='text'/>
+            </div>
+            <button
+              className='btn btn-primary'
+              type='submit'>
+              { t('Send') }
+              </button>
+          </form>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default withTranslation()(CreatePasswordReset);
