@@ -1,25 +1,22 @@
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
+import { AuthenticationContext } from './authentication/AuthenticationContext.js';
+import { getMenuItems } from './navbar/MenuItemsFactory.js';
+import { useTranslation } from 'react-i18next';
 
-export default class SideMenu extends Component {
+export default () => {
+  const { t } = useTranslation();
+  const { authenticated, account, unauthenticate } = useContext(AuthenticationContext);
+  const items = getMenuItems(authenticated, account, unauthenticate, t);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loggedIn: false
-    };
-  }
-
-  renderItem = (item, index) => {
+  const renderItem = (item, index) => {
     return <div className="nav-item" key={index}>{item}</div>;
-  }
+  };
 
-  render() {
-    return (
-      <div className="sidemenu">
-        <nav className="sidebar nav flex-column border-left" id="sidebarList">
-          {this.props.items.map(this.renderItem)}
-        </nav>
-      </div>
-    );
-  }
+  return (
+    <div className="sidemenu">
+      <nav className="sidebar nav flex-column border-left" id="sidebarList">
+        {items.map(renderItem)}
+      </nav>
+    </div>
+  );
 }

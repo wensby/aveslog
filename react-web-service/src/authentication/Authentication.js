@@ -1,32 +1,15 @@
 import React from 'react';
-import { withTranslation } from 'react-i18next';
 import { Switch, Route } from "react-router-dom";
 import PasswordReset from './PasswordReset.js';
 import Login from './Login.js';
 import Register from './Register.js';
 
-function Authentication({ match, onAuthenticated }) {
-
-  const renderLogin = props => {
-    return <Login {...props} onAuthenticated={onAuthenticated} />;
-  };
-
-  const renderRegistration = props => {
-    return <Register {...props} />;
-  };
-
-  const renderPasswordReset = props => {
-    return <PasswordReset {...props} />;
-  };
-
-  const path = match.path;
+export default ({ match }) => {
   return (
     <Switch>
-      <Route path={`${path}/login`} render={renderLogin}/>
-      <Route path={`${path}/register`} render={renderRegistration}/>
-      <Route path={`${path}/password-reset`} render={renderPasswordReset}/>
+      <Route path={`${match.path}/login`} component={Login}/>
+      <Route path={`${match.path}/register`} component={Register}/>
+      <Route path={`${match.path}/password-reset`} component={PasswordReset}/>
     </Switch>
   );
 }
-
-export default withTranslation()(Authentication);
