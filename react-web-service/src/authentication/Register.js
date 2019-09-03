@@ -32,7 +32,7 @@ class PasswordReset extends Component {
     try {
       event.preventDefault();
       const { email } = this.state;
-      const response = await this.authentication.post_registration_email(email);
+      const response = await this.authentication.postRegistrationEmail(email);
       if (response.status === 'success') {
         this.setState({
           alert: {

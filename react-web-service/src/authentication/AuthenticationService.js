@@ -4,14 +4,14 @@ export default class AuthenticationService {
     this.apiUrl = window._env_.API_URL;
   }
 
-  async get_authentication_token(username, password) {
+  async fetchAuthenticationToken(username, password) {
     const url = `${window._env_.API_URL}/v2/authentication/token`;
     const parameters = `?username=${username}&password=${password}`;
     const response = await fetch(url + parameters);
     return await response.json();
   }
 
-  async post_password_reset(email) {
+  async postPasswordResetEmail(email) {
     const response = await fetch(
       `${window._env_.API_URL}/v2/authentication/password-reset`,
       {
@@ -27,7 +27,7 @@ export default class AuthenticationService {
     return await response.json();
   }
 
-  async postPasswordReset(token, password) {
+  async postPasswordResetPassword(token, password) {
     const response = await fetch(
       `${this.apiUrl}/v2/authentication/password-reset/${token}`,
       {
@@ -43,7 +43,7 @@ export default class AuthenticationService {
     return await response.json();
   }
 
-  async post_registration_email(email) {
+  async postRegistrationEmail(email) {
     const url = `${window._env_.API_URL}/v2/authentication/registration`;
     const response = await fetch(url, {
       method: 'POST',

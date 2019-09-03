@@ -14,7 +14,7 @@ function LoginForm(props) {
   const handleLoginFormSubmit = async event => {
     try {
       event.preventDefault();
-      const response = await authentication.get_authentication_token(username, password);
+      const response = await authentication.fetchAuthenticationToken(username, password);
       if (response.status === 'success') {
         onAuthenticated(response.authToken);
         props.history.push("/");

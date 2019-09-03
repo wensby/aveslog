@@ -31,7 +31,7 @@ class CreatePasswordReset extends Component {
     try {
       event.preventDefault();
       const { email } = this.state;
-      const response = await this.authentication.post_password_reset(email);
+      const response = await this.authentication.postPasswordResetEmail(email);
       if (response.status === 'success') {
         this.setState({
           alert: {
