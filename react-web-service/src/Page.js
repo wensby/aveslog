@@ -6,7 +6,7 @@ import { Route } from "react-router-dom";
 import Navbar from './navbar/navbar.js';
 import SideMenu from './sidemenu.js';
 import Settings from './settings/settings'
-import Home from './home/home.js';
+import Home from './home/HomePage.js';
 import './App.css';
 import { withTranslation } from 'react-i18next';
 import Authentication from './authentication/Authentication.js'
