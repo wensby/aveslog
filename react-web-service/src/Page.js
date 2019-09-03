@@ -3,7 +3,7 @@ import './index.css';
 
 import React from 'react';
 import Navbar from './navbar/navbar.js';
-import SideMenu from './sidemenu.js';
+import SideMenu from './Side_Menu.js';
 import './App.css';
 import Main from './Main.js';
 
