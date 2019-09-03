@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import { Link } from 'react-router-dom';
 import { AuthenticationContext } from './AuthenticationContext.js';
+import { useReactRouter } from '../reactRouterHook.js';
 
-export default ({history, setErrorMessage}) => {
+export default ({ setErrorMessage }) => {
+  const { history } = useReactRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const authentication = new AuthenticationService();

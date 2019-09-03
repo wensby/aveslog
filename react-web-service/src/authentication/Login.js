@@ -1,28 +1,17 @@
-import React, { Component } from 'react';
-import { withTranslation } from 'react-i18next';
-import AuthenticationService from './AuthenticationService.js'
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import LoginForm from './LoginForm.js';
 
-class Login extends Component {
+export default () => {
+  const [loginErrorMessage, setLoginErrorMessage] = useState(null);
+  const { t } = useTranslation();
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-      loginErrorMessage: null,
-    };
-    this.authentication = new AuthenticationService();
+  const setErrorMessage = message => {
+    setLoginErrorMessage(message);
   }
 
-  setErrorMessage = message => {
-    this.setState({ loginErrorMessage: message });
-  }
-
-  renderErrorMessage = () => {
-    const { t } = this.props;
-    const { loginErrorMessage } = this.state;
+  const renderErrorMessage = () => {
     if (loginErrorMessage) {
       return (
         <div className="row">
@@ -37,29 +26,24 @@ class Login extends Component {
     }
   }
 
-  render() {
-    const { t } = this.props;
-    return (
-      <div className="container">
-        <h1>{t('Login')}</h1>
-        {this.renderErrorMessage()}
-        <div className="d-flex justify-content-center">
-          <div className="row">
-            <div className="col">
-              <div id="loginFormContainer">
-                <LoginForm {...this.props} setErrorMessage={this.setErrorMessage} />
-                <div className="row">
-                  <Link to="/authentication/password-reset">
-                    {t('Forgot your password?')}
-                  </Link>
-                </div>
+  return (
+    <div className='container'>
+      <h1>{t('Login')}</h1>
+      {renderErrorMessage()}
+      <div className='d-flex justify-content-center'>
+        <div className='row'>
+          <div className='col'>
+            <div id='loginFormContainer'>
+              <LoginForm setErrorMessage={setErrorMessage} />
+              <div className='row'>
+                <Link to='/authentication/password-reset'>
+                  {t('Forgot your password?')}
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default withTranslation()(Login);
