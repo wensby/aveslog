@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 
 import React from 'react';
-import Navbar from './navbar/navbar.js';
+import TopNavbar from './navbar/TopNavbar.js';
 import SideMenu from './SideMenu.js';
 import './App.css';
 import Main from './Main.js';
@@ -10,7 +10,7 @@ import Main from './Main.js';
 export default () => {
   return (
     <>
-      <Navbar />
+      <TopNavbar />
       <div className='main-grid navbar-pushed'>
         <SideMenu />
         <Main />
