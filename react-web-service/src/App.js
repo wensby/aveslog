@@ -5,6 +5,7 @@ import React, { Suspense } from 'react';
 import Page from './Page.js'
 import './App.css';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export default () => {
 
@@ -15,10 +16,12 @@ export default () => {
   );
 
   return (
-    <AuthenticationProvider>
-      <Suspense fallback={<Loader />}>
-        <Page />
-      </Suspense>
-    </AuthenticationProvider>
+    <Router>
+      <AuthenticationProvider>
+        <Suspense fallback={<Loader />}>
+          <Page />
+        </Suspense>
+      </AuthenticationProvider>
+    </Router>
   );
 }
