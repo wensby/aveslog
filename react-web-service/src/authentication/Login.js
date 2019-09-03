@@ -34,7 +34,7 @@ export default () => {
         <div className='row'>
           <div className='col'>
             <div id='loginFormContainer'>
-              <LoginForm setErrorMessage={setErrorMessage} />
+              <LoginForm onError={setErrorMessage} />
               <div className='row'>
                 <Link to='/authentication/password-reset'>
                   {t('Forgot your password?')}

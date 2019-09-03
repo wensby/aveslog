@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { AuthenticationContext } from './AuthenticationContext.js';
 import { useReactRouter } from '../reactRouterHook.js';
 
-export default ({ setErrorMessage }) => {
+export default ({ onError }) => {
   const { history } = useReactRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +22,7 @@ export default ({ setErrorMessage }) => {
         history.push("/");
       }
       else {
-        setErrorMessage('Login failed.');
+        onError('Login failed.');
         setUsername('');
         setPassword('');
       }
