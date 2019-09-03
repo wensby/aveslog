@@ -2,11 +2,11 @@ import React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import './navbar.css';
 
-export default function Menu(props) {
+export default ({ onClick }) => {
 
   const renderItem = (item, index) => {
     return (
-      <div className="nav-item" key={index} onClick={props.onClick}>
+      <div className="nav-item" key={index} onClick={onClick}>
         {item}
       </div>
     )
