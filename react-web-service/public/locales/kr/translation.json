@@ -29,9 +29,13 @@
   "password-reset-title": "비밀번호 초기화",
   "password-reset-form-prompt-message": "",
   "password-format-help-message": "비밀번호가 8 ~ 128 자 여야합니다.",
-  "new-password-confirm-password-label": "비밀번호 확인",
+  "password-confirm-password-label": "비밀번호 확인",
   "password-reset-success-alert-message": "비밀번호를 초기화됐습니다.",
   "password-reset-failure-alert-message": "비밀번호를 초기화가 실패했습니다.",
   "sighting-item-edit-link": "편집",
+  "registration-form-instructions": "이 양식을 입력하여 등록하세요.",
+  "username-help-block": "비밀번호는 5-32자리 사이의 문자, 숫자, 기호 3가지 (- . _)으로 이뤄져야 합니다.",
+  "terms-and-conditions-checkbox-label": "이용 약관에 동의",
+  "registration-button": "만들기",
   "Logout": "로그아웃"
 }

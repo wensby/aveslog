@@ -49,9 +49,9 @@ export default () => {
     <div className='container'>
       <div className='row'>
         <div className='col'>
-          <h2>{ t('Register') }</h2>
+          <h2>{ t('Registration') }</h2>
           <p>
-            { t('Fill out the following form to complete your registration.') }
+            { t('registration-form-instructions') }
           </p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default () => {
                 onChange={event => setUsername(event.target.value)}
                 pattern='[A-Za-z0-9._-]{5,32}'/>
               <small id='usernameHelpBlock' className='form-text text-muted'>
-                { t('Must be 5 to 32 characters long, contain only letters, numbers, dashes (-), periods (.), and underscores (_).') }
+                { t('username-help-block') }
               </small>
               <div className='valid-feedback'>
                 { t('Nice username!') }
@@ -104,7 +104,7 @@ export default () => {
                 onChange={event => setPassword(event.target.value)}
                 pattern='.{8,128}'/>
               <small id='passwordHelpBlock' className='form-text text-muted'>
-                { t('Must be 8 to 128 character long.') }
+                { t('password-format-help-message') }
               </small>
               <div className='valid-feedback'>
                 { t('Seems long enough!') }
@@ -115,14 +115,14 @@ export default () => {
             </div>
             <div className='form-group'>
               <label htmlFor='confirmPasswordInput'>
-                { t('Confirm password') }
+                { t('password-confirm-password-label') }
               </label>
               <input
                 id='confirmPasswordInput'
                 className='form-control'
                 type='password'
                 name='confirmPassword'
-                placeholder={ t('Confirm password')}/>
+                placeholder={ t('password-confirm-password-label')}/>
               <div className='valid-feedback'>
                 { t('Both passwords matches!') }
               </div>
@@ -139,7 +139,7 @@ export default () => {
                   id='tocCheckbox'
                   required/>
                 <label className='form-check-label' htmlFor='tocCheckbox'>
-                  { t('Agree to terms and conditions') }
+                  { t('terms-and-conditions-checkbox-label') }
                 </label>
                 <div className='invalid-feedback'>
                   { t('You must agree before submitting.') }
@@ -148,7 +148,7 @@ export default () => {
             </div>
             <input type='hidden' name='token' value={token}/>
             <button class='btn btn-primary' type='submit'>
-              { t('Register') }
+              { t('registration-button') }
             </button>
           </form>
         </div>

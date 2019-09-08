@@ -29,9 +29,13 @@
   "password-reset-title": "Återställ lösenord",
   "password-reset-form-prompt-message": "Välj ett nytt lösenord.",
   "password-format-help-message": "Måste vara 8 till 128 tecken lång.",
-  "new-password-confirm-password-label": "Bekräfta lösenordet",
+  "password-confirm-password-label": "Bekräfta lösenordet",
   "password-reset-success-alert-message": "Lösenordet återställt.",
   "password-reset-failure-alert-message": "Lösenordsåterställningen misslyckades.",
   "sighting-item-edit-link": "Ändra",
+  "registration-form-instructions": "Fyll i formuläret nedan för att slutföra din registrering.",
+  "username-help-block": "Måste vara 5 till 32 tecken lång och enbart innehålla bokstäver, siffror, bindestreck (-), punkter (.) och understreck (_).",
+  "terms-and-conditions-checkbox-label": "Godkänn vilkoren",
+  "registration-button": "Registrera",
   "Logout": "Logga ut"
 }
