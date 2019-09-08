@@ -7,6 +7,8 @@ export default () => {
   const token = match.params.token;
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const { t } = useTranslation();
 
   const renderAlert = () => {
@@ -65,6 +67,8 @@ export default () => {
                 aria-describedby='usernameHelpBlock'
                 placeholder={ t('Username')}
                 required
+                value={username}
+                onChange={event => setUsername(event.target.value)}
                 pattern='[A-Za-z0-9._-]{5,32}'/>
               <small id='usernameHelpBlock' className='form-text text-muted'>
                 { t('Must be 5 to 32 characters long, contain only letters, numbers, dashes (-), periods (.), and underscores (_).') }
@@ -83,6 +87,8 @@ export default () => {
                 aria-describedby='passwordHelpBlock'
                 placeholder={ t('Password')}
                 required
+                value={password}
+                onChange={event => setPassword(event.target.value)}
                 pattern='.{8,128}'/>
               <small id='passwordHelpBlock' className='form-text text-muted'>
                 { t('Must be 8 to 128 character long.') }
