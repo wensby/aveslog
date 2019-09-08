@@ -1,6 +1,7 @@
-import React, { useState, } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../reactRouterHook';
+import AuthenticationService from './AuthenticationService.js';
 
 export default () => {
   const { match } = useReactRouter();
@@ -10,6 +11,18 @@ export default () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { t } = useTranslation();
+  const authentication = new AuthenticationService();
+
+  const fetchEmail = async () => {
+    const registration = await authentication.fetchRegistration(token);
+    if (registration) {
+      setEmail(registration['result']['registration']['email']);
+    }
+  }
+
+  useEffect(() => {
+    fetchEmail();
+  }, []);
 
   const renderAlert = () => {
     if (alert) {

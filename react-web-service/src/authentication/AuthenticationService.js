@@ -57,6 +57,17 @@ export default class AuthenticationService {
     return await response.json();
   }
 
+  async fetchRegistration(token) {
+    try {
+      const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
+      const response = await fetch(url);
+      return await response.json();
+    }
+    catch (err) {
+      return undefined;
+    }
+  }
+
   async logout() {
     localStorage.removeItem('authToken');
   }
