@@ -61,7 +61,8 @@ export default class AuthenticationService {
     try {
       const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
       const response = await fetch(url);
-      return await response.json();
+      const json = await response.json();
+      return json['result']['registration'];
     }
     catch (err) {
       return undefined;

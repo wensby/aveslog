@@ -16,7 +16,7 @@ export default () => {
   const fetchEmail = async () => {
     const registration = await authentication.fetchRegistration(token);
     if (registration) {
-      setEmail(registration['result']['registration']['email']);
+      setEmail(registration['email']);
     }
   }
 
