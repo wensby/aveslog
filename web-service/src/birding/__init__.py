@@ -108,6 +108,7 @@ def create_app(test_config=None):
     password_reset_controller,
   )
   v2_authentication_blueprint = create_authentication_rest_api_blueprint(
+    account_repository,
     authenticator,
     password_reset_controller,
     account_registration_controller,

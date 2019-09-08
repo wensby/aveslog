@@ -128,7 +128,42 @@ class TestRegistration(AppTestCase):
     self.assertEqual(data['status'], 'failure')
     self.assertEqual(data['message'], 'Email taken')
 
+  def test_get_registration_when_token_present(self):
+    self.db_insert_registration('hulot@mail.com', 'myToken')
+
+  def test_post_registration_when_credentials_ok(self):
+    self.db_insert_registration('hulot@mail.com', 'myToken')
+
+    response = self.post_registration('myToken', 'myUsername', 'myPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'success')
+    self.assertEqual(data['message'], 'Registration successful')
+
+  def test_post_registration_when_username_already_taken(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'takenUsername', 'mail@mail.com', 1, None)
+    self.db_insert_registration('hulot@mail.com', 'myToken')
+
+    response = self.post_registration('myToken', 'takenUsername', 'password')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'failure')
+    self.assertEqual(data['message'], 'Username already taken')
+
   def post_registration_email(self, email):
     return self.client.post(
       '/v2/authentication/registration',
       json={'email': email})
+
+  def post_registration(
+        self,
+        token: str,
+        username: str,
+        password: str
+  )-> Response:
+    return self.client.post(
+      f'/v2/authentication/registration/{token}',
+      json={'username': username, 'password': password})

@@ -9,12 +9,13 @@ from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
-from .account import Credentials
+from .account import Credentials, AccountRepository
 from .account import Username
 from .account import Password
 
 
 def create_authentication_rest_api_blueprint(
+      account_repository: AccountRepository,
       authenticator: Authenticator,
       password_reset_controller: PasswordResetController,
       account_registration_controller: AccountRegistrationController,
@@ -70,6 +71,25 @@ def create_authentication_rest_api_blueprint(
         'status': 'success',
       }
       return make_response(jsonify(response), HTTPStatus.OK)
+
+  @blueprint.route('/registration/<string:token>', methods=['POST'])
+  def post_registration(token: str) -> Response:
+    registration = account_repository.find_account_registration_by_token(token)
+    username = request.json['username']
+    password = request.json['password']
+    response = account_registration_controller.perform_registration(
+      registration.email, registration.token, username, password
+    )
+    if response == 'success':
+      return make_response(jsonify({
+        'status': 'success',
+        'message': 'Registration successful',
+      }), HTTPStatus.OK)
+    elif response == 'username taken':
+      return make_response(jsonify({
+        'status': 'failure',
+        'message': 'Username already taken',
+      }), HTTPStatus.INTERNAL_SERVER_ERROR)
 
   @blueprint.route('/password-reset', methods=['POST'])
   def post_password_reset_email():
