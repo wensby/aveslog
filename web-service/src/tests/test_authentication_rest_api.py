@@ -131,6 +131,21 @@ class TestRegistration(AppTestCase):
   def test_get_registration_when_token_present(self):
     self.db_insert_registration('hulot@mail.com', 'myToken')
 
+  def test_get_registration_when_present(self):
+    self.db_insert_registration('hulot@mail.com', 'myToken')
+
+    response = self.get_registration('myToken')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    data = json.loads(response.data.decode('utf-8'))
+    self.assertEqual(data['status'], 'success')
+    self.assertEqual(data['result']['registration']['email'], 'hulot@mail.com')
+
+  def test_get_registration_when_missing(self):
+    response = self.get_registration('myToken')
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
   def test_post_registration_when_credentials_ok(self):
     self.db_insert_registration('hulot@mail.com', 'myToken')
 
@@ -157,6 +172,9 @@ class TestRegistration(AppTestCase):
     return self.client.post(
       '/v2/authentication/registration',
       json={'email': email})
+
+  def get_registration(self, token: str) -> Response:
+    return self.client.get(f'/v2/authentication/registration/{token}')
 
   def post_registration(
         self,

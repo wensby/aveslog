@@ -72,6 +72,21 @@ def create_authentication_rest_api_blueprint(
       }
       return make_response(jsonify(response), HTTPStatus.OK)
 
+  @blueprint.route('/registration/<string:token>')
+  def get_registration(token: str) -> Response:
+    registration = account_repository.find_account_registration_by_token(token)
+    if registration:
+      return make_response(jsonify({
+        'status': 'success',
+        'result': {
+          'registration': {
+            'email': registration.email
+          }
+        },
+      }), HTTPStatus.OK)
+    else:
+      return make_response('', HTTPStatus.NOT_FOUND)
+
   @blueprint.route('/registration/<string:token>', methods=['POST'])
   def post_registration(token: str) -> Response:
     registration = account_repository.find_account_registration_by_token(token)
