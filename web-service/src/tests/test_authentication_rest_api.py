@@ -95,7 +95,7 @@ class TestPasswordReset(AppTestCase):
     )
 
 
-class TestRegister(AppTestCase):
+class TestRegistration(AppTestCase):
 
   def test_post_registration_email_when_email_not_taken(self):
     self.db_insert_locale(1, 'en')
