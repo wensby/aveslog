@@ -138,6 +138,11 @@ class AppTestCase(TestCase):
         (account_id,), Account.fromrow)
       return next(iter(result.rows), None)
 
+  def get_authentication_token(self, username, password) -> str:
+    resource = '/v2/authentication/token'
+    query = f'?username={username}&password={password}'
+    return self.client.get(f'{resource}{query}').json['authToken']
+
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:
       if '_flashes' in session:

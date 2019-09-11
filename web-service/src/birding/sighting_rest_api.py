@@ -3,6 +3,10 @@ from typing import Optional, List
 
 from flask import Blueprint, Response, make_response, jsonify, request
 
+from .bird import BirdRepository
+from .sighting import SightingRepository, SightingPost
+from .time import parse_date
+from .time import parse_time
 from .account import AccountRepository, Account
 from .authentication import AuthenticationTokenDecoder
 from .sighting_view import SightingViewFactory, SightingItem
@@ -12,6 +16,8 @@ def create_sighting_rest_api_blueprint(
       token_decoder: AuthenticationTokenDecoder,
       account_repository: AccountRepository,
       sighting_view_factory: SightingViewFactory,
+      sighting_repository: SightingRepository,
+      bird_repository: BirdRepository,
 ) -> Blueprint:
   blueprint = Blueprint('v2sighting', __name__, url_prefix='/v2')
 
@@ -23,6 +29,18 @@ def create_sighting_rest_api_blueprint(
       return sightings_response(sightings)
     else:
       return failure_response()
+
+  @blueprint.route('/sighting', methods=['POST'])
+  def post_sighting() -> Response:
+    account = get_authorized_account(request.headers.get('authToken'))
+    person_id = request.json['person']['id']
+    if account and account.person_id == person_id:
+      sighting_post = create_sighting_post(request.json)
+      added = sighting_repository.add_sighting(sighting_post)
+      if added:
+        return post_sighting_success_response()
+    else:
+      return post_sighting_failure_response()
 
   def get_authorized_account(token: Optional[str]) -> Optional[Account]:
     if not token:
@@ -51,6 +69,14 @@ def create_sighting_rest_api_blueprint(
     return list(map(lambda item: convert_sighting_item(item, account.person_id),
                     sighting_view_factory.create_sighting_items(account)))
 
+  def create_sighting_post(post_data: dict) -> SightingPost:
+    binomial_name = post_data['bird']['binomialName']
+    bird = bird_repository.get_bird_by_binomial_name(binomial_name)
+    person_id = post_data['person']['id']
+    date = parse_date(post_data['date'])
+    time = parse_time(post_data['time']) if 'time' in post_data else None
+    return SightingPost(person_id, bird.id, date, time)
+
   def sightings_response(sightings: List[dict]) -> Response:
     return make_response(jsonify({
       'status': 'success',
@@ -63,6 +89,16 @@ def create_sighting_rest_api_blueprint(
     return make_response(jsonify({
       'status': 'failure',
       'message': 'You are not authorized to get these sightings'
+    }), HTTPStatus.UNAUTHORIZED)
+
+  def post_sighting_success_response() -> Response:
+    return make_response(jsonify({
+      'status': 'success',
+    }), HTTPStatus.OK)
+
+  def post_sighting_failure_response() -> Response:
+    return make_response(jsonify({
+      'status': 'failure',
     }), HTTPStatus.UNAUTHORIZED)
 
   return blueprint

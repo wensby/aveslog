@@ -142,6 +142,8 @@ def create_app(test_config=None):
     authentication_token_decoder,
     account_repository,
     sighting_view_factory,
+    sighting_repository,
+    bird_repository,
   )
   app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
