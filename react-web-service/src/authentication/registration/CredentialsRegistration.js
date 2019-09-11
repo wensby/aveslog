@@ -57,7 +57,9 @@ export default () => {
       {renderAlert()}
       <div className='row'>
         <div className='col'>
-          <RegistrationForm email={email} token={token}
+          <RegistrationForm
+            email={email}
+            token={token}
             onSubmit={handleFormSubmit} />
         </div>
       </div>
