@@ -14,7 +14,7 @@ export default ({ email, token, onSubmit }) => {
         id='emailInput'
         type='text'
         name='email'
-        readonly
+        readOnly
         placeholder={email}
         value={email} />
     </div>
@@ -91,7 +91,7 @@ export default ({ email, token, onSubmit }) => {
       </div>
     </div>
     <input type='hidden' name='token' value={token} />
-    <button class='btn btn-primary' type='submit'>
+    <button className='btn btn-primary' type='submit'>
       {t('registration-button')}
     </button>
   </form>);
