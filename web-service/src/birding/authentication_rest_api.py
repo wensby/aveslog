@@ -53,7 +53,7 @@ def create_authentication_rest_api_blueprint(
     locale = locale_repository.find_locale_by_code('en')
     loaded_locale = locale_loader.load_locale(locale)
     result = account_registration_controller.initiate_registration(
-      email, loaded_locale)
+      email, loaded_locale, True)
     if result == 'email taken':
       response = {
         'status': 'failure',

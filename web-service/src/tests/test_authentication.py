@@ -89,6 +89,17 @@ class TestAccountRegistrationController(TestCase):
 
     self.link_factory.create_endpoint_external_link.assert_called_with('authentication.get_register_form', token='myToken')
 
+  def test_initiate_registration_creates_correct_registration_link_when_valid_email_and_rest_api(self):
+    locale = Simple(text=mock_return('translated'))
+    self.account_repository.create_account_registration().token = 'myToken'
+    self.link_factory.create_frontend_link.return_value = 'myLink'
+    self.account_repository.find_account_by_email.return_value = None
+
+    result = self.controller.initiate_registration(valid_email, locale, True)
+
+    self.link_factory.create_frontend_link.assert_called_with(
+      '/authentication/registration/myToken')
+
   def test_initiate_registration_dispatches_registration_link_when_valid_free_email(self):
     locale = Simple(text=mock_return('translated message: '))
     self.link_factory.create_endpoint_external_link.return_value = 'myLink'
