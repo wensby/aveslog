@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AuthenticationService from './AuthenticationService.js';
+import AuthenticationService from '../AuthenticationService.js';
 import { Link } from 'react-router-dom'
 
 export default () => {

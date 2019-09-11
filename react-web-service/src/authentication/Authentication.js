@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import PasswordReset from './PasswordReset.js';
 import Login from './Login.js';
-import Registration from './Registration.js';
+import Registration from './registration/Registration.js';
 
 export default ({ match }) => {
   return (
