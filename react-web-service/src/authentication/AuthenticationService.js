@@ -69,6 +69,26 @@ export default class AuthenticationService {
     }
   }
 
+  async postRegistration(token, username, password) {
+    try {
+      const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'username': username,
+          'password': password,
+        })
+      })
+      return await response.json();
+    }
+    catch (err) {
+      return undefined;
+    }
+  }
+
   async logout() {
     localStorage.removeItem('authToken');
   }
