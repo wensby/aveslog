@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../../reactRouterHook';
 import AuthenticationService from '../AuthenticationService.js';
 import RegistrationForm from './CredentialsForm';
+import RegistrationSuccess from './RegistrationSuccess';
 
 export default () => {
   const { match } = useReactRouter();
   const token = match.params.token;
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const { t } = useTranslation();
   const authentication = new AuthenticationService();
@@ -36,14 +38,26 @@ export default () => {
     }
   }
 
-  const handleFormSubmit = async event => {
+  const handleFormSubmit = async credentials => {
     try {
-      event.preventDefault();
+      const response = await authentication.postRegistration(token, credentials);
+      if (response['status'] == 'success') {
+        setSuccess(true);
+      }
+      else if (response['message'] == 'Username already taken') {
+        setAlert({
+          category: 'danger',
+          message: 'Username already taken.',
+        });
+      }
     }
     catch (err) {
     }
   };
 
+  if (success) {
+    return <RegistrationSuccess />;
+  }
   return (
     <div className='container'>
       <div className='row'>

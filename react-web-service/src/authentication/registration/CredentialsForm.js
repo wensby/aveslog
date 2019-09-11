@@ -6,7 +6,12 @@ export default ({ email, token, onSubmit }) => {
   const [password, setPassword] = useState('');
   const { t } = useTranslation();
 
-  return (<form onSubmit={onSubmit}>
+  const handleSubmit = async event => {
+    event.preventDefault();
+    onSubmit([username, password]);
+  }
+
+  return (<form onSubmit={handleSubmit}>
     <div className='form-group'>
       <label htmlFor='emailInput'>{t('Email address')}</label>
       <input

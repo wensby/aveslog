@@ -69,7 +69,7 @@ export default class AuthenticationService {
     }
   }
 
-  async postRegistration(token, username, password) {
+  async postRegistration(token, [username, password]) {
     try {
       const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
       const response = await fetch(url, {
