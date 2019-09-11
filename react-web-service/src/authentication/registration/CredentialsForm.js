@@ -1,20 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default ({ email, token }) => {
+export default ({ email, token, onSubmit }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { t } = useTranslation();
 
-  const handleFormSubmit = async (event) => {
-    try {
-      event.preventDefault();
-    }
-    catch (err) {
-    }
-  };
-
-  return (<form onSubmit={handleFormSubmit}>
+  return (<form onSubmit={onSubmit}>
     <div className='form-group'>
       <label htmlFor='emailInput'>{t('Email address')}</label>
       <input

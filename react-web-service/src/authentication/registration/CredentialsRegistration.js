@@ -36,6 +36,14 @@ export default () => {
     }
   }
 
+  const handleFormSubmit = async event => {
+    try {
+      event.preventDefault();
+    }
+    catch (err) {
+    }
+  };
+
   return (
     <div className='container'>
       <div className='row'>
@@ -49,7 +57,8 @@ export default () => {
       {renderAlert()}
       <div className='row'>
         <div className='col'>
-          <RegistrationForm email={email} token={token}/>
+          <RegistrationForm email={email} token={token}
+            onSubmit={handleFormSubmit} />
         </div>
       </div>
     </div>
