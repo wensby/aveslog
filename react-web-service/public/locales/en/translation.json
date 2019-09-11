@@ -42,5 +42,6 @@
   "password-confirmation-valid-feedback": "The passwords match now!",
   "password-confirmation-invalid-feedback": "This needs to be looked over.",
   "password-invalid-feedback": "Not quite long enough.",
+  "add-sighting-link": "Add new sighting!",
   "Logout": "Logout"
 }

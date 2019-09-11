@@ -42,5 +42,6 @@
   "password-confirmation-valid-feedback": "Lösenorden stämmer överens nu!",
   "password-confirmation-invalid-feedback": "Lösenorden stämmer inte överens.",
   "password-invalid-feedback": "Försök igen!",
+  "add-sighting-link": "Ny observation",
   "Logout": "Logga ut"
 }

@@ -42,5 +42,6 @@
   "password-confirmation-valid-feedback": "비밀번호가 이제 일치해요!",
   "password-confirmation-invalid-feedback": "비밀번호가 일치하지 않습니다.",
   "password-invalid-feedback": "비밀번호가 아직 괜찮지 않아요.",
+  "add-sighting-link": "관찰 기록하기",
   "Logout": "로그아웃"
 }

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import queryString from 'query-string';
 import BirdService from './BirdService.js';
 import { useTranslation } from 'react-i18next';
 import './style.css';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export default function BirdQueryResult(props) {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ export default function BirdQueryResult(props) {
   const [resultItems, setResultItems] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { authenticated } = useContext(AuthenticationContext);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -57,11 +59,10 @@ export default function BirdQueryResult(props) {
   };
 
   const renderAddSightingLink = item => {
-    const { authenticated } = false;
     if (authenticated) {
-      return <Link to='/' className="btn btn-primary">
-        {t('Add new sighting')}
-      </Link>;
+      const formattedName = item.binomialName.toLowerCase().replace(' ', '-');
+      const path = `/bird/${formattedName}/new-sighting`;
+      return <Link to={path}>{t('add-sighting-link')}</Link>;
     }
     else {
       return null;
