@@ -88,7 +88,10 @@ class TestAccountRepository(TestCase):
 
     self.database.query.assert_has_calls([
       call(
-        'INSERT INTO user_account_registration (email, token) VALUES (%s, %s) RETURNING id, email, token;',
+        'INSERT INTO user_account_registration (email, token) '
+        'VALUES (%s, %s) '
+        'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
+        'RETURNING id, email, token;',
         (email.raw, token)),
     ])
 

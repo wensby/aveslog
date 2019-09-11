@@ -153,6 +153,7 @@ class AccountRepository:
     query = (
       'INSERT INTO user_account_registration (email, token) '
       'VALUES (%s, %s) '
+      'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
       'RETURNING id, email, token;')
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
