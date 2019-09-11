@@ -1,103 +1,130 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
 
 export default ({ email, token, onSubmit }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { t } = useTranslation();
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [usernameValid, setUsernameValid] = useState(false);
+  const [passwordValid, setPasswordValid] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
-  const handleSubmit = async event => {
+  useEffect(() => {
+    setUsernameValid(/^[A-Za-z0-9._-]{5,32}$/.test(username));
+    setPasswordValid(/^.{8,128}$/.test(password));
+    setPasswordsMatch(password == passwordConfirmation);
+  }, [username, password, passwordConfirmation]);
+
+  const handleSubmit = event => {
     event.preventDefault();
-    onSubmit([username, password]);
+    if (usernameValid && passwordValid && passwordsMatch) {
+      onSubmit([username, password]);
+    }
+    else {
+      setShowFeedback(true);
+    }
   }
 
-  return (<form onSubmit={handleSubmit}>
+  return (
+    <form onSubmit={handleSubmit}>
+      <EmailFormGroup value={email} />
+      <UsernameFormGroup value={username} onChange={setUsername}
+        valid={usernameValid} showFeedback={showFeedback} />
+      <PasswordFormGroup value={password} onChange={setPassword}
+        valid={passwordValid} showFeedback={showFeedback} />
+      <PasswordConfirmationFormGroup value={passwordConfirmation}
+        onChange={setPasswordConfirmation}
+        valid={passwordsMatch} showFeedback={showFeedback} />
+      <input type='hidden' name='token' value={token} />
+      <SubmitButton />
+    </form>
+  );
+}
+
+const EmailFormGroup = ({ value }) => {
+  const { t } = useTranslation();
+  return (
     <div className='form-group'>
       <label htmlFor='emailInput'>{t('Email address')}</label>
-      <input
-        className='form-control'
-        id='emailInput'
-        type='text'
-        name='email'
-        readOnly
-        placeholder={email}
-        value={email} />
+      <input id='emailInput' readOnly className='form-control' type='email'
+        name='email' value={value} />
     </div>
+  );
+};
+
+const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
+  const { t } = useTranslation();
+  const validClassName = valid ? ' is-valid' : ' is-invalid';
+  const feedbackClass = showFeedback ? validClassName : '';
+
+  return (
     <div className='form-group'>
       <label htmlFor='usernameInput'>{t('Username')}</label>
-      <input
-        id='usernameInput'
-        className='form-control'
-        type='username'
-        name='username'
-        aria-describedby='usernameHelpBlock'
-        placeholder={t('Username')}
-        required value={username}
-        onChange={event => setUsername(event.target.value)}
-        pattern='[A-Za-z0-9._-]{5,32}' />
+      <input id='usernameInput' className={`form-control${feedbackClass}`}
+        type='text' name='username' aria-describedby='usernameHelpBlock'
+        placeholder={t('Username')} value={value}
+        onChange={event => onChange(event.target.value)} />
       <small id='usernameHelpBlock' className='form-text text-muted'>
         {t('username-help-block')}
       </small>
-      <div className='valid-feedback'>
-        {t('Nice username!')}
-      </div>
+      <div className='valid-feedback'>{t('username-valid-feedback')}</div>
     </div>
+  );
+};
+
+const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
+  const { t } = useTranslation();
+  const validClassName = valid ? ' is-valid' : ' is-invalid';
+  const feedbackClass = showFeedback ? validClassName : '';
+
+  return (
     <div className='form-group'>
       <label htmlFor='passwordInput'>{t('Password')}</label>
-      <input id='passwordInput'
-        className='form-control'
-        type='password'
-        name='password'
-        aria-describedby='passwordHelpBlock'
-        placeholder={t('Password')}
-        required value={password}
-        onChange={event => setPassword(event.target.value)}
-        pattern='.{8,128}' />
+      <input id='passwordInput' className={`form-control ${feedbackClass}`}
+        type='password' name='password' aria-describedby='passwordHelpBlock'
+        placeholder={t('Password')} value={value}
+        onChange={event => onChange(event.target.value)} />
       <small id='passwordHelpBlock' className='form-text text-muted'>
         {t('password-format-help-message')}
       </small>
-      <div className='valid-feedback'>
-        {t('Seems long enough!')}
-      </div>
-      <div className='invalid-feedback'>
-        {t('Needs more love.')}
-      </div>
+      <div className='valid-feedback'>{t('password-valid-feedback')}</div>
+      <div className='invalid-feedback'>{t('password-invalid-feedback')}</div>
     </div>
+  );
+};
+
+const PasswordConfirmationFormGroup = props => {
+  const { value, onChange, valid, showFeedback } = props;
+  const { t } = useTranslation();
+  const validClassName = valid && value ? ' is-valid' : ' is-invalid';
+  const feedbackClass = showFeedback ? validClassName : '';
+
+  return (
     <div className='form-group'>
       <label htmlFor='confirmPasswordInput'>
         {t('password-confirm-password-label')}
       </label>
-      <input
-        id='confirmPasswordInput'
-        className='form-control'
-        type='password'
-        name='confirmPassword'
-        placeholder={t('password-confirm-password-label')} />
+      <input id='confirmPasswordInput' type='password' name='confirmPassword'
+        className={`form-control ${feedbackClass}`} value={value}
+        placeholder={t('password-confirm-password-label')}
+        onChange={event => onChange(event.target.value)} />
       <div className='valid-feedback'>
-        {t('Both passwords matches!')}
+        {t('password-confirmation-valid-feedback')}
       </div>
       <div className='invalid-feedback'>
-        {t("Doesn't match your password above.")}
+        {t('password-confirmation-invalid-feedback')}
       </div>
     </div>
-    <div className='form-group'>
-      <div className='form-check'>
-        <input className='form-check-input'
-          type='checkbox'
-          value=''
-          id='tocCheckbox'
-          required />
-        <label className='form-check-label' htmlFor='tocCheckbox'>
-          {t('terms-and-conditions-checkbox-label')}
-        </label>
-        <div className='invalid-feedback'>
-          {t('You must agree before submitting.')}
-        </div>
-      </div>
-    </div>
-    <input type='hidden' name='token' value={token} />
+  );
+};
+
+const SubmitButton = () => {
+  const { t } = useTranslation();
+  return (
     <button className='btn btn-primary' type='submit'>
       {t('registration-button')}
     </button>
-  </form>);
-}
+  );
+};

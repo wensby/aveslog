@@ -37,5 +37,10 @@
   "username-help-block": "Måste vara 5 till 32 tecken lång och enbart innehålla bokstäver, siffror, bindestreck (-), punkter (.) och understreck (_).",
   "terms-and-conditions-checkbox-label": "Godkänn vilkoren",
   "registration-button": "Registrera",
+  "username-valid-feedback": "Ser bra ut!",
+  "password-valid-feedback": "Tillräckligt långt. Bra.",
+  "password-confirmation-valid-feedback": "Lösenorden stämmer överens nu!",
+  "password-confirmation-invalid-feedback": "Lösenorden stämmer inte överens.",
+  "password-invalid-feedback": "Försök igen!",
   "Logout": "Logga ut"
 }

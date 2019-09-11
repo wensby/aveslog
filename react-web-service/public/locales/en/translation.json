@@ -37,5 +37,10 @@
   "username-help-block": "Must be 5 to 32 characters long, contain only letters, numbers, dashes (-), periods (.), and underscores (_).",
   "terms-and-conditions-checkbox-label": "Agree to terms and conditions",
   "registration-button": "Register",
+  "username-valid-feedback": "Nice username!",
+  "password-valid-feedback": "Seems long enough.",
+  "password-confirmation-valid-feedback": "The passwords match now!",
+  "password-confirmation-invalid-feedback": "This needs to be looked over.",
+  "password-invalid-feedback": "Not quite long enough.",
   "Logout": "Logout"
 }
