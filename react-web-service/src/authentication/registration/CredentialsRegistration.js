@@ -11,6 +11,7 @@ export default () => {
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
+  const [takenUsernames, setTakenUsernames] = useState([]);
 
   const { t } = useTranslation();
   const authentication = new AuthenticationService();
@@ -45,6 +46,7 @@ export default () => {
         setSuccess(true);
       }
       else if (response['message'] == 'Username already taken') {
+        setTakenUsernames(takenUsernames.concat([credentials[0]]))
         setAlert({
           category: 'danger',
           message: 'Username already taken.',
@@ -74,7 +76,8 @@ export default () => {
           <RegistrationForm
             email={email}
             token={token}
-            onSubmit={handleFormSubmit} />
+            onSubmit={handleFormSubmit}
+            takenUsernames={takenUsernames} />
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 
-export default ({ email, token, onSubmit }) => {
+export default ({ email, token, onSubmit, takenUsernames }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -12,19 +12,17 @@ export default ({ email, token, onSubmit }) => {
   const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
-    setUsernameValid(/^[A-Za-z0-9._-]{5,32}$/.test(username));
+    setUsernameValid(!takenUsernames.includes(username) && /^[A-Za-z0-9._-]{5,32}$/.test(username));
     setPasswordValid(/^.{8,128}$/.test(password));
     setPasswordsMatch(password == passwordConfirmation);
-  }, [username, password, passwordConfirmation]);
+  }, [takenUsernames, username, password, passwordConfirmation]);
 
   const handleSubmit = event => {
     event.preventDefault();
     if (usernameValid && passwordValid && passwordsMatch) {
       onSubmit([username, password]);
     }
-    else {
-      setShowFeedback(true);
-    }
+    setShowFeedback(true);
   }
 
   return (
