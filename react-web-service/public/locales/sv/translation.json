@@ -43,5 +43,11 @@
   "password-confirmation-invalid-feedback": "Lösenorden stämmer inte överens.",
   "password-invalid-feedback": "Försök igen!",
   "add-sighting-link": "Ny observation",
+  "new-sighting-title": "Registrera observation",
+  "bird-label": "Fågel",
+  "date-label": "Datum",
+  "time-label": "Tid",
+  "submit-sighting-button": "Registrera",
+  "cancel-new-sighting-link": "Avbryt",
   "Logout": "Logga ut"
 }

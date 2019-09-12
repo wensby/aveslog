@@ -1,3 +1,115 @@
-export default () => {
-  return 'new sighting!';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import BirdService from './BirdService';
+
+export default ({ match }) => {
+  const binomialName = match.params.binomialName;
+  const [bird, setBird] = useState(null);
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [timeEnabled, setTimeEnabled] = useState(true);
+  const { t } = useTranslation();
+  const birdService = new BirdService();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await birdService.getBird(binomialName);
+      setBird(data.result);
+    }
+    fetchData();
+    const now = new Date();
+    setDate(now.toDateInputValue());
+    setTime(now.toTimeInputValue());
+  }, []);
+
+  useEffect(() => {
+    if (timeEnabled) {
+      const now = new Date();
+      setTime(now.toTimeInputValue());
+    }
+  }, [timeEnabled]);
+
+  const handleFormSubmit = async event => {
+    event.preventDefault();
+  }
+
+  Date.prototype.toDateInputValue = (function () {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0, 10);
+  });
+
+  Date.prototype.toTimeInputValue = (function () {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(11, 16);
+  });
+
+  if (!bird) {
+    return null;
+  }
+
+  return (
+    <div className='container'>
+      <div className='row'>
+        <div className='col'>
+          <h1>{t('new-sighting-title')}</h1>
+          <form onSubmit={handleFormSubmit}>
+            <BirdSection bird={bird} />
+            <div className='form-group row'>
+              <Label htmlFor='dateInput' label='date-label' />
+              <div className='col-sm-10'>
+                <input type='date' id='dateInput' className='form-control'
+                  value={date}
+                  onChange={event => setDate(event.target.value)} />
+              </div>
+            </div>
+            <div className='form-group row'>
+              <Label htmlFor='timeInput' label='time-label' />
+              <div className='input-group col-sm-10' id='timeInput'>
+                <div className='input-group-prepend'>
+                  <div className='input-group-text'>
+                    <input type='checkbox' id='timeCheckboxInput'
+                      name='timeCheckboxInput' checked={timeEnabled}
+                      onChange={event => setTimeEnabled(event.target.checked)} />
+                  </div>
+                </div>
+                <input type='time' id='timeTimeInput' className='form-control'
+                  value={timeEnabled ? time : ''} disabled={!timeEnabled}
+                  onChange={event => setTime(event.target.value)} />
+              </div>
+            </div>
+            <input type='hidden' name='birdId' value={bird.id} />
+            <button type='submit' className='btn btn-primary'>
+              {t('submit-sighting-button')}
+            </button>
+          </form>
+          <Link to='/'>{t('cancel-new-sighting-link')}</Link>
+        </div>
+      </div>
+    </div>
+  );
 }
+
+const BirdSection = ({ bird }) => {
+  const { t } = useTranslation();
+  const name = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
+
+  return (
+    <div className='form-group row'>
+      <Label htmlFor='birdInput' label='bird-label' />
+      <div className='col-sm-10'>
+        <input id='birdInput' type='text' readOnly
+          className='col-sm-10 form-control-plaintext'
+          value={name} />
+      </div>
+    </div>
+  );
+};
+
+const Label = ({ htmlFor, label }) => {
+  const { t } = useTranslation();
+  const className = 'col-sm-2 col-form-label';
+  return <label htmlFor={htmlFor} className={className}>{t(label)}</label>;
+};

@@ -43,5 +43,11 @@
   "password-confirmation-invalid-feedback": "비밀번호가 일치하지 않습니다.",
   "password-invalid-feedback": "비밀번호가 아직 괜찮지 않아요.",
   "add-sighting-link": "관찰 기록하기",
+  "new-sighting-title": "관찰 기록하기",
+  "bird-label": "새",
+  "date-label": "일자",
+  "time-label": "시간",
+  "submit-sighting-button": "기록하기",
+  "cancel-new-sighting-link": "취소",
   "Logout": "로그아웃"
 }
