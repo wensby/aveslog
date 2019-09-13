@@ -74,7 +74,7 @@ class TestAddSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
 
-    response = self.post_sighting(token, 'pica pica')
+    response = self.post_sighting(token, 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
@@ -85,24 +85,32 @@ class TestAddSighting(AppTestCase):
     self.db_insert_password(1, 'myPassword')
     self.db_insert_bird(1, 'Pica pica')
 
-    response = self.post_sighting('invalid token', 'pica pica')
+    response = self.post_sighting('invalid token', 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {'status': 'failure'})
 
-  def post_sighting(self, token: str, binomial_name: str) -> Response:
+  def post_sighting(
+        self,
+        token: str,
+        binomial_name: str,
+        time: str = None
+  ) -> Response:
+    data = {
+      'person': {
+        'id': 1
+      },
+      'bird': {
+        'binomialName': binomial_name,
+      },
+      'date': '2019-09-11',
+    }
+    if time:
+      data['time'] = time
     return self.client.post(
       '/v2/sighting',
       headers={
         'authToken': token,
       },
-      json={
-        'person': {
-          'id': 1
-        },
-        'bird': {
-          'binomialName': binomial_name,
-        },
-        'date': '2019-09-11',
-        'time': '17:42'
-      })
+      json=data,
+    )
