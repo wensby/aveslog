@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BirdService from './BirdService';
+import SightingService from '../sighting/SightingService';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { useReactRouter } from '../reactRouterHook';
 
 export default ({ match }) => {
   const binomialName = match.params.binomialName;
@@ -11,6 +14,9 @@ export default ({ match }) => {
   const [timeEnabled, setTimeEnabled] = useState(true);
   const { t } = useTranslation();
   const birdService = new BirdService();
+  const sightingService = new SightingService();
+  const { token, account } = useContext(AuthenticationContext);
+  const { history } = useReactRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,10 +34,19 @@ export default ({ match }) => {
       const now = new Date();
       setTime(now.toTimeInputValue());
     }
+    else {
+      setTime('');
+    }
   }, [timeEnabled]);
 
   const handleFormSubmit = async event => {
     event.preventDefault();
+    const response = await sightingService.postSighting(
+      token, account.personId, bird.binomialName, date, time
+    );
+    if (response.status == 'success') {
+      history.push('/sighting');
+    }
   }
 
   Date.prototype.toDateInputValue = (function () {
@@ -76,7 +91,7 @@ export default ({ match }) => {
                   </div>
                 </div>
                 <input type='time' id='timeTimeInput' className='form-control'
-                  value={timeEnabled ? time : ''} disabled={!timeEnabled}
+                  value={time} disabled={!timeEnabled}
                   onChange={event => setTime(event.target.value)} />
               </div>
             </div>
