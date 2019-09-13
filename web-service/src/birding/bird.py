@@ -1,6 +1,3 @@
-import json
-import psycopg2
-
 class Bird:
 
   def __init__(self, id, binomial_name):
