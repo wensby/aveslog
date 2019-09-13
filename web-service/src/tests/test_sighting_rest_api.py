@@ -79,6 +79,18 @@ class TestAddSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
 
+  def test_add_sighting_when_no_time(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password(1, 'myPassword')
+    self.db_insert_bird(1, 'Pica pica')
+    token = self.get_authentication_token('hulot', 'myPassword')
+
+    response = self.post_sighting(token, 'pica pica')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {'status': 'success'})
+
   def test_add_sighting_when_invalid_authentication_token(self):
     self.db_insert_person(1)
     self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
