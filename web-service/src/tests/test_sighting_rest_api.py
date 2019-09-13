@@ -6,6 +6,46 @@ from flask import Response
 from test_util import AppTestCase
 
 
+class TestGetSighting(AppTestCase):
+
+  def test_get_sighting_when_ok(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password(1, 'myPassword')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
+    token = self.get_authentication_token('hulot', 'myPassword')
+    headers = {'authToken': token}
+
+    response = self.client.get('/v2/sighting/1', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'result': {
+        'sightingId': 1,
+        'personId': 1,
+        'birdId': 1,
+        'date': '2019-08-28',
+        'time': '11:52:00'
+      },
+    })
+
+  def test_get_sighting_when_not_authorized(self):
+    self.db_insert_person(1)
+    self.db_insert_person(2)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_account(2, 'dude', 'dude@mail.com', 2, None)
+    self.db_insert_password(1, 'myPassword')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
+    token = self.get_authentication_token('hulot', 'myPassword')
+    headers = {'authToken': token}
+
+    response = self.client.get('/v2/sighting/2', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
 class TestGetSightings(AppTestCase):
 
   def test_get_own_sightings_with_valid_auth_token(self):

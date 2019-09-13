@@ -4,7 +4,7 @@ from typing import Optional, List
 from flask import Blueprint, Response, make_response, jsonify, request
 
 from .bird import BirdRepository
-from .sighting import SightingRepository, SightingPost
+from .sighting import SightingRepository, SightingPost, Sighting
 from .time import parse_date
 from .time import parse_time
 from .account import AccountRepository, Account
@@ -30,6 +30,15 @@ def create_sighting_rest_api_blueprint(
     else:
       return failure_response()
 
+  @blueprint.route('/sighting/<int:sighting_id>')
+  def get_sighting(sighting_id: int) -> Response:
+    sighting = sighting_repository.find_sighting(sighting_id)
+    account = get_authorized_account(request.headers.get('authToken'))
+    if sighting and sighting.person_id == account.person_id:
+      return sighting_response(sighting)
+    else:
+      return get_sighting_failure_response()
+
   @blueprint.route('/sighting', methods=['POST'])
   def post_sighting() -> Response:
     account = get_authorized_account(request.headers.get('authToken'))
@@ -50,6 +59,17 @@ def create_sighting_rest_api_blueprint(
       return None
     account_id = decode_result.payload['sub']
     return account_repository.find_account_by_id(account_id)
+
+  def convert_sighting(sighting: Sighting) -> dict:
+    result = {
+      'sightingId': sighting.id,
+      'personId': sighting.person_id,
+      'birdId': sighting.bird_id,
+      'date': sighting.sighting_date.isoformat(),
+    }
+    if sighting.sighting_time:
+      result['time'] = sighting.sighting_time.isoformat()
+    return result
 
   def convert_sighting_item(item: SightingItem, person_id: int) -> dict:
     result = {
@@ -85,10 +105,22 @@ def create_sighting_rest_api_blueprint(
       },
     }), HTTPStatus.OK)
 
+  def sighting_response(sighting: Sighting) -> Response:
+    return make_response(jsonify({
+      'status': 'success',
+      'result': convert_sighting(sighting),
+    }), HTTPStatus.OK)
+
   def failure_response() -> Response:
     return make_response(jsonify({
       'status': 'failure',
       'message': 'You are not authorized to get these sightings'
+    }), HTTPStatus.UNAUTHORIZED)
+
+  def get_sighting_failure_response() -> Response:
+    return make_response(jsonify({
+      'status': 'failure',
+      'message': 'You are not authorized to get this sighting'
     }), HTTPStatus.UNAUTHORIZED)
 
   def post_sighting_success_response() -> Response:
