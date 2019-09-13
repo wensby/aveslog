@@ -2,6 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
+from typing import Optional
 
 from birding.database import Database
 
@@ -165,7 +166,8 @@ class AccountRepository:
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def find_account_registration_by_token(self, token):
+  def find_account_registration_by_token(
+        self, token: str) -> Optional[AccountRegistration]:
     query = ('SELECT id, email, token '
              'FROM user_account_registration '
              'WHERE token LIKE %s;')

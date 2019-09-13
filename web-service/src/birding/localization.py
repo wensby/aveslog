@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional
 
 from birding.database import Database
 from .bird import Bird
@@ -121,7 +122,7 @@ class LocaleRepository:
                                    (id,))
       return self.find_locale_by_code(result.rows[0][0])
 
-  def find_locale_by_code(self, code) -> Locale:
+  def find_locale_by_code(self, code: str) -> Optional[Locale]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'SELECT id, code FROM locale WHERE code LIKE %s;', (code,),

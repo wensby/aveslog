@@ -1,11 +1,15 @@
 import os
 from base64 import b64encode
 from datetime import timedelta
+from typing import Union, Optional
 
 import jwt
 
+from .localization import LoadedLocale
 from .mail import EmailAddress
 from .account import Username, AccountFactory
+from .account import Account
+from .account import AccountRegistration
 from .account import Password
 
 
@@ -22,7 +26,7 @@ class Authenticator:
       expected_hash = hashed_password.salted_hash
       return self.hasher.hash_password(password, salt) == expected_hash
 
-  def get_authenticated_user_account(self, credentials):
+  def get_authenticated_user_account(self, credentials) -> Optional[Account]:
     password = credentials.password
     account = self.account_repository.find_user_account(credentials.username)
     if account and self.is_account_password_correct(account, password):
@@ -39,7 +43,11 @@ class AccountRegistrationController:
     self.link_factory = link_factory
     self.person_repository = person_repository
 
-  def initiate_registration(self, raw_email, locale, is_rest=False):
+  def initiate_registration(
+        self,
+        raw_email: str,
+        locale: LoadedLocale,
+        is_rest: bool = False) -> Union[AccountRegistration, str]:
     if not EmailAddress.is_valid(raw_email):
       return 'email invalid'
     email = EmailAddress(raw_email)
@@ -66,8 +74,12 @@ class AccountRegistrationController:
       'Here is your link to the registration form: ')
     return locale.text(message) + link
 
-  def perform_registration(self, raw_email, registration_token, raw_username,
-        raw_password):
+  def perform_registration(
+        self,
+        raw_email: str,
+        registration_token: str,
+        raw_username: str,
+        raw_password: str) -> str:
     email = EmailAddress(raw_email)
     registration = self.__find_associated_registration(email,
                                                        registration_token)
@@ -102,7 +114,11 @@ class PasswordResetController:
     self.link_factory = link_factory
     self.mail_dispatcher = mail_dispatcher
 
-  def initiate_password_reset(self, raw_email, locale, is_rest=False):
+  def initiate_password_reset(
+        self,
+        raw_email: str,
+        locale: LoadedLocale,
+        is_rest: bool = False) -> bool:
     email = EmailAddress(raw_email)
     account = self.account_repository.find_account_by_email(email)
     if not account:
@@ -126,7 +142,7 @@ class PasswordResetController:
       'Please follow this link to get to your password reset form: ')
     return locale.text(message) + link
 
-  def perform_password_reset(self, token, password):
+  def perform_password_reset(self, token: str, password: str) -> Optional[str]:
     account_id = self.password_repository.find_password_reset_account_id(token)
     if account_id:
       self.password_repository.update_password(account_id, Password(password))
