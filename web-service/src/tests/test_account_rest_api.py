@@ -54,6 +54,7 @@ class TestAccount(AppTestCase):
     data = json.loads(response.data.decode('utf-8'))
     self.assertEqual(data['status'], 'success')
     self.assertEqual(data['account']['username'], 'hulot')
+    self.assertEqual(data['account']['personId'], 1)
 
   def get_account(self, headers=None):
     return self.client.get('/v2/account/me', headers=headers)
