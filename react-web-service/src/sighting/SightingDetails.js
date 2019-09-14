@@ -29,9 +29,12 @@ export default function SightingDetails(props) {
   if (!sighting || !bird) {
     return null;
   }
+
+  const name = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
+
   return (
     <div className='container'>
-      <h1>{ t(`bird:${bird.binomialName}`) }</h1>
+    <h1>{ name }</h1>
       <form onSubmit={() => {}}>
         <button type='submit' value='Delete' className='btn btn-danger'>
           {t('delete-sighting-button')}
