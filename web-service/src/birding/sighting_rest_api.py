@@ -17,8 +17,7 @@ def create_sighting_rest_api_blueprint(
       account_repository: AccountRepository,
       sighting_view_factory: SightingViewFactory,
       sighting_repository: SightingRepository,
-      bird_repository: BirdRepository,
-) -> Blueprint:
+      bird_repository: BirdRepository) -> Blueprint:
   blueprint = Blueprint('v2sighting', __name__, url_prefix='/v2')
 
   @blueprint.route('/profile/<string:username>/sighting')
@@ -86,8 +85,9 @@ def create_sighting_rest_api_blueprint(
     return result
 
   def get_sightings(account: Account) -> List[dict]:
-    return list(map(lambda item: convert_sighting_item(item, account.person_id),
-                    sighting_view_factory.create_sighting_items(account)))
+    items = sighting_view_factory.create_sighting_items(account)
+    to_dict = lambda item: convert_sighting_item(item, account.person_id)
+    return list(map(to_dict, items))
 
   def create_sighting_post(post_data: dict) -> SightingPost:
     binomial_name = post_data['bird']['binomialName']
