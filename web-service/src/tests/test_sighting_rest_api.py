@@ -46,6 +46,7 @@ class TestGetSighting(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
+
 class TestGetSightings(AppTestCase):
 
   def test_get_own_sightings_with_valid_auth_token(self):
