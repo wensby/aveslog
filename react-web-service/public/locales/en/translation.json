@@ -49,5 +49,6 @@
   "time-label": "Time",
   "submit-sighting-button": "Add",
   "cancel-new-sighting-link": "Cancel",
+  "delete-sighting-button": "Delete",
   "Logout": "Logout"
 }
