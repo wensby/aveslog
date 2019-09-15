@@ -5,14 +5,20 @@ import SightingItem from './SightingItem';
 
 export default () => {
   const [sightings, setSightings] = useState([]);
-  const { account, token } = useContext(AuthenticationContext);
+  const { account, token, unauthenticate } = useContext(AuthenticationContext);
   const sightingService = new SightingService();
 
   const fetchSightings = async () => {
     const username = account.username;
     const response = await sightingService.fetchSightings(username, token);
-    if (response.status == 'success') {
-      setSightings(response.result.sightings);
+    if (response.status == 401) {
+      unauthenticate();
+    }
+    else {
+      const content = await response.json();
+      if (content.status == 'success') {
+        setSightings(content.result.sightings);
+      }
     }
   }
 

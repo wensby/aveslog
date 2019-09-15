@@ -5,13 +5,11 @@ export default class SightingService {
   }
 
   async fetchSightings(username, authToken) {
-    const url = `${this.apiUrl}/v2/profile/${username}/sighting`;
-    const response = await fetch(url, {
+    return await fetch(`${this.apiUrl}/v2/profile/${username}/sighting`, {
       'headers': {
         'authToken': authToken,
       },
     });
-    return await response.json();
   }
 
   async fetchSighting(authToken, sightingId) {

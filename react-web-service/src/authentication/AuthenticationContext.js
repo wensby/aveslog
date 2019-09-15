@@ -36,7 +36,7 @@ function AuthenticationProvider(props) {
 
   useEffect(() => {
     resolveLocalStorageToken();
-  });
+  }, []);
   
   const onAuthenticated = async token => {
     setToken(token);
@@ -47,10 +47,10 @@ function AuthenticationProvider(props) {
   }
 
   const unauthenticate = () => {
+    localStorage.removeItem('authenticationToken');
     setToken(null);
     setAuthenticated(false);
     setAccount(false);
-    localStorage.removeItem('authenticationToken');
   }
 
   if (resolvingLocalStorage) {
