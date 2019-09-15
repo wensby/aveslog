@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository';
 import SightingService from './SightingService';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { useReactRouter } from '../reactRouterHook';
 
 export default function SightingDetails(props) {
   const sightingId = props.match.params.sightingId;
@@ -11,6 +12,7 @@ export default function SightingDetails(props) {
   const { token } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const sightingService = new SightingService();
+  const { history } = useReactRouter();
 
   const resolveData = async () => {
     const response = await sightingService.fetchSighting(token, sightingId);
@@ -30,15 +32,21 @@ export default function SightingDetails(props) {
     return null;
   }
 
+  const handleDelete = async () => {
+    const deleted = await sightingService.deleteSighting(token, sightingId);
+    if (deleted) {
+      history.push('/sighting');
+    }
+  };
+
   const name = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
 
   return (
     <div className='container'>
-    <h1>{ name }</h1>
-      <form onSubmit={() => {}}>
-        <button type='submit' value='Delete' className='btn btn-danger'>
-          {t('delete-sighting-button')}
-        </button>
+      <h1>{name}</h1>
+      <form onSubmit={event => { event.preventDefault(); }}>
+        <button onClick={handleDelete} value='Delete'
+          className='btn btn-danger'>{t('delete-sighting-button')}</button>
       </form>
     </div>
   );

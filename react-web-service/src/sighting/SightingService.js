@@ -44,4 +44,14 @@ export default class SightingService {
     });
     return await response.json();
   }
+
+  async deleteSighting(authToken, sightingId) {
+    const response = await fetch(`${this.apiUrl}/v2/sighting/${sightingId}`, {
+      method: 'DELETE',
+      headers: {
+        'authToken': authToken,
+      },
+    });
+    return response.status == 204;
+  }
 }
