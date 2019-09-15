@@ -8,20 +8,30 @@ function AuthenticationProvider(props) {
   const [authenticated, setAuthenticated] = useState(false);
   const [account, setAccount] = useState(null);
   const [token, setToken] = useState(null);
+  const [resolvingLocalStorage, setResolvingLocalStorage] = useState(true);
 
   const resolveLocalStorageToken = async () => {
     const localStorageToken = localStorage.getItem('authenticationToken');
     if (authenticated && !localStorageToken) {
       setToken(null);
       setAuthenticated(false);
-      setAccount(false);
+      setAccount(null);
     }
     else if (!authenticated && localStorageToken) {
-      setToken(localStorageToken);
-      setAuthenticated(true);
       const account = await accountService.fetchAccount(localStorageToken);
-      setAccount(account);
+      if (account) {
+        setToken(localStorageToken);
+        setAuthenticated(true);
+        setAccount(account);
+      }
+      else {
+        setToken(null);
+        setAuthenticated(false);
+        setAccount(null);
+        localStorage.removeItem('authenticationToken');
+      }
     }
+    setResolvingLocalStorage(false);
   }
 
   useEffect(() => {
@@ -43,6 +53,9 @@ function AuthenticationProvider(props) {
     localStorage.removeItem('authenticationToken');
   }
 
+  if (resolvingLocalStorage) {
+    return null;
+  }
   return (
     <AuthenticationContext.Provider value={{
       authenticated: authenticated,
