@@ -167,3 +167,45 @@ class TestAddSighting(AppTestCase):
       },
       json=data,
     )
+
+
+class TestDeleteSighting(AppTestCase):
+
+  def test_delete_sighting_when_ok(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_person(1)
+    self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password(1, 'myPassword')
+    authentication_token = self.get_authentication_token('hulot', 'myPassword')
+
+    response = self.delete_sighting(authentication_token, 1)
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+  def test_delete_sighting_when_not_exist(self):
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password(1, 'myPassword')
+    authentication_token = self.get_authentication_token('hulot', 'myPassword')
+
+    response = self.delete_sighting(authentication_token, 1)
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+  def test_delete_sighting_when_not_authorized(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_person(1)
+    self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+
+    response = self.delete_sighting('notOkToken', 1)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def delete_sighting(self,
+        authentication_token: str,
+        sighting_id: int) -> Response:
+    resource = f'/v2/sighting/{sighting_id}'
+    headers = {'authToken': authentication_token}
+    return self.client.delete(resource, headers=headers)

@@ -38,6 +38,17 @@ def create_sighting_rest_api_blueprint(
     else:
       return get_sighting_failure_response()
 
+  @blueprint.route('/sighting/<int:sighting_id>', methods=['DELETE'])
+  def delete_sighting(sighting_id: int) -> Response:
+    sighting = sighting_repository.find_sighting(sighting_id)
+    if not sighting:
+      return sighting_deleted_response()
+    account = get_authorized_account(request.headers.get('authToken'))
+    if not account or sighting.person_id != account.person_id:
+      return sighting_delete_unauthorized_response()
+    sighting_repository.delete_sighting(sighting_id)
+    return sighting_deleted_response()
+
   @blueprint.route('/sighting', methods=['POST'])
   def post_sighting() -> Response:
     account = get_authorized_account(request.headers.get('authToken'))
@@ -122,6 +133,12 @@ def create_sighting_rest_api_blueprint(
       'status': 'failure',
       'message': 'You are not authorized to get this sighting'
     }), HTTPStatus.UNAUTHORIZED)
+
+  def sighting_deleted_response() -> Response:
+    return make_response('', HTTPStatus.NO_CONTENT)
+
+  def sighting_delete_unauthorized_response() -> Response:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
 
   def post_sighting_success_response() -> Response:
     return make_response(jsonify({
