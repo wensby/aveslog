@@ -1,5 +1,3 @@
-from flask import url_for
-
 class LinkFactory:
 
   def __init__(self, external_host, frontend_host):
@@ -8,9 +6,6 @@ class LinkFactory:
 
   def create_url_external_link(self, url):
     return f'{self.external_host}{url}'
-
-  def create_endpoint_external_link(self, endpoint, **values):
-    return self.create_url_external_link(url_for(endpoint, **values))
 
   def create_frontend_link(self, link):
     return f'{self.frontend_host}{link}'

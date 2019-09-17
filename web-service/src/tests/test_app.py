@@ -3,7 +3,6 @@ import shutil
 from unittest import TestCase
 
 import birding
-from test_util import AppTestCase
 
 
 class TestAppCreation(TestCase):
@@ -69,13 +68,3 @@ class TestAppCreation(TestCase):
   def tearDown(self) -> None:
     if 'FRONTEND_HOST' in os.environ:
       del os.environ['FRONTEND_HOST']
-
-class TestGeneralFunctionality(AppTestCase):
-
-  def test_saves_locales_misses_after_request(self):
-    self.db_insert_locale(1, 'xx')
-    headers = {'Accept-Language': 'xx'}
-
-    self.client.get('/', headers=headers)
-
-    self.assertFileExist('test-logs/locales-misses/xx.txt')

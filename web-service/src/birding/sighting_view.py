@@ -38,22 +38,10 @@ class SightingViewFactory:
     time = format_date_time(row[3], row[4])
     return SightingItem(row[0], row[1], row[2], time, row[5])
 
-  def create_sighting_view(self, sighting):
-    bird = self.bird_repository.get_bird_by_id(sighting.bird_id)
-    if bird:
-      return SightingView(sighting, bird)
-
   def create_sighting_creation_view(self, birdid=None):
     bird = self.bird_repository.get_bird_by_id(birdid)
     if bird:
       return SightingCreationView(bird)
-
-
-class SightingView:
-
-  def __init__(self, sighting, bird):
-    self.sighting = sighting
-    self.bird = bird
 
 
 class SightingCreationView:

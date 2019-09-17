@@ -2,8 +2,7 @@ import datetime
 import logging
 import os
 
-from flask import Flask, session
-from flask import g
+from flask import Flask
 from flask import request
 from flask_cors import CORS
 
@@ -18,15 +17,11 @@ from .authentication import AuthenticationTokenFactory
 from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
-from .authentication_blueprint import create_authentication_blueprint
 from .authentication_rest_api import create_authentication_rest_api_blueprint
 from .bird_rest_api import create_bird_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
-from .bird_blueprint import create_bird_blueprint
-from .blueprint_home import create_home_blueprint
-from .profile_blueprint import create_profile_blueprint
 from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory, \
@@ -39,10 +34,8 @@ from .picture import PictureRepository
 from .search import BirdSearchController
 from .search import BirdSearcher
 from .search import StringMatcher
-from .search_view import BirdSearchViewFactory
-from .settings_blueprint import create_settings_blueprint, update_locale_context
+from .settings_blueprint import update_locale_context
 from .sighting import SightingRepository
-from .sighting_blueprint import create_sighting_blueprint
 from .sighting_view import SightingViewFactory
 
 
@@ -77,8 +70,6 @@ def create_app(test_config=None):
     bird_repository, locale_repository, string_matcher, locale_loader)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
-  bird_search_view_factory = BirdSearchViewFactory(picture_repository,
-                                                   bird_repository)
   sighting_view_factory = SightingViewFactory(bird_repository, database)
   link_factory = LinkFactory(
     os.environ['EXTERNAL_HOST'],
@@ -100,13 +91,6 @@ def create_app(test_config=None):
   authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
 
   # Create and register blueprints
-  home_blueprint = create_home_blueprint()
-  authentication_blueprint = create_authentication_blueprint(
-    account_repository,
-    authenticator,
-    account_registration_controller,
-    password_reset_controller,
-  )
   v2_authentication_blueprint = create_authentication_rest_api_blueprint(
     account_repository,
     authenticator,
@@ -118,19 +102,6 @@ def create_app(test_config=None):
   )
   account_rest_api = create_account_rest_api_blueprint(
     authentication_token_decoder, account_repository)
-  sighting_blueprint = create_sighting_blueprint(sighting_repository,
-                                                 sighting_view_factory)
-  profile_blueprint = create_profile_blueprint(
-    account_repository, sighting_repository)
-  settings_blueprint = create_settings_blueprint(authenticator,
-                                                 password_repository,
-                                                 locale_repository,
-                                                 account_repository,
-                                                 locale_loader,
-                                                 user_locale_cookie_key)
-  bird_blueprint = create_bird_blueprint(bird_view_factory,
-                                         bird_search_controller,
-                                         bird_search_view_factory)
   bird_rest_api = create_bird_rest_api_blueprint(
     bird_search_controller,
     bird_repository,
@@ -147,19 +118,11 @@ def create_app(test_config=None):
   )
   app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
-  app.register_blueprint(home_blueprint)
-  app.register_blueprint(authentication_blueprint)
-  app.register_blueprint(sighting_blueprint)
-  app.register_blueprint(profile_blueprint)
-  app.register_blueprint(settings_blueprint)
-  app.register_blueprint(bird_blueprint)
   app.register_blueprint(v2_authentication_blueprint)
   app.register_blueprint(account_rest_api)
 
   @app.before_request
   def before_request():
-    load_logged_in_account()
-    init_render_context()
     detect_user_locale()
 
   @app.after_request
@@ -167,38 +130,17 @@ def create_app(test_config=None):
     locales_misses_logger.log_misses()
     return response
 
-  def load_logged_in_account():
-    account_id = session.get('account_id')
-    if account_id:
-      g.logged_in_account = account_repository.find_account_by_id(account_id)
-    else:
-      g.logged_in_account = None
-
-  def init_render_context():
-    g.render_context = dict()
-
   def detect_user_locale():
-    if g.logged_in_account:
-      if g.logged_in_account.locale_id:
-        locale = locale_repository.find_locale_by_id(
-          g.logged_in_account.locale_id)
-        loaded_locale = locale_loader.load_locale(locale)
-        update_locale_context(user_locale_cookie_key, loaded_locale)
-      else:
-        update_locale_context(
-          user_locale_cookie_key,
-          LoadedLocale(Locale(None, None), None, None, None))
+    locale_determiner = locale_determiner_factory.create_locale_determiner()
+    locale_code = locale_determiner.determine_locale_from_request(request)
+    if locale_code:
+      locale = locale_repository.find_locale_by_code(locale_code)
+      loaded_locale = locale_loader.load_locale(locale)
+      update_locale_context(user_locale_cookie_key, loaded_locale)
     else:
-      locale_determiner = locale_determiner_factory.create_locale_determiner()
-      locale_code = locale_determiner.determine_locale_from_request(request)
-      if locale_code:
-        locale = locale_repository.find_locale_by_code(locale_code)
-        loaded_locale = locale_loader.load_locale(locale)
-        update_locale_context(user_locale_cookie_key, loaded_locale)
-      else:
-        update_locale_context(
-          user_locale_cookie_key,
-          LoadedLocale(Locale(None, None), None, None, None))
+      update_locale_context(
+        user_locale_cookie_key,
+        LoadedLocale(Locale(None, None), None, None, None))
 
   app.logger.info('Flask app constructed')
   return app

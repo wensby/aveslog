@@ -93,7 +93,7 @@ def create_authentication_rest_api_blueprint(
 
   def initiate_registration(email: str) -> Union[AccountRegistration, str]:
     locale = load_english_locale()
-    return registration_controller.initiate_registration(email, locale, True)
+    return registration_controller.initiate_registration(email, locale)
 
   def email_taken_response() -> Response:
     return make_response(jsonify({
@@ -172,7 +172,7 @@ def create_authentication_rest_api_blueprint(
   def initiate_password_reset(email: str) -> bool:
     locale = load_english_locale()
     return password_reset_controller.initiate_password_reset(
-      email, locale, is_rest=True)
+      email, locale)
 
   def password_reset_creation_failure_response() -> Response:
     return make_response(jsonify({

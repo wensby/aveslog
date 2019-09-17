@@ -46,24 +46,19 @@ class AccountRegistrationController:
   def initiate_registration(
         self,
         raw_email: str,
-        locale: LoadedLocale,
-        is_rest: bool = False) -> Union[AccountRegistration, str]:
+        locale: LoadedLocale) -> Union[AccountRegistration, str]:
     if not EmailAddress.is_valid(raw_email):
       return 'email invalid'
     email = EmailAddress(raw_email)
     if self.account_repository.find_account_by_email(email):
       return 'email taken'
     registration = self.account_repository.create_account_registration(email)
-    self.__send_registration_email(email, registration, locale, is_rest)
+    self.__send_registration_email(email, registration, locale)
     return registration
 
-  def __send_registration_email(self, email_address, registration, locale, is_rest):
+  def __send_registration_email(self, email_address, registration, locale):
     token = registration.token
-    if is_rest:
-      link = self.link_factory.create_frontend_link(f'/authentication/registration/{token}')
-    else:
-      link = self.link_factory.create_endpoint_external_link(
-        'authentication.get_register_form', token=token)
+    link = self.link_factory.create_frontend_link(f'/authentication/registration/{token}')
     message = self.create_registration_mail_message(link, locale)
     self.mail_dispatcher.dispatch(email_address, 'Birding Registration',
                                   message)
@@ -117,8 +112,7 @@ class PasswordResetController:
   def initiate_password_reset(
         self,
         raw_email: str,
-        locale: LoadedLocale,
-        is_rest: bool = False) -> bool:
+        locale: LoadedLocale) -> bool:
     email = EmailAddress(raw_email)
     account = self.account_repository.find_account_by_email(email)
     if not account:
@@ -126,12 +120,8 @@ class PasswordResetController:
     password_reset_token = self.password_repository.create_password_reset_token(
       account)
     token = password_reset_token.token
-    if is_rest:
-      link = self.link_factory.create_frontend_link(
-        f'/authentication/password-reset/{token}')
-    else:
-      link = self.link_factory.create_endpoint_external_link(
-        'authentication.get_password_reset_form', token=token)
+    link = self.link_factory.create_frontend_link(
+      f'/authentication/password-reset/{token}')
     message = self.__create_mail_message(link, locale)
     self.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
     return True

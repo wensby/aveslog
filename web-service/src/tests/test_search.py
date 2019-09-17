@@ -1,4 +1,3 @@
-import unittest
 from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
