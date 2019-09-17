@@ -201,11 +201,6 @@ class AccountRepository:
              'WHERE id = %s;')
     self.database.query(query, (person.id, account.id))
 
-  def set_account_locale(self, account_id, locale):
-    with self.database.transaction() as transaction:
-      transaction.execute(
-        'UPDATE user_account SET locale_id = %s WHERE id = %s;',
-        (locale.id, account_id))
 
 class PasswordHasher:
 
