@@ -57,7 +57,6 @@ def create_authentication_rest_api_blueprint(
       return registration_success_response()
     elif response == 'username taken':
       return username_taken_response()
-    raise Exception(f'Unknown registration result {response}')
 
   @blueprint.route('/token')
   def get_token() -> Response:
