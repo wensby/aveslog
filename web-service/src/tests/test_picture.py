@@ -14,3 +14,6 @@ class TestPicture(TestCase):
 
   def test_eq_false_when_other_type(self):
     self.assertNotEqual(Picture(4, 'a', 'b'), 'Picture(4, a, b)')
+
+  def test_repr(self) -> None:
+    self.assertEqual(repr(Picture(1, 'a', 'b')), 'Picture(1, a, b)')
