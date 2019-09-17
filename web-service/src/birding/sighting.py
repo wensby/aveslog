@@ -1,6 +1,3 @@
-from birding.account import Account
-
-
 class Sighting:
 
   def __init__(self, id, person_id, bird_id, sighting_date, sighting_time):
@@ -56,13 +53,6 @@ class SightingRepository:
     )
     result = self.database.query(query, args)
     return 'INSERT 0 1' in result.status
-
-  def get_life_list_count(self, account: Account):
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT COUNT(DISTINCT bird_id) FROM sighting WHERE person_id = %s;',
-        (account.person_id,))
-      return result.rows[0][0]
 
 
 class SightingPost:
