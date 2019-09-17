@@ -35,16 +35,17 @@ class TestAccountRegistrationController(TestCase):
         self.person_repository,
     )
 
-  def test_initiate_registration_when_invalid_email(self):
-    result = self.controller.initiate_registration('invalid@email', None)
+  def test_initiate_registration_when_invalid_email(self) -> None:
+    result = self.controller.initiate_registration('invalid@email', Mock())
     self.assertEqual(result, 'email invalid')
 
   def test_initiate_registration_when_invalid_but_taken_email(self):
-    result = self.controller.initiate_registration('taken@gmail.com', None)
+    result = self.controller.initiate_registration('taken@gmail.com', Mock())
     self.assertEqual(result, 'email taken')
 
   def test_initiate_registration_creates_correct_registration_link_when_valid_email_and_rest_api(self):
-    locale = Simple(text=mock_return('translated'))
+    locale = Mock()
+    locale.text.return_value='translated'
     self.account_repository.create_account_registration().token = 'myToken'
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None

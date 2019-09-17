@@ -31,7 +31,7 @@ class TestLogin(AppTestCase):
     })
 
   def get_authentication_token(self, username: str, password: str) -> Response:
-    resource = '/v2/authentication/token'
+    resource = '/authentication/token'
     query = f'username={username}&password={password}'
     return self.client.get(f'{resource}?{query}')
 
@@ -86,10 +86,10 @@ class TestPasswordReset(AppTestCase):
 
   def post_password_reset_email(self, email: str) -> Response:
     json = {'email': email}
-    return self.client.post('/v2/authentication/password-reset', json=json)
+    return self.client.post('/authentication/password-reset', json=json)
 
   def post_password_reset(self, token: str, password: str) -> Response:
-    resource = f'/v2/authentication/password-reset/{token}'
+    resource = f'/authentication/password-reset/{token}'
     return self.client.post(resource, json={'password': password})
 
 
@@ -174,16 +174,16 @@ class TestRegistration(AppTestCase):
     })
 
   def post_registration_email(self, email: str) -> Response:
-    resource = '/v2/authentication/registration'
+    resource = '/authentication/registration'
     return self.client.post(resource, json={'email': email})
 
   def get_registration(self, token: str) -> Response:
-    return self.client.get(f'/v2/authentication/registration/{token}')
+    return self.client.get(f'/authentication/registration/{token}')
 
   def post_registration(self,
         token: str,
         username: str,
         password: str) -> Response:
-    resource = f'/v2/authentication/registration/{token}'
+    resource = f'/authentication/registration/{token}'
     json = {'username': username, 'password': password}
     return self.client.post(resource, json=json)

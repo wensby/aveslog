@@ -17,7 +17,7 @@ class TestGetSighting(AppTestCase):
     token = self.get_authentication_token('hulot', 'myPassword')
     headers = {'authToken': token}
 
-    response = self.client.get('/v2/sighting/1', headers=headers)
+    response = self.client.get('/sighting/1', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -42,7 +42,7 @@ class TestGetSighting(AppTestCase):
     token = self.get_authentication_token('hulot', 'myPassword')
     headers = {'authToken': token}
 
-    response = self.client.get('/v2/sighting/2', headers=headers)
+    response = self.client.get('/sighting/2', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
@@ -61,7 +61,7 @@ class TestGetSightings(AppTestCase):
     token = self.get_authentication_token('hulot', 'myPassword')
     headers = {'authToken': token}
 
-    response = self.client.get('/v2/profile/hulot/sighting', headers=headers)
+    response = self.client.get('/profile/hulot/sighting', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -86,7 +86,7 @@ class TestGetSightings(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
 
-    response = self.client.get('/v2/profile/hulot/sighting')
+    response = self.client.get('/profile/hulot/sighting')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -97,7 +97,7 @@ class TestGetSightings(AppTestCase):
   def test_get_sightings_when_auth_token_invalid(self):
     headers = {'authToken': 'i-am-not-a-valid-jwt-token'}
 
-    response = self.client.get('/v2/profile/hulot/sighting', headers=headers)
+    response = self.client.get('/profile/hulot/sighting', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -161,7 +161,7 @@ class TestAddSighting(AppTestCase):
     if time:
       data['time'] = time
     return self.client.post(
-      '/v2/sighting',
+      '/sighting',
       headers={
         'authToken': token,
       },
@@ -206,6 +206,6 @@ class TestDeleteSighting(AppTestCase):
   def delete_sighting(self,
         authentication_token: str,
         sighting_id: int) -> Response:
-    resource = f'/v2/sighting/{sighting_id}'
+    resource = f'/sighting/{sighting_id}'
     headers = {'authToken': authentication_token}
     return self.client.delete(resource, headers=headers)

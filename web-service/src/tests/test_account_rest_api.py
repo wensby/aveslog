@@ -57,4 +57,4 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['account']['personId'], 1)
 
   def get_account(self, headers=None):
-    return self.client.get('/v2/account/me', headers=headers)
+    return self.client.get('/account/me', headers=headers)
