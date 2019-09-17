@@ -1,4 +1,5 @@
 import os
+import abc
 from flask_mail import Mail, Message
 from distutils.util import strtobool
 import re
@@ -25,12 +26,19 @@ class EmailAddress:
   def __repr__(self):
     return (f'EmailAddress<{self.raw}>')
 
+class MailDispatcher(abc.ABC):
+
+  @abc.abstractmethod
+  def dispatch(self, recipient, subject, body):
+    pass
+
+
 class MailDispatcherFactory:
 
   def __init__(self, app):
     self.app = app
 
-  def create_dispatcher(self):
+  def create_dispatcher(self) -> MailDispatcher:
     if 'MAIL_SERVER' in os.environ:
       server = os.environ['MAIL_SERVER']
       port = os.environ['MAIL_PORT']
@@ -42,7 +50,7 @@ class MailDispatcherFactory:
     else:
       return MailDebugDispatcher(self.app)
 
-class MailDebugDispatcher:
+class MailDebugDispatcher(MailDispatcher):
 
   def __init__(self, app):
     self.app = app
@@ -50,7 +58,7 @@ class MailDebugDispatcher:
   def dispatch(self, recipient, subject, body):
     self.app.logger.info('dispatching mail to %s: %s - %s', recipient.raw, subject, body)
 
-class MailServerDispatcher:
+class MailServerDispatcher(MailDispatcher):
 
   def __init__(self, app, server, port, username, password, use_tls, use_ssl):
     self.sender = username
