@@ -1,11 +1,15 @@
 import os
 import shutil
 import tempfile
+from typing import Set
 from unittest import TestCase
 from unittest.mock import Mock
 
 from birding.localization import Locale, LocaleDeterminer, LoadedLocale
+from birding.localization import LocaleRepository
+from birding.localization import LocaleLoader
 from birding.localization import LocalesMissesLogger
+from birding.database import Database
 
 
 class TestLocale(TestCase):
@@ -156,3 +160,37 @@ class TestLocaleDeterminer(TestCase):
     determiner = LocaleDeterminer('cookie-key', ['en', 'sv'])
     locale = determiner.determine_locale_from_request(self.request)
     self.assertEqual(locale, 'sv')
+
+
+class TestLocaleRepository(TestCase):
+
+  def setUp(self) -> None:
+    self.database = Mock(spec=Database)
+    self.loader = Mock(spec=LocaleLoader)
+    self.temp_dir = tempfile.mkdtemp()
+
+  def test_available_locale_codes_when_multiple(self) -> None:
+    codes = {'en', 'sv', 'ko'}
+    self.create_temporary_locale_directories(codes)
+    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
+
+    result = repository.available_locale_codes()
+
+    self.assertSetEqual(result, codes)
+
+  def test_available_locale_codes_when_none(self) -> None:
+    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
+    result = repository.available_locale_codes()
+    self.assertSetEqual(result, set())
+
+  def test_available_locale_codes_when_locales_directory_missing(self) -> None:
+    repository = LocaleRepository('missing_dir', self.loader, self.database)
+    result = repository.available_locale_codes()
+    self.assertSetEqual(result, set())
+
+  def create_temporary_locale_directories(self, codes: Set[str]) -> None:
+    for code in codes:
+      os.mkdir(os.path.join(self.temp_dir, code))
+
+  def tearDown(self) -> None:
+    shutil.rmtree(self.temp_dir)

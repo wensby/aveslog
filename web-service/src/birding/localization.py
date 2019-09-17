@@ -1,7 +1,7 @@
 from __future__ import annotations
 import json
 import os
-from typing import Optional, List, Union, Any
+from typing import Optional, List, Union, Any, Set
 from flask import Request
 from birding.database import Database
 from .bird import Bird
@@ -117,15 +117,20 @@ class LocaleRepository:
     self.locale_loader = locale_loader
     self.database = database
 
-  def available_locale_codes(self) -> List[str]:
-    def is_length_2(x: str) -> bool:
-      return len(x) == 2
+  def available_locale_codes(self) -> Set[str]:
+    is_length_2 = lambda x: len(x) == 2
+    return set(filter(is_length_2, self.__locales_directory_subdirectories()))
 
-    def locales_directory_subdirectories() -> filter:
-      path = self.locales_directory_path
-      return filter(lambda x: os.path.isdir(path + x), os.listdir(path))
+  def __locales_directory_subdirectories(self) -> List[str]:
+    path = self.locales_directory_path
+    is_dir = lambda x: os.path.isdir(os.path.join(path, x))
+    return list(filter(is_dir, self.__locales_directory_files()))
 
-    return list(filter(is_length_2, locales_directory_subdirectories()))
+  def __locales_directory_files(self) -> List[str]:
+    path = self.locales_directory_path
+    if not os.path.isdir(path):
+      return []
+    return os.listdir(path)
 
   def enabled_locale_codes(self) -> List[str]:
     with self.database.transaction() as transaction:
