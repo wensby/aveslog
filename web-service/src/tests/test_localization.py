@@ -64,6 +64,19 @@ class TestLoadedLocale(TestCase):
     self.assertIn('missing translation', locale_misses)
     self.assertIn('another one', locale_misses)
 
+  def test_bird_name(self):
+    bird_dictionary = {'Pica pica': 'Eurasian Magpie'}
+    locale = LoadedLocale(Locale(1, 'en'), None, bird_dictionary, None)
+
+    name = locale.name('Pica pica')
+
+    self.assertEqual(name, 'Eurasian Magpie')
+
+  def test_bird_name_when_missing(self):
+    locale = LoadedLocale(Locale(1, 'en'), None, None, None)
+    name = locale.name('Pica pica')
+    self.assertEqual(name, 'Pica pica')
+
 
 class TestLocalesMissesLogger(TestCase):
 
