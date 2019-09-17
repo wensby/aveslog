@@ -137,11 +137,11 @@ class LocaleRepository:
       result = transaction.execute('SELECT id, code FROM locale;')
       return list(map(lambda x: x[1], result.rows))
 
-  def find_locale_by_id(self, id: int) -> Locale:
+  def find_locale_by_id(self, id: int) -> Optional[Locale]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
-        'SELECT code FROM locale WHERE id = %s;', (id,))
-      return self.find_locale_by_code(result.rows[0][0])
+        'SELECT id, code FROM locale WHERE id = %s;', (id,), Locale.from_row)
+      return next(iter(result.rows), None)
 
   def find_locale_by_code(self, code: str) -> Optional[Locale]:
     with self.database.transaction() as transaction:

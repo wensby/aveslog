@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+from types import SimpleNamespace as Simple
 from typing import Set
 from unittest import TestCase
 from unittest.mock import Mock
@@ -10,6 +11,7 @@ from birding.localization import LocaleRepository
 from birding.localization import LocaleLoader
 from birding.localization import LocalesMissesLogger
 from birding.database import Database
+from test_util import mock_database_transaction
 
 
 class TestLocale(TestCase):
@@ -187,6 +189,19 @@ class TestLocaleRepository(TestCase):
     repository = LocaleRepository('missing_dir', self.loader, self.database)
     result = repository.available_locale_codes()
     self.assertSetEqual(result, set())
+
+  def test_find_locale_by_id_when_present(self) -> None:
+    locale = Locale(1, 'en')
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.return_value = Simple(rows=[locale])
+    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
+
+    result = repository.find_locale_by_id(1)
+
+    self.assertEqual(result, locale)
+    self.database.transaction().execute.assert_called_with(
+      'SELECT id, code FROM locale WHERE id = %s;',
+      (1,), Locale.from_row)
 
   def create_temporary_locale_directories(self, codes: Set[str]) -> None:
     for code in codes:
