@@ -56,7 +56,8 @@ class TestAccountRegistrationController(TestCase):
       '/authentication/registration/myToken')
 
   def test_initiate_registration_dispatches_registration_link_when_valid_free_email(self):
-    locale = Simple(text=mock_return('translated message: '))
+    locale = Mock()
+    locale.text.return_value = 'translated message: '
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
 
@@ -65,7 +66,8 @@ class TestAccountRegistrationController(TestCase):
     self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email), 'Birding Registration', 'translated message: myLink')
 
   def test_initiate_registration_returns_registration_when_success(self):
-    locale = Simple(text=mock_return('translated'))
+    locale = Mock()
+    locale.text.return_value = 'translated'
     registration = self.account_repository.create_account_registration()
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
@@ -121,7 +123,8 @@ class TestPasswordResetController(TestCase):
     )
 
   def test_initiate_password_reset_creates_token_when_account_present(self):
-    locale = Simple(text=mock_return('translated: '))
+    locale = Mock()
+    locale.text.return_value = 'translated: '
     account = Simple()
     self.link_factory.create_frontend_link = mock_return('myLink')
     self.account_repository.find_account_by_email = mock_return(account)
@@ -134,13 +137,14 @@ class TestPasswordResetController(TestCase):
   def test_initiate_password_reset_not_create_token_when_account_not_present(self):
     self.account_repository.find_account_by_email = mock_return(None)
 
-    self.controller.initiate_password_reset(valid_email, None)
+    self.controller.initiate_password_reset(valid_email, Mock())
 
     self.account_repository.find_account_by_email.assert_called_with(EmailAddress(valid_email))
     self.password_repository.create_password_reset_token.assert_not_called()
 
   def test_initiate_password_reset_dispatches_email_with_link(self):
-    locale = Simple(text=mock_return('translated: '))
+    locale = Mock()
+    locale.text.return_value = 'translated: '
     self.link_factory.create_frontend_link = mock_return('myLink')
 
     self.controller.initiate_password_reset(valid_email, locale)
@@ -148,7 +152,8 @@ class TestPasswordResetController(TestCase):
     self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email), 'Birding Password Reset', 'translated: myLink')
 
   def test_initiate_password_reset_creates_correct_frontend_link(self):
-    locale = Simple(text=mock_return('translated: '))
+    locale = Mock()
+    locale.text.return_value = 'translated: '
     password_reset_token = Simple(token='myToken')
     self.link_factory.create_frontend_link = mock_return('myLink')
     self.password_repository.create_password_reset_token = mock_return(password_reset_token)
