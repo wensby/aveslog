@@ -10,7 +10,7 @@ def create_account_rest_api_blueprint(
       token_decoder: AuthenticationTokenDecoder,
       account_repository: AccountRepository
 ) -> Blueprint:
-  blueprint = Blueprint('v2account', __name__, url_prefix='/v2/account')
+  blueprint = Blueprint('account', __name__, url_prefix='/account')
 
   @blueprint.route('/me')
   def get_me():

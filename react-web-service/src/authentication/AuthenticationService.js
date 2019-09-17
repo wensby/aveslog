@@ -5,7 +5,7 @@ export default class AuthenticationService {
   }
 
   async fetchAuthenticationToken(username, password) {
-    const url = `${this.apiUrl}/v2/authentication/token`;
+    const url = `${this.apiUrl}/authentication/token`;
     const parameters = `?username=${username}&password=${password}`;
     const response = await fetch(url + parameters);
     return await response.json();
@@ -13,7 +13,7 @@ export default class AuthenticationService {
 
   async postPasswordResetEmail(email) {
     const response = await fetch(
-      `${this.apiUrl}/v2/authentication/password-reset`,
+      `${this.apiUrl}/authentication/password-reset`,
       {
         method: 'POST',
         headers: {
@@ -29,7 +29,7 @@ export default class AuthenticationService {
 
   async postPasswordResetPassword(token, password) {
     const response = await fetch(
-      `${this.apiUrl}/v2/authentication/password-reset/${token}`,
+      `${this.apiUrl}/authentication/password-reset/${token}`,
       {
         method: 'POST',
         headers: {
@@ -44,7 +44,7 @@ export default class AuthenticationService {
   }
 
   async postRegistrationEmail(email) {
-    const url = `${this.apiUrl}/v2/authentication/registration`;
+    const url = `${this.apiUrl}/authentication/registration`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -59,7 +59,7 @@ export default class AuthenticationService {
 
   async fetchRegistration(token) {
     try {
-      const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
+      const url = `${this.apiUrl}/authentication/registration/${token}`;
       const response = await fetch(url);
       const json = await response.json();
       return json['result']['registration'];
@@ -71,7 +71,7 @@ export default class AuthenticationService {
 
   async postRegistration(token, [username, password]) {
     try {
-      const url = `${this.apiUrl}/v2/authentication/registration/${token}`;
+      const url = `${this.apiUrl}/authentication/registration/${token}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {

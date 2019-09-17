@@ -91,7 +91,7 @@ def create_app(test_config=None):
   authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
 
   # Create and register blueprints
-  v2_authentication_blueprint = create_authentication_rest_api_blueprint(
+  authentication_blueprint = create_authentication_rest_api_blueprint(
     account_repository,
     authenticator,
     password_reset_controller,
@@ -118,7 +118,7 @@ def create_app(test_config=None):
   )
   app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
-  app.register_blueprint(v2_authentication_blueprint)
+  app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
 
   @app.before_request
@@ -170,7 +170,7 @@ def configure_cross_origin_resource_sharing(app: Flask):
     raise Exception('FRONTEND_HOST not set in environment variables or config.')
   logging.getLogger('flask_cors').level = logging.DEBUG
   CORS(app, resources={
-    r'/v2/*': {
+    r'/*': {
       'supports_credentials': True,
       'origins': frontend_host
     }

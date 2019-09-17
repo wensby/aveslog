@@ -18,7 +18,7 @@ def create_sighting_rest_api_blueprint(
       sighting_view_factory: SightingViewFactory,
       sighting_repository: SightingRepository,
       bird_repository: BirdRepository) -> Blueprint:
-  blueprint = Blueprint('v2sighting', __name__, url_prefix='/v2')
+  blueprint = Blueprint('sighting', __name__)
 
   @blueprint.route('/profile/<string:username>/sighting')
   def get_profile_sightings(username: str) -> Response:

@@ -1,7 +1,7 @@
 export default class AccountService {
 
   async fetchAccount(authToken) {
-    const url = `${window._env_.API_URL}/v2/account/me`;
+    const url = `${window._env_.API_URL}/account/me`;
     const response = await fetch(url, {
       'headers': {
         'authToken': authToken

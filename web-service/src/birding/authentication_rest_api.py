@@ -25,8 +25,8 @@ def create_authentication_rest_api_blueprint(
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
       token_factory: AuthenticationTokenFactory) -> Blueprint:
-  blueprint_name = 'v2authentication'
-  url_prefix = '/v2/authentication'
+  blueprint_name = 'authentication'
+  url_prefix = '/authentication'
   blueprint = Blueprint(blueprint_name, __name__, url_prefix=url_prefix)
 
   @blueprint.route('/registration', methods=['POST'])

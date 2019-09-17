@@ -5,17 +5,17 @@ export default class BirdService {
   }
 
   async queryBirds(query) {
-    const response = await fetch(`${this.apiUrl}/v2/bird?q=${query}`);
+    const response = await fetch(`${this.apiUrl}/bird?q=${query}`);
     return await response.json();
   }
 
   async getBird(binomialName) {
-    const response = await fetch(`${this.apiUrl}/v2/bird/${binomialName}`);
+    const response = await fetch(`${this.apiUrl}/bird/${binomialName}`);
     return await response.json();
   }
 
   async fetchBirdById(id) {
-    const response = await fetch(`${this.apiUrl}/v2/bird/${id}`);
+    const response = await fetch(`${this.apiUrl}/bird/${id}`);
     return await response.json();
   }
 }

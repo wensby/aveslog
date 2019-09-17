@@ -17,8 +17,7 @@ def create_bird_rest_api_blueprint(
       link_factory: LinkFactory,
       bird_view_factory: BirdViewFactory,
 ) -> Blueprint:
-  blueprint = Blueprint('v2bird', __name__,
-                        url_prefix='/v2/bird')
+  blueprint = Blueprint('bird', __name__, url_prefix='/bird')
 
   def result_item(match):
     item = {

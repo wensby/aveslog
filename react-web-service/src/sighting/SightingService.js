@@ -5,7 +5,7 @@ export default class SightingService {
   }
 
   async fetchSightings(username, authToken) {
-    return await fetch(`${this.apiUrl}/v2/profile/${username}/sighting`, {
+    return await fetch(`${this.apiUrl}/profile/${username}/sighting`, {
       'headers': {
         'authToken': authToken,
       },
@@ -13,7 +13,7 @@ export default class SightingService {
   }
 
   async fetchSighting(authToken, sightingId) {
-    const url = `${this.apiUrl}/v2/sighting/${sightingId}`;
+    const url = `${this.apiUrl}/sighting/${sightingId}`;
     const response = await fetch(url, {
       'headers': {
         'authToken': authToken,
@@ -32,7 +32,7 @@ export default class SightingService {
       body['time'] = time;
     }
     const response = await fetch(
-      `${this.apiUrl}/v2/sighting`, {
+      `${this.apiUrl}/sighting`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export default class SightingService {
   }
 
   async deleteSighting(authToken, sightingId) {
-    const response = await fetch(`${this.apiUrl}/v2/sighting/${sightingId}`, {
+    const response = await fetch(`${this.apiUrl}/sighting/${sightingId}`, {
       method: 'DELETE',
       headers: {
         'authToken': authToken,
