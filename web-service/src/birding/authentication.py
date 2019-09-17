@@ -8,7 +8,6 @@ import jwt
 from .localization import LoadedLocale
 from .mail import EmailAddress
 from .account import Username, AccountFactory
-from .account import Account
 from .account import AccountRegistration
 from .account import Password
 
@@ -25,12 +24,6 @@ class Authenticator:
       salt = hashed_password.salt
       expected_hash = hashed_password.salted_hash
       return self.hasher.hash_password(password, salt) == expected_hash
-
-  def get_authenticated_user_account(self, credentials) -> Optional[Account]:
-    password = credentials.password
-    account = self.account_repository.find_user_account(credentials.username)
-    if account and self.is_account_password_correct(account, password):
-      return account
 
 
 class AccountRegistrationController:

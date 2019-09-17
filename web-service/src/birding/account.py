@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional
+from typing import Optional, Union
 
 from birding.database import Database
 
@@ -52,8 +52,8 @@ class Account:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2], row[3], row[4])
 
-  def __init__(self, id, username, email, person_id, locale_id):
-    self.id = id
+  def __init__(self, account_id, username, email, person_id, locale_id):
+    self.id = account_id
     self.username = username
     self.email = email
     self.person_id = person_id
@@ -174,11 +174,14 @@ class AccountRepository:
     result = self.database.query(query, (token,))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def find_user_account(self, username):
+  def find_user_account(self,
+        username: Union[Username, str]) -> Optional[Account]:
+    if isinstance(username, Username):
+      username = username.raw
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
              'WHERE username LIKE %s;')
-    result = self.database.query(query, (username.raw,))
+    result = self.database.query(query, (username,))
     return next(map(Account.fromrow, result.rows), None)
 
   def find_account_by_email(self, email):
@@ -212,8 +215,10 @@ class PasswordHasher:
     hash = self.hash_password(password, salt)
     return (salt, hash)
 
-  def hash_password(self, password, salt):
-    encoded_password = password.raw.encode()
+  def hash_password(self, password: Union[Password, str], salt: str) -> str:
+    if isinstance(password, Password):
+      password = password.raw
+    encoded_password = password.encode()
     encoded_salt = salt.encode()
     binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
     return binascii.hexlify(binary_hash).decode()

@@ -6,7 +6,6 @@ from birding.authentication import AccountRegistrationController
 from birding.authentication import AuthenticationTokenFactory
 from birding.authentication import AuthenticationTokenDecoder
 from birding.authentication import PasswordResetController
-from birding.authentication import Authenticator
 from birding.account import AccountRepository, Username, Password, \
   AccountFactory
 from birding.person import PersonRepository
@@ -18,32 +17,6 @@ from tests.test_util import mock_return
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
 valid_password = 'myPassword'
-
-class TestAuthenticator(TestCase):
-
-  def setUp(self):
-    self.account_repository = Mock()
-    self.password_hasher = Mock()
-    self.authenticator = Authenticator(
-        self.account_repository, 
-        self.password_hasher,
-    )
-
-  def test_get_authenticated_user_account_when_correct_password(self):
-    credentials = Mock()
-    account = self.account_repository.find_user_account()
-    hashed_password = self.account_repository.find_hashed_password()
-    hashed_password.salted_hash = self.password_hasher.hash_password()
-
-    result = self.authenticator.get_authenticated_user_account(credentials)
-
-    self.account_repository.find_user_account.assert_called_with(credentials.username)
-    self.assertEqual(result, account)
-
-  def test_get_authenticated_user_account_none_when_wrong_password(self):
-    self.password_hasher.hash_password.return_value = 'wrong_hash'
-    result = self.authenticator.get_authenticated_user_account(Mock())
-    self.assertIsNone(result)
 
 
 class TestAccountRegistrationController(TestCase):

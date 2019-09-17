@@ -13,10 +13,8 @@ from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
-from .account import Credentials, AccountRepository
+from .account import AccountRepository
 from .account import AccountRegistration
-from .account import Username
-from .account import Password
 
 
 def create_authentication_rest_api_blueprint(
@@ -62,9 +60,12 @@ def create_authentication_rest_api_blueprint(
   def get_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')
-    token = try_get_token(username, password)
-    if not token:
+    account = account_repository.find_user_account(username)
+    if not account:
       return token_failure_response()
+    if not authenticator.is_account_password_correct(account, password):
+      return token_failure_response()
+    token = token_factory.create_authentication_token(account.id)
     return token_response(token)
 
   @blueprint.route('/password-reset', methods=['POST'])
@@ -145,15 +146,6 @@ def create_authentication_rest_api_blueprint(
       'status': 'failure',
       'message': 'Username already taken',
     }), HTTPStatus.INTERNAL_SERVER_ERROR)
-
-  def try_get_token(username: str, password: str) -> Optional[str]:
-    if not Username.is_valid(username) or not Password.is_valid(password):
-      return None
-    credentials = Credentials(Username(username), Password(password))
-    account = authenticator.get_authenticated_user_account(credentials)
-    if not account:
-      return None
-    return token_factory.create_authentication_token(account.id)
 
   def token_response(token: str) -> Response:
     return make_response(jsonify({
