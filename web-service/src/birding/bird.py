@@ -44,10 +44,6 @@ class BirdRepository:
     if len(result.rows) == 1:
       return self.bird_from_row(result.rows[0])
 
-  def bird_thumbnails(self):
-    result = self.database.query('SELECT bird_id, picture_id FROM bird_thumbnail;')
-    return list(map(BirdThumbnail.fromrow, result.rows))
-
   def bird_thumbnail(self, bird):
     query = (
       'SELECT bird_id, picture_id '
