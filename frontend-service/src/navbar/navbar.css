@@ -1,9 +1,3 @@
-.navbar {
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-bottom-color: #3FA7D6;
-}
-
 .navbar .grid {
   width: 100%;
   display: grid;
