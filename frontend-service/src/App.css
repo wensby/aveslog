@@ -1,4 +1,5 @@
 .main-grid {
+  min-height: 300px;
   display: grid;
   grid: 1fr / 1fr;
   grid-template-areas:
@@ -6,15 +7,11 @@
 }
 
 .navbar-pushed {
-  margin-top: 112px;
+  margin-top: 116px;
 }
 
 .sidemenu {
   display: none;
-}
-
-main {
-  padding-top: 10px;
 }
 
 @media only screen and (min-width : 768px) {
@@ -25,7 +22,7 @@ main {
   }
 
   .navbar-pushed {
-    margin-top: 64px;
+    margin-top: 74px;
   }
 
   .sidemenu {

@@ -51,7 +51,7 @@ body {
 
 .sidebar {
   position: sticky;
-  top: 74px;
+  top: 64px;
 }
 
 .sidebar .nav-link {
