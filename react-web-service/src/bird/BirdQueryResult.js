@@ -5,6 +5,7 @@ import BirdService from './BirdService.js';
 import { useTranslation } from 'react-i18next';
 import './style.css';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import Loading from '../Loading.js';
 
 export default function BirdQueryResult(props) {
   const { t } = useTranslation();
@@ -92,16 +93,7 @@ export default function BirdQueryResult(props) {
 
   const renderLoading = () => {
     if (loading) {
-      return (
-        <div className='loading-overlay' >
-          <div className='lds-ring'>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-      );
+      return <Loading />;
     }
     return null;
   };
