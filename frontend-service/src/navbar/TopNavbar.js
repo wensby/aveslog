@@ -12,8 +12,8 @@ import { useTranslation } from 'react-i18next';
 function Brand() {
   return (
     <BootstrapNavbar.Brand>
-      <Link to="/">
-        <img id='navbarLogoImage' src='/birdlogo-50.png' alt='' />
+      <Link to="/" className='text-decoration-none brand-name'>
+        Aves Log
       </Link>
     </BootstrapNavbar.Brand>
   );
@@ -134,7 +134,7 @@ export default () => {
 
   return (
     <div ref={setFullNavbarRef}
-      className="navbar navbar-dark shadow p-0 bg-primary fixed-top">
+      className="navbar navbar-light shadow p-0 bg-primary fixed-top">
       {renderStaticPart()}
       {renderExpandibleMenu()}
     </div>

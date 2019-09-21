@@ -1,6 +1,7 @@
 .navbar .grid {
   width: 100%;
   display: grid;
+  background-color: #FCFCFC;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 64px 48px;
   grid-template-areas:
@@ -8,7 +9,19 @@
     "search search";
 }
 
+.brand-name {
+  font-family: 'Carter One', cursive;
+  font-size: larger;
+  margin-left: 10px;
+  color: #EE6352;
+}
+
+.brand-name:hover {
+  color: #262626;
+}
+
 .menu {
+  background-color: #FCFCFC;
   transition: max-height .3s;
   padding-left: 15px;
   width: 100%;
