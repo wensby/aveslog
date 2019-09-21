@@ -22,7 +22,7 @@ while [[ $# -gt 0 ]]; do
 done
 set -- "${POSITIONAL[@]}" # restore positional parameters
 
-RUNNING=$(docker-compose -f docker-compose.test.yml ps -q test-web-service)
+RUNNING=$(docker-compose -f docker-compose.test.yml ps -q test-api-service)
 if [ -z "$RUNNING" ] || [ -n "$FORCE_RECREATE" ]; then
   echo "Recreating test containers"
   docker-compose -f docker-compose.test.yml down
@@ -33,9 +33,9 @@ fi
 
 if [ -n "$COVERAGE" ]; then
   rm -rf htmlcov
-  time docker exec -i -t test-web-service /run_tests.sh -c
-  docker cp test-web-service:/src/htmlcov ./
+  time docker exec -i -t test-api-service /run_tests.sh -c
+  docker cp test-api-service:/src/htmlcov ./
   open htmlcov/index.html
 else
-  time docker exec -i -t test-web-service /run_tests.sh
+  time docker exec -i -t test-api-service /run_tests.sh
 fi

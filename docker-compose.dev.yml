@@ -2,9 +2,9 @@ version: '3'
 
 services:
 
-  react-web-service:
+  frontend-service:
     volumes:
-      - ./react-web-service:/app
+      - ./frontend-service:/app
       - /app/node_modules
     ports:
       - '3003:3000'
@@ -12,7 +12,7 @@ services:
       API_URL: http://127.0.0.1:3002
       NODE_ENV: development
 
-  birding-web-service:
+  api-service:
     ports:
      - "3002:3002"
     environment:

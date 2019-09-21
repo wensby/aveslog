@@ -5,6 +5,6 @@ if [ -z "$1" ]; then
 fi
 
 backup_dir=$1
-docker cp $backup_dir/image/* birding-web-service:/src/birding/static/image/
-cat $backup_dir/dump.sql | docker exec -i birding-database-service \
+docker cp $backup_dir/image/* api-service:/src/birding/static/image/
+cat $backup_dir/dump.sql | docker exec -i database-service \
   psql -U postgres -d birding-database

@@ -2,9 +2,9 @@ version: '3'
 
 services:
 
-  react-web-service:
+  frontend-service:
     build:
-      context: ./react-web-service
+      context: ./frontend-service
       dockerfile: Dockerfile-prod
       args:
         apiurl: https://yourrestapidomain.tld
@@ -18,7 +18,7 @@ services:
       LETSENCRYPT_HOST: yourwebpagedomain.tld
       LETSENCRYPT_EMAIL: email@domain.tld
 
-  birding-web-service:
+  api-service:
     expose:
       - 3000
     environment:

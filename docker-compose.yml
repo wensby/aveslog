@@ -2,45 +2,45 @@ version: '3'
 
 services:
 
-  react-web-service:
-    container_name: react-web-service
+  frontend-service:
+    container_name: frontend-service
     build:
       dockerfile: Dockerfile
-      context: ./react-web-service
-    image: react-web-service
+      context: ./frontend-service
+    image: frontend-service
     restart: always
     networks:
       - default
 
-  birding-web-service:
+  api-service:
     build:
       dockerfile: Dockerfile
-      context: ./web-service
-    image: birding-web-service
+      context: ./api-service
+    image: api-service
     volumes:
-      - ./web-service/src/logs:/src/logs
-    container_name: birding-web-service
+      - ./api-service/src/logs:/src/logs
+    container_name: api-service
     restart: always
     networks:
       - default
-      - birding-database-network
+      - database-network
     depends_on:
-      - birding-database-service
+      - database-service
     environment:
-      DATABASE_HOST: birding-database-service
+      DATABASE_HOST: database-service
       DATABASE_NAME: birding-database
       DATABASE_USER: postgres
       DATABASE_PASSWORD: docker
 
-  birding-database-service:
+  database-service:
     build:
       dockerfile: Dockerfile
       context: ./database
-    image: birding-database-service
-    container_name: birding-database-service
+    image: database-service
+    container_name: database-service
     restart: always
     networks:
-      - birding-database-network
+      - database-network
     volumes:
       - ./volumes/database:/var/lib/postgresql/data
     environment:
@@ -49,7 +49,7 @@ services:
       POSTGRES_PASSWORD: docker
 
 networks:
-  birding-database-network:
+  database-network:
     driver: bridge
   default:
     driver: bridge

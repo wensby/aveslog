@@ -2,19 +2,19 @@ version: '3'
 
 services:
 
-  test-web-service:
-    image: test-web-service
-    container_name: test-web-service
+  test-api-service:
+    image: test-api-service
+    container_name: test-api-service
     depends_on:
       - test-database-service
     build:
       dockerfile: testDockerfile
-      context: ./web-service
+      context: ./api-service
     networks:
       - test
     volumes:
-      - ./web-service/src/birding:/src/birding
-      - ./web-service/src/tests:/src/tests
+      - ./api-service/src/birding:/src/birding
+      - ./api-service/src/tests:/src/tests
     environment:
       EXTERNAL_HOST: myExternalHost
       DATABASE_HOST: test-database-service
