@@ -96,7 +96,7 @@ export default () => {
   const renderUsername = () => {
     if (authenticated && account) {
       return (
-        <Link className='text-light' to={`/profile/${account.username}`}>
+        <Link className='text-dark' to={`/profile/${account.username}`}>
           {account.username}
         </Link>
       );
@@ -134,7 +134,7 @@ export default () => {
 
   return (
     <div ref={setFullNavbarRef}
-      className="navbar navbar-light shadow p-0 bg-primary fixed-top">
+      className="navbar navbar-light shadow p-0 fixed-top">
       {renderStaticPart()}
       {renderExpandibleMenu()}
     </div>
