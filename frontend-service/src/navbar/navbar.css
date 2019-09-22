@@ -9,6 +9,18 @@
     "search search";
 }
 
+.navbar-toggler:hover {
+  background-color: #EE6352;
+}
+
+.navbar-toggler:active {
+  background-color: #FCFCFC!important;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none!important;
+}
+
 .brand-name {
   font-family: 'Carter One', cursive;
   font-size: larger;
@@ -17,7 +29,7 @@
 }
 
 .brand-name:hover {
-  color: #262626;
+  color: #343A40;
 }
 
 .menu {
