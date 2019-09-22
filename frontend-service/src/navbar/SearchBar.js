@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 
@@ -21,8 +20,8 @@ export default () => {
 
   const renderButton = () => {
     return (
-      <Button variant="light" className="rounded-0" type="submit"
-        id="button-addon">{t('Search')}</Button>
+      <button variant="dark" className="rounded-0 btn btn-dark search-button"
+        type="submit" id="button-addon">{t('Search')}</button>
     );
   };
 
