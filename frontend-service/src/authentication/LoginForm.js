@@ -19,7 +19,7 @@ export default ({ onError }) => {
       const response = await authentication.fetchAuthenticationToken(username, password);
       if (response.status === 'success') {
         onAuthenticated(response.authToken);
-        history.push("/");
+        history.push('/');
       }
       else {
         onError('Login failed.');
@@ -33,27 +33,27 @@ export default ({ onError }) => {
   };
 
   return (
-    <form onSubmit={handleLoginFormSubmit}>
-      <div className="form-row">
-        <div className="form-group col-6">
-          <label htmlFor="usernameInput">{t('Username')}</label>
+    <form className='login-form' onSubmit={handleLoginFormSubmit}>
+      <div className='form-row'>
+        <div className='form-group col-6'>
+          <label htmlFor='usernameInput'>{t('username-label')}</label>
           <input value={username}
             onChange={event => setUsername(event.target.value)}
-            id="usernameInput" className="form-control" type="text"
-            name="username" placeholder={t('Username')} />
+            id='usernameInput' className='form-control' type='text'
+            name='username' placeholder={t('username-label')} />
         </div>
-        <div className="form-group col-6">
-          <label htmlFor="passwordInput">{t('Password')}</label>
+        <div className='form-group col-6'>
+          <label htmlFor='passwordInput'>{t('Password')}</label>
           <input value={password}
             onChange={event => setPassword(event.target.value)}
-            id="passwordInput" className="form-control" type="password"
-            name="password" placeholder={t('Password')} />
+            id='passwordInput' className='form-control' type='password'
+            name='password' placeholder={t('Password')} />
         </div>
       </div>
-      <div className="d-flex flex-row">
-        <Link to="/authentication/registration" className="btn btn-secondary">
-          {t('Register new account')}</Link>
-        <button type='submit' className="btn btn-primary ml-auto">{t('Login')}</button>
+      <div className='d-flex flex-row'>
+        <button type='submit' className='btn ml-auto login-button'>
+          {t('Login')}
+        </button>
       </div>
     </form>
   );

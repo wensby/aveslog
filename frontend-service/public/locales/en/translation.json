@@ -3,10 +3,10 @@
   "Settings": "Settings",
   "Search bird": "Search bird",
   "Search": "Search",
-  "Username": "Username",
+  "username-label": "Username",
   "Password": "Password",
   "Register new account": "Register new account",
-  "Forgot your password?": "Forgot your password?",
+  "password-recover-link": "Forgot your password?",
   "Profile": "Profile",
   "Sightings": "Sightings",
   "It's birding time!": "It's birding time!",
@@ -50,5 +50,6 @@
   "submit-sighting-button": "Add",
   "cancel-new-sighting-link": "Cancel",
   "delete-sighting-button": "Delete",
+  "new-user-question": "New to Aves Log?",
   "Logout": "Logout"
 }

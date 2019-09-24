@@ -3,10 +3,10 @@
   "Settings": "설정",
   "Search bird": "새 검색",
   "Search": "검색",
-  "Username": "사용자 이름",
+  "username-label": "사용자 이름",
   "Password": "비밀번호",
   "Register new account": "새로운 계정을 만들기",
-  "Forgot your password?": "비밀번호 까먹었어?",
+  "password-recover-link": "비밀번호 까먹었어?",
   "Profile": "프로필",
   "Sightings": "관찰",
   "It's birding time!": "탐조 시간이다!",
@@ -50,5 +50,6 @@
   "submit-sighting-button": "기록하기",
   "cancel-new-sighting-link": "취소",
   "delete-sighting-button": "지우기",
+  "new-user-question": "Aves Log에 처음이에요?",
   "Logout": "로그아웃"
 }

@@ -3,10 +3,10 @@
   "Settings": "Inställningar",
   "Search bird": "Sök fågel",
   "Search": "Sök",
-  "Username": "Användarnamn",
+  "username-label": "Användarnamn",
   "Password": "Lösenord",
   "Register new account": "Registrera nytt konto",
-  "Forgot your password?": "Glömt lösenordet?",
+  "password-recover-link": "Glömt lösenordet?",
   "Profile": "Profil",
   "Sightings": "Observationer",
   "It's birding time!": "Det är dags att fågelskåda!",
@@ -50,5 +50,6 @@
   "submit-sighting-button": "Registrera",
   "cancel-new-sighting-link": "Avbryt",
   "delete-sighting-button": "Radera",
+  "new-user-question": "Ny här på Aves Log?",
   "Logout": "Logga ut"
 }

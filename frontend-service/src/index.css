@@ -110,9 +110,6 @@ body {
 
 /* => md */
 @media (min-width: 768px) {
-  #loginFormContainer {
-    width: 520px;
-  }
   #registerRequestFormContainer {
     width: 520px;
   }
