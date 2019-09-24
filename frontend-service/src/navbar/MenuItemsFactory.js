@@ -17,8 +17,6 @@ const getMenuItems = (authenticated, account, unauthenticate, t) => {
     return [
       <Link className="nav-link"
           to={'/authentication/login'}>{t('Login')}</Link>,
-      <Link className="nav-link"
-          to={'/settings/'}>{t('Settings')}</Link>,
     ];
   }
 }
