@@ -26,7 +26,7 @@ export default ({ sighting }) => {
     return (
       <div className='col-sm-4' id='card-bird-thumbnail-col'>
         <Link to={`/bird/${formattedName}`}>
-          <img src={url} className='img-fluid card-bird-thumbnail' />;
+          <img src={url} className='img-fluid card-bird-thumbnail' />
         </Link>
       </div>
     );
