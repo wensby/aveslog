@@ -1,5 +1,4 @@
 footer {
-  display: grid;
   margin: 20px;
 }
 
@@ -11,7 +10,15 @@ footer a:hover {
   color: #EE6352;
 }
 
+footer .selected {
+  color: #4C535A;
+}
+
 .language {
   display: flex;
   flex-direction: row;
+}
+
+.language > * {
+  margin: 0px 5px;
 }
