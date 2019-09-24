@@ -4,9 +4,11 @@ import AuthenticationService from './AuthenticationService.js';
 import { Link } from 'react-router-dom';
 import { AuthenticationContext } from './AuthenticationContext.js';
 import { useReactRouter } from '../reactRouterHook.js';
+import './spinner.scss';
 
 export default ({ onError }) => {
   const { history } = useReactRouter();
+  const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const authentication = new AuthenticationService();
@@ -16,6 +18,7 @@ export default ({ onError }) => {
   const handleLoginFormSubmit = async (event) => {
     try {
       event.preventDefault();
+      setLoading(true);
       const response = await authentication.fetchAuthenticationToken(username, password);
       if (response.status === 'success') {
         onAuthenticated(response.authToken);
@@ -30,7 +33,17 @@ export default ({ onError }) => {
     catch (e) {
       console.log(e);
     }
+    finally {
+      setLoading(false);
+    }
   };
+
+  const renderLoading = () => {
+    if (loading) {
+      return <div className='spinner' />;
+    }
+    return null;
+  }
 
   return (
     <form className='login-form' onSubmit={handleLoginFormSubmit}>
@@ -51,9 +64,12 @@ export default ({ onError }) => {
         </div>
       </div>
       <div className='d-flex flex-row'>
-        <button type='submit' className='btn ml-auto login-button'>
-          {t('Login')}
-        </button>
+        <div className='d-flex ml-auto'>
+          {renderLoading()}
+          <button type='submit' className='btn login-button'>
+            {t('Login')}
+          </button>
+        </div>
       </div>
     </form>
   );

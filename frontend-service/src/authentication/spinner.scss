@@ -1,0 +1,38 @@
+@import '../colors.scss';
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+@-webkit-keyframes spinner {
+  to {-webkit-transform: rotate(360deg);}
+}
+
+.spinner {
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.spinner:before {
+  content: 'Loading';
+  box-sizing: border-box;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner:not(:required):before {
+  content: '';
+  border-radius: 50%;
+  border: 2px solid $white;
+  border-top-color: $primary;
+  animation: spinner .6s linear infinite;
+  -webkit-animation: spinner .6s linear infinite;
+}
+
+.spinner {
+  position: relative;
+  margin-top: auto;
+  width: 30px;
+  height: 30px;
+}
