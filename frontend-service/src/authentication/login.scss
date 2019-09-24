@@ -1,3 +1,5 @@
+@import '../colors.scss';
+
 .login {
   display: flex;
   max-width: 600px;
@@ -12,14 +14,14 @@
 }
 
 .login a {
-  color: #EE6352;
+  color: $primary;
   font-weight: 400;
   font-size: 16px;
 }
 
 .login a:hover {
   text-decoration: none;
-  color: #262626;
+  color: $black;
 }
 
 .login .password-recover-link {
@@ -28,14 +30,9 @@
 }
 
 .login .login-button {
-  background-color: #EE6352;
+  background-color: $primary;
   font-weight: bold;
   color: #FCFCFC;
-}
-
-.login input:focus {
-  border-color: #EE6352;
-  box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.15);
 }
 
 .login .login-button:hover {

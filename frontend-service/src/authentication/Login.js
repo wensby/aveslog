@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import LoginForm from './LoginForm.js';
-import './login.css';
+import './login.scss';
 
 const Separator = () => {
   return <div className='separator'/>;

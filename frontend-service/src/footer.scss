@@ -1,17 +1,19 @@
+@import './colors.scss';
+
 footer {
   margin: 20px;
 }
 
 footer a {
-  color: #7F8891;
+  color: $lightgrey;
 }
 
 footer a:hover {
-  color: #EE6352;
+  color: $primary;
 }
 
 footer .selected {
-  color: #4C535A;
+  color: $darkgrey;
 }
 
 .language {

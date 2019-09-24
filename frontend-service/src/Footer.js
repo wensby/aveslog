@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './footer.css';
+import './footer.scss';
 
 const LanguageLink = ({ languageCode, label }) => {
   const { i18n } = useTranslation();

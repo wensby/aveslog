@@ -1,7 +1,9 @@
+@import '../colors.scss';
+
 .navbar .grid {
   width: 100%;
   display: grid;
-  background-color: #FCFCFC;
+  background-color: $white;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 64px 48px;
   grid-template-areas:
@@ -10,11 +12,11 @@
 }
 
 .navbar-toggler:hover {
-  background-color: #EE6352;
+  background-color: $primary;
 }
 
 .navbar-toggler:active {
-  background-color: #FCFCFC!important;
+  background-color: $white!important;
 }
 
 .navbar-toggler:focus {
@@ -25,15 +27,15 @@
   font-family: 'Carter One', cursive;
   font-size: larger;
   margin-left: 10px;
-  color: #EE6352;
+  color: $primary;
 }
 
 .brand-name:hover {
-  color: #343A40;
+  color: $darkgrey;
 }
 
 .menu {
-  background-color: #FCFCFC;
+  background-color: $white;
   transition: max-height .3s;
   padding-left: 15px;
   width: 100%;

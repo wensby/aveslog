@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
-import './navbar.css';
+import './navbar.scss';
 import Menu from './Menu.js';
 import SearchBar from './SearchBar';
 import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
