@@ -1,13 +1,19 @@
+html, body {
+  background-color: #343A40;
+}
+
 .main-grid {
-  min-height: 300px;
+  padding-bottom: 1em;
+  background-color: white;
+  height: auto;
   display: grid;
   grid: 1fr / 1fr;
   grid-template-areas:
-    'main';
+    'main'
 }
 
 .navbar-pushed {
-  margin-top: 116px;
+  padding-top: 116px;
 }
 
 .sidemenu {
@@ -22,7 +28,7 @@
   }
 
   .navbar-pushed {
-    margin-top: 74px;
+    padding-top: 74px;
   }
 
   .sidemenu {

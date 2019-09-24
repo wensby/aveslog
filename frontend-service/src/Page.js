@@ -6,6 +6,7 @@ import TopNavbar from './navbar/TopNavbar.js';
 import SideMenu from './SideMenu.js';
 import './App.css';
 import Main from './Main.js';
+import Footer from './Footer.js';
 
 export default () => {
   return (
@@ -15,6 +16,7 @@ export default () => {
         <SideMenu />
         <Main />
       </div>
+      <Footer />
     </>
   );
 }

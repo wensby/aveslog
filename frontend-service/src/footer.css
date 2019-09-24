@@ -1,0 +1,17 @@
+footer {
+  display: grid;
+  margin: 20px;
+}
+
+footer a {
+  color: #7F8891;
+}
+
+footer a:hover {
+  color: #EE6352;
+}
+
+.language {
+  display: flex;
+  flex-direction: row;
+}
