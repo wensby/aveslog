@@ -4,3 +4,11 @@ input:focus {
   border-color: $light-primary!important;
   box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25)!important;
 }
+
+a {
+  color: $primary;
+}
+
+a:hover {
+  color: $black;
+}
