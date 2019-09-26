@@ -30,11 +30,11 @@
 .login .login-button {
   background-color: $primary;
   font-weight: bold;
-  color: #FCFCFC;
+  color: $white;
 }
 
 .login .login-button:hover {
-  background-color: #4C535A;
+  background-color: $darkgrey;
 }
 
 .new-account-section {
