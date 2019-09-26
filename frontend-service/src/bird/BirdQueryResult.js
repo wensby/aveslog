@@ -40,7 +40,7 @@ export default function BirdQueryResult(props) {
     }
     return (
       <img style={{ maxHeight: '150px' }}
-        src='/placeholder-bird.png' alt="Card cap" />
+        src='/placeholder-bird.jpg' alt="Card cap" />
       );
   };
 

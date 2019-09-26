@@ -22,7 +22,7 @@ export default ({ sighting }) => {
 
   const renderPicture = () => {
     const formattedName = bird.binomialName.toLowerCase().replace(' ', '-');
-    const url = bird.thumbnailUrl || '/placeholder-bird.png';
+    const url = bird.thumbnailUrl || '/placeholder-bird.jpg';
     return (
       <div className='col-sm-4' id='card-bird-thumbnail-col'>
         <Link to={`/bird/${formattedName}`}>
