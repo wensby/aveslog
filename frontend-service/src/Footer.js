@@ -14,7 +14,7 @@ const LanguageLink = ({ languageCode, label }) => {
   if (i18n.language == languageCode) {
     return <p className='selected'>{label}</p>;
   }
-  return <a href='javascipt:void(0)' onClick={handleClick}>{label}</a>;
+  return <a href='javascript:void(0);' onClick={handleClick}>{label}</a>;
 }
 
 export default () => {
