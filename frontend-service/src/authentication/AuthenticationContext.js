@@ -39,10 +39,10 @@ function AuthenticationProvider(props) {
   }, []);
   
   const onAuthenticated = async token => {
-    setToken(token);
-    localStorage.setItem('authenticationToken', token);
-    setAuthenticated(true);
     const account = await accountService.fetchAccount(token);
+    localStorage.setItem('authenticationToken', token);
+    setToken(token);
+    setAuthenticated(true);
     setAccount(account);
   }
 
