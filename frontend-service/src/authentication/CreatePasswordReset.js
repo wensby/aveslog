@@ -62,7 +62,7 @@ export default () => {
                 type='text'/>
             </div>
             <button
-              className='btn btn-primary'
+              className='button'
               type='submit'>
               { t('Send') }
               </button>

@@ -77,7 +77,7 @@ export default function PasswordResetForm(props) {
                 name='confirmPassword'
                 placeholder={ t('password-confirm-password-label') }/>
             </div>
-            <button className='btn btn-primary'
+            <button className='button'
               type='submit'>{ t('button-submit-label') }</button>
           </form>
         </div>

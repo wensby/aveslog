@@ -66,7 +66,7 @@ export default ({ onError }) => {
       <div className='d-flex flex-row'>
         <div className='d-flex ml-auto'>
           {renderLoading()}
-          <button type='submit' className='btn login-button'>
+          <button type='submit' className='button'>
             {t('Login')}
           </button>
         </div>

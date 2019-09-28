@@ -96,7 +96,7 @@ export default ({ match }) => {
               </div>
             </div>
             <input type='hidden' name='birdId' value={bird.id} />
-            <button type='submit' className='btn btn-primary'>
+            <button type='submit' className='button'>
               {t('submit-sighting-button')}
             </button>
           </form>

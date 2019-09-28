@@ -121,7 +121,7 @@ const PasswordConfirmationFormGroup = props => {
 const SubmitButton = () => {
   const { t } = useTranslation();
   return (
-    <button className='btn btn-primary' type='submit'>
+    <button className='button' type='submit'>
       {t('registration-button')}
     </button>
   );

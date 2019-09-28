@@ -46,7 +46,7 @@ export default function SightingDetails(props) {
       <h1>{name}</h1>
       <form onSubmit={event => { event.preventDefault(); }}>
         <button onClick={handleDelete} value='Delete'
-          className='btn btn-danger'>{t('delete-sighting-button')}</button>
+          className='button-danger'>{t('delete-sighting-button')}</button>
       </form>
     </div>
   );
