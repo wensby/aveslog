@@ -70,12 +70,12 @@ export default function PasswordResetForm(props) {
             </div>
             <div className='form-group'>
               <label htmlFor='confirmPasswordInput'>
-                { t('new-password-confirm-password-label') }</label>
+                { t('password-confirm-password-label') }</label>
               <input id='confirmPasswordInput'
                 className='form-control'
                 type='password'
                 name='confirmPassword'
-                placeholder={ t('new-password-confirm-password-label') }/>
+                placeholder={ t('password-confirm-password-label') }/>
             </div>
             <button className='btn btn-primary'
               type='submit'>{ t('button-submit-label') }</button>
