@@ -7,13 +7,9 @@ export default ({ component, ...routeProps }) => {
   const path = '/authentication/login';
 
   if (authenticated) {
-    return (
-      <Route {...routeProps} component={component}/>
-    );
+    return <Route {...routeProps} component={component} />;
   }
   else {
-    return (
-      <Route {...routeProps} render={() => <Redirect to={path} />} />
-    );
+    return <Route {...routeProps} render={() => <Redirect to={path} />} />;
   }
 };
