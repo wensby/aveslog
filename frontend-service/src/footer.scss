@@ -1,7 +1,13 @@
 @import './colors.scss';
+@import './style.scss';
 
 footer {
-  margin: 20px;
+  background-color: $black;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: $footer-height;            /* Footer height */
+  padding: 20px;
 }
 
 footer a {

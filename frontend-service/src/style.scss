@@ -1,5 +1,7 @@
 @import './colors.scss';
 
+$footer-height: 60px;
+
 input:focus {
   border-color: $light-primary!important;
   box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25)!important;
@@ -11,4 +13,13 @@ a {
 
 a:hover {
   color: $black;
+}
+
+.page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+.navbar-pushed {
+  padding-bottom: $footer-height;
 }
