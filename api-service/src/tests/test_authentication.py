@@ -6,6 +6,9 @@ from birding.authentication import AccountRegistrationController
 from birding.authentication import AuthenticationTokenFactory
 from birding.authentication import AuthenticationTokenDecoder
 from birding.authentication import PasswordResetController
+from birding.authentication import Authenticator
+from birding.authentication import PasswordHasher
+from birding.account import Account
 from birding.account import AccountRepository, Username, Password, \
   AccountFactory
 from birding.person import PersonRepository
@@ -17,6 +20,22 @@ from tests.test_util import mock_return
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
 valid_password = 'myPassword'
+
+
+class TestAuthenticator(TestCase):
+
+  def setUp(self) -> None:
+    self.account_repository = Mock(spec=AccountRepository)
+    self.password_hasher = Mock(spec=PasswordHasher)
+
+  def test_is_password_incorrect_when_hashed_password_missing(self) -> None:
+    account = Account(1, 'hulot', 'hulot@mail.com', 1, None)
+    authenticator = Authenticator(self.account_repository, self.password_hasher)
+    self.account_repository.find_hashed_password.return_value = None
+
+    result = authenticator.is_account_password_correct(account, 'idontexist')
+
+    self.assertFalse(result)
 
 
 class TestAccountRegistrationController(TestCase):
