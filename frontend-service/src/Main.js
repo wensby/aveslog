@@ -11,7 +11,7 @@ export default () => {
     <main role="main">
       <Route path='/' exact component={Home} />
       <Route path='/authentication' component={Authentication} />
-      <Route path='/settings/' exact component={Settings} />
+      <Route path='/settings' exact component={Settings} />
       <Route path='/bird' component={Bird} />
       <Route path='/sighting' component={Sighting} />
     </main>

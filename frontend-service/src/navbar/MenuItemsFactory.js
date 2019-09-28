@@ -9,7 +9,7 @@ const getMenuItems = (authenticated, account, unauthenticate, t) => {
       <Link className="nav-link"
           to={'/sighting'}>{t('Sightings')}</Link>,
       <Link className="nav-link"
-          to={'/settings/'}>{t('Settings')}</Link>,
+          to={'/settings'}>{t('Settings')}</Link>,
       <Link className="nav-link" onClick={unauthenticate}
           to={'/authentication/logout'}>{t('Logout')}</Link>
     ];
