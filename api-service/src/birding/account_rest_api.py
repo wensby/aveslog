@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, request, jsonify
 
+from birding.authentication_rest_api import create_unauthorized_response
 from birding import AccountRepository
 from .authentication import AuthenticationTokenDecoder
 
@@ -25,9 +26,5 @@ def create_account_rest_api_blueprint(
       elif decode_result.error == 'signature-expired':
         return create_unauthorized_response('Authentication token expired')
     return create_unauthorized_response('Authentication token missing')
-
-  def create_unauthorized_response(message):
-    data = jsonify({'status': 'failure', 'message': message})
-    return make_response(data, HTTPStatus.UNAUTHORIZED)
 
   return blueprint

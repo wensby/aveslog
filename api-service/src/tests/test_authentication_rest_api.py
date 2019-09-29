@@ -1,7 +1,9 @@
+import datetime
 from http import HTTPStatus
-
+from typing import Optional
+from datetime import timedelta
 from flask import Response
-
+from birding.authentication import AuthenticationTokenFactory
 from test_util import AppTestCase
 
 
@@ -187,3 +189,83 @@ class TestRegistration(AppTestCase):
     resource = f'/authentication/registration/{token}'
     json = {'username': username, 'password': password}
     return self.client.post(resource, json=json)
+
+
+class TestPasswordUpdate(AppTestCase):
+
+  def setUp(self) -> None:
+    super().setUp()
+    self.db_insert_person(1)
+    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_insert_password(1, 'oldPassword')
+    self.token_factory = AuthenticationTokenFactory(
+      self._app.secret_key, datetime.datetime.utcnow)
+
+  def test_post_password_update_when_ok(self) -> None:
+    token = self.get_authentication_token('hulot', 'oldPassword')
+
+    response = self.post_password_update(token, 'oldPassword', 'newPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+  def test_post_password_update_when_token_missing(self) -> None:
+    response = self.post_password_update(None, 'oldPassword', 'newPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'authentication token required',
+    })
+
+  def test_post_password_update_when_token_invalid(self) -> None:
+    response = self.post_password_update('invalid', 'oldPassword',
+                                         'newPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'authentication token invalid',
+    })
+
+  def test_post_password_update_when_token_expired(self) -> None:
+    expiration = timedelta(seconds=-1)
+    token = self.token_factory.create_authentication_token(1, expiration)
+
+    response = self.post_password_update(token, 'oldPassword', 'newPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'authentication token expired',
+    })
+
+  def test_post_password_update_when_old_password_incorrect(self) -> None:
+    token = self.get_authentication_token('hulot', 'oldPassword')
+
+    response = self.post_password_update(token, 'incorrect', 'newPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'old password incorrect',
+    })
+
+  def test_post_password_update_when_new_password_invalid(self) -> None:
+    token = self.get_authentication_token('hulot', 'oldPassword')
+
+    response = self.post_password_update(token, 'oldPassword', 'invalid')
+
+    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'new password invalid',
+    })
+
+  def post_password_update(self,
+        token: Optional[str],
+        old_password: str,
+        new_password: str) -> Response:
+    resource = '/authentication/password'
+    headers = {'authToken': token} if token else {}
+    json = {'oldPassword': old_password, 'newPassword': new_password}
+    return self.client.post(resource, headers=headers, json=json)

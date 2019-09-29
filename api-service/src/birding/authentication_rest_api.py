@@ -13,8 +13,17 @@ from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
+from .authentication import AuthenticationTokenDecoder
+from .authentication import PasswordRepository
 from .account import AccountRepository
 from .account import AccountRegistration
+from .account import Password
+from .account import Account
+
+
+def create_unauthorized_response(message):
+  data = jsonify({'status': 'failure', 'message': message})
+  return make_response(data, HTTPStatus.UNAUTHORIZED)
 
 
 def create_authentication_rest_api_blueprint(
@@ -24,6 +33,8 @@ def create_authentication_rest_api_blueprint(
       registration_controller: AccountRegistrationController,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
+      token_decoder: AuthenticationTokenDecoder,
+      password_repository: PasswordRepository,
       token_factory: AuthenticationTokenFactory) -> Blueprint:
   blueprint_name = 'authentication'
   url_prefix = '/authentication'
@@ -84,6 +95,30 @@ def create_authentication_rest_api_blueprint(
     if not success:
       return password_reset_failure_response()
     return password_reset_success_response()
+
+  @blueprint.route('/password', methods=['POST'])
+  def post_password_update() -> Response:
+    auth_token = request.headers.get('authToken')
+    old_password = request.json['oldPassword']
+    raw_new_password = request.json['newPassword']
+    if not auth_token:
+      return authentication_token_missing_response()
+    decode_result = token_decoder.decode_authentication_token(auth_token)
+    if not decode_result.ok:
+      if decode_result.error == 'token-invalid':
+        return create_unauthorized_response('authentication token invalid')
+      elif decode_result.error == 'signature-expired':
+        return create_unauthorized_response('authentication token expired')
+    account_id = decode_result.payload['sub']
+    account = account_repository.find_account_by_id(account_id)
+    old_password_correct = is_password_correct(account, old_password)
+    if not old_password_correct:
+      return old_password_incorrect_response()
+    if not Password.is_valid(raw_new_password):
+      return new_password_invalid_response()
+    new_password = Password(raw_new_password)
+    password_repository.update_password(account_id, new_password)
+    return password_update_success_response()
 
   def password_reset_failure_response() -> Response:
     return make_response(jsonify({
@@ -187,6 +222,30 @@ def create_authentication_rest_api_blueprint(
       'status': 'success',
       'message': 'Password reset successfully',
     }), HTTPStatus.OK)
+
+  def authentication_token_missing_response() -> Response:
+    return make_response(jsonify({
+      'status': 'failure',
+      'message': 'authentication token required',
+    }), HTTPStatus.UNAUTHORIZED)
+
+  def is_password_correct(account: Account, password: str) -> bool:
+    return authenticator.is_account_password_correct(account, password)
+
+  def old_password_incorrect_response() -> Response:
+    return make_response(jsonify({
+      'status': 'failure',
+      'message': 'old password incorrect',
+    }), HTTPStatus.INTERNAL_SERVER_ERROR)
+
+  def new_password_invalid_response() -> Response:
+    return make_response(jsonify({
+      'status': 'failure',
+      'message': 'new password invalid',
+    }), HTTPStatus.INTERNAL_SERVER_ERROR)
+
+  def password_update_success_response() -> Response:
+    return make_response('', HTTPStatus.NO_CONTENT)
 
   def load_english_locale() -> LoadedLocale:
     locale = locale_repository.find_locale_by_code('en')

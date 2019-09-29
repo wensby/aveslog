@@ -98,6 +98,8 @@ def create_app(test_config=None):
     account_registration_controller,
     locale_repository,
     locale_loader,
+    authentication_token_decoder,
+    password_repository,
     authentication_token_factory,
   )
   account_rest_api = create_account_rest_api_blueprint(
