@@ -25,6 +25,7 @@ a:hover {
 }
 
 .button {
+  display: flex;
   background-color: $primary;
   color: $white;
   font-weight: bold;
@@ -46,7 +47,7 @@ a:hover {
 
   &-danger {
     @extend .button;
-    border-radius: 0.15rem;
+    border-radius: 0.05rem;
     background-color: $white;
     color: $danger;
     border: 1px solid $danger;
@@ -59,6 +60,20 @@ a:hover {
 
     &:focus {
       box-shadow: 0 0 0 0.2rem transparentize($danger, .5);
+    }
+  }
+
+  &-delete {
+    @extend .button-danger;
+
+    & svg {
+      display: block;
+      margin: auto;
+      background-color: transparent;
+      fill: $danger;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
     }
   }
 }

@@ -5,6 +5,14 @@ import SightingService from './SightingService';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { useReactRouter } from '../reactRouterHook';
 
+const DeleteButton = ({ onClick }) => {
+  const { t } = useTranslation();
+  return <button className='button-delete' onClick={onClick}>
+    <svg viewBox='0 0 7 8'><use xlinkHref='/open-iconic.svg#trash' /></svg>
+    {`${t('delete-sighting-button')}`}
+  </button>;
+}
+
 export default function SightingDetails(props) {
   const sightingId = props.match.params.sightingId;
   const [sighting, setSighting] = useState(null);
@@ -45,8 +53,7 @@ export default function SightingDetails(props) {
     <div className='container'>
       <h1>{name}</h1>
       <form onSubmit={event => { event.preventDefault(); }}>
-        <button onClick={handleDelete} value='Delete'
-          className='button-danger'>{t('delete-sighting-button')}</button>
+        <DeleteButton onClick={handleDelete} />
       </form>
     </div>
   );
