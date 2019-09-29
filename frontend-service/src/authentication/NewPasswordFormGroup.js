@@ -34,7 +34,7 @@ const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
   return (
     <div className='form-group'>
       <label htmlFor='passwordInput'>{t('Password')}</label>
-      <input id='passwordInput' className={`form-control ${feedbackClass}`}
+      <input id='passwordInput' className={`form-input ${feedbackClass}`}
         type='password' name='password' aria-describedby='passwordHelpBlock'
         placeholder={t('Password')} value={value}
         onChange={event => onChange(event.target.value)} />
@@ -59,7 +59,7 @@ const PasswordConfirmationFormGroup = props => {
         {t('password-confirm-password-label')}
       </label>
       <input id='confirmPasswordInput' type='password' name='confirmPassword'
-        className={`form-control ${feedbackClass}`} value={value}
+        className={`form-input ${feedbackClass}`} value={value}
         placeholder={t('password-confirm-password-label')}
         onChange={event => onChange(event.target.value)} />
       <div className='valid-feedback'>

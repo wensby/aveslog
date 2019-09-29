@@ -87,11 +87,26 @@ a:hover {
   border: 1px solid $lighter;
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &.is-valid {
+    border-color: $success;
+    &:focus {
+      box-shadow: 0 0 0 0.2rem transparentize($success, 0.6)!important;
+    }
+  }
+}
+
+.form-input.is-valid ~ .valid-feedback {
+  display: block;
+}
+
+.form-input.is-invalid ~ .invalid-feedback {
+  display: block;
 }
 
 input:focus {
-  border-color: $light-primary!important;
-  box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25)!important;
+  border-color: $light-primary;
+  box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25);
   outline-color: transparent;
   outline-width: 0;
 }
