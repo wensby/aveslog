@@ -51,12 +51,12 @@ export default function SightingDetails(props) {
   const time = `${sighting.date} ${sighting.time ? sighting.time : ''}`;
 
   return (
-    <div className='container'>
+    <>
       <h1>{name}</h1>
       <h2>{time}</h2>
       <form onSubmit={event => { event.preventDefault(); }}>
         <DeleteButton onClick={handleDelete} />
       </form>
-    </div>
+    </>
   );
 }
