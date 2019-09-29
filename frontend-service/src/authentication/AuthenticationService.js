@@ -43,6 +43,20 @@ export default class AuthenticationService {
     return await response.json();
   }
 
+  async postPasswordUpdate(authenticationToken, oldPassword, newPassword) {
+    return await fetch(`${this.apiUrl}/authentication/password`, {
+      method: 'POST',
+      headers: {
+        'authToken': authenticationToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      }),
+    });
+  }
+
   async postRegistrationEmail(email) {
     const url = `${this.apiUrl}/authentication/registration`;
     const response = await fetch(url, {
