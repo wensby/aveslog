@@ -51,5 +51,9 @@
   "cancel-new-sighting-link": "Avbryt",
   "delete-sighting-button": "Radera",
   "new-user-question": "Ny här på Aves Log?",
+  "change-password": "Byt lösenord",
+  "current-password": "Nuvarande lösenord",
+  "new-password": "Nytt lösenord",
+  "password-change-button": "Byt lösenord",
   "Logout": "Logga ut"
 }

@@ -51,5 +51,9 @@
   "cancel-new-sighting-link": "취소",
   "delete-sighting-button": "지우기",
   "new-user-question": "Aves Log에 처음이에요?",
+  "change-password": "비밀번호 변경",
+  "current-password": "현재 비밀번호",
+  "new-password": "새로운 비밀번호",
+  "password-change-button": "비밀번호 변경",
   "Logout": "로그아웃"
 }

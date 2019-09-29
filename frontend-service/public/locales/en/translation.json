@@ -51,5 +51,9 @@
   "cancel-new-sighting-link": "Cancel",
   "delete-sighting-button": "Delete",
   "new-user-question": "New to Aves Log?",
+  "change-password": "Change password",
+  "current-password": "Current password",
+  "new-password": "New password",
+  "password-change-button": "Change password",
   "Logout": "Logout"
 }
