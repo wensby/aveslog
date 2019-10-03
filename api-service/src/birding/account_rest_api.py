@@ -19,8 +19,15 @@ def create_account_rest_api_blueprint(
     if auth_token:
       decode_result = token_decoder.decode_authentication_token(auth_token)
       if decode_result.ok:
-        account = account_repository.find_account_by_id(decode_result.payload['sub'])
-        return make_response(jsonify({'status': 'success', 'account': {'username': account.username, 'personId': account.person_id}}), HTTPStatus.OK)
+        account = account_repository.find_account_by_id(
+          decode_result.payload['sub'])
+        return make_response(jsonify({
+          'status': 'success',
+          'account': {
+            'username': account.username,
+            'personId': account.person_id
+          }
+        }), HTTPStatus.OK)
       elif decode_result.error == 'token-invalid':
         return create_unauthorized_response('Authentication token invalid')
       elif decode_result.error == 'signature-expired':
