@@ -4,11 +4,12 @@ import birdRepository from '../bird/BirdRepository';
 import SightingService from './SightingService';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { useReactRouter } from '../reactRouterHook';
+import Icon from '../Icon';
 
 const DeleteButton = ({ onClick }) => {
   const { t } = useTranslation();
   return <button className='button-delete' onClick={onClick}>
-    <svg viewBox='0 0 7 8'><use xlinkHref='/open-iconic.svg#trash' /></svg>
+    <Icon name='trash' />
     {`${t('delete-sighting-button')}`}
   </button>;
 }
