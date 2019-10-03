@@ -8,7 +8,9 @@ export default ({ match }) => {
     return <ProfilePage username={props.match.params.username}/>;
   }
 
-  return <Switch>
-    <AuthenticatedRoute path={`${match.path}/:username`} render={renderProfilePage} />
-  </Switch>;
+  return (
+    <Switch>
+      <AuthenticatedRoute path={`${match.path}/:username`} render={renderProfilePage} />
+    </Switch>
+  );
 }
