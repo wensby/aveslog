@@ -1,6 +1,7 @@
 import React from 'react';
-import { Switch, Route } from "react-router-dom";
+import { Switch } from "react-router-dom";
 import ProfilePage from './ProfilePage.js';
+import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 
 export default ({ match }) => {
   const renderProfilePage = props => {
@@ -8,6 +9,6 @@ export default ({ match }) => {
   }
 
   return <Switch>
-    <Route path={`${match.path}/:username`} render={renderProfilePage} />
+    <AuthenticatedRoute path={`${match.path}/:username`} render={renderProfilePage} />
   </Switch>;
 }
