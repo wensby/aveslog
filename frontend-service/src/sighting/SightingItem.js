@@ -12,7 +12,7 @@ export default ({ sighting }) => {
 
   useEffect(() => {
     resolveBird();
-  }, []);
+  }, [sighting]);
 
   const resolveBird = async () => {
     const bird = await birdRepository.getBird(sighting.birdId);
