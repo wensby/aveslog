@@ -31,8 +31,7 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['message'], 'Authentication token invalid')
 
   def test_get_account_when_authentication_token_expired(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     expiration = timedelta(seconds=-1)
     token = self.token_factory.create_authentication_token(1, expiration)
 
@@ -44,8 +43,7 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['message'], 'Authentication token expired')
 
   def test_get_account_when_authentication_token_ok(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     token = self.token_factory.create_authentication_token(1)
 
     response = self.get_account({'authToken': token})

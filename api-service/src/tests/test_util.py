@@ -138,6 +138,16 @@ class AppTestCase(TestCase):
         (account_id,), Account.fromrow)
       return next(iter(result.rows), None)
 
+  def db_setup_account(self,
+        person_id: int,
+        account_id: int,
+        username: str,
+        password: str,
+        email: str) -> None:
+    self.db_insert_person(person_id)
+    self.db_insert_account(account_id, username, email, person_id, None)
+    self.db_insert_password(account_id, password)
+
   def get_authentication_token(self, username, password) -> str:
     resource = '/authentication/token'
     query = f'?username={username}&password={password}'

@@ -10,10 +10,9 @@ from test_util import AppTestCase
 class TestLogin(AppTestCase):
 
   def test_get_token_when_ok(self):
-    self.db_insert_account(1, 'myUsername', 'my@email.com', None, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
-    response = self.get_authentication_token('myUsername', 'myPassword')
+    response = self.get_authentication_token('hulot', 'myPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json['status'], 'success')
@@ -21,8 +20,7 @@ class TestLogin(AppTestCase):
     self.assertIn('authToken', response.json)
 
   def test_get_token_when_incorrect_credentials(self):
-    self.db_insert_account(1, 'myUsername', 'my@email.com', None, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
     response = self.get_authentication_token('somethingElse', 'notGood')
 
@@ -41,11 +39,10 @@ class TestLogin(AppTestCase):
 class TestPasswordReset(AppTestCase):
 
   def test_post_password_reset_email_when_ok(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'bolas', 'bolas@mail.com', 1, None)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_locale(1, 'en')
 
-    response = self.post_password_reset_email('bolas@mail.com')
+    response = self.post_password_reset_email('hulot@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -74,8 +71,7 @@ class TestPasswordReset(AppTestCase):
     })
 
   def test_post_password_reset_when_ok(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_password_reset_token(1, 'myToken')
 
     response = self.post_password_reset('myToken', 'myNewPassword')
@@ -120,8 +116,7 @@ class TestRegistration(AppTestCase):
 
   def test_post_registration_email_when_email_taken(self):
     self.db_insert_locale(1, 'en')
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
     response = self.post_registration_email('hulot@mail.com')
 
@@ -163,11 +158,10 @@ class TestRegistration(AppTestCase):
     })
 
   def test_post_registration_when_username_already_taken(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'takenUsername', 'mail@mail.com', 1, None)
-    self.db_insert_registration('hulot@mail.com', 'myToken')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_insert_registration('new@mail.com', 'token')
 
-    response = self.post_registration('myToken', 'takenUsername', 'password')
+    response = self.post_registration('token', 'hulot', 'password')
 
     self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
     self.assertEqual(response.json, {
@@ -195,9 +189,7 @@ class TestPasswordUpdate(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'oldPassword')
+    self.db_setup_account(1, 1, 'hulot', 'oldPassword', 'hulot@mail.com')
     self.token_factory = AuthenticationTokenFactory(
       self._app.secret_key, datetime.datetime.utcnow)
 

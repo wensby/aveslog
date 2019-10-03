@@ -9,9 +9,7 @@ from test_util import AppTestCase
 class TestGetSighting(AppTestCase):
 
   def test_get_sighting_when_ok(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     token = self.get_authentication_token('hulot', 'myPassword')
@@ -32,11 +30,8 @@ class TestGetSighting(AppTestCase):
     })
 
   def test_get_sighting_when_not_authorized(self):
-    self.db_insert_person(1)
-    self.db_insert_person(2)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_account(2, 'dude', 'dude@mail.com', 2, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
     token = self.get_authentication_token('hulot', 'myPassword')
@@ -50,11 +45,8 @@ class TestGetSighting(AppTestCase):
 class TestGetSightings(AppTestCase):
 
   def test_get_own_sightings_with_valid_auth_token(self):
-    self.db_insert_person(1)
-    self.db_insert_person(2)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_account(2, 'dude', 'dude@mail.com', 2, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
@@ -80,9 +72,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_when_unauthorized(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
 
@@ -106,11 +96,8 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
-    self.db_insert_person(1)
-    self.db_insert_person(2)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_account(2, 'dude', 'dude@mail.com', 2, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
@@ -139,9 +126,7 @@ class TestGetSightings(AppTestCase):
 class TestAddSighting(AppTestCase):
 
   def test_add_sighting_when_everything_ok(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
 
@@ -151,9 +136,7 @@ class TestAddSighting(AppTestCase):
     self.assertEqual(response.json, {'status': 'success'})
 
   def test_add_sighting_when_no_time(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
 
@@ -163,9 +146,7 @@ class TestAddSighting(AppTestCase):
     self.assertEqual(response.json, {'status': 'success'})
 
   def test_add_sighting_when_invalid_authentication_token(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
 
     response = self.post_sighting('invalid token', 'pica pica', '17:42')
@@ -203,10 +184,8 @@ class TestDeleteSighting(AppTestCase):
 
   def test_delete_sighting_when_ok(self):
     self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_person(1)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
     authentication_token = self.get_authentication_token('hulot', 'myPassword')
 
     response = self.delete_sighting(authentication_token, 1)
@@ -214,9 +193,7 @@ class TestDeleteSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
   def test_delete_sighting_when_not_exist(self):
-    self.db_insert_person(1)
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
-    self.db_insert_password(1, 'myPassword')
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     authentication_token = self.get_authentication_token('hulot', 'myPassword')
 
     response = self.delete_sighting(authentication_token, 1)
@@ -225,9 +202,8 @@ class TestDeleteSighting(AppTestCase):
 
   def test_delete_sighting_when_not_authorized(self):
     self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_person(1)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
-    self.db_insert_account(1, 'hulot', 'hulot@mail.com', 1, None)
 
     response = self.delete_sighting('notOkToken', 1)
 
