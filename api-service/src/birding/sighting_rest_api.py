@@ -22,12 +22,14 @@ def create_sighting_rest_api_blueprint(
 
   @blueprint.route('/profile/<string:username>/sighting')
   def get_profile_sightings(username: str) -> Response:
-    account = get_authorized_account(request.headers.get('authToken'))
-    if account and account.username == username:
-      sightings = get_sightings(account)
-      return sightings_response(sightings)
-    else:
+    authenticated_account = get_authorized_account(request.headers.get('authToken'))
+    if not authenticated_account:
       return failure_response()
+    account = account_repository.find_user_account(username)
+    if not account:
+      return failure_response()
+    sightings = get_sightings(account)
+    return sightings_response(sightings)
 
   @blueprint.route('/sighting/<int:sighting_id>')
   def get_sighting(sighting_id: int) -> Response:
