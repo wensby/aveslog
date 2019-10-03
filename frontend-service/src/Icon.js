@@ -1,5 +1,4 @@
 import React from 'react'
-// eslint-disable-next-line import/no-webpack-loader-syntax
 import icons from './icons.svg';
 
 export default ({name}) => (
