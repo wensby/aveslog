@@ -23,15 +23,35 @@ def create_account_rest_api_blueprint(
           decode_result.payload['sub'])
         return make_response(jsonify({
           'status': 'success',
-          'account': {
-            'username': account.username,
-            'personId': account.person_id
-          }
+          'account': account_response_dict(account)
         }), HTTPStatus.OK)
       elif decode_result.error == 'token-invalid':
         return create_unauthorized_response('Authentication token invalid')
       elif decode_result.error == 'signature-expired':
         return create_unauthorized_response('Authentication token expired')
     return create_unauthorized_response('Authentication token missing')
+
+  @blueprint.route('')
+  def get_accounts():
+    auth_token = request.headers.get('authToken')
+    if not auth_token:
+      return create_unauthorized_response('Authentication token missing')
+    decode_result = token_decoder.decode_authentication_token(auth_token)
+    if not decode_result.ok:
+      if decode_result.error == 'token-invalid':
+        return create_unauthorized_response('Authentication token invalid')
+      elif decode_result.error == 'signature-expired':
+        return create_unauthorized_response('Authentication token expired')
+    accounts = account_repository.accounts()
+    return make_response(jsonify({
+      'status': 'success',
+      'result': list(map(account_response_dict, accounts)),
+    }))
+
+  def account_response_dict(account):
+    return {
+      'username': account.username,
+      'personId': account.person_id
+    }
 
   return blueprint

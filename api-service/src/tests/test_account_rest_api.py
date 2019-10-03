@@ -7,6 +7,26 @@ from birding import AuthenticationTokenFactory
 from test_util import AppTestCase
 
 
+class TestGetActiveAccounts(AppTestCase):
+
+  def test_get_active_accounts_ok_when_authenticated(self):
+    self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
+    token = self.get_authentication_token('hulot', 'password')
+
+    response = self.client.get('/account', headers={'authToken': token})
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'result': [
+        {
+          'username': 'hulot',
+          'personId': 1,
+        },
+      ],
+    })
+
+
 class TestAccount(AppTestCase):
 
   def setUp(self) -> None:

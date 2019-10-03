@@ -204,6 +204,11 @@ class AccountRepository:
              'WHERE id = %s;')
     self.database.query(query, (person.id, account.id))
 
+  def accounts(self):
+    with self.database.transaction() as transaction:
+      result = transaction.execute(
+        'SELECT * FROM user_account;', mapper=Account.fromrow)
+      return result.rows
 
 class PasswordHasher:
 
