@@ -69,11 +69,13 @@ export default ({ sighting }) => {
   };
 
   const renderCardBodyRight = () => {
-    return (<div className='card-body text-right'>
-      <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
-        {t('sighting-item-edit-link')}
-      </Link>
-    </div>);
+    if (sighting.personId == account.personId) {
+      return (<div className='card-body text-right'>
+        <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
+          {t('sighting-item-edit-link')}
+        </Link>
+      </div>);
+    }
   };
 
   if (!account || loading) {
