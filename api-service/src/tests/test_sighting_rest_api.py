@@ -194,8 +194,11 @@ class TestAddSighting(AppTestCase):
 
 class TestDeleteSighting(AppTestCase):
 
-  def test_delete_sighting_when_ok(self):
+  def setUp(self) -> None:
+    super().setUp()
     self.db_insert_bird(1, 'Pica pica')
+
+  def test_delete_sighting_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
     authentication_token = self.get_authentication_token('hulot', 'myPassword')
@@ -213,7 +216,6 @@ class TestDeleteSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
   def test_delete_sighting_when_not_authorized(self):
-    self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
 
@@ -222,7 +224,6 @@ class TestDeleteSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
   def test_delete_sighting_when_authenticated_as_other_account(self):
-    self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 10, 4), time(16, 9))
     self.db_setup_account(2, 2, 'harry', 'wizardboy', 'harry@hogwarts.com')
