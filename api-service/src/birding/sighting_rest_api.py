@@ -26,7 +26,7 @@ def create_sighting_rest_api_blueprint(
   def get_profile_sightings(username: str, account: Account) -> Response:
     account = account_repository.find_user_account(username)
     if not account:
-      return failure_response()
+      return make_response('', HTTPStatus.NOT_FOUND)
     sightings = get_sightings(account)
     return sightings_response(sightings)
 
@@ -113,12 +113,6 @@ def create_sighting_rest_api_blueprint(
       'status': 'success',
       'result': convert_sighting(sighting),
     }), HTTPStatus.OK)
-
-  def failure_response() -> Response:
-    return make_response(jsonify({
-      'status': 'failure',
-      'message': 'You are not authorized to get these sightings'
-    }), HTTPStatus.UNAUTHORIZED)
 
   def get_sighting_failure_response() -> Response:
     return make_response(jsonify({

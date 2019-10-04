@@ -71,6 +71,15 @@ class TestGetSightings(AppTestCase):
       }
     })
 
+  def test_get_sightings_when_username_missing(self):
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    token = self.get_authentication_token('hulot', 'myPassword')
+    headers = {'authToken': token}
+
+    response = self.client.get('/profile/godzilla/sighting', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
   def test_get_sightings_when_unauthorized(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
