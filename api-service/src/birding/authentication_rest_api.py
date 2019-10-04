@@ -1,5 +1,6 @@
+from functools import wraps
 from http import HTTPStatus
-from typing import Optional
+from typing import Optional, Callable
 from typing import Union
 
 from flask import Blueprint, Response
@@ -20,10 +21,52 @@ from .account import AccountRegistration
 from .account import Password
 from .account import Account
 
+RouteFunction = Callable[..., Response]
+
 
 def create_unauthorized_response(message):
   data = jsonify({'status': 'failure', 'message': message})
   return make_response(data, HTTPStatus.UNAUTHORIZED)
+
+
+def require_authentication(
+      token_decoder: AuthenticationTokenDecoder,
+      account_repository: AccountRepository) -> RouteFunction:
+  """Wraps a route to require a valid authentication token
+
+  The wrapped route will be provided with the authenticated account through a
+  parameter named 'account'.
+  """
+
+  def route_decorator(route: RouteFunction) -> RouteFunction:
+    @wraps(route)
+    def route_wrapper(**kwargs):
+      authentication_token = request.headers.get('authToken')
+      if not authentication_token:
+        return authentication_token_missing_response()
+      decode_result = token_decoder.decode_authentication_token(
+        authentication_token)
+      if not decode_result.ok:
+        if decode_result.error == 'token-invalid':
+          return create_unauthorized_response('authentication token invalid')
+        elif decode_result.error == 'signature-expired':
+          return create_unauthorized_response('authentication token expired')
+      account_id = decode_result.payload['sub']
+      account = account_repository.find_account_by_id(account_id)
+      if not account:
+        return create_unauthorized_response('account missing')
+      return route(**kwargs, account=account)
+
+    return route_wrapper
+
+  return route_decorator
+
+
+def authentication_token_missing_response() -> Response:
+  return make_response(jsonify({
+    'status': 'failure',
+    'message': 'authentication token required',
+  }), HTTPStatus.UNAUTHORIZED)
 
 
 def create_authentication_rest_api_blueprint(
@@ -97,27 +140,17 @@ def create_authentication_rest_api_blueprint(
     return password_reset_success_response()
 
   @blueprint.route('/password', methods=['POST'])
-  def post_password_update() -> Response:
-    auth_token = request.headers.get('authToken')
+  @require_authentication(token_decoder, account_repository)
+  def post_password_update(account: Account) -> Response:
     old_password = request.json['oldPassword']
     raw_new_password = request.json['newPassword']
-    if not auth_token:
-      return authentication_token_missing_response()
-    decode_result = token_decoder.decode_authentication_token(auth_token)
-    if not decode_result.ok:
-      if decode_result.error == 'token-invalid':
-        return create_unauthorized_response('authentication token invalid')
-      elif decode_result.error == 'signature-expired':
-        return create_unauthorized_response('authentication token expired')
-    account_id = decode_result.payload['sub']
-    account = account_repository.find_account_by_id(account_id)
     old_password_correct = is_password_correct(account, old_password)
     if not old_password_correct:
       return old_password_incorrect_response()
     if not Password.is_valid(raw_new_password):
       return new_password_invalid_response()
     new_password = Password(raw_new_password)
-    password_repository.update_password(account_id, new_password)
+    password_repository.update_password(account.id, new_password)
     return password_update_success_response()
 
   def password_reset_failure_response() -> Response:
@@ -222,12 +255,6 @@ def create_authentication_rest_api_blueprint(
       'status': 'success',
       'message': 'Password reset successfully',
     }), HTTPStatus.OK)
-
-  def authentication_token_missing_response() -> Response:
-    return make_response(jsonify({
-      'status': 'failure',
-      'message': 'authentication token required',
-    }), HTTPStatus.UNAUTHORIZED)
 
   def is_password_correct(account: Account, password: str) -> bool:
     return authenticator.is_account_password_correct(account, password)
