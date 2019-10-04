@@ -81,7 +81,7 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
       'status': 'failure',
-      'message': 'You are not authorized to get these sightings',
+      'message': 'authentication token required',
     })
 
   def test_get_sightings_when_auth_token_invalid(self):
@@ -92,7 +92,7 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
       'status': 'failure',
-      'message': 'You are not authorized to get these sightings',
+      'message': 'authentication token invalid',
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
@@ -152,7 +152,10 @@ class TestAddSighting(AppTestCase):
     response = self.post_sighting('invalid token', 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    self.assertEqual(response.json, {'status': 'failure'})
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'authentication token invalid',
+    })
 
   def post_sighting(
         self,

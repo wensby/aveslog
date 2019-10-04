@@ -1,8 +1,9 @@
 from http import HTTPStatus
-from typing import Optional, List
+from typing import List
 
 from flask import Blueprint, Response, make_response, jsonify, request
 
+from .authentication_rest_api import require_authentication
 from .bird import BirdRepository
 from .sighting import SightingRepository, SightingPost, Sighting
 from .time import parse_date
@@ -21,10 +22,8 @@ def create_sighting_rest_api_blueprint(
   blueprint = Blueprint('sighting', __name__)
 
   @blueprint.route('/profile/<string:username>/sighting')
-  def get_profile_sightings(username: str) -> Response:
-    authenticated_account = get_authorized_account(request.headers.get('authToken'))
-    if not authenticated_account:
-      return failure_response()
+  @require_authentication(token_decoder, account_repository)
+  def get_profile_sightings(username: str, account: Account) -> Response:
     account = account_repository.find_user_account(username)
     if not account:
       return failure_response()
@@ -32,45 +31,36 @@ def create_sighting_rest_api_blueprint(
     return sightings_response(sightings)
 
   @blueprint.route('/sighting/<int:sighting_id>')
-  def get_sighting(sighting_id: int) -> Response:
+  @require_authentication(token_decoder, account_repository)
+  def get_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
-    account = get_authorized_account(request.headers.get('authToken'))
     if sighting and sighting.person_id == account.person_id:
       return sighting_response(sighting)
     else:
       return get_sighting_failure_response()
 
   @blueprint.route('/sighting/<int:sighting_id>', methods=['DELETE'])
-  def delete_sighting(sighting_id: int) -> Response:
+  @require_authentication(token_decoder, account_repository)
+  def delete_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
     if not sighting:
       return sighting_deleted_response()
-    account = get_authorized_account(request.headers.get('authToken'))
-    if not account or sighting.person_id != account.person_id:
+    if sighting.person_id != account.person_id:
       return sighting_delete_unauthorized_response()
     sighting_repository.delete_sighting(sighting_id)
     return sighting_deleted_response()
 
   @blueprint.route('/sighting', methods=['POST'])
-  def post_sighting() -> Response:
-    account = get_authorized_account(request.headers.get('authToken'))
+  @require_authentication(token_decoder, account_repository)
+  def post_sighting(account: Account) -> Response:
     person_id = request.json['person']['id']
-    if account and account.person_id == person_id:
+    if account.person_id == person_id:
       sighting_post = create_sighting_post(request.json)
       added = sighting_repository.add_sighting(sighting_post)
       if added:
         return post_sighting_success_response()
     else:
       return post_sighting_failure_response()
-
-  def get_authorized_account(token: Optional[str]) -> Optional[Account]:
-    if not token:
-      return None
-    decode_result = token_decoder.decode_authentication_token(token)
-    if decode_result.error:
-      return None
-    account_id = decode_result.payload['sub']
-    return account_repository.find_account_by_id(account_id)
 
   def convert_sighting(sighting: Sighting) -> dict:
     result = {
