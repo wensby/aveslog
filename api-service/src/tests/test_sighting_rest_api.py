@@ -221,6 +221,17 @@ class TestDeleteSighting(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
+  def test_delete_sighting_when_authenticated_as_other_account(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
+    self.db_insert_sighting(1, 1, 1, date(2019, 10, 4), time(16, 9))
+    self.db_setup_account(2, 2, 'harry', 'wizardboy', 'harry@hogwarts.com')
+    harry_token = self.get_authentication_token('harry', 'wizardboy')
+
+    response = self.delete_sighting(harry_token, 1)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
   def delete_sighting(self,
         authentication_token: str,
         sighting_id: int) -> Response:
