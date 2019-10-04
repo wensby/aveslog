@@ -2,10 +2,20 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'build', 'media'), {
-  maxAge: 86400000,
+const hashedFilePathPattern = new RegExp('\\.[0-9a-f]{8}\\.');
+
+app.use(express.static(path.join(__dirname, 'build'), {
+  etag: true,
+  lastModified: true,
+  setHeaders: function (res, path) {
+    if (hashedFilePathPattern.test(path)) {
+      res.setHeader('Cache-Control', 'max-age=31536000');
+    }
+    else {
+      res.setHeader('Cache-Control', 'no-cache');
+    }
+  },
 }));
-app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
