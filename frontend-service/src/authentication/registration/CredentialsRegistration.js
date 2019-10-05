@@ -45,7 +45,7 @@ export default () => {
       if (response['status'] == 'success') {
         setSuccess(true);
       }
-      else if (response['message'] == 'Username already taken') {
+      else if (response['message'] == 'username already taken') {
         setTakenUsernames(takenUsernames.concat([credentials[0]]))
         setAlert({
           category: 'danger',

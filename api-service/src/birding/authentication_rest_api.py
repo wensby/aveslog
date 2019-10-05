@@ -212,8 +212,8 @@ def create_authentication_rest_api_blueprint(
   def username_taken_response() -> Response:
     return make_response(jsonify({
       'status': 'failure',
-      'message': 'Username already taken',
-    }), HTTPStatus.INTERNAL_SERVER_ERROR)
+      'message': 'username already taken',
+    }), HTTPStatus.CONFLICT)
 
   def token_response(token: str) -> Response:
     return make_response(jsonify({

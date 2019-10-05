@@ -163,10 +163,10 @@ class TestRegistration(AppTestCase):
 
     response = self.post_registration('token', 'hulot', 'password')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
     self.assertEqual(response.json, {
       'status': 'failure',
-      'message': 'Username already taken',
+      'message': 'username already taken',
     })
 
   def post_registration_email(self, email: str) -> Response:
