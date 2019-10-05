@@ -1,9 +1,11 @@
 from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
+
 def read_script_file(filename: str) -> str:
   with open(f'birding/resources/{filename}', 'r') as file:
     return file.read()
+
 
 class DatabaseFactory:
 
@@ -11,7 +13,8 @@ class DatabaseFactory:
     self.logger = logger
 
   def create_database(self, host, dbname, user, password):
-    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host, database=dbname)
+    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host,
+                                database=dbname)
     self.logger.info(f'Database ({dbname}) connection pool created')
     return Database(self.logger, pool)
 
@@ -46,6 +49,7 @@ class Database:
     self.logger.info('Getting database connection')
     return self.connection_pool.getconn()
 
+
 class Transaction:
 
   def __init__(self, connection_pool):
@@ -75,6 +79,7 @@ class Transaction:
     if mapper:
       rows = list(map(mapper, rows))
     return QueryResult(status, rows)
+
 
 class QueryResult:
 
