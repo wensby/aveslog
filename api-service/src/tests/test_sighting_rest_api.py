@@ -139,7 +139,7 @@ class TestAddSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
 
-    response = self.post_sighting(token, 'pica pica', '17:42')
+    response = self.post_sighting(1, token, 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
@@ -149,7 +149,7 @@ class TestAddSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
 
-    response = self.post_sighting(token, 'pica pica')
+    response = self.post_sighting(1, token, 'pica pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
@@ -158,7 +158,7 @@ class TestAddSighting(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
 
-    response = self.post_sighting('invalid token', 'pica pica', '17:42')
+    response = self.post_sighting(1, 'invalid token', 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -168,13 +168,14 @@ class TestAddSighting(AppTestCase):
 
   def post_sighting(
         self,
+        person_id: int,
         token: str,
         binomial_name: str,
         time: str = None
   ) -> Response:
     data = {
       'person': {
-        'id': 1
+        'id': person_id
       },
       'bird': {
         'binomialName': binomial_name,
