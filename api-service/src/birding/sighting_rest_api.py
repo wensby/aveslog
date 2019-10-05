@@ -54,13 +54,13 @@ def create_sighting_rest_api_blueprint(
   @require_authentication(token_decoder, account_repository)
   def post_sighting(account: Account) -> Response:
     person_id = request.json['person']['id']
-    if account.person_id == person_id:
-      sighting_post = create_sighting_post(request.json)
-      added = sighting_repository.add_sighting(sighting_post)
-      if added:
-        return post_sighting_success_response()
-    else:
+    if account.person_id != person_id:
       return post_sighting_failure_response()
+    sighting_post = create_sighting_post(request.json)
+    added = sighting_repository.add_sighting(sighting_post)
+    if not added:
+      return post_sighting_failure_response()
+    return post_sighting_success_response()
 
   def convert_sighting(sighting: Sighting) -> dict:
     result = {
