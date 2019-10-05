@@ -144,6 +144,15 @@ class TestAddSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
 
+  def test_post_sighting_when_person_id_not_match_authentication(self) -> None:
+    self.db_setup_account(1, 1, 'kenny', 'bostick!', 'kenny@mail.com')
+    self.db_insert_bird(1, 'Pica pica')
+    token = self.get_authentication_token('kenny', 'bostick!')
+
+    response = self.post_sighting(2, token, 'pica pica', '17:42')
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
   def test_add_sighting_when_no_time(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
