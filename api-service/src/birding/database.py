@@ -1,7 +1,7 @@
 from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
-def read_script_file(filename):
+def read_script_file(filename: str) -> str:
   with open(f'birding/resources/{filename}', 'r') as file:
     return file.read()
 
