@@ -1,3 +1,6 @@
+from logging import Logger
+from typing import Callable, Any
+
 from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
@@ -9,15 +12,15 @@ def read_script_file(filename: str) -> str:
 
 class QueryResult:
 
-  def __init__(self, status, rows):
-    self.status = status
-    self.rows = rows
+  def __init__(self, status: str, rows: list) -> None:
+    self.status: str = status
+    self.rows: rows = rows
 
 
 class Transaction:
 
-  def __init__(self, connection_pool):
-    self.connection_pool = connection_pool
+  def __init__(self, connection_pool: SimpleConnectionPool) -> None:
+    self.connection_pool: SimpleConnectionPool = connection_pool
 
   def __enter__(self):
     self.connection = self.__get_connection()
@@ -33,7 +36,10 @@ class Transaction:
   def __get_connection(self):
     return self.connection_pool.getconn()
 
-  def execute(self, query, vars=None, mapper=None):
+  def execute(self,
+        query: str,
+        vars: tuple = None,
+        mapper: Callable[[list], Any] = None) -> QueryResult:
     self.cursor.execute(query, vars)
     try:
       rows = self.cursor.fetchall()
@@ -47,14 +53,16 @@ class Transaction:
 
 class Database:
 
-  def __init__(self, logger, connection_pool):
-    self.logger = logger
-    self.connection_pool = connection_pool
+  def __init__(self,
+        logger: Logger,
+        connection_pool: SimpleConnectionPool) -> None:
+    self.logger: Logger = logger
+    self.connection_pool: SimpleConnectionPool = connection_pool
 
-  def transaction(self):
+  def transaction(self) -> Transaction:
     return Transaction(self.connection_pool)
 
-  def query(self, query, vars=None):
+  def query(self, query: str, vars: tuple = None) -> QueryResult:
     connection = self.__get_connection()
     cursor = connection.cursor()
     cursor.execute(query, vars)
@@ -78,18 +86,15 @@ class Database:
 
 class DatabaseFactory:
 
-  def __init__(self, logger):
-    self.logger = logger
+  def __init__(self, logger: Logger) -> None:
+    self.logger: Logger = logger
 
-  def create_database(self, host, dbname, user, password):
+  def create_database(self,
+        host: str,
+        dbname: str,
+        user: str,
+        password: str) -> Database:
     pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host,
                                 database=dbname)
     self.logger.info(f'Database ({dbname}) connection pool created')
     return Database(self.logger, pool)
-
-
-class QueryResult:
-
-  def __init__(self, status, rows):
-    self.status = status
-    self.rows = rows
