@@ -1,6 +1,8 @@
 from datetime import date, time
 from typing import Optional, Any
 
+from .database import Database
+
 
 class SightingPost:
 
@@ -37,27 +39,27 @@ class Sighting:
 
 class SightingRepository:
 
-  def __init__(self, database):
-    self.database = database
+  def __init__(self, database: Database) -> None:
+    self.database: Database = database
 
-  def find_sighting(self, sighting_id):
+  def find_sighting(self, sighting_id: int) -> Optional[Sighting]:
     query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
              'FROM sighting '
              'WHERE id = %s;')
     result = self.database.query(query, (sighting_id,))
     return next(map(self.sighting_from_row, result.rows), None)
 
-  def delete_sighting(self, sighting_id):
+  def delete_sighting(self, sighting_id: int) -> bool:
     query = ('DELETE '
              'FROM sighting '
              'WHERE id = %s;')
     result = self.database.query(query, (sighting_id,))
     return 'DELETE' in result.status
 
-  def sighting_from_row(self, row):
+  def sighting_from_row(self, row: list) -> Sighting:
     return Sighting(row[0], row[1], row[2], row[3], row[4])
 
-  def add_sighting(self, sighting_post):
+  def add_sighting(self, sighting_post: SightingPost) -> bool:
     query = (
       'INSERT INTO '
       '  sighting (person_id, bird_id, sighting_date, sighting_time) '
