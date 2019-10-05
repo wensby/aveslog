@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
 from birding.database import Database
 
@@ -48,9 +48,14 @@ class Password:
 
 class Credentials:
 
-  def __init__(self, username, password):
-    self.username = username
-    self.password = password
+  def __init__(self, username: Username, password: Password) -> None:
+    self.username: Username = username
+    self.password: Password = password
+
+  def __eq__(self, other: Any) -> bool:
+    if isinstance(other, Credentials):
+      return self.__dict__ == other.__dict__
+    return False
 
 
 class Account:
@@ -82,21 +87,23 @@ class AccountFactory:
     self.database = database
     self.hasher = hasher
 
-  def create_account(self, email, username, password):
+  def create_account(self, email, credentials: Credentials):
     with self.database.transaction() as transaction:
       result = transaction.execute(
-        'SELECT 1 FROM user_account WHERE username LIKE %s;', (username.raw,))
+        'SELECT 1 FROM user_account WHERE username LIKE %s;',
+        (credentials.username.raw,))
       if len(result.rows) > 0:
         return
       result = transaction.execute(
         ('INSERT INTO user_account (username, email) '
          'VALUES (%s, %s) '
          'RETURNING id, username, email, person_id, locale_id;'),
-        (username.raw, email.raw))
+        (credentials.username.raw, email.raw))
       account = next(map(Account.fromrow, result.rows), None)
       if not account:
         return
-      salt_hashed_password = self.hasher.create_salt_hashed_password(password)
+      salt_hashed_password = self.hasher.create_salt_hashed_password(
+        credentials.password)
       salt = salt_hashed_password[0]
       hash = salt_hashed_password[1]
       transaction.execute(
@@ -131,7 +138,7 @@ class HashedPassword:
 
 class AccountRepository:
 
-  def __init__(self, database : Database, password_hasher, token_factory):
+  def __init__(self, database: Database, password_hasher, token_factory):
     self.database = database
     self.hasher = password_hasher
     self.token_factory = token_factory

@@ -11,6 +11,7 @@ from .localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
 from .account import Username, AccountFactory
+from .account import Credentials
 from .account import PasswordRepository
 from .account import Account
 from .account import PasswordHasher
@@ -108,7 +109,8 @@ class AccountRegistrationController:
     if self.account_repository.find_user_account(username):
       return 'username taken'
     password = Password(raw_password)
-    account = self.account_factory.create_account(email, username, password)
+    credentials = Credentials(username, password)
+    account = self.account_factory.create_account(email, credentials)
     self.__remove_registration(registration.id)
     self.__initialize_account_person(account)
     return 'success'

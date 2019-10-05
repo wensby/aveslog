@@ -7,6 +7,7 @@ from binascii import hexlify
 from birding.account import Account, PasswordRepository, PasswordResetToken, \
   PasswordHasher, TokenFactory, \
   AccountRepository, Username, Password, AccountFactory
+from birding.account import Credentials
 from birding.database import Database
 from birding.mail import EmailAddress
 
@@ -105,6 +106,7 @@ class TestAccountFactory(TestCase):
   username = Username('alice')
   email = EmailAddress('alice@email.com')
   password = Password('password')
+  credentials = Credentials(username, password)
 
   def setUp(self) -> None:
     self.database = Mock()
@@ -120,8 +122,7 @@ class TestAccountFactory(TestCase):
       Simple(rows=[[4, 'alice', 'alice@email.com', None, None]]),
       Simple()]
 
-    result = self.factory.create_account(
-      self.email, self.username, self.password)
+    result = self.factory.create_account(self.email, self.credentials)
 
     self.assertEqual(result, Account(4, 'alice', 'alice@email.com', None, None))
 
@@ -129,8 +130,7 @@ class TestAccountFactory(TestCase):
     self.database.transaction.return_value = mock_database_transaction()
     self.database.transaction().execute.return_value = Simple(rows=[[1]])
 
-    result = self.factory.create_account(
-      self.email, self.username, self.password)
+    result = self.factory.create_account(self.email, self.credentials)
 
     self.assertIsNone(result)
 
@@ -140,8 +140,7 @@ class TestAccountFactory(TestCase):
       Simple(rows=[]),
       Simple(rows=[])]
 
-    result = self.factory.create_account(
-      self.email, self.username, self.password)
+    result = self.factory.create_account(self.email, self.credentials)
 
     self.assertIsNone(result)
 

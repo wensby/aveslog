@@ -9,6 +9,7 @@ from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
 from birding.account import Account
+from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
   AccountFactory
 from birding.person import PersonRepository
@@ -120,8 +121,8 @@ class TestAccountRegistrationController(TestCase):
     self.controller.perform_registration(valid_email, 'myToken', valid_username,
                                          valid_password)
     self.account_factory.create_account.assert_called_with(
-      EmailAddress(valid_email), Username(valid_username),
-      Password(valid_password))
+      EmailAddress(valid_email), Credentials(Username(valid_username),
+      Password(valid_password)))
 
   def test_perform_registration_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
