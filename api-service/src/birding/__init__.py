@@ -39,7 +39,7 @@ from .sighting import SightingRepository
 from .sighting_view import SightingViewFactory
 
 
-def create_app(test_config=None):
+def create_app(test_config: dict = None) -> Flask:
   app = Flask(__name__, instance_relative_config=True)
   configure_app(app, test_config)
 
@@ -148,7 +148,7 @@ def create_app(test_config=None):
   return app
 
 
-def configure_app(app, test_config):
+def configure_app(app: Flask, test_config: dict) -> None:
   if not os.path.isdir(app.instance_path):
     os.makedirs(app.instance_path)
   if test_config:
@@ -162,7 +162,7 @@ def configure_app(app, test_config):
   configure_cross_origin_resource_sharing(app)
 
 
-def configure_cross_origin_resource_sharing(app: Flask):
+def configure_cross_origin_resource_sharing(app: Flask) -> None:
   if 'FRONTEND_HOST' in app.config:
     frontend_host = app.config['FRONTEND_HOST']
   elif 'FRONTEND_HOST' in os.environ:
@@ -179,7 +179,7 @@ def configure_cross_origin_resource_sharing(app: Flask):
   })
 
 
-def create_database_connection_details():
+def create_database_connection_details() -> dict:
   return {
     'host': os.environ.get('DATABASE_HOST'),
     'dbname': os.environ.get('DATABASE_NAME'),
