@@ -46,6 +46,13 @@ class Password:
     return False
 
 
+class Credentials:
+
+  def __init__(self, username, password):
+    self.username = username
+    self.password = password
+
+
 class Account:
 
   @classmethod
@@ -108,13 +115,6 @@ class AccountRegistration:
   @classmethod
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2])
-
-
-class Credentials:
-
-  def __init__(self, username, password):
-    self.username = username
-    self.password = password
 
 
 class HashedPassword:
