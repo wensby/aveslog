@@ -180,7 +180,7 @@ class AccountRepository:
       username = username.raw
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM user_account '
-             'WHERE username LIKE %s;')
+             'WHERE username ILIKE %s;')
     result = self.database.query(query, (username,))
     return next(map(Account.fromrow, result.rows), None)
 

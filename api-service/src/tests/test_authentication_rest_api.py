@@ -169,6 +169,18 @@ class TestRegistration(AppTestCase):
       'message': 'username already taken',
     })
 
+  def test_post_registration_when_other_cased_username_taken(self) -> None:
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    self.db_insert_registration('first@mail.com', 'token')
+
+    response = self.post_registration('token', 'George', 'washington')
+
+    self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'username already taken',
+    })
+
   def post_registration_email(self, email: str) -> Response:
     resource = '/authentication/registration'
     return self.client.post(resource, json={'email': email})
