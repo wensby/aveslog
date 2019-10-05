@@ -7,16 +7,42 @@ def read_script_file(filename: str) -> str:
     return file.read()
 
 
-class DatabaseFactory:
+class QueryResult:
 
-  def __init__(self, logger):
-    self.logger = logger
+  def __init__(self, status, rows):
+    self.status = status
+    self.rows = rows
 
-  def create_database(self, host, dbname, user, password):
-    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host,
-                                database=dbname)
-    self.logger.info(f'Database ({dbname}) connection pool created')
-    return Database(self.logger, pool)
+
+class Transaction:
+
+  def __init__(self, connection_pool):
+    self.connection_pool = connection_pool
+
+  def __enter__(self):
+    self.connection = self.__get_connection()
+    self.cursor = self.connection.cursor()
+    return self
+
+  def __exit__(self, exc_type, exc_val, exc_tb):
+    self.connection.commit()
+    self.cursor.close()
+    self.connection_pool.putconn(self.connection)
+
+  @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
+  def __get_connection(self):
+    return self.connection_pool.getconn()
+
+  def execute(self, query, vars=None, mapper=None):
+    self.cursor.execute(query, vars)
+    try:
+      rows = self.cursor.fetchall()
+    except:
+      rows = []
+    status = self.cursor.statusmessage
+    if mapper:
+      rows = list(map(mapper, rows))
+    return QueryResult(status, rows)
 
 
 class Database:
@@ -50,35 +76,16 @@ class Database:
     return self.connection_pool.getconn()
 
 
-class Transaction:
+class DatabaseFactory:
 
-  def __init__(self, connection_pool):
-    self.connection_pool = connection_pool
+  def __init__(self, logger):
+    self.logger = logger
 
-  def __enter__(self):
-    self.connection = self.__get_connection()
-    self.cursor = self.connection.cursor()
-    return self
-
-  def __exit__(self, exc_type, exc_val, exc_tb):
-    self.connection.commit()
-    self.cursor.close()
-    self.connection_pool.putconn(self.connection)
-
-  @retry(wait_exponential_multiplier=1000, wait_exponential_max=10000)
-  def __get_connection(self):
-    return self.connection_pool.getconn()
-
-  def execute(self, query, vars=None, mapper=None):
-    self.cursor.execute(query, vars)
-    try:
-      rows = self.cursor.fetchall()
-    except:
-      rows = []
-    status = self.cursor.statusmessage
-    if mapper:
-      rows = list(map(mapper, rows))
-    return QueryResult(status, rows)
+  def create_database(self, host, dbname, user, password):
+    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host,
+                                database=dbname)
+    self.logger.info(f'Database ({dbname}) connection pool created')
+    return Database(self.logger, pool)
 
 
 class QueryResult:
