@@ -4,7 +4,7 @@ from typing import List
 from flask import Blueprint, Response, make_response, jsonify, request
 
 from .authentication_rest_api import require_authentication
-from .bird import BirdRepository
+from .bird import BirdRepository, Bird
 from .sighting import SightingRepository, SightingPost, Sighting
 from .time import parse_date
 from .time import parse_time
@@ -55,11 +55,15 @@ def create_sighting_rest_api_blueprint(
   def post_sighting(account: Account) -> Response:
     person_id = request.json['person']['id']
     if account.person_id != person_id:
-      return post_sighting_failure_response()
-    sighting_post = create_sighting_post(request.json)
+      return post_sighting_unauthorized_response()
+    binomial_name = request.json['bird']['binomialName']
+    bird = bird_repository.get_bird_by_binomial_name(binomial_name)
+    if not bird:
+      return make_response('', HTTPStatus.BAD_REQUEST)
+    sighting_post = create_sighting_post(request.json, bird)
     added = sighting_repository.add_sighting(sighting_post)
     if not added:
-      return post_sighting_failure_response()
+      return make_response('', HTTPStatus.INTERNAL_SERVER_ERROR)
     return post_sighting_success_response()
 
   def convert_sighting(sighting: Sighting) -> dict:
@@ -92,9 +96,7 @@ def create_sighting_rest_api_blueprint(
     to_dict = lambda item: convert_sighting_item(item, account.person_id)
     return list(map(to_dict, items))
 
-  def create_sighting_post(post_data: dict) -> SightingPost:
-    binomial_name = post_data['bird']['binomialName']
-    bird = bird_repository.get_bird_by_binomial_name(binomial_name)
+  def create_sighting_post(post_data: dict, bird: Bird) -> SightingPost:
     person_id = post_data['person']['id']
     date = parse_date(post_data['date'])
     time = parse_time(post_data['time']) if 'time' in post_data else None
@@ -131,7 +133,7 @@ def create_sighting_rest_api_blueprint(
       'status': 'success',
     }), HTTPStatus.OK)
 
-  def post_sighting_failure_response() -> Response:
+  def post_sighting_unauthorized_response() -> Response:
     return make_response(jsonify({
       'status': 'failure',
     }), HTTPStatus.UNAUTHORIZED)
