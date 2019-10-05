@@ -137,12 +137,12 @@ class AccountRepository:
     self.token_factory = token_factory
 
   def find_account_by_id(self, id) -> Account:
-    query = (
-      'SELECT id, username, email, person_id, locale_id '
-      'FROM user_account '
-      'WHERE id = %s;')
-    result = self.database.query(query, (id,))
-    return next(map(Account.fromrow, result.rows), None)
+    with self.database.transaction() as transaction:
+      query = ('SELECT id, username, email, person_id, locale_id '
+               'FROM user_account '
+               'WHERE id = %s;')
+      result = transaction.execute(query, (id,), Account.fromrow)
+      return next(iter(result.rows), None)
 
   def remove_account_registration_by_id(self, id):
     query = ('DELETE FROM user_account_registration '
@@ -209,6 +209,7 @@ class AccountRepository:
       result = transaction.execute(
         'SELECT * FROM user_account;', mapper=Account.fromrow)
       return result.rows
+
 
 class PasswordHasher:
 

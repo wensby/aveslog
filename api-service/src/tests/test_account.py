@@ -66,17 +66,15 @@ class TestAccountRepository(TestCase):
       self.token_factory,
     )
 
-  def test_find_account_by_id_queries_database_correctly(self):
-    self.database.query().rows = []
-    result = self.repository.find_account_by_id(4)
-    self.database.query.assert_called_with(
-      'SELECT id, username, email, person_id, locale_id FROM user_account WHERE id = %s;',
-      (4,))
+  def test_find_account_by_id_queries_database_correctly(self) -> None:
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.return_value = Simple(rows=[])
 
-  def test_find_account_by_id_parses_account_correctly_when_present(self):
-    self.database.query().rows = [[4, 'username', 'e@mail.com', 8, 15]]
-    result = self.repository.find_account_by_id(4)
-    self.assertEqual(result, Account(4, 'username', 'e@mail.com', 8, 15))
+    self.repository.find_account_by_id(4)
+
+    self.database.transaction().execute.assert_called_with(
+      'SELECT id, username, email, person_id, locale_id FROM user_account '
+      'WHERE id = %s;', (4,), Account.fromrow)
 
   def test_create_account_registration_queries_database_correctly(self):
     email = EmailAddress('e@mail.com')

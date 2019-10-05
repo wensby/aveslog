@@ -14,7 +14,7 @@ class QueryResult:
 
   def __init__(self, status: str, rows: list) -> None:
     self.status: str = status
-    self.rows: rows = rows
+    self.rows: list = rows
 
 
 class Transaction:
