@@ -2,6 +2,15 @@ from datetime import date, time
 from typing import Optional, Any
 
 
+class SightingPost:
+
+  def __init__(self, person_id, bird_id, date, time=None):
+    self.person_id = person_id
+    self.bird_id = bird_id
+    self.date = date
+    self.time = time
+
+
 class Sighting:
 
   def __init__(self,
@@ -63,12 +72,3 @@ class SightingRepository:
     )
     result = self.database.query(query, args)
     return 'INSERT 0 1' in result.status
-
-
-class SightingPost:
-
-  def __init__(self, person_id, bird_id, date, time=None):
-    self.person_id = person_id
-    self.bird_id = bird_id
-    self.date = date
-    self.time = time
