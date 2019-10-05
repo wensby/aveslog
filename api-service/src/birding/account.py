@@ -37,7 +37,7 @@ class Password:
 
   def __init__(self, raw_password):
     if not self.is_valid(raw_password):
-      raise Exception(f'Username format invalid: {raw_password}')
+      raise Exception(f'Password format invalid: {raw_password}')
     self.raw = raw_password
 
   def __eq__(self, other):
