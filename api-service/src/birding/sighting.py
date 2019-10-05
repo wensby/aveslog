@@ -1,18 +1,27 @@
+from datetime import date, time
+from typing import Optional, Any
+
+
 class Sighting:
 
-  def __init__(self, id, person_id, bird_id, sighting_date, sighting_time):
-    self.id = id
-    self.person_id = person_id
-    self.bird_id = bird_id
-    self.sighting_date = sighting_date
-    self.sighting_time = sighting_time
+  def __init__(self,
+        id: int,
+        person_id: int,
+        bird_id: int,
+        sighting_date: date,
+        sighting_time: Optional[time]) -> None:
+    self.id: int = id
+    self.person_id: int = person_id
+    self.bird_id: int = bird_id
+    self.sighting_date: date = sighting_date
+    self.sighting_time: Optional[time] = sighting_time
 
-  def __eq__(self, other):
+  def __eq__(self, other: Any) -> bool:
     if isinstance(other, Sighting):
       return self.__dict__ == other.__dict__
     return False
 
-  def __repr__(self):
+  def __repr__(self) -> str:
     return f'{self.__class__.__name__}({self.id}, {self.person_id}, {self.bird_id}, {self.sighting_date}, {self.sighting_time})'
 
 
