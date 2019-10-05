@@ -5,6 +5,7 @@ import re
 from typing import Optional, Union, Any
 
 from birding.database import Database
+from birding.mail import EmailAddress
 
 
 class Username:
@@ -81,13 +82,34 @@ class Account:
             f'{self.person_id}, {self.locale_id})')
 
 
+class PasswordHasher:
+
+  def __init__(self, salt_factory):
+    self.salt_factory = salt_factory
+
+  def create_salt_hashed_password(self, password):
+    salt = self.salt_factory.create_salt()
+    hash = self.hash_password(password, salt)
+    return (salt, hash)
+
+  def hash_password(self, password: Union[Password, str], salt: str) -> str:
+    if isinstance(password, Password):
+      password = password.raw
+    encoded_password = password.encode()
+    encoded_salt = salt.encode()
+    binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
+    return binascii.hexlify(binary_hash).decode()
+
+
 class AccountFactory:
 
-  def __init__(self, database, hasher):
-    self.database = database
-    self.hasher = hasher
+  def __init__(self, database: Database, hasher: PasswordHasher) -> None:
+    self.database: Database = database
+    self.hasher: PasswordHasher = hasher
 
-  def create_account(self, email, credentials: Credentials):
+  def create_account(self,
+        email: EmailAddress,
+        credentials: Credentials) -> Optional[Account]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'SELECT 1 FROM user_account WHERE username LIKE %s;',
@@ -216,25 +238,6 @@ class AccountRepository:
       result = transaction.execute(
         'SELECT * FROM user_account;', mapper=Account.fromrow)
       return result.rows
-
-
-class PasswordHasher:
-
-  def __init__(self, salt_factory):
-    self.salt_factory = salt_factory
-
-  def create_salt_hashed_password(self, password):
-    salt = self.salt_factory.create_salt()
-    hash = self.hash_password(password, salt)
-    return (salt, hash)
-
-  def hash_password(self, password: Union[Password, str], salt: str) -> str:
-    if isinstance(password, Password):
-      password = password.raw
-    encoded_password = password.encode()
-    encoded_salt = salt.encode()
-    binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
-    return binascii.hexlify(binary_hash).decode()
 
 
 class PasswordRepository:
