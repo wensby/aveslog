@@ -10,6 +10,7 @@ from tests.test_util import mock_return
 
 picapica = Bird(1, 'Pica pica')
 
+
 class TestBirdSearchController(TestCase):
 
   def setUp(self):
@@ -32,6 +33,7 @@ class TestBirdSearchController(TestCase):
     result = self.controller.search('name')
 
     self.assertEqual(len(result), 100)
+
 
 class TestBirdSearcher(TestCase):
 
@@ -88,6 +90,7 @@ class TestBirdSearcher(TestCase):
 
     self.assertEqual(matches, [])
 
+
 class TestBirdMatch(TestCase):
 
   def test_query_match(self):
@@ -99,6 +102,7 @@ class TestBirdMatch(TestCase):
     bird = picapica
     match = BirdMatch(bird, 1)
     self.assertIs(match.bird, bird)
+
 
 class TestStringMatcher(TestCase):
 
