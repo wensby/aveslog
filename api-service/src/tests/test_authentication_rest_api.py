@@ -19,6 +19,16 @@ class TestLogin(AppTestCase):
     self.assertEqual(response.json['message'], 'Successfully logged in.')
     self.assertIn('authToken', response.json)
 
+  def test_get_token_when_different_username_case(self) -> None:
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+
+    response = self.get_authentication_token('GeOrGe', 'costanza')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json['status'], 'success')
+    self.assertEqual(response.json['message'], 'Successfully logged in.')
+    self.assertIn('authToken', response.json)
+
   def test_get_token_when_incorrect_credentials(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
