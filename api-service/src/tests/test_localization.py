@@ -9,7 +9,6 @@ from unittest.mock import Mock
 from birding.localization import Locale, LocaleDeterminer, LoadedLocale
 from birding.localization import LocaleRepository
 from birding.localization import LocaleLoader
-from birding.localization import LocalesMissesLogger
 from birding.database import Database
 from test_util import mock_database_transaction
 
@@ -82,51 +81,6 @@ class TestLoadedLocale(TestCase):
     locale = LoadedLocale(Locale(1, 'en'), None, None, None)
     name = locale.name('Pica pica')
     self.assertEqual(name, 'Pica pica')
-
-
-class TestLocalesMissesLogger(TestCase):
-
-  def setUp(self) -> None:
-    self.locale = Locale(1, 'sv')
-    self.temp_dir = tempfile.mkdtemp()
-
-  def test_creates_locales_file_if_not_present(self):
-    misses_repository = {self.locale: ['shelter']}
-    self.assertFalse(self.is_misses_file_present(self.locale))
-    logger = LocalesMissesLogger(misses_repository, self.temp_dir)
-
-    logger.log_misses()
-
-    self.assertTrue(self.is_misses_file_present(self.locale))
-
-  def test_only_adds_not_already_logged_misses(self):
-    os.makedirs(self.locales_misses_dir_path())
-    with open(self.misses_file_path(self.locale), 'w') as locale_misses_file:
-      locale_misses_file.write('alreadypresent\n')
-    misses_repository = {self.locale: ['alreadypresent', 'new']}
-    logger = LocalesMissesLogger(misses_repository, self.temp_dir)
-
-    logger.log_misses()
-
-    misses_file_lines = self.locales_misses_file_lines(self.locale)
-    self.assertListEqual(misses_file_lines, ['alreadypresent\n', 'new\n'])
-
-  def is_misses_file_present(self, locale: Locale) -> bool:
-    return os.path.isfile(self.misses_file_path(locale))
-
-  def locales_misses_dir_path(self) -> str:
-    return os.path.join(self.temp_dir, 'locales-misses')
-
-  def misses_file_path(self, locale: Locale) -> str:
-    misses_dir = os.path.join(self.temp_dir, self.locales_misses_dir_path())
-    return os.path.join(misses_dir, f'{locale.code}.txt')
-
-  def locales_misses_file_lines(self, locale: Locale) -> list:
-    with open(self.misses_file_path(locale), 'r') as file:
-      return file.readlines()
-
-  def tearDown(self) -> None:
-    shutil.rmtree(self.temp_dir)
 
 
 english_locale = Mock()

@@ -24,8 +24,7 @@ from .bird import BirdRepository
 from .bird_view import BirdViewFactory
 from .database import DatabaseFactory
 from .link import LinkFactory
-from .localization import LocaleRepository, LocaleDeterminerFactory, \
-  LocalesMissesLogger
+from .localization import LocaleRepository, LocaleDeterminerFactory
 from .localization import LoadedLocale
 from .localization import LocaleLoader, Locale
 from .mail import MailDispatcherFactory
@@ -84,8 +83,6 @@ def create_app(test_config: dict = None) -> Flask:
   password_repository = PasswordRepository(token_factory, database, hasher)
   password_reset_controller = PasswordResetController(
     account_repository, password_repository, link_factory, mail_dispatcher)
-  locales_misses_logger = LocalesMissesLogger(
-    locales_misses_repository, app.config['LOGS_DIR_PATH'])
   authentication_token_factory = AuthenticationTokenFactory(
     app.secret_key, datetime.datetime.utcnow)
   authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
@@ -126,11 +123,6 @@ def create_app(test_config: dict = None) -> Flask:
   @app.before_request
   def before_request():
     detect_user_locale()
-
-  @app.after_request
-  def after_request(response):
-    locales_misses_logger.log_misses()
-    return response
 
   def detect_user_locale():
     locale_determiner = locale_determiner_factory.create_locale_determiner()
