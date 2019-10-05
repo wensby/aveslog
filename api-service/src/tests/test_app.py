@@ -16,6 +16,18 @@ class TestAppCreation(TestCase):
     }
     birding.create_app(test_config=test_config)
 
+  def test_creation_sets_frontend_host_from_environment_variable(self) -> None:
+    test_config = {
+      'TESTING': True,
+      'SECRET_KEY': 'wowsosecret',
+      'LOGS_DIR_PATH': 'test-logs',
+    }
+    os.environ['FRONTEND_HOST'] = 'http://localhost:3002'
+
+    app = birding.create_app(test_config=test_config)
+
+    self.assertEqual(app.config['FRONTEND_HOST'], 'http://localhost:3002')
+
   def test_creation_crashes_without_frontend_host(self):
     test_config = {
       'TESTING': True,
