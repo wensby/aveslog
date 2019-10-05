@@ -15,6 +15,7 @@ class TestSighting(TestCase):
     sighting = Sighting(4, 8, 15, date(2019, 7, 12), None)
     self.assertEqual(repr(sighting), 'Sighting(4, 8, 15, 2019-07-12, None)')
 
+
 class TestSightingRepository(TestCase):
 
   def setUp(self):
