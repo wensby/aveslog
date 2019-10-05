@@ -6,11 +6,15 @@ from .database import Database
 
 class SightingPost:
 
-  def __init__(self, person_id, bird_id, date, time=None):
-    self.person_id = person_id
-    self.bird_id = bird_id
-    self.date = date
-    self.time = time
+  def __init__(self,
+        person_id: int,
+        bird_id: int,
+        sighting_date: date,
+        sighting_time: Optional[time] = None) -> None:
+    self.person_id: int = person_id
+    self.bird_id: int = bird_id
+    self.date: date = sighting_date
+    self.time: Optional[time] = sighting_time
 
 
 class Sighting:
