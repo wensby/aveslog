@@ -132,9 +132,9 @@ class TestGetSightings(AppTestCase):
     })
 
 
-class TestAddSighting(AppTestCase):
+class TestPostSighting(AppTestCase):
 
-  def test_add_sighting_when_everything_ok(self):
+  def test_post_sighting_when_everything_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
@@ -161,7 +161,7 @@ class TestAddSighting(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
-  def test_add_sighting_when_no_time(self):
+  def test_post_sighting_when_no_time(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     token = self.get_authentication_token('hulot', 'myPassword')
@@ -171,7 +171,7 @@ class TestAddSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {'status': 'success'})
 
-  def test_add_sighting_when_invalid_authentication_token(self):
+  def test_post_sighting_when_invalid_authentication_token(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
 
