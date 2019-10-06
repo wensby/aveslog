@@ -19,6 +19,10 @@ class SightingPost:
 
 class Sighting:
 
+  @classmethod
+  def fromrow(cls, row: list):
+    return cls(row[0], row[1], row[2], row[3], row[4])
+
   def __init__(self,
         id: int,
         person_id: int,
@@ -63,18 +67,20 @@ class SightingRepository:
   def sighting_from_row(self, row: list) -> Sighting:
     return Sighting(row[0], row[1], row[2], row[3], row[4])
 
-  def add_sighting(self, sighting_post: SightingPost) -> bool:
-    query = (
-      'INSERT INTO '
-      '  sighting (person_id, bird_id, sighting_date, sighting_time) '
-      'VALUES '
-      '  (%s, %s, %s, %s);'
-    )
-    args = (
-      sighting_post.person_id,
-      sighting_post.bird_id,
-      sighting_post.date,
-      sighting_post.time,
-    )
-    result = self.database.query(query, args)
-    return 'INSERT 0 1' in result.status
+  def add_sighting(self, sighting_post: SightingPost) -> Sighting:
+    with self.database.transaction() as transaction:
+      query = (
+        'INSERT INTO '
+        '  sighting (person_id, bird_id, sighting_date, sighting_time) '
+        'VALUES '
+        '  (%s, %s, %s, %s) '
+        'RETURNING id, person_id, bird_id, sighting_date, sighting_time;'
+      )
+      args = (
+        sighting_post.person_id,
+        sighting_post.bird_id,
+        sighting_post.date,
+        sighting_post.time,
+      )
+      result = transaction.execute(query, args, Sighting.fromrow)
+      return next(iter(result.rows), None)

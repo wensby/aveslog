@@ -44,7 +44,7 @@ export default ({ match }) => {
     const response = await sightingService.postSighting(
       token, account.personId, bird.binomialName, date, time
     );
-    if (response.status == 'success') {
+    if (response.status == 201) {
       history.push('/sighting');
     }
   }

@@ -144,8 +144,8 @@ class TestPostSighting(AppTestCase):
 
     response = self.post_sighting(1, token, 'pica pica', '17:42')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {'status': 'success'})
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
 
   def test_post_sighting_when_person_id_not_match_authentication(self) -> None:
     token = self.get_authentication_token('kenny', 'bostick!')
@@ -162,8 +162,8 @@ class TestPostSighting(AppTestCase):
 
     response = self.post_sighting(1, token, 'pica pica')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {'status': 'success'})
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
 
   def test_post_sighting_when_invalid_authentication_token(self):
     response = self.post_sighting(1, 'invalid token', 'pica pica', '17:42')

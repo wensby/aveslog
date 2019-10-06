@@ -61,10 +61,10 @@ def create_sighting_rest_api_blueprint(
     if not bird:
       return make_response('', HTTPStatus.BAD_REQUEST)
     sighting_post = create_sighting_post(request.json, bird)
-    added = sighting_repository.add_sighting(sighting_post)
-    if not added:
+    sighting = sighting_repository.add_sighting(sighting_post)
+    if not sighting:
       return make_response('', HTTPStatus.INTERNAL_SERVER_ERROR)
-    return post_sighting_success_response()
+    return post_sighting_success_response(sighting.id)
 
   def convert_sighting(sighting: Sighting) -> dict:
     result = {
@@ -128,10 +128,13 @@ def create_sighting_rest_api_blueprint(
   def sighting_delete_unauthorized_response() -> Response:
     return make_response('', HTTPStatus.UNAUTHORIZED)
 
-  def post_sighting_success_response() -> Response:
-    return make_response(jsonify({
+  def post_sighting_success_response(sighting_id: int) -> Response:
+    response = make_response(jsonify({
       'status': 'success',
-    }), HTTPStatus.OK)
+    }), HTTPStatus.CREATED)
+    response.headers['Location'] = f'/sighting/{sighting_id}'
+    response.autocorrect_location_header = False
+    return response
 
   def post_sighting_unauthorized_response() -> Response:
     return make_response(jsonify({

@@ -40,7 +40,7 @@ export default class SightingService {
       },
       body: JSON.stringify(body),
     });
-    return await response.json();
+    return response;
   }
 
   async deleteSighting(authToken, sightingId) {
