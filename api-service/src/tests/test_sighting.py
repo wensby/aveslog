@@ -1,8 +1,13 @@
 from unittest import TestCase
 from unittest.mock import Mock
 from birding.sighting import SightingRepository
+from birding.sighting import SightingPost
 from birding.sighting import Sighting
 from datetime import datetime, date
+from datetime import time
+from birding.database import Database
+from birding.database import QueryResult
+from test_util import mock_database_transaction
 
 
 class TestSighting(TestCase):
@@ -19,8 +24,17 @@ class TestSighting(TestCase):
 class TestSightingRepository(TestCase):
 
   def setUp(self):
-    self.database = Mock()
+    self.database: Database = Mock(spec=Database)
     self.repository = SightingRepository(self.database)
+
+  def test_add_sighting_when_failed_insert_in_database(self) -> None:
+    self.database.transaction.return_value = mock_database_transaction()
+    self.database.transaction().execute.return_value = QueryResult('', [])
+    sighting_post = SightingPost(1, 1, date.today(), datetime.now().time())
+
+    sighting = self.repository.add_sighting(sighting_post)
+
+    self.assertIsNone(sighting)
 
   def test_find_sighting_returns_sighting_when_present(self):
     now = datetime.now()
