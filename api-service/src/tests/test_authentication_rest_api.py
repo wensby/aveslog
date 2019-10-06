@@ -9,28 +9,26 @@ from test_util import AppTestCase
 
 class TestGetAuthenticationToken(AppTestCase):
 
-  def test_get_token_when_ok(self) -> None:
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+  def setUp(self) -> None:
+    super().setUp()
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
 
-    response = self.get_authentication_token('hulot', 'myPassword')
+  def test_get_token_when_ok(self) -> None:
+    response = self.get_authentication_token('george', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json['status'], 'success')
     self.assertIn('result', response.json)
 
   def test_get_token_when_username_differently_cased(self) -> None:
-    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
-
     response = self.get_authentication_token('GeOrGe', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json['status'], 'success')
     self.assertIn('result', response.json)
 
-  def test_get_token_when_incorrect_credentials(self) -> None:
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-
-    response = self.get_authentication_token('somethingElse', 'notGood')
+  def test_get_token_when_incorrect_username(self) -> None:
+    response = self.get_authentication_token('tbone', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
     self.assertEqual(response.json, {
