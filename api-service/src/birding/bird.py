@@ -2,8 +2,14 @@ from typing import Any, Type, TypeVar, Optional, List
 
 from .database import Database
 
+BirdType = TypeVar('BirdType', bound='Bird')
+
 
 class Bird:
+
+  @classmethod
+  def from_row(cls: Type[BirdType], row: list) -> BirdType:
+    return cls(row[0], row[1])
 
   def __init__(self, bird_id: int, binomial_name: str) -> None:
     self.id: int = bird_id
@@ -79,9 +85,6 @@ class BirdRepository:
 
   @property
   def birds(self) -> List[Bird]:
-    result = self.database.query("SELECT * FROM bird;")
-    birds = []
-    for row in result.rows:
-      bird = Bird(row[0], row[1])
-      birds.append(bird)
-    return birds
+    with self.database.transaction() as transaction:
+      result = transaction.execute('SELECT * FROM bird;', mapper=Bird.from_row)
+      return result.rows
