@@ -67,7 +67,7 @@ class SightingRepository:
   def sighting_from_row(self, row: list) -> Sighting:
     return Sighting(row[0], row[1], row[2], row[3], row[4])
 
-  def add_sighting(self, sighting_post: SightingPost) -> Sighting:
+  def add_sighting(self, sighting_post: SightingPost) -> Optional[Sighting]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'INSERT INTO sighting '
@@ -80,4 +80,7 @@ class SightingRepository:
           sighting_post.date,
           sighting_post.time
         ), Sighting.fromrow)
-      return next(iter(result.rows), None)
+      if not result.rows:
+        return None
+      else:
+        return result.rows[0]
