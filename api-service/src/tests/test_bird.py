@@ -22,6 +22,7 @@ class TestBird(TestCase):
   def test_repr(self) -> None:
     self.assertEqual(repr(Bird(1, 'Pica pica')), 'Bird(1, Pica pica)')
 
+
 class TestBirdThumbnail(TestCase):
 
   def test_construction(self):
