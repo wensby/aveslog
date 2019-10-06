@@ -7,9 +7,9 @@ from birding.authentication import AuthenticationTokenFactory
 from test_util import AppTestCase
 
 
-class TestLogin(AppTestCase):
+class TestGetAuthenticationToken(AppTestCase):
 
-  def test_get_token_when_ok(self):
+  def test_get_token_when_ok(self) -> None:
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
     response = self.get_authentication_token('hulot', 'myPassword')
@@ -19,7 +19,7 @@ class TestLogin(AppTestCase):
     self.assertEqual(response.json['message'], 'Successfully logged in.')
     self.assertIn('authToken', response.json)
 
-  def test_get_token_when_different_username_case(self) -> None:
+  def test_get_token_when_username_differently_cased(self) -> None:
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
 
     response = self.get_authentication_token('GeOrGe', 'costanza')
@@ -29,7 +29,7 @@ class TestLogin(AppTestCase):
     self.assertEqual(response.json['message'], 'Successfully logged in.')
     self.assertIn('authToken', response.json)
 
-  def test_get_token_when_incorrect_credentials(self):
+  def test_get_token_when_incorrect_credentials(self) -> None:
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
     response = self.get_authentication_token('somethingElse', 'notGood')
