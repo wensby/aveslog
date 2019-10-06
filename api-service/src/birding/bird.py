@@ -58,9 +58,12 @@ class BirdRepository:
   def fetchonebird(self,
         query: str,
         vars: Optional[tuple] = None) -> Optional[Bird]:
-    result = self.database.query(query, vars)
-    if len(result.rows) == 1:
-      return self.bird_from_row(result.rows[0])
+    with self.database.transaction() as transaction:
+      result = transaction.execute(query, vars, Bird.from_row)
+      if not result.rows:
+        return None
+      else:
+        return result.rows[0]
 
   def bird_thumbnail(self, bird: Bird) -> Optional[BirdThumbnail]:
     query = (
@@ -70,9 +73,6 @@ class BirdRepository:
     )
     result = self.database.query(query, (bird.id,))
     return next(map(BirdThumbnail.fromrow, result.rows), None)
-
-  def bird_from_row(self, row: list) -> Bird:
-    return Bird(row[0], row[1])
 
   def get_bird_by_id(self, id: int) -> Optional[Bird]:
     return self.fetchonebird(

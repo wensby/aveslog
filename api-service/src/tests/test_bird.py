@@ -3,7 +3,9 @@ from unittest.mock import Mock
 
 from birding.bird import Bird, BirdThumbnail, BirdRepository
 
-from types import SimpleNamespace as Simple
+from birding.database import Database
+from birding.database import QueryResult
+from test_util import mock_database_transaction
 
 
 class TestBird(TestCase):
@@ -41,15 +43,12 @@ class TestBirdThumbnail(TestCase):
 class TestBirdRepository(TestCase):
 
   def setUp(self) -> None:
-    self.database = Mock()
+    self.database: Database = Mock(spec=Database)
+    self.transaction = mock_database_transaction()
+    self.database.transaction.return_value = self.transaction
     self.repository = BirdRepository(self.database)
 
   def test_fetchonebird_queries_database_correctly(self):
-    self.database.query.return_value = Simple(rows=[])
+    self.transaction.execute.return_value = QueryResult('', [])
     self.repository.fetchonebird('query', (1,))
-    self.database.query.assert_called_with('query', (1,))
-
-  def test_fetchonebird_parses_result_correctly(self):
-    self.database.query.return_value = Simple(rows=[[4, 'Pica pica']])
-    result = self.repository.fetchonebird('query', (4,))
-    self.assertEqual(result, Bird(4, 'Pica pica'))
+    self.transaction.execute.assert_called_with('query', (1,), Bird.from_row)
