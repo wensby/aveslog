@@ -52,6 +52,7 @@ class TestMailDispatcherFactory(TestCase):
     del os.environ['MAIL_USE_TLS']
     del os.environ['MAIL_USE_SSL']
 
+
 class TestMailServerDispatcher(TestCase):
 
   def setUp(self) -> None:
@@ -62,7 +63,8 @@ class TestMailServerDispatcher(TestCase):
       'FRONTEND_HOST': 'http://localhost:3002'
     }
     app = birding.create_app(test_config=test_config)
-    self.dispatcher = MailServerDispatcher(app, None, None, 'myUsername', None, None, None)
+    self.dispatcher = MailServerDispatcher(
+      app, None, None, 'myUsername', None, None, None)
     self.app_context = app.test_request_context()
     self.app_context.push()
 
