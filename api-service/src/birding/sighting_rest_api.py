@@ -10,13 +10,11 @@ from .time import parse_date
 from .time import parse_time
 from .account import AccountRepository, Account
 from .authentication import AuthenticationTokenDecoder
-from .sighting_view import SightingViewFactory, SightingItem
 
 
 def create_sighting_rest_api_blueprint(
       token_decoder: AuthenticationTokenDecoder,
       account_repository: AccountRepository,
-      sighting_view_factory: SightingViewFactory,
       sighting_repository: SightingRepository,
       bird_repository: BirdRepository) -> Blueprint:
   blueprint = Blueprint('sighting', __name__)
@@ -27,7 +25,7 @@ def create_sighting_rest_api_blueprint(
     account = account_repository.find_user_account(username)
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
-    sightings = get_sightings(account)
+    sightings = sighting_repository.sightings(account.person_id)
     return sightings_response(sightings)
 
   @blueprint.route('/sighting/<int:sighting_id>')
@@ -75,36 +73,17 @@ def create_sighting_rest_api_blueprint(
       result['time'] = sighting.sighting_time.isoformat()
     return result
 
-  def convert_sighting_item(item: SightingItem, person_id: int) -> dict:
-    result = {
-      'sightingId': item.sighting_id,
-      'personId': person_id,
-      'birdId': item.bird_id,
-    }
-    split_time = item.time.split()
-    if len(split_time) > 1:
-      result['date'] = split_time[0]
-      result['time'] = split_time[1]
-    else:
-      result['date'] = item.time
-    return result
-
-  def get_sightings(account: Account) -> List[dict]:
-    items = sighting_view_factory.create_sighting_items(account)
-    to_dict = lambda item: convert_sighting_item(item, account.person_id)
-    return list(map(to_dict, items))
-
   def create_sighting_post(post_data: dict, bird: Bird) -> SightingPost:
     person_id = post_data['person']['id']
     date = parse_date(post_data['date'])
     time = parse_time(post_data['time']) if 'time' in post_data else None
     return SightingPost(person_id, bird.id, date, time)
 
-  def sightings_response(sightings: List[dict]) -> Response:
+  def sightings_response(sightings: List[Sighting]) -> Response:
     return make_response(jsonify({
       'status': 'success',
       'result': {
-        'sightings': sightings,
+        'sightings': list(map(convert_sighting, sightings)),
       },
     }), HTTPStatus.OK)
 

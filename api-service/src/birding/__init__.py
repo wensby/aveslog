@@ -35,7 +35,6 @@ from .search import BirdSearcher
 from .search import StringMatcher
 from .settings_blueprint import update_locale_context
 from .sighting import SightingRepository
-from .sighting_view import SightingViewFactory
 
 
 def create_app(test_config: dict = None) -> Flask:
@@ -69,7 +68,6 @@ def create_app(test_config: dict = None) -> Flask:
     bird_repository, locale_repository, string_matcher, locale_loader)
   sighting_repository = SightingRepository(database)
   picture_repository = PictureRepository(database)
-  sighting_view_factory = SightingViewFactory(bird_repository, database)
   link_factory = LinkFactory(
     os.environ['EXTERNAL_HOST'],
     app.config['FRONTEND_HOST'],
@@ -111,7 +109,6 @@ def create_app(test_config: dict = None) -> Flask:
   sighting_api = create_sighting_rest_api_blueprint(
     authentication_token_decoder,
     account_repository,
-    sighting_view_factory,
     sighting_repository,
     bird_repository,
   )

@@ -1,7 +1,7 @@
 from datetime import date, time
-from typing import Optional, Any
+from typing import Optional, Any, List
 
-from .database import Database
+from .database import Database, read_script_file
 
 
 class SightingPost:
@@ -84,3 +84,8 @@ class SightingRepository:
         return None
       else:
         return result.rows[0]
+
+  def sightings(self, person_id: int) -> List[Sighting]:
+    with self.database.transaction() as transaction:
+      query = read_script_file('select_sighting_item_data.sql')
+      return transaction.execute(query, (person_id,), Sighting.fromrow).rows
