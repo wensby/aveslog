@@ -139,7 +139,7 @@ class TestPostSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'kenny', 'bostick!', 'kenny@mail.com')
 
-  def test_post_sighting_when_everything_ok(self):
+  def test_post_sighting_when_everything_ok(self) -> None:
     token = self.get_authentication_token('kenny', 'bostick!')
 
     response = self.post_sighting(1, token, 'pica pica', '17:42')
@@ -157,7 +157,7 @@ class TestPostSighting(AppTestCase):
     response = self.post_sighting(1, token, 'pikachu', '17:42')
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
-  def test_post_sighting_when_no_time(self):
+  def test_post_sighting_when_no_time(self) -> None:
     token = self.get_authentication_token('kenny', 'bostick!')
 
     response = self.post_sighting(1, token, 'pica pica')
@@ -165,7 +165,7 @@ class TestPostSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
 
-  def test_post_sighting_when_invalid_authentication_token(self):
+  def test_post_sighting_when_invalid_authentication_token(self) -> None:
     response = self.post_sighting(1, 'invalid token', 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
