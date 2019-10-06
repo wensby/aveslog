@@ -31,8 +31,9 @@ class TestAccount(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
-    self.token_factory = AuthenticationTokenFactory(
-      self._app.secret_key, datetime.datetime.utcnow)
+    secret_key = self._app.secret_key
+    time_supplier = datetime.datetime.utcnow
+    self.token_factory = AuthenticationTokenFactory(secret_key, time_supplier)
 
   def test_get_account_when_authenticated_account_disappears(self):
     token = self.token_factory.create_authentication_token(1)
