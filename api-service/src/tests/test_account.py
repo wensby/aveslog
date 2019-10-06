@@ -40,6 +40,18 @@ class TestPassword(TestCase):
     self.assertNotEqual(Password('12345678'), '12345678')
 
 
+class TestCredentials(TestCase):
+
+  def test_eq_with_other_type(self) -> None:
+    username = Username('kenny')
+    password = Password('bostick!')
+    credentials = Credentials(username, password)
+
+    self.assertNotEqual(credentials, {
+      'username': username, 'password': password
+    })
+
+
 class TestAccount(TestCase):
 
   @classmethod
