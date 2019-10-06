@@ -34,6 +34,17 @@ class TestAccount(AppTestCase):
     self.token_factory = AuthenticationTokenFactory(
       self._app.secret_key, datetime.datetime.utcnow)
 
+  def test_get_account_when_authenticated_account_disappears(self):
+    token = self.token_factory.create_authentication_token(1)
+
+    response = self.get_account({'authToken': token})
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'status': 'failure',
+      'message': 'account missing',
+    })
+
   def test_get_account_when_no_authentication_token(self):
     response = self.get_account()
 

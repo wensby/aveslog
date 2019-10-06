@@ -12,6 +12,7 @@ import birding
 from birding.account import PasswordHasher, Password, Account
 from birding.authentication import SaltFactory
 from birding.database import Transaction
+from birding.database import Database
 
 
 def mock_return(value):
@@ -47,7 +48,7 @@ class AppTestCase(TestCase):
     cls._app.test_client_class = TestClient
 
   def setUp(self) -> None:
-    self.database = self._app.db
+    self.database: Database = self._app.db
     self.app_context = self._app.test_request_context()
     self.app_context.push()
     self.client = self._app.test_client()
@@ -81,6 +82,11 @@ class AppTestCase(TestCase):
       'VALUES '
       '(%s, %s, %s, %s, %s);',
       (account_id, username, email, person_id, locale_id))
+
+  def db_delete_account(self, account_id):
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'DELETE FROM user_account WHERE id = %s;', (account_id,))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
