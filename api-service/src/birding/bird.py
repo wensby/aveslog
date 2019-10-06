@@ -15,6 +15,7 @@ class Bird:
   def __hash__(self):
     return hash((self.id, self.binomial_name))
 
+
 class BirdThumbnail:
 
   def __init__(self, bird_id, picture_id):
@@ -33,6 +34,7 @@ class BirdThumbnail:
     if isinstance(other, BirdThumbnail):
       return self.__dict__ == other.__dict__
     return False
+
 
 class BirdRepository:
 
@@ -57,10 +59,13 @@ class BirdRepository:
     return Bird(row[0], row[1])
 
   def get_bird_by_id(self, id):
-    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
+    return self.fetchonebird(
+      "SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
 
   def get_bird_by_binomial_name(self, binomial_name):
-    return self.fetchonebird("SELECT id, binomial_name FROM bird WHERE binomial_name ILIKE %s;", (binomial_name,))
+    return self.fetchonebird(
+      "SELECT id, binomial_name FROM bird WHERE binomial_name ILIKE %s;",
+      (binomial_name,))
 
   @property
   def birds(self):
