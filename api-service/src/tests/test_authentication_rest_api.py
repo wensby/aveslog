@@ -16,8 +16,7 @@ class TestGetAuthenticationToken(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json['status'], 'success')
-    self.assertEqual(response.json['message'], 'Successfully logged in.')
-    self.assertIn('authToken', response.json)
+    self.assertIn('result', response.json)
 
   def test_get_token_when_username_differently_cased(self) -> None:
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
@@ -26,8 +25,7 @@ class TestGetAuthenticationToken(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json['status'], 'success')
-    self.assertEqual(response.json['message'], 'Successfully logged in.')
-    self.assertIn('authToken', response.json)
+    self.assertIn('result', response.json)
 
   def test_get_token_when_incorrect_credentials(self) -> None:
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')

@@ -21,7 +21,7 @@ export default ({ onError }) => {
       setLoading(true);
       const response = await authentication.fetchAuthenticationToken(username, password);
       if (response.status === 'success') {
-        await onAuthenticated(response.authToken);
+        await onAuthenticated(response.result);
         history.push('/');
       }
       else {
