@@ -36,6 +36,10 @@ class TestGetAuthenticationToken(AppTestCase):
       'message': 'Try again',
     })
 
+  def test_get_token_when_incorrect_password(self) -> None:
+    response = self.get_authentication_token('george', 'festivus')
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
   def get_authentication_token(self, username: str, password: str) -> Response:
     resource = '/authentication/token'
     query = f'username={username}&password={password}'
