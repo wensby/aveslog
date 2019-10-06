@@ -1,5 +1,4 @@
 import os
-import abc
 from flask_mail import Mail, Message
 from distutils.util import strtobool
 import re
@@ -26,9 +25,9 @@ class EmailAddress:
   def __repr__(self):
     return (f'EmailAddress<{self.raw}>')
 
-class MailDispatcher(abc.ABC):
 
-  @abc.abstractmethod
+class MailDispatcher():
+
   def dispatch(self, recipient, subject, body):
     pass
 

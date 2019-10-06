@@ -3,6 +3,13 @@ from unittest import TestCase
 
 import birding
 from birding.mail import EmailAddress, MailServerDispatcher
+from birding.mail import MailDispatcher
+
+
+class TestMailDispatcher(TestCase):
+
+  def test_dispatch_is_method(self) -> None:
+    MailDispatcher().dispatch('tbone@mail.com', 'subject', 'body')
 
 
 class TestEmailAddress(TestCase):
