@@ -30,7 +30,7 @@ class TestGetAuthenticationToken(AppTestCase):
   def test_get_token_when_incorrect_username(self) -> None:
     response = self.get_authentication_token('tbone', 'costanza')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
       'status': 'failure',
       'message': 'Try again',

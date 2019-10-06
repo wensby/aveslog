@@ -225,7 +225,7 @@ def create_authentication_rest_api_blueprint(
     return make_response(jsonify({
       'status': 'failure',
       'message': 'Try again'
-    }), HTTPStatus.INTERNAL_SERVER_ERROR)
+    }), HTTPStatus.UNAUTHORIZED)
 
   def initiate_password_reset(email: str) -> bool:
     locale = load_english_locale()
