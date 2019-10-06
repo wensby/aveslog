@@ -69,18 +69,15 @@ class SightingRepository:
 
   def add_sighting(self, sighting_post: SightingPost) -> Sighting:
     with self.database.transaction() as transaction:
-      query = (
-        'INSERT INTO '
-        '  sighting (person_id, bird_id, sighting_date, sighting_time) '
-        'VALUES '
-        '  (%s, %s, %s, %s) '
+      result = transaction.execute(
+        'INSERT INTO sighting '
+        '(person_id, bird_id, sighting_date, sighting_time) '
+        'VALUES (%s, %s, %s, %s) '
         'RETURNING id, person_id, bird_id, sighting_date, sighting_time;'
-      )
-      args = (
-        sighting_post.person_id,
-        sighting_post.bird_id,
-        sighting_post.date,
-        sighting_post.time,
-      )
-      result = transaction.execute(query, args, Sighting.fromrow)
+        , (
+          sighting_post.person_id,
+          sighting_post.bird_id,
+          sighting_post.date,
+          sighting_post.time
+        ), Sighting.fromrow)
       return next(iter(result.rows), None)
