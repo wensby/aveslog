@@ -62,8 +62,6 @@ def create_sighting_rest_api_blueprint(
       return make_response('', HTTPStatus.BAD_REQUEST)
     sighting_post = create_sighting_post(request.json, bird)
     sighting = sighting_repository.add_sighting(sighting_post)
-    if not sighting:
-      return make_response('', HTTPStatus.INTERNAL_SERVER_ERROR)
     return post_sighting_success_response(sighting.id)
 
   def convert_sighting(sighting: Sighting) -> dict:
