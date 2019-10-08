@@ -2,10 +2,11 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, List
 
 from birding.database import Database
 from birding.mail import EmailAddress
+from birding.person import Person
 
 
 class Username:
@@ -166,25 +167,29 @@ class TokenFactory:
 
 class AccountRepository:
 
-  def __init__(self, database: Database, password_hasher, token_factory):
+  def __init__(self,
+        database: Database,
+        password_hasher: PasswordHasher,
+        token_factory: TokenFactory):
     self.database = database
     self.hasher = password_hasher
     self.token_factory = token_factory
 
-  def find_account_by_id(self, id) -> Account:
+  def find_account_by_id(self, account_id: int) -> Account:
     with self.database.transaction() as transaction:
       query = ('SELECT id, username, email, person_id, locale_id '
                'FROM account '
                'WHERE id = %s;')
-      result = transaction.execute(query, (id,), Account.fromrow)
+      result = transaction.execute(query, (account_id,), Account.fromrow)
       return next(iter(result.rows), None)
 
-  def remove_account_registration_by_id(self, id):
+  def remove_account_registration_by_id(self, account_id: int) -> None:
     query = ('DELETE FROM account_registration '
              'WHERE id = %s;')
-    self.database.query(query, (id,))
+    self.database.query(query, (account_id,))
 
-  def create_account_registration(self, email):
+  def create_account_registration(self,
+        email: EmailAddress) -> Optional[AccountRegistration]:
     token = self.token_factory.create_token()
     query = (
       'INSERT INTO account_registration (email, token) '
@@ -194,15 +199,17 @@ class AccountRepository:
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def find_account_registration(self, email, token):
+  def find_account_registration(self,
+        email: EmailAddress,
+        token: str) -> Optional[AccountRegistration]:
     query = ('SELECT id, email, token '
              'FROM account_registration '
              'WHERE email LIKE %s AND token LIKE %s;')
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def find_account_registration_by_token(
-        self, token: str) -> Optional[AccountRegistration]:
+  def find_account_registration_by_token(self,
+        token: str) -> Optional[AccountRegistration]:
     query = ('SELECT id, email, token '
              'FROM account_registration '
              'WHERE token LIKE %s;')
@@ -219,27 +226,27 @@ class AccountRepository:
     result = self.database.query(query, (username,))
     return next(map(Account.fromrow, result.rows), None)
 
-  def find_account_by_email(self, email):
+  def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
     query = ('SELECT id, username, email, person_id, locale_id '
              'FROM account '
              'WHERE email LIKE %s;')
     result = self.database.query(query, (email.raw,))
     return next(map(Account.fromrow, result.rows), None)
 
-  def find_hashed_password(self, account):
+  def find_hashed_password(self, account: Account) -> Optional[HashedPassword]:
     query = ('SELECT account_id, salt, salted_hash '
              'FROM hashed_password '
              'WHERE account_id = %s;')
     result = self.database.query(query, (account.id,))
     return next(map(HashedPassword.fromrow, result.rows), None)
 
-  def set_account_person(self, account, person):
+  def set_account_person(self, account: Account, person: Person) -> None:
     query = ('UPDATE account '
              'SET person_id = %s '
              'WHERE id = %s;')
     self.database.query(query, (person.id, account.id))
 
-  def accounts(self):
+  def accounts(self) -> List[Account]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'SELECT * FROM account;', mapper=Account.fromrow)
