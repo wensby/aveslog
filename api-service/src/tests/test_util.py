@@ -157,7 +157,7 @@ class AppTestCase(TestCase):
   def get_authentication_token(self, username, password) -> str:
     resource = '/authentication/token'
     query = f'?username={username}&password={password}'
-    return self.client.get(f'{resource}{query}').json['result']
+    return self.client.get(f'{resource}{query}').json['accessToken']
 
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:

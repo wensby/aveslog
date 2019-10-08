@@ -17,15 +17,13 @@ class TestGetAuthenticationToken(AppTestCase):
     response = self.get_authentication_token('george', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json['status'], 'success')
-    self.assertIn('result', response.json)
+    self.assertIn('accessToken', response.json)
 
   def test_get_token_when_username_differently_cased(self) -> None:
     response = self.get_authentication_token('GeOrGe', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json['status'], 'success')
-    self.assertIn('result', response.json)
+    self.assertIn('accessToken', response.json)
 
   def test_get_token_when_incorrect_username(self) -> None:
     response = self.get_authentication_token('tbone', 'costanza')

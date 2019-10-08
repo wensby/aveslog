@@ -7,8 +7,7 @@ export default class AuthenticationService {
   async fetchAuthenticationToken(username, password) {
     const url = `${this.apiUrl}/authentication/token`;
     const parameters = `?username=${username}&password=${password}`;
-    const response = await fetch(url + parameters);
-    return await response.json();
+    return await fetch(url + parameters);
   }
 
   async postPasswordResetEmail(email) {

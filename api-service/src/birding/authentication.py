@@ -1,11 +1,12 @@
 import os
 from base64 import b64encode
 from datetime import timedelta, datetime
-from typing import Union, Optional, Callable
+from typing import Union, Optional, Callable, Any, TypeVar, Type
 
 import jwt
 
 from .database import Database
+from .database import read_script_file
 from .person import PersonRepository
 from .link import LinkFactory
 from .localization import LoadedLocale
@@ -20,8 +21,14 @@ from .account import AccountRepository
 from .account import AccountRegistration
 from .account import Password
 
+RefreshTokenType = TypeVar('RefreshTokenType', bound='RefreshToken')
+
 
 class RefreshToken:
+
+  @classmethod
+  def from_row(cls: Type[RefreshTokenType], row: list) -> RefreshTokenType:
+    return cls(row[0], row[1], row[2], row[3])
 
   def __init__(self,
         refresh_token_id: int,
@@ -33,11 +40,25 @@ class RefreshToken:
     self.account_id = account_id
     self.expiration_date = expiration_date
 
+  def __eq__(self, other: Any) -> bool:
+    if not isinstance(other, RefreshToken):
+      return False
+    return self.__dict__ == other.__dict__
+
 
 class RefreshTokenRepository():
 
   def __init__(self, database: Database):
     self.database = database
+
+  def refresh_token_by_jwt(self, jwt_token: str) -> Optional[RefreshToken]:
+    with self.database.transaction() as transaction:
+      query = read_script_file('select_refresh_token_by_jwt_token.sql')
+      result = transaction.execute(query, (jwt_token,), RefreshToken.from_row)
+      if not result.rows:
+        return None
+      else:
+        return result.rows[0]
 
 
 class Authenticator:

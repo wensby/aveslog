@@ -19,7 +19,8 @@ from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
 from birding.database import Database
-from tests.test_util import mock_return
+from birding.database import QueryResult
+from tests.test_util import mock_return, mock_database_transaction
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
@@ -281,11 +282,36 @@ class TestRefreshToken(TestCase):
   def test_init(self):
     RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
 
+  def test_eq_when_identical(self):
+    a = RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
+    b = RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
+    self.assertEqual(a, b)
+
 
 class TestRefreshTokenRepository(TestCase):
 
   def setUp(self) -> None:
     self.database: Database = Mock(spec=Database)
+    self.transaction = mock_database_transaction()
+    self.database.transaction.return_value = self.transaction
 
   def test_init(self):
     RefreshTokenRepository(self.database)
+
+  def test_refresh_token_by_jwt_when_missing(self):
+    self.transaction.execute.return_value = QueryResult('', [])
+    repository = RefreshTokenRepository(self.database)
+
+    token = repository.refresh_token_by_jwt('jwt')
+
+    self.assertIsNone(token)
+
+  def test_refresh_token_by_jwt_when_found_in_database(self):
+    expiration_date = datetime.datetime(2019, 10, 8, 12, 57)
+    refresh_token = RefreshToken(1, 'jwt', 1, expiration_date)
+    self.transaction.execute.return_value = QueryResult('', [refresh_token])
+    repository = RefreshTokenRepository(self.database)
+
+    result = repository.refresh_token_by_jwt('jwt')
+
+    self.assertIs(result, refresh_token)

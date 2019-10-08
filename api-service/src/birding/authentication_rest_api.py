@@ -217,8 +217,7 @@ def create_authentication_rest_api_blueprint(
 
   def token_response(token: str) -> Response:
     return make_response(jsonify({
-      'status': 'success',
-      'result': token,
+      'accessToken': token,
     }), HTTPStatus.OK)
 
   def token_failure_response() -> Response:

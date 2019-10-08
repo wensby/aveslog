@@ -20,8 +20,8 @@ export default ({ onError }) => {
       event.preventDefault();
       setLoading(true);
       const response = await authentication.fetchAuthenticationToken(username, password);
-      if (response.status === 'success') {
-        await onAuthenticated(response.result);
+      if (response.status === 200) {
+        await onAuthenticated((await response.json()).accessToken);
         history.push('/');
       }
       else {
