@@ -147,7 +147,7 @@ class TestAccountRegistrationController(TestCase):
                                                   valid_password)
     self.person_repository.add_person.assert_called_with(account.username)
     self.account_repository.set_account_person.assert_called_with(account,
-                                                                       person)
+                                                                  person)
     self.assertEqual(result, 'success')
 
 
@@ -286,6 +286,15 @@ class TestRefreshToken(TestCase):
     a = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
     b = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
     self.assertEqual(a, b)
+
+  def test_from_row(self):
+    expiration_date = datetime(2019, 10, 8, 20, 41)
+    token = RefreshToken.from_row([1, 'jwt', 1, expiration_date])
+    self.assertEqual(token, RefreshToken(1, 'jwt', 1, expiration_date))
+
+  def test_eq_when_other_type(self):
+    token = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 20, 46))
+    self.assertNotEqual(token, 'RefreshToken(1, jwt, 1, 2019-10-08 20:46)')
 
 
 class TestRefreshTokenRepository(TestCase):
