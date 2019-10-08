@@ -122,7 +122,7 @@ class TestAccountRegistrationController(TestCase):
                                          valid_password)
     self.account_factory.create_account.assert_called_with(
       EmailAddress(valid_email), Credentials(Username(valid_username),
-      Password(valid_password)))
+                                             Password(valid_password)))
 
   def test_perform_registration_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
