@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
@@ -235,7 +235,7 @@ class TestPasswordResetController(TestCase):
 class TestAuthenticationTokenFactory(TestCase):
 
   def test_encode_token(self):
-    utc_now_supplier = lambda: datetime.datetime(2019, 8, 3, 20, 31)
+    utc_now_supplier = lambda: datetime(2019, 8, 3, 20, 31)
     factory = AuthenticationTokenFactory('secret', utc_now_supplier)
 
     token = factory.create_authentication_token(1)
@@ -248,7 +248,7 @@ class TestAuthenticationTokenFactory(TestCase):
 class TestAuthenticationTokenDecoder(TestCase):
 
   def test_decode_token(self):
-    factory = AuthenticationTokenFactory('secret', datetime.datetime.utcnow)
+    factory = AuthenticationTokenFactory('secret', datetime.utcnow)
     token = factory.create_authentication_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
@@ -258,7 +258,7 @@ class TestAuthenticationTokenDecoder(TestCase):
     self.assertEqual(result.payload['sub'], 1)
 
   def test_decode_expired_token(self):
-    utc_now_supplier = lambda: datetime.datetime(2008, 8, 3, 20, 31)
+    utc_now_supplier = lambda: datetime(2008, 8, 3, 20, 31)
     factory = AuthenticationTokenFactory('secret', utc_now_supplier)
     token = factory.create_authentication_token(1)
     decoder = AuthenticationTokenDecoder('secret')
@@ -280,11 +280,11 @@ class TestAuthenticationTokenDecoder(TestCase):
 class TestRefreshToken(TestCase):
 
   def test_init(self):
-    RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
+    RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
 
   def test_eq_when_identical(self):
-    a = RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
-    b = RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
+    a = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
+    b = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
     self.assertEqual(a, b)
 
 
@@ -307,7 +307,7 @@ class TestRefreshTokenRepository(TestCase):
     self.assertIsNone(token)
 
   def test_refresh_token_by_jwt_when_found_in_database(self):
-    expiration_date = datetime.datetime(2019, 10, 8, 12, 57)
+    expiration_date = datetime(2019, 10, 8, 12, 57)
     refresh_token = RefreshToken(1, 'jwt', 1, expiration_date)
     self.transaction.execute.return_value = QueryResult('', [refresh_token])
     repository = RefreshTokenRepository(self.database)
