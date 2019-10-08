@@ -158,6 +158,12 @@ class HashedPassword:
     return cls(row[0], row[1], row[2])
 
 
+class TokenFactory:
+
+  def create_token(self):
+    return os.urandom(16).hex()
+
+
 class AccountRepository:
 
   def __init__(self, database: Database, password_hasher, token_factory):
@@ -307,9 +313,3 @@ class PasswordResetToken:
     if isinstance(other, PasswordResetToken):
       return self.__dict__ == other.__dict__
     return False
-
-
-class TokenFactory:
-
-  def create_token(self):
-    return os.urandom(16).hex()
