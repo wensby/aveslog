@@ -1,3 +1,5 @@
+@import '../colors.scss';
+
 .loading-overlay {
   background-color: rgba(255, 255, 255, 0.7);      
   position: absolute;
@@ -7,7 +9,7 @@
   bottom: 0;
 }
 
-.lds-ring {
+.lds-ring-container {
   display: inline-block;
   position: relative;
   width: 64px;
@@ -18,7 +20,7 @@
   top: 100px;
 }
 
-.lds-ring div {
+.lds-ring-container div {
   box-sizing: border-box;
   display: block;
   position: absolute;
@@ -31,19 +33,19 @@
   border-color: rgb(0, 0, 0) transparent transparent transparent;
 }
 
-.lds-ring div:nth-child(1) {
+.lds-ring-container div:nth-child(1) {
   animation-delay: -0.45s;
 }
 
-.lds-ring div:nth-child(2) {
+.lds-ring-container div:nth-child(2) {
   animation-delay: -0.3s;
 }
 
-.lds-ring div:nth-child(3) {
+.lds-ring-container div:nth-child(3) {
   animation-delay: -0.15s;
 }
 
-@keyframes lds-ring {
+@keyframes lds-ring-container {
   0% {
     transform: rotate(0deg);
   }

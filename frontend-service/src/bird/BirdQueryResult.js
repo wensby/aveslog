@@ -5,7 +5,7 @@ import BirdService from './BirdService.js';
 import { useTranslation } from 'react-i18next';
 import './style.css';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
-import Loading from '../Loading.js';
+import Loading from '../loading/Loading';
 
 export default function BirdQueryResult(props) {
   const { t } = useTranslation();

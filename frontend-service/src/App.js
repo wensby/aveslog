@@ -6,8 +6,8 @@ import Page from './Page.js'
 import './App.css';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Loading from './Loading';
 import { SightingProvider } from './sighting/SightingContext.js';
+import SuspenseLoader from './suspense/SuspenseLoader';
 
 export default () => {
 
@@ -15,7 +15,7 @@ export default () => {
     <Router>
       <AuthenticationProvider>
         <SightingProvider>
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<SuspenseLoader />}>
             <Page />
           </Suspense>
         </SightingProvider>
