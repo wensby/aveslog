@@ -64,9 +64,9 @@ class RefreshTokenRepository():
 class Authenticator:
 
   def __init__(self,
-        user_account_repository: AccountRepository,
+        account_repository: AccountRepository,
         password_hasher: PasswordHasher) -> None:
-    self.account_repository = user_account_repository
+    self.account_repository = account_repository
     self.hasher = password_hasher
 
   def is_account_password_correct(self,
@@ -147,7 +147,7 @@ class AccountRegistrationController:
     if not registration:
       return 'associated registration missing'
     username = Username(raw_username)
-    if self.account_repository.find_user_account(username):
+    if self.account_repository.find_account(username):
       return 'username taken'
     password = Password(raw_password)
     credentials = Credentials(username, password)
@@ -161,7 +161,7 @@ class AccountRegistrationController:
 
   def __initialize_account_person(self, account: Account) -> None:
     person = self.person_repository.add_person(account.username)
-    self.account_repository.set_user_account_person(account, person)
+    self.account_repository.set_account_person(account, person)
 
 
 class PasswordResetController:

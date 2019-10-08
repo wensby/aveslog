@@ -77,7 +77,7 @@ class AppTestCase(TestCase):
   def db_insert_account(self, account_id, username, email, person_id,
         locale_id):
     self.database.query(
-      'INSERT INTO user_account '
+      'INSERT INTO account '
       '(id, username, email, person_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
@@ -86,7 +86,7 @@ class AppTestCase(TestCase):
   def db_delete_account(self, account_id):
     with self.database.transaction() as transaction:
       transaction.execute(
-        'DELETE FROM user_account WHERE id = %s;', (account_id,))
+        'DELETE FROM account WHERE id = %s;', (account_id,))
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
@@ -95,12 +95,12 @@ class AppTestCase(TestCase):
     salt = salt_hashed_password[0]
     hashed_password = salt_hashed_password[1]
     self.database.query(
-      'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+      'INSERT INTO hashed_password (account_id, salt, salted_hash) '
       'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
 
   def db_insert_registration(self, email, token):
     self.database.query(
-      'INSERT INTO user_account_registration (id, email, token) '
+      'INSERT INTO account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
 
   def db_insert_bird(self, bird_id, binomial_name):
@@ -125,7 +125,7 @@ class AppTestCase(TestCase):
   def db_insert_password_reset_token(self, account_id, token):
     with self.database.transaction() as transaction:
       transaction.execute(
-        'INSERT INTO password_reset_token (user_account_id, token) '
+        'INSERT INTO password_reset_token (account_id, token) '
         'VALUES (%s, %s);', (account_id, token))
 
   def db_insert_sighting(self,
@@ -140,7 +140,7 @@ class AppTestCase(TestCase):
   def db_get_account(self, account_id) -> Account:
     with self.database.transaction() as transaction:
       result = transaction.execute(
-        'SELECT * FROM user_account WHERE id = %s;',
+        'SELECT * FROM account WHERE id = %s;',
         (account_id,), Account.fromrow)
       return next(iter(result.rows), None)
 
@@ -192,13 +192,13 @@ class AppTestCase(TestCase):
     with self.database.transaction() as transaction:
       transaction.execute('DELETE FROM password_reset_token;')
       transaction.execute('DELETE FROM hashed_password;')
-      transaction.execute('DELETE FROM user_account;')
+      transaction.execute('DELETE FROM account;')
       transaction.execute('DELETE FROM sighting;')
       transaction.execute('DELETE FROM bird_thumbnail;')
       transaction.execute('DELETE FROM picture;')
       transaction.execute('DELETE FROM bird;')
       transaction.execute('DELETE FROM person;')
-      transaction.execute('DELETE FROM user_account_registration;')
+      transaction.execute('DELETE FROM account_registration;')
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()
 

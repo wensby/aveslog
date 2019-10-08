@@ -114,7 +114,7 @@ def create_authentication_rest_api_blueprint(
   def get_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')
-    account = account_repository.find_user_account(username)
+    account = account_repository.find_account(username)
     if not account:
       return token_failure_response()
     if not authenticator.is_account_password_correct(account, password):

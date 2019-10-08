@@ -112,12 +112,12 @@ class AccountFactory:
         credentials: Credentials) -> Optional[Account]:
     with self.database.transaction() as transaction:
       result = transaction.execute(
-        'SELECT 1 FROM user_account WHERE username LIKE %s;',
+        'SELECT 1 FROM account WHERE username LIKE %s;',
         (credentials.username.raw,))
       if len(result.rows) > 0:
         return
       result = transaction.execute(
-        ('INSERT INTO user_account (username, email) '
+        ('INSERT INTO account (username, email) '
          'VALUES (%s, %s) '
          'RETURNING id, username, email, person_id, locale_id;'),
         (credentials.username.raw, email.raw))
@@ -129,7 +129,7 @@ class AccountFactory:
       salt = salt_hashed_password[0]
       hash = salt_hashed_password[1]
       transaction.execute(
-        'INSERT INTO hashed_password (user_account_id, salt, salted_hash) '
+        'INSERT INTO hashed_password (account_id, salt, salted_hash) '
         'VALUES (%s, %s, %s);', (account.id, salt, hash))
       return account
 
@@ -148,8 +148,8 @@ class AccountRegistration:
 
 class HashedPassword:
 
-  def __init__(self, user_account_id, salt, salted_hash):
-    self.user_account_id = user_account_id
+  def __init__(self, account_id, salt, salted_hash):
+    self.account_id = account_id
     self.salt = salt
     self.salted_hash = salted_hash
 
@@ -168,20 +168,20 @@ class AccountRepository:
   def find_account_by_id(self, id) -> Account:
     with self.database.transaction() as transaction:
       query = ('SELECT id, username, email, person_id, locale_id '
-               'FROM user_account '
+               'FROM account '
                'WHERE id = %s;')
       result = transaction.execute(query, (id,), Account.fromrow)
       return next(iter(result.rows), None)
 
   def remove_account_registration_by_id(self, id):
-    query = ('DELETE FROM user_account_registration '
+    query = ('DELETE FROM account_registration '
              'WHERE id = %s;')
     self.database.query(query, (id,))
 
   def create_account_registration(self, email):
     token = self.token_factory.create_token()
     query = (
-      'INSERT INTO user_account_registration (email, token) '
+      'INSERT INTO account_registration (email, token) '
       'VALUES (%s, %s) '
       'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
       'RETURNING id, email, token;')
@@ -190,7 +190,7 @@ class AccountRepository:
 
   def find_account_registration(self, email, token):
     query = ('SELECT id, email, token '
-             'FROM user_account_registration '
+             'FROM account_registration '
              'WHERE email LIKE %s AND token LIKE %s;')
     result = self.database.query(query, (email.raw, token))
     return next(map(AccountRegistration.fromrow, result.rows), None)
@@ -198,37 +198,37 @@ class AccountRepository:
   def find_account_registration_by_token(
         self, token: str) -> Optional[AccountRegistration]:
     query = ('SELECT id, email, token '
-             'FROM user_account_registration '
+             'FROM account_registration '
              'WHERE token LIKE %s;')
     result = self.database.query(query, (token,))
     return next(map(AccountRegistration.fromrow, result.rows), None)
 
-  def find_user_account(self,
+  def find_account(self,
         username: Union[Username, str]) -> Optional[Account]:
     if isinstance(username, Username):
       username = username.raw
     query = ('SELECT id, username, email, person_id, locale_id '
-             'FROM user_account '
+             'FROM account '
              'WHERE username ILIKE %s;')
     result = self.database.query(query, (username,))
     return next(map(Account.fromrow, result.rows), None)
 
   def find_account_by_email(self, email):
     query = ('SELECT id, username, email, person_id, locale_id '
-             'FROM user_account '
+             'FROM account '
              'WHERE email LIKE %s;')
     result = self.database.query(query, (email.raw,))
     return next(map(Account.fromrow, result.rows), None)
 
-  def find_hashed_password(self, user_account):
-    query = ('SELECT user_account_id, salt, salted_hash '
+  def find_hashed_password(self, account):
+    query = ('SELECT account_id, salt, salted_hash '
              'FROM hashed_password '
-             'WHERE user_account_id = %s;')
-    result = self.database.query(query, (user_account.id,))
+             'WHERE account_id = %s;')
+    result = self.database.query(query, (account.id,))
     return next(map(HashedPassword.fromrow, result.rows), None)
 
-  def set_user_account_person(self, account, person):
-    query = ('UPDATE user_account '
+  def set_account_person(self, account, person):
+    query = ('UPDATE account '
              'SET person_id = %s '
              'WHERE id = %s;')
     self.database.query(query, (person.id, account.id))
@@ -236,7 +236,7 @@ class AccountRepository:
   def accounts(self):
     with self.database.transaction() as transaction:
       result = transaction.execute(
-        'SELECT * FROM user_account;', mapper=Account.fromrow)
+        'SELECT * FROM account;', mapper=Account.fromrow)
       return result.rows
 
 
@@ -250,9 +250,9 @@ class PasswordRepository:
   def create_password_reset_token(self, account):
     token = self.token_factory.create_token()
     query = (
-      'INSERT INTO password_reset_token (user_account_id, token) '
+      'INSERT INTO password_reset_token (account_id, token) '
       'VALUES (%s, %s) '
-      'ON CONFLICT (user_account_id) '
+      'ON CONFLICT (account_id) '
       'DO UPDATE SET token = excluded.token;')
     result = self.database.query(query, (account.id, token))
     if 'INSERT' in result.status:
@@ -260,15 +260,15 @@ class PasswordRepository:
 
   def find_password_reset_token(self, account):
     query = (
-      'SELECT user_account_id, token '
+      'SELECT account_id, token '
       'FROM password_reset_token '
-      'WHERE user_account_id = %s;')
+      'WHERE account_id = %s;')
     result = self.database.query(query, (account.id,))
     return next(map(PasswordResetToken.fromrow, result.rows), None)
 
   def find_password_reset_account_id(self, token):
     query = (
-      'SELECT user_account_id '
+      'SELECT account_id '
       'FROM password_reset_token '
       'WHERE token LIKE %s;')
     result = self.database.query(query, (token,))
@@ -280,7 +280,7 @@ class PasswordRepository:
     hash = salt_hashed_password[1]
     query = ('UPDATE hashed_password '
              'SET salt = %s, salted_hash = %s '
-             'WHERE user_account_id = %s;')
+             'WHERE account_id = %s;')
     self.database.query(query, (salt, hash, account_id))
 
   def remove_password_reset_token(self, token):
@@ -292,8 +292,8 @@ class PasswordRepository:
 
 class PasswordResetToken:
 
-  def __init__(self, user_account_id, token):
-    self.user_account_id = user_account_id
+  def __init__(self, account_id, token):
+    self.account_id = account_id
     self.token = token
 
   @classmethod
@@ -301,7 +301,7 @@ class PasswordResetToken:
     return cls(row[0], row[1])
 
   def __repr__(self):
-    return f'{self.__class__.__name__}({self.user_account_id}, {self.token})'
+    return f'{self.__class__.__name__}({self.account_id}, {self.token})'
 
   def __eq__(self, other):
     if isinstance(other, PasswordResetToken):

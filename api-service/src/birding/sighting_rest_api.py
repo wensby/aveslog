@@ -22,7 +22,7 @@ def create_sighting_rest_api_blueprint(
   @blueprint.route('/profile/<string:username>/sighting')
   @require_authentication(token_decoder, account_repository)
   def get_profile_sightings(username: str, account: Account) -> Response:
-    account = account_repository.find_user_account(username)
+    account = account_repository.find_account(username)
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
     sightings = sighting_repository.sightings(account.person_id)

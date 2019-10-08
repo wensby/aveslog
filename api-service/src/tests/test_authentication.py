@@ -112,16 +112,16 @@ class TestAccountRegistrationController(TestCase):
     self.assertEqual(result, 'associated registration missing')
 
   def test_perform_registration_username_taken(self):
-    self.account_repository.find_user_account = mock_return('uh-oh!')
+    self.account_repository.find_account = mock_return('uh-oh!')
     result = self.controller.perform_registration(valid_email, 'myToken',
                                                   valid_username,
                                                   valid_password)
-    self.account_repository.find_user_account.assert_called_with(
+    self.account_repository.find_account.assert_called_with(
       Username(valid_username))
     self.assertEqual(result, 'username taken')
 
   def test_perform_registration_creates_account(self):
-    self.account_repository.find_user_account.return_value = None
+    self.account_repository.find_account.return_value = None
     self.controller.perform_registration(valid_email, 'myToken', valid_username,
                                          valid_password)
     self.account_factory.create_account.assert_called_with(
@@ -130,7 +130,7 @@ class TestAccountRegistrationController(TestCase):
 
   def test_perform_registration_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
-    self.account_repository.find_user_account = mock_return(None)
+    self.account_repository.find_account = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
                                                   valid_username,
                                                   valid_password)
@@ -141,12 +141,12 @@ class TestAccountRegistrationController(TestCase):
   def test_perform_registration_initializes_account_person_on_success(self):
     account = self.account_factory.create_account()
     person = self.person_repository.add_person()
-    self.account_repository.find_user_account = mock_return(None)
+    self.account_repository.find_account = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
                                                   valid_username,
                                                   valid_password)
     self.person_repository.add_person.assert_called_with(account.username)
-    self.account_repository.set_user_account_person.assert_called_with(account,
+    self.account_repository.set_account_person.assert_called_with(account,
                                                                        person)
     self.assertEqual(result, 'success')
 

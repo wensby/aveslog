@@ -86,7 +86,7 @@ class TestAccountRepository(TestCase):
     self.repository.find_account_by_id(4)
 
     self.database.transaction().execute.assert_called_with(
-      'SELECT id, username, email, person_id, locale_id FROM user_account '
+      'SELECT id, username, email, person_id, locale_id FROM account '
       'WHERE id = %s;', (4,), Account.fromrow)
 
   def test_create_account_registration_queries_database_correctly(self):
@@ -99,7 +99,7 @@ class TestAccountRepository(TestCase):
 
     self.database.query.assert_has_calls([
       call(
-        'INSERT INTO user_account_registration (email, token) '
+        'INSERT INTO account_registration (email, token) '
         'VALUES (%s, %s) '
         'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
         'RETURNING id, email, token;',
@@ -110,7 +110,7 @@ class TestAccountRepository(TestCase):
     self.database.query().rows = []
     self.repository.find_account_registration_by_token('myToken')
     self.database.query.assert_called_with(
-      'SELECT id, email, token FROM user_account_registration WHERE token LIKE %s;',
+      'SELECT id, email, token FROM account_registration WHERE token LIKE %s;',
       ('myToken',))
 
 
@@ -205,10 +205,10 @@ class TestPasswordRepository(TestCase):
     self.repository.create_password_reset_token(account)
 
     insert_call = call(
-      'INSERT INTO password_reset_token (user_account_id, token) VALUES (%s, %s) ON CONFLICT (user_account_id) DO UPDATE SET token = excluded.token;',
+      'INSERT INTO password_reset_token (account_id, token) VALUES (%s, %s) ON CONFLICT (account_id) DO UPDATE SET token = excluded.token;',
       (1, 'myToken'))
     select_call = call(
-      'SELECT user_account_id, token FROM password_reset_token WHERE user_account_id = %s;',
+      'SELECT account_id, token FROM password_reset_token WHERE account_id = %s;',
       (account.id,))
     self.database.query.assert_has_calls([insert_call, select_call])
 
@@ -241,14 +241,14 @@ class TestPasswordRepository(TestCase):
     self.repository.find_password_reset_token(account)
 
     self.database.query.assert_called_with(
-      'SELECT user_account_id, token FROM password_reset_token WHERE user_account_id = %s;',
+      'SELECT account_id, token FROM password_reset_token WHERE account_id = %s;',
       (account.id,))
 
   def test_find_password_reset_account_id_queries_database_correctly(self):
     self.database.query.return_value = Simple(rows=[])
     self.repository.find_password_reset_account_id('myToken')
     self.database.query.assert_called_with(
-      'SELECT user_account_id FROM password_reset_token WHERE token LIKE %s;',
+      'SELECT account_id FROM password_reset_token WHERE token LIKE %s;',
       ('myToken',))
 
   def test_find_password_reset_account_id_parses_response_correctly(self):
@@ -261,7 +261,7 @@ class TestPasswordRepository(TestCase):
       'mySalt', 'myHashedPassword')
     self.repository.update_password(4, 'myNewPassword')
     self.database.query.assert_called_with(
-      'UPDATE hashed_password SET salt = %s, salted_hash = %s WHERE user_account_id = %s;',
+      'UPDATE hashed_password SET salt = %s, salted_hash = %s WHERE account_id = %s;',
       ('mySalt', 'myHashedPassword', 4))
 
   def test_remove_password_reset_token_queries_database_correctly(self):
