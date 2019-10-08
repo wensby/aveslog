@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Union, Any, List
+from typing import Optional, Union, Any, List, TypeVar, Type
 
 from birding.database import Database
 from birding.mail import EmailAddress
@@ -135,15 +135,20 @@ class AccountFactory:
       return account
 
 
+AccountRegistrationType = TypeVar(
+  'AccountRegistrationType', bound='AccountRegistration')
+
+
 class AccountRegistration:
 
-  def __init__(self, id, email, token):
-    self.id = id
+  def __init__(self, account_registration_id: int, email: str, token: str):
+    self.id = account_registration_id
     self.email = email
     self.token = token
 
   @classmethod
-  def fromrow(cls, row):
+  def fromrow(cls: Type[AccountRegistrationType],
+        row: list) -> AccountRegistrationType:
     return cls(row[0], row[1], row[2])
 
 
