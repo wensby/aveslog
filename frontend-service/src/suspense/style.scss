@@ -19,7 +19,8 @@
 }
 
 .lds-ring {
-  position: absolute;
+  display: inline-block;
+  position: relative;
   width: 64px;
   height: 64px;
   left:0;
@@ -31,6 +32,10 @@
 
 .lds-ring div {
   box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 51px;
+  height: 51px;
   margin: 6px;
   border: 6px solid $primary;
   border-radius: 50%;
