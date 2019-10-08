@@ -215,33 +215,33 @@ class SaltFactory:
     return b64encode(os.urandom(16)).decode('utf-8')
 
 
+TimeSupplier = Callable[[], datetime]
+
+
 class JwtFactory:
 
-  def __init__(self, secret: str):
+  def __init__(self, secret: str, time_supplier: TimeSupplier):
     self.secret = secret
+    self.time_supplier = time_supplier
 
-  def create_token(self, payload: dict) -> str:
+  def create_token(self, subject_claim: Any, expiration: timedelta) -> str:
+    payload = {
+      'exp': self.time_supplier() + expiration,
+      'iat': self.time_supplier(),
+      'sub': subject_claim
+    }
     return jwt.encode(payload, self.secret, algorithm='HS256').decode('utf-8')
-
-
-TimeSupplier = Callable[[], datetime]
 
 
 class AuthenticationTokenFactory:
 
-  def __init__(self, jwt_factory: JwtFactory, time_supplier: TimeSupplier):
+  def __init__(self, jwt_factory: JwtFactory):
     self.jwt_factory = jwt_factory
-    self.time_supplier = time_supplier
 
   def create_authentication_token(self,
         account_id: int,
         expiration: timedelta = timedelta(days=0, minutes=30)) -> str:
-    payload = {
-      'exp': self.time_supplier() + expiration,
-      'iat': self.time_supplier(),
-      'sub': account_id
-    }
-    return self.jwt_factory.create_token(payload)
+    return self.jwt_factory.create_token(account_id, expiration)
 
 
 class DecodeResult:
