@@ -8,7 +8,9 @@
 \i /schema/public/table/picture.sql
 \i /schema/public/table/bird_thumbnail.sql
 \i /schema/public/table/password_reset_token.sql
+\i /schema/public/table/refresh_token.sql
 
 \i /schema/public/foreign-key-constraint/user_account.sql
 \i /schema/public/foreign-key-constraint/bird_thumbnail.sql
 \i /schema/public/foreign-key-constraint/password_reset_token.sql
+\i /schema/public/foreign-key-constraint/refresh_token.sql
