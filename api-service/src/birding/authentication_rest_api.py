@@ -52,7 +52,7 @@ def require_authentication(
         elif decode_result.error == 'signature-expired':
           return create_unauthorized_response('authentication token expired')
       account_id = decode_result.payload['sub']
-      account = account_repository.find_account_by_id(account_id)
+      account = account_repository.account_by_id(account_id)
       if not account:
         return create_unauthorized_response('account missing')
       return route(**kwargs, account=account)

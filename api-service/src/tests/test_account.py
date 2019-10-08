@@ -9,6 +9,7 @@ from birding.account import Account, PasswordRepository, PasswordResetToken, \
   AccountRepository, Username, Password, AccountFactory
 from birding.account import Credentials
 from birding.database import Database
+from birding.database import read_script_file
 from birding.mail import EmailAddress
 
 from test_util import mock_database_transaction
@@ -83,11 +84,10 @@ class TestAccountRepository(TestCase):
     self.database.transaction.return_value = mock_database_transaction()
     self.database.transaction().execute.return_value = Simple(rows=[])
 
-    self.repository.find_account_by_id(4)
+    self.repository.account_by_id(4)
 
     self.database.transaction().execute.assert_called_with(
-      'SELECT id, username, email, person_id, locale_id FROM account '
-      'WHERE id = %s;', (4,), Account.fromrow)
+      read_script_file('select-account-by-id.sql'), (4,), Account.fromrow)
 
   def test_create_account_registration_queries_database_correctly(self):
     email = EmailAddress('e@mail.com')

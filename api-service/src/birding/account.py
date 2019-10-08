@@ -5,6 +5,7 @@ import re
 from typing import Optional, Union, Any, List, TypeVar, Type
 
 from birding.database import Database
+from .database import read_script_file
 from birding.mail import EmailAddress
 from birding.person import Person
 
@@ -180,13 +181,13 @@ class AccountRepository:
     self.hasher = password_hasher
     self.token_factory = token_factory
 
-  def find_account_by_id(self, account_id: int) -> Account:
+  def account_by_id(self, account_id: int) -> Optional[Account]:
     with self.database.transaction() as transaction:
-      query = ('SELECT id, username, email, person_id, locale_id '
-               'FROM account '
-               'WHERE id = %s;')
+      query = read_script_file('select-account-by-id.sql')
       result = transaction.execute(query, (account_id,), Account.fromrow)
-      return next(iter(result.rows), None)
+      if not result.rows:
+        return None
+      return result.rows[0]
 
   def remove_account_registration_by_id(self, account_id: int) -> None:
     query = ('DELETE FROM account_registration '
