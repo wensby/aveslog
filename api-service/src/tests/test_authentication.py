@@ -8,6 +8,7 @@ from birding.authentication import AuthenticationTokenDecoder
 from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
+from birding.authentication import RefreshToken
 from birding.account import Account
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
@@ -271,3 +272,9 @@ class TestAuthenticationTokenDecoder(TestCase):
 
     self.assertFalse(result.ok)
     self.assertEqual(result.error, 'token-invalid')
+
+
+class TestRefreshToken(TestCase):
+
+  def test_init(self):
+    RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))

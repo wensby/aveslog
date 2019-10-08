@@ -20,6 +20,19 @@ from .account import AccountRegistration
 from .account import Password
 
 
+class RefreshToken:
+
+  def __init__(self,
+        refresh_token_id: int,
+        jwt_token: str,
+        account_id: int,
+        expiration_date: datetime) -> None:
+    self.id = refresh_token_id
+    self.jwt_token = jwt_token
+    self.account_id = account_id
+    self.expiration_date = expiration_date
+
+
 class Authenticator:
 
   def __init__(self,
