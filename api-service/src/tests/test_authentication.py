@@ -240,7 +240,7 @@ class TestAuthenticationTokenFactory(TestCase):
     jwt_factory = JwtFactory('secret', utc_now_supplier)
     factory = AuthenticationTokenFactory(jwt_factory)
 
-    token = factory.create_authentication_token(1)
+    token = factory.create_access_token(1)
 
     self.assertEqual(token, (
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjYwNjAsImlhdCI6MTU'
@@ -252,7 +252,7 @@ class TestAuthenticationTokenDecoder(TestCase):
   def test_decode_token(self):
     jwt_factory = JwtFactory('secret', datetime.utcnow)
     factory = AuthenticationTokenFactory(jwt_factory)
-    token = factory.create_authentication_token(1)
+    token = factory.create_access_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
     result = decoder.decode_authentication_token(token)
@@ -264,7 +264,7 @@ class TestAuthenticationTokenDecoder(TestCase):
     utc_now_supplier = lambda: datetime(2008, 8, 3, 20, 31)
     jwt_factory = JwtFactory('secret', utc_now_supplier)
     factory = AuthenticationTokenFactory(jwt_factory)
-    token = factory.create_authentication_token(1)
+    token = factory.create_access_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
     result = decoder.decode_authentication_token(token)

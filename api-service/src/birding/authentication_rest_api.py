@@ -119,9 +119,9 @@ def create_authentication_rest_api_blueprint(
       return token_failure_response()
     if not authenticator.is_account_password_correct(account, password):
       return token_failure_response()
-    token = token_factory.create_authentication_token(account.id)
+    access_token = token_factory.create_access_token(account.id)
     refresh_token = ''
-    return token_response(token, refresh_token)
+    return token_response(access_token, refresh_token)
 
   @blueprint.route('/password-reset', methods=['POST'])
   def post_password_reset_email() -> Response:
@@ -216,9 +216,9 @@ def create_authentication_rest_api_blueprint(
       'message': 'username already taken',
     }), HTTPStatus.CONFLICT)
 
-  def token_response(token: str, refresh_token: str) -> Response:
+  def token_response(access_token: str, refresh_token: str) -> Response:
     return make_response(jsonify({
-      'accessToken': token,
+      'accessToken': access_token,
       'refreshToken': refresh_token,
     }), HTTPStatus.OK)
 

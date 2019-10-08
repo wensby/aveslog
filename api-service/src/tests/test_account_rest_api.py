@@ -37,7 +37,7 @@ class TestAccount(AppTestCase):
     self.token_factory = AuthenticationTokenFactory(self.jwt_factory)
 
   def test_get_account_when_authenticated_account_disappears(self):
-    token = self.token_factory.create_authentication_token(1)
+    token = self.token_factory.create_access_token(1)
 
     response = self.get_own_account(token)
 
@@ -55,7 +55,7 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['status'], 'failure')
     self.assertEqual(data['message'], 'authentication token required')
 
-  def test_get_account_when_authentication_token_invalid(self):
+  def test_get_account_when_access_token_invalid(self):
     response = self.get_own_account('invalid')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
@@ -63,10 +63,10 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['status'], 'failure')
     self.assertEqual(data['message'], 'authentication token invalid')
 
-  def test_get_account_when_authentication_token_expired(self):
+  def test_get_account_when_access_token_expired(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     expiration = timedelta(seconds=-1)
-    token = self.token_factory.create_authentication_token(1, expiration)
+    token = self.token_factory.create_access_token(1, expiration)
 
     response = self.get_own_account(token)
 
@@ -75,9 +75,9 @@ class TestAccount(AppTestCase):
     self.assertEqual(data['status'], 'failure')
     self.assertEqual(data['message'], 'authentication token expired')
 
-  def test_get_account_when_authentication_token_ok(self):
+  def test_get_account_when_access_token_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    token = self.token_factory.create_authentication_token(1)
+    token = self.token_factory.create_access_token(1)
 
     response = self.get_own_account(token)
 

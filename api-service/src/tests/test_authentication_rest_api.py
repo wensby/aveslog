@@ -243,7 +243,7 @@ class TestPasswordUpdate(AppTestCase):
 
   def test_post_password_update_when_token_expired(self) -> None:
     expiration = timedelta(seconds=-1)
-    token = self.token_factory.create_authentication_token(1, expiration)
+    token = self.token_factory.create_access_token(1, expiration)
 
     response = self.post_password_update(token, 'oldPassword', 'newPassword')
 

@@ -238,7 +238,7 @@ class AuthenticationTokenFactory:
   def __init__(self, jwt_factory: JwtFactory):
     self.jwt_factory = jwt_factory
 
-  def create_authentication_token(self,
+  def create_access_token(self,
         account_id: int,
         expiration: timedelta = timedelta(days=0, minutes=30)) -> str:
     return self.jwt_factory.create_token(account_id, expiration)
