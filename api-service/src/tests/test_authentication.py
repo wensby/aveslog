@@ -9,6 +9,7 @@ from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
 from birding.authentication import RefreshToken
+from birding.authentication import RefreshTokenRepository
 from birding.account import Account
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
@@ -17,6 +18,7 @@ from birding.person import PersonRepository
 from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
+from birding.database import Database
 from tests.test_util import mock_return
 
 valid_email = 'valid@email.com'
@@ -278,3 +280,12 @@ class TestRefreshToken(TestCase):
 
   def test_init(self):
     RefreshToken(1, 'jwt', 1, datetime.datetime(2019, 10, 8, 12, 28, 0))
+
+
+class TestRefreshTokenRepository(TestCase):
+
+  def setUp(self) -> None:
+    self.database: Database = Mock(spec=Database)
+
+  def test_init(self):
+    RefreshTokenRepository(self.database)

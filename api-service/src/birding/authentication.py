@@ -5,6 +5,7 @@ from typing import Union, Optional, Callable
 
 import jwt
 
+from .database import Database
 from .person import PersonRepository
 from .link import LinkFactory
 from .localization import LoadedLocale
@@ -31,6 +32,12 @@ class RefreshToken:
     self.jwt_token = jwt_token
     self.account_id = account_id
     self.expiration_date = expiration_date
+
+
+class RefreshTokenRepository():
+
+  def __init__(self, database: Database):
+    self.database = database
 
 
 class Authenticator:
