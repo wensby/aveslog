@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from birding.authentication import AccountRegistrationController
+from birding.authentication import JwtFactory
 from birding.authentication import AuthenticationTokenFactory
 from birding.authentication import AuthenticationTokenDecoder
 from birding.authentication import PasswordResetController
@@ -236,7 +237,8 @@ class TestAuthenticationTokenFactory(TestCase):
 
   def test_encode_token(self):
     utc_now_supplier = lambda: datetime(2019, 8, 3, 20, 31)
-    factory = AuthenticationTokenFactory('secret', utc_now_supplier)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, utc_now_supplier)
 
     token = factory.create_authentication_token(1)
 
@@ -248,7 +250,8 @@ class TestAuthenticationTokenFactory(TestCase):
 class TestAuthenticationTokenDecoder(TestCase):
 
   def test_decode_token(self):
-    factory = AuthenticationTokenFactory('secret', datetime.utcnow)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, datetime.utcnow)
     token = factory.create_authentication_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
@@ -259,7 +262,8 @@ class TestAuthenticationTokenDecoder(TestCase):
 
   def test_decode_expired_token(self):
     utc_now_supplier = lambda: datetime(2008, 8, 3, 20, 31)
-    factory = AuthenticationTokenFactory('secret', utc_now_supplier)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, utc_now_supplier)
     token = factory.create_authentication_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 

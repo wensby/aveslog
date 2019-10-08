@@ -3,7 +3,7 @@ import json
 from http import HTTPStatus
 from datetime import timedelta
 
-from birding import AuthenticationTokenFactory
+from birding import AuthenticationTokenFactory, JwtFactory
 from test_util import AppTestCase
 
 
@@ -33,7 +33,8 @@ class TestAccount(AppTestCase):
     super().setUp()
     secret_key = self._app.secret_key
     time_supplier = datetime.datetime.utcnow
-    self.token_factory = AuthenticationTokenFactory(secret_key, time_supplier)
+    self.jwt_factory = JwtFactory(secret_key)
+    self.token_factory = AuthenticationTokenFactory(self.jwt_factory, time_supplier)
 
   def test_get_account_when_authenticated_account_disappears(self):
     token = self.token_factory.create_authentication_token(1)

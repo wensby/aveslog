@@ -12,6 +12,7 @@ from .account import PasswordHasher
 from .account import PasswordRepository
 from .account import TokenFactory
 from .authentication import AccountRegistrationController
+from .authentication import JwtFactory
 from .authentication import AuthenticationTokenDecoder
 from .authentication import AuthenticationTokenFactory
 from .authentication import Authenticator
@@ -81,8 +82,9 @@ def create_app(test_config: dict = None) -> Flask:
   password_repository = PasswordRepository(token_factory, database, hasher)
   password_reset_controller = PasswordResetController(
     account_repository, password_repository, link_factory, mail_dispatcher)
+  jwt_factory = JwtFactory(app.secret_key)
   authentication_token_factory = AuthenticationTokenFactory(
-    app.secret_key, datetime.datetime.utcnow)
+    jwt_factory, datetime.datetime.utcnow)
   authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
 
   # Create and register blueprints

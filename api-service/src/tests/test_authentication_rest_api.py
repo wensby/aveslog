@@ -4,6 +4,7 @@ from typing import Optional
 from datetime import timedelta
 from flask import Response
 from birding.authentication import AuthenticationTokenFactory
+from birding.authentication import JwtFactory
 from test_util import AppTestCase
 
 
@@ -210,8 +211,9 @@ class TestPasswordUpdate(AppTestCase):
   def setUp(self) -> None:
     super().setUp()
     self.db_setup_account(1, 1, 'hulot', 'oldPassword', 'hulot@mail.com')
-    self.token_factory = AuthenticationTokenFactory(
-      self._app.secret_key, datetime.datetime.utcnow)
+    jwt_factory = JwtFactory(self._app.secret_key)
+    time_supplier = datetime.datetime.utcnow
+    self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
 
   def test_post_password_update_when_ok(self) -> None:
     token = self.get_authentication_token('hulot', 'oldPassword')
