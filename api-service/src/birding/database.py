@@ -1,5 +1,5 @@
 from logging import Logger
-from typing import Callable, Any
+from typing import Callable, Any, Union
 
 from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
@@ -38,9 +38,9 @@ class Transaction:
 
   def execute(self,
         query: str,
-        vars: tuple = None,
+        values: Union[tuple, dict] = None,
         mapper: Callable[[list], Any] = None) -> QueryResult:
-    self.cursor.execute(query, vars)
+    self.cursor.execute(query, values)
     try:
       rows = self.cursor.fetchall()
     except:
