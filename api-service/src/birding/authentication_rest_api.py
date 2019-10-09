@@ -18,7 +18,6 @@ from .authentication import RefreshTokenRepository
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
 from .authentication import AuthenticationTokenDecoder
-from .authentication import PasswordRepository
 from .account import AccountRepository
 from .account import AccountRegistration
 from .account import Password
