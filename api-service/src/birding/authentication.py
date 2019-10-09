@@ -51,41 +51,42 @@ class RefreshTokenRepository:
   def __init__(self, database: Database):
     self.database = database
 
-  def refresh_token_by_jwt(self, jwt_token: str) -> Optional[RefreshToken]:
-    with self.database.transaction() as transaction:
-      query = read_script_file('select_refresh_token_by_jwt_token.sql')
-      result = transaction.execute(query, (jwt_token,), RefreshToken.from_row)
-      if not result.rows:
-        return None
-      else:
-        return result.rows[0]
-
   def put_refresh_token(self, token: RefreshToken) -> RefreshToken:
     if not token.id:
       return self.__insert_refresh_token(token)
     return self.__update_refresh_token(token)
 
+  def refresh_token_by_jwt(self, jwt: str) -> Optional[RefreshToken]:
+    query = read_script_file('select-refresh-token-by-jwt.sql')
+    values = {'token': jwt}
+    tokens = self.__query_tokens(query, values)
+    if not tokens:
+      return None
+    return tokens[0]
+
+  def remove_refresh_tokens(self, account: Account) -> List[RefreshToken]:
+    query = read_script_file('delete-account-refresh-tokens.sql')
+    values = {'account_id': account.id}
+    return self.__query_tokens(query, values)
+
   def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
     query = read_script_file('insert-refresh-token.sql')
-    return self.__query_token(query, token)
+    values = {
+      'token': token.jwt_token,
+      'account_id': token.account_id,
+      'expiration_date': token.expiration_date,
+    }
+    return self.__query_tokens(query, values)[0]
 
   def __update_refresh_token(self, token: RefreshToken) -> RefreshToken:
     query = read_script_file('update-refresh-token.sql')
-    return self.__query_token(query, token)
-
-  def __query_token(self, query: str, token: RefreshToken) -> RefreshToken:
-    with self.database.transaction() as transaction:
-      values = {
-        'id': token.id,
-        'token': token.jwt_token,
-        'account_id': token.account_id,
-        'expiration_date': token.expiration_date,
-      }
-      return transaction.execute(query, values, RefreshToken.from_row).rows[0]
-
-  def remove_refresh_token(self, account: Account) -> List[RefreshToken]:
-    query = read_script_file('delete-account-refresh-tokens.sql')
-    return self.__query_tokens(query, {'account_id': account.id})
+    values = {
+      'id': token.id,
+      'token': token.jwt_token,
+      'account_id': token.account_id,
+      'expiration_date': token.expiration_date,
+    }
+    return self.__query_tokens(query, values)[0]
 
   def __query_tokens(self, query: str, values: dict) -> List[RefreshToken]:
     with self.database.transaction() as transaction:

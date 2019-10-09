@@ -351,14 +351,14 @@ class TestRefreshTokenRepository(TestCase):
 
     self.assertEqual(result, new_token)
 
-  def test_remove_all_accounts_refresh_token(self):
+  def test_remove_all_accounts_refresh_tokens(self):
     expiration_date = datetime(2019, 10, 9, 14, 34)
     account = Account(1, 'george', 'tbone@mail.com', 1, None)
     database_token = RefreshToken(1, 'jwt', 1, expiration_date)
     self.transaction.execute.return_value = QueryResult('', [database_token])
     repository = RefreshTokenRepository(self.database)
 
-    result = repository.remove_refresh_token(account)
+    result = repository.remove_refresh_tokens(account)
 
     self.assertListEqual(result, [database_token])
     self.transaction.execute.assert_called_with(
