@@ -46,7 +46,7 @@ class RefreshToken:
     return self.__dict__ == other.__dict__
 
 
-class RefreshTokenRepository():
+class RefreshTokenRepository:
 
   def __init__(self, database: Database):
     self.database = database
