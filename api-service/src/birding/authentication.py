@@ -1,7 +1,7 @@
 import os
 from base64 import b64encode
 from datetime import timedelta, datetime
-from typing import Union, Optional, Callable, Any, TypeVar, Type
+from typing import Union, Optional, Callable, Any, TypeVar, Type, List
 
 import jwt
 
@@ -82,6 +82,14 @@ class RefreshTokenRepository:
         'expiration_date': token.expiration_date,
       }
       return transaction.execute(query, values, RefreshToken.from_row).rows[0]
+
+  def remove_refresh_token(self, account: Account) -> List[RefreshToken]:
+    query = read_script_file('delete-account-refresh-tokens.sql')
+    return self.__query_tokens(query, {'account_id': account.id})
+
+  def __query_tokens(self, query: str, values: dict) -> List[RefreshToken]:
+    with self.database.transaction() as transaction:
+      return transaction.execute(query, values, RefreshToken.from_row).rows
 
 
 class Authenticator:

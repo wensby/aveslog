@@ -20,6 +20,7 @@ from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
 from birding.database import Database
+from birding.database import read_script_file
 from birding.database import QueryResult
 from tests.test_util import mock_return, mock_database_transaction
 
@@ -349,3 +350,17 @@ class TestRefreshTokenRepository(TestCase):
     result = repository.put_refresh_token(new_token)
 
     self.assertEqual(result, new_token)
+
+  def test_remove_all_accounts_refresh_token(self):
+    expiration_date = datetime(2019, 10, 9, 14, 34)
+    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    database_token = RefreshToken(1, 'jwt', 1, expiration_date)
+    self.transaction.execute.return_value = QueryResult('', [database_token])
+    repository = RefreshTokenRepository(self.database)
+
+    result = repository.remove_refresh_token(account)
+
+    self.assertListEqual(result, [database_token])
+    self.transaction.execute.assert_called_with(
+      read_script_file('delete-account-refresh-tokens.sql'),
+      {'account_id': 1}, RefreshToken.from_row)
