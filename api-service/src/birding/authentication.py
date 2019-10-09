@@ -3,7 +3,7 @@ from base64 import b64encode
 from datetime import timedelta, datetime
 from typing import Union, Optional, Callable, Any, TypeVar, Type, List
 
-import jwt
+from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
 from .database import Database
 from .database import read_script_file
@@ -265,7 +265,7 @@ class JwtFactory:
       'iat': issue_date,
       'sub': subject_claim
     }
-    return jwt.encode(payload, self.secret, algorithm='HS256').decode('utf-8')
+    return encode(payload, self.secret, algorithm='HS256').decode('utf-8')
 
 
 class AuthenticationTokenFactory:
@@ -303,9 +303,9 @@ class AuthenticationTokenDecoder:
 
   def decode_authentication_token(self, token: str) -> DecodeResult:
     try:
-      payload = jwt.decode(token, self.secret, algorithms=['HS256'])
+      payload = decode(token, self.secret, algorithms=['HS256'])
       return DecodeResult(payload)
-    except jwt.ExpiredSignatureError:
+    except ExpiredSignatureError:
       return DecodeResult({}, error='signature-expired')
-    except jwt.InvalidTokenError:
+    except InvalidTokenError:
       return DecodeResult({}, error='token-invalid')
