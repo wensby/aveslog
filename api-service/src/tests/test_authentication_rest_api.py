@@ -8,7 +8,7 @@ from birding.authentication import JwtFactory
 from test_util import AppTestCase
 
 
-class TestGetAuthenticationToken(AppTestCase):
+class TestGetAuthenticationTokens(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
@@ -19,12 +19,14 @@ class TestGetAuthenticationToken(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertIn('accessToken', response.json)
+    self.assertIn('refreshToken', response.json)
 
   def test_get_token_when_username_differently_cased(self) -> None:
     response = self.get_authentication_token('GeOrGe', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertIn('accessToken', response.json)
+    self.assertIn('refreshToken', response.json)
 
   def test_get_token_when_incorrect_username(self) -> None:
     response = self.get_authentication_token('tbone', 'costanza')

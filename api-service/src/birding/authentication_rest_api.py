@@ -120,7 +120,7 @@ def create_authentication_rest_api_blueprint(
     if not authenticator.is_account_password_correct(account, password):
       return token_failure_response()
     access_token = token_factory.create_access_token(account.id)
-    refresh_token = ''
+    refresh_token = token_factory.create_refresh_token(account.id)
     return token_response(access_token, refresh_token)
 
   @blueprint.route('/password-reset', methods=['POST'])

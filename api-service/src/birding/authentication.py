@@ -243,6 +243,9 @@ class AuthenticationTokenFactory:
         expiration: timedelta = timedelta(days=0, minutes=30)) -> str:
     return self.jwt_factory.create_token(account_id, expiration)
 
+  def create_refresh_token(self, account_id: int) -> str:
+    return self.jwt_factory.create_token(account_id, timedelta(days=90))
+
 
 class DecodeResult:
 
