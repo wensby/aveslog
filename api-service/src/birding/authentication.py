@@ -31,7 +31,7 @@ class RefreshToken:
     return cls(row[0], row[1], row[2], row[3])
 
   def __init__(self,
-        refresh_token_id: int,
+        refresh_token_id: Optional[int],
         jwt_token: str,
         account_id: int,
         expiration_date: datetime) -> None:
