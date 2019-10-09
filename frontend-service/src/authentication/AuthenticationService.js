@@ -42,11 +42,11 @@ export default class AuthenticationService {
     return await response.json();
   }
 
-  async postPasswordUpdate(authenticationToken, oldPassword, newPassword) {
+  async postPasswordUpdate(accessToken, oldPassword, newPassword) {
     return await fetch(`${this.apiUrl}/authentication/password`, {
       method: 'POST',
       headers: {
-        'authToken': authenticationToken,
+        'accessToken': accessToken,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -103,6 +103,6 @@ export default class AuthenticationService {
   }
 
   async logout() {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('accessToken');
   }
 }

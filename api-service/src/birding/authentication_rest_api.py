@@ -43,11 +43,11 @@ def require_authentication(
   def route_decorator(route: RouteFunction) -> RouteFunction:
     @wraps(route)
     def route_wrapper(**kwargs):
-      authentication_token = request.headers.get('authToken')
-      if not authentication_token:
+      access_token = request.headers.get('accessToken')
+      if not access_token:
         return authentication_token_missing_response()
       decode_result = token_decoder.decode_authentication_token(
-        authentication_token)
+        access_token)
       if not decode_result.ok:
         if decode_result.error == 'token-invalid':
           return create_unauthorized_response('authentication token invalid')

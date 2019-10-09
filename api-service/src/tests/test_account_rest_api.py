@@ -13,7 +13,7 @@ class TestGetActiveAccounts(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
     token = self.get_authentication_token('hulot', 'password')
 
-    response = self.client.get('/account', headers={'authToken': token})
+    response = self.client.get('/account', headers={'accessToken': token})
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -91,4 +91,4 @@ class TestAccount(AppTestCase):
     if not token:
       return self.client.get('/account/me')
     else:
-      return self.client.get('/account/me', headers={'authToken': token})
+      return self.client.get('/account/me', headers={'accessToken': token})

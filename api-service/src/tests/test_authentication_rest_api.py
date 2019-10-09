@@ -282,6 +282,6 @@ class TestPasswordUpdate(AppTestCase):
         old_password: str,
         new_password: str) -> Response:
     resource = '/authentication/password'
-    headers = {'authToken': token} if token else {}
+    headers = {'accessToken': token} if token else {}
     json = {'oldPassword': old_password, 'newPassword': new_password}
     return self.client.post(resource, headers=headers, json=json)

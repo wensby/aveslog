@@ -4,25 +4,25 @@ export default class SightingService {
     this.apiUrl = window._env_.API_URL;
   }
 
-  async fetchSightings(username, authToken) {
+  async fetchSightings(username, accessToken) {
     return await fetch(`${this.apiUrl}/profile/${username}/sighting`, {
       'headers': {
-        'authToken': authToken,
+        'accessToken': accessToken,
       },
     });
   }
 
-  async fetchSighting(authToken, sightingId) {
+  async fetchSighting(accessToken, sightingId) {
     const url = `${this.apiUrl}/sighting/${sightingId}`;
     const response = await fetch(url, {
       'headers': {
-        'authToken': authToken,
+        'accessToken': accessToken,
       },
     });
     return await response.json();
   }
 
-  async postSighting(authToken, personId, binomialName, date, time) {
+  async postSighting(accessToken, personId, binomialName, date, time) {
     const body = {
       'person': { 'id': personId },
       'bird': { 'binomialName': binomialName },
@@ -36,18 +36,18 @@ export default class SightingService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'authToken': authToken,
+        'accessToken': accessToken,
       },
       body: JSON.stringify(body),
     });
     return response;
   }
 
-  async deleteSighting(authToken, sightingId) {
+  async deleteSighting(accessToken, sightingId) {
     const response = await fetch(`${this.apiUrl}/sighting/${sightingId}`, {
       method: 'DELETE',
       headers: {
-        'authToken': authToken,
+        'accessToken': accessToken,
       },
     });
     return response.status == 204;

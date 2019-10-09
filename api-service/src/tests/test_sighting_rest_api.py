@@ -13,7 +13,7 @@ class TestGetSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'authToken': token}
+    headers = {'accessToken': token}
 
     response = self.client.get('/sighting/1', headers=headers)
 
@@ -35,7 +35,7 @@ class TestGetSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
     token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'authToken': token}
+    headers = {'accessToken': token}
 
     response = self.client.get('/sighting/2', headers=headers)
 
@@ -51,7 +51,7 @@ class TestGetSightings(AppTestCase):
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
     token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'authToken': token}
+    headers = {'accessToken': token}
 
     response = self.client.get('/profile/hulot/sighting', headers=headers)
 
@@ -74,7 +74,7 @@ class TestGetSightings(AppTestCase):
   def test_get_sightings_when_username_missing(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'authToken': token}
+    headers = {'accessToken': token}
 
     response = self.client.get('/profile/godzilla/sighting', headers=headers)
 
@@ -94,7 +94,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_when_auth_token_invalid(self):
-    headers = {'authToken': 'i-am-not-a-valid-jwt-token'}
+    headers = {'accessToken': 'i-am-not-a-valid-jwt-token'}
 
     response = self.client.get('/profile/hulot/sighting', headers=headers)
 
@@ -111,7 +111,7 @@ class TestGetSightings(AppTestCase):
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
     token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'authToken': token}
+    headers = {'accessToken': token}
 
     response = self.client.get('/profile/dude/sighting', headers=headers)
 
@@ -195,7 +195,7 @@ class TestPostSighting(AppTestCase):
     return self.client.post(
       '/sighting',
       headers={
-        'authToken': token,
+        'accessToken': token,
       },
       json=data,
     )
@@ -246,5 +246,5 @@ class TestDeleteSighting(AppTestCase):
         authentication_token: str,
         sighting_id: int) -> Response:
     resource = f'/sighting/{sighting_id}'
-    headers = {'authToken': authentication_token}
+    headers = {'accessToken': authentication_token}
     return self.client.delete(resource, headers=headers)
