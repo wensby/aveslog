@@ -243,14 +243,17 @@ TimeSupplier = Callable[[], datetime]
 
 class JwtFactory:
 
-  def __init__(self, secret: str, time_supplier: TimeSupplier):
+  def __init__(self, secret: str):
     self.secret = secret
-    self.time_supplier = time_supplier
 
-  def create_token(self, subject_claim: Any, expiration: timedelta) -> str:
+  def create_token(self,
+        subject_claim: Any,
+        issue_date: datetime,
+        expiration_date: datetime,
+  ) -> str:
     payload = {
-      'exp': self.time_supplier() + expiration,
-      'iat': self.time_supplier(),
+      'exp': expiration_date,
+      'iat': issue_date,
       'sub': subject_claim
     }
     return jwt.encode(payload, self.secret, algorithm='HS256').decode('utf-8')
@@ -258,16 +261,22 @@ class JwtFactory:
 
 class AuthenticationTokenFactory:
 
-  def __init__(self, jwt_factory: JwtFactory):
+  def __init__(self, jwt_factory: JwtFactory, time_supplier: TimeSupplier):
     self.jwt_factory = jwt_factory
+    self.time_supplier = time_supplier
 
   def create_access_token(self,
         account_id: int,
         expiration: timedelta = timedelta(days=0, minutes=30)) -> str:
-    return self.jwt_factory.create_token(account_id, expiration)
+    time = self.time_supplier()
+    expiration_date = time + expiration
+    return self.jwt_factory.create_token(account_id, time, expiration_date)
 
-  def create_refresh_token(self, account_id: int) -> str:
-    return self.jwt_factory.create_token(account_id, timedelta(days=90))
+  def create_refresh_token(self, account_id: int) -> RefreshToken:
+    time = self.time_supplier()
+    expiration_date = time + timedelta(days=90)
+    jwt_token = self.jwt_factory.create_token(account_id, time, expiration_date)
+    return RefreshToken(None, jwt_token, account_id, expiration_date)
 
 
 class DecodeResult:

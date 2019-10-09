@@ -190,6 +190,7 @@ class AppTestCase(TestCase):
 
   def tearDown(self) -> None:
     with self.database.transaction() as transaction:
+      transaction.execute('DELETE FROM refresh_token;')
       transaction.execute('DELETE FROM password_reset_token;')
       transaction.execute('DELETE FROM hashed_password;')
       transaction.execute('DELETE FROM account;')

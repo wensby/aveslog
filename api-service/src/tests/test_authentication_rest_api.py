@@ -214,8 +214,8 @@ class TestPasswordUpdate(AppTestCase):
     super().setUp()
     self.db_setup_account(1, 1, 'hulot', 'oldPassword', 'hulot@mail.com')
     time_supplier = datetime.datetime.utcnow
-    jwt_factory = JwtFactory(self._app.secret_key, time_supplier)
-    self.token_factory = AuthenticationTokenFactory(jwt_factory)
+    jwt_factory = JwtFactory(self._app.secret_key)
+    self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
 
   def test_post_password_update_when_ok(self) -> None:
     token = self.get_authentication_token('hulot', 'oldPassword')

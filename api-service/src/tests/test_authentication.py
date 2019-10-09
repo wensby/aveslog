@@ -237,8 +237,8 @@ class TestAuthenticationTokenFactory(TestCase):
 
   def test_encode_token(self):
     utc_now_supplier = lambda: datetime(2019, 8, 3, 20, 31)
-    jwt_factory = JwtFactory('secret', utc_now_supplier)
-    factory = AuthenticationTokenFactory(jwt_factory)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, utc_now_supplier)
 
     token = factory.create_access_token(1)
 
@@ -250,8 +250,8 @@ class TestAuthenticationTokenFactory(TestCase):
 class TestAuthenticationTokenDecoder(TestCase):
 
   def test_decode_token(self):
-    jwt_factory = JwtFactory('secret', datetime.utcnow)
-    factory = AuthenticationTokenFactory(jwt_factory)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, datetime.utcnow)
     token = factory.create_access_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
@@ -262,8 +262,8 @@ class TestAuthenticationTokenDecoder(TestCase):
 
   def test_decode_expired_token(self):
     utc_now_supplier = lambda: datetime(2008, 8, 3, 20, 31)
-    jwt_factory = JwtFactory('secret', utc_now_supplier)
-    factory = AuthenticationTokenFactory(jwt_factory)
+    jwt_factory = JwtFactory('secret')
+    factory = AuthenticationTokenFactory(jwt_factory, utc_now_supplier)
     token = factory.create_access_token(1)
     decoder = AuthenticationTokenDecoder('secret')
 
