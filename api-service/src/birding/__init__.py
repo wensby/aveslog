@@ -81,13 +81,17 @@ def create_app(test_config: dict = None) -> Flask:
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
   password_repository = PasswordRepository(token_factory, database, hasher)
+  refresh_token_repository = RefreshTokenRepository(database)
   password_reset_controller = PasswordResetController(
-    account_repository, password_repository, link_factory, mail_dispatcher)
+    account_repository,
+    password_repository,
+    link_factory,
+    refresh_token_repository,
+    mail_dispatcher)
   jwt_factory = JwtFactory(app.secret_key)
   authentication_token_factory = AuthenticationTokenFactory(
     jwt_factory, datetime.datetime.utcnow)
   authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
-  refresh_token_repository = RefreshTokenRepository(database)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_rest_api_blueprint(

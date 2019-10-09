@@ -156,14 +156,16 @@ class TestAccountRegistrationController(TestCase):
 class TestPasswordResetController(TestCase):
 
   def setUp(self):
-    self.account_repository = Mock()
+    self.account_repository: AccountRepository = Mock(spec=AccountRepository)
     self.password_repository = Mock()
     self.link_factory = Mock()
     self.mail_dispatcher = Mock()
+    self.refresh_token_repository: RefreshTokenRepository = Mock(spec=RefreshTokenRepository)
     self.controller = PasswordResetController(
       self.account_repository,
       self.password_repository,
       self.link_factory,
+      self.refresh_token_repository,
       self.mail_dispatcher,
     )
 
@@ -219,6 +221,8 @@ class TestPasswordResetController(TestCase):
         self):
     token = 'myToken'
     self.password_repository.find_password_reset_account_id.return_value = 4
+    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    self.account_repository.account_by_id.return_value = account
 
     result = self.controller.perform_password_reset(token, valid_password)
 
@@ -227,6 +231,8 @@ class TestPasswordResetController(TestCase):
     self.password_repository.update_password.assert_called_with(
       4, Password(valid_password))
     self.assertEqual(result, 'success')
+    self.refresh_token_repository.remove_refresh_tokens.assert_called_with(
+      account)
 
   def test_perform_password_reset_removes_password_reset_token_on_success(self):
     result = self.controller.perform_password_reset('myToken', valid_password)

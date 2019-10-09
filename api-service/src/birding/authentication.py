@@ -202,10 +202,12 @@ class PasswordResetController:
         account_repository: AccountRepository,
         password_repository: PasswordRepository,
         link_factory: LinkFactory,
+        refresh_token_repository: RefreshTokenRepository,
         mail_dispatcher: MailDispatcher) -> None:
     self.account_repository = account_repository
     self.password_repository = password_repository
     self.link_factory = link_factory
+    self.refresh_token_repository = refresh_token_repository
     self.mail_dispatcher = mail_dispatcher
 
   def initiate_password_reset(
@@ -237,6 +239,8 @@ class PasswordResetController:
     if not account_id:
       return None
     self.password_repository.update_password(account_id, Password(password))
+    account = self.account_repository.account_by_id(account_id)
+    self.refresh_token_repository.remove_refresh_tokens(account)
     self.password_repository.remove_password_reset_token(token)
     return 'success'
 
