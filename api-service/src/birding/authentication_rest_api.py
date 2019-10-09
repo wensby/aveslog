@@ -12,6 +12,7 @@ from .localization import LocaleLoader
 from .localization import LoadedLocale
 from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
+from .authentication import RefreshToken
 from .authentication import RefreshTokenRepository
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
@@ -122,9 +123,8 @@ def create_authentication_rest_api_blueprint(
     if not authenticator.is_account_password_correct(account, password):
       return token_failure_response()
     access_token = token_factory.create_access_token(account.id)
-    refresh_token = token_factory.create_refresh_token(account.id)
-    refresh_token_repository.put_refresh_token(refresh_token)
-    return token_response(access_token, refresh_token.jwt_token)
+    refresh_token = create_persistent_refresh_token(account)
+    return token_response(access_token, refresh_token)
 
   @blueprint.route('/password-reset', methods=['POST'])
   def post_password_reset_email() -> Response:
@@ -219,10 +219,13 @@ def create_authentication_rest_api_blueprint(
       'message': 'username already taken',
     }), HTTPStatus.CONFLICT)
 
-  def token_response(access_token: str, refresh_token: str) -> Response:
+  def token_response(
+        access_token: str,
+        refresh_token: RefreshToken,
+  ) -> Response:
     return make_response(jsonify({
       'accessToken': access_token,
-      'refreshToken': refresh_token,
+      'refreshToken': refresh_token.jwt_token,
     }), HTTPStatus.OK)
 
   def token_failure_response() -> Response:
@@ -230,6 +233,10 @@ def create_authentication_rest_api_blueprint(
       'status': 'failure',
       'message': 'Try again'
     }), HTTPStatus.UNAUTHORIZED)
+
+  def create_persistent_refresh_token(account):
+    token = token_factory.create_refresh_token(account.id)
+    return refresh_token_repository.put_refresh_token(token)
 
   def initiate_password_reset(email: str) -> bool:
     locale = load_english_locale()
