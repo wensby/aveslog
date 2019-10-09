@@ -60,6 +60,29 @@ class RefreshTokenRepository():
       else:
         return result.rows[0]
 
+  def put_refresh_token(self, token: RefreshToken) -> RefreshToken:
+    if not token.id:
+      return self.__insert_refresh_token(token)
+    return self.__update_refresh_token(token)
+
+  def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
+    query = read_script_file('insert-refresh-token.sql')
+    return self.__query_token(query, token)
+
+  def __update_refresh_token(self, token: RefreshToken) -> RefreshToken:
+    query = read_script_file('update-refresh-token.sql')
+    return self.__query_token(query, token)
+
+  def __query_token(self, query: str, token: RefreshToken) -> RefreshToken:
+    with self.database.transaction() as transaction:
+      values = {
+        'id': token.id,
+        'token': token.jwt_token,
+        'account_id': token.account_id,
+        'expiration_date': token.expiration_date,
+      }
+      return transaction.execute(query, values, RefreshToken.from_row).rows[0]
+
 
 class Authenticator:
 

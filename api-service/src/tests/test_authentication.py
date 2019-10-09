@@ -328,3 +328,24 @@ class TestRefreshTokenRepository(TestCase):
     result = repository.refresh_token_by_jwt('jwt')
 
     self.assertIs(result, refresh_token)
+
+  def test_put_refresh_token_with_no_id(self):
+    expiration_date = datetime(2019, 10, 9, 12, 49)
+    new_token = RefreshToken(None, 'jwt', 1, expiration_date)
+    repository = RefreshTokenRepository(self.database)
+    added_token = RefreshToken(1, 'jwt', 1, expiration_date)
+    self.transaction.execute.return_value = QueryResult('', [added_token])
+
+    result = repository.put_refresh_token(new_token)
+
+    self.assertEqual(result, added_token)
+
+  def test_put_refresh_token_with_id(self):
+    expiration_date = datetime(2019, 10, 9, 12, 49)
+    new_token = RefreshToken(1, 'jwt', 1, expiration_date)
+    repository = RefreshTokenRepository(self.database)
+    self.transaction.execute.return_value = QueryResult('', [new_token])
+
+    result = repository.put_refresh_token(new_token)
+
+    self.assertEqual(result, new_token)
