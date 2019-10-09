@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from birding.authentication import AccountRegistrationController
+from birding.authentication import PasswordUpdateController
 from birding.authentication import JwtFactory
 from birding.authentication import AuthenticationTokenFactory
 from birding.authentication import AuthenticationTokenDecoder
@@ -12,6 +13,7 @@ from birding.authentication import PasswordHasher
 from birding.authentication import RefreshToken
 from birding.authentication import RefreshTokenRepository
 from birding.account import Account
+from birding.account import PasswordRepository
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
   AccountFactory
@@ -160,7 +162,8 @@ class TestPasswordResetController(TestCase):
     self.password_repository = Mock()
     self.link_factory = Mock()
     self.mail_dispatcher = Mock()
-    self.refresh_token_repository: RefreshTokenRepository = Mock(spec=RefreshTokenRepository)
+    self.refresh_token_repository: RefreshTokenRepository = Mock(
+      spec=RefreshTokenRepository)
     self.controller = PasswordResetController(
       self.account_repository,
       self.password_repository,
@@ -370,3 +373,24 @@ class TestRefreshTokenRepository(TestCase):
     self.transaction.execute.assert_called_with(
       read_script_file('delete-account-refresh-tokens.sql'),
       {'account_id': 1}, RefreshToken.from_row)
+
+
+class TestPasswordUpdateController(TestCase):
+
+  def setUp(self) -> None:
+    self.password_repository: PasswordRepository = Mock(
+      spec=PasswordRepository)
+    self.refresh_token_repository: RefreshTokenRepository = Mock(
+      spec=RefreshTokenRepository)
+
+  def test_invokes_correct_methods(self):
+    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    password = Password('costanza')
+    controller = PasswordUpdateController(
+      self.password_repository, self.refresh_token_repository)
+
+    controller.update_password(account, password)
+
+    self.password_repository.update_password.assert_called_with(1, password)
+    self.refresh_token_repository.remove_refresh_tokens.assert_called_with(
+      account)

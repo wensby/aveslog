@@ -313,3 +313,16 @@ class AuthenticationTokenDecoder:
       return DecodeResult({}, error='signature-expired')
     except InvalidTokenError:
       return DecodeResult({}, error='token-invalid')
+
+
+class PasswordUpdateController:
+
+  def __init__(self,
+        password_repository: PasswordRepository,
+        refresh_token_repository: RefreshTokenRepository):
+    self.password_repository = password_repository
+    self.refresh_token_repository = refresh_token_repository
+
+  def update_password(self, account: Account, password: Password) -> None:
+    self.password_repository.update_password(account.id, password)
+    self.refresh_token_repository.remove_refresh_tokens(account)

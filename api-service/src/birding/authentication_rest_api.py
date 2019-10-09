@@ -12,6 +12,7 @@ from .localization import LocaleLoader
 from .localization import LoadedLocale
 from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
+from .authentication import PasswordUpdateController
 from .authentication import RefreshToken
 from .authentication import RefreshTokenRepository
 from .authentication import PasswordResetController
@@ -79,7 +80,7 @@ def create_authentication_rest_api_blueprint(
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
       token_decoder: AuthenticationTokenDecoder,
-      password_repository: PasswordRepository,
+      password_update_controller: PasswordUpdateController,
       refresh_token_repository: RefreshTokenRepository,
       token_factory: AuthenticationTokenFactory) -> Blueprint:
   blueprint_name = 'authentication'
@@ -154,7 +155,7 @@ def create_authentication_rest_api_blueprint(
     if not Password.is_valid(raw_new_password):
       return new_password_invalid_response()
     new_password = Password(raw_new_password)
-    password_repository.update_password(account.id, new_password)
+    password_update_controller.update_password(account, new_password)
     return password_update_success_response()
 
   def password_reset_failure_response() -> Response:
