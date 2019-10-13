@@ -7,7 +7,7 @@ import { useReactRouter } from '../reactRouterHook.js';
 
 const PasswordChangeForm = () => {
   const { history } = useReactRouter();
-  const { token } = useContext(AuthenticationContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -29,7 +29,8 @@ const PasswordChangeForm = () => {
   const handleFormSubmit = async event => {
     event.preventDefault();
     if (newPassword) {
-      const response = await service.postPasswordUpdate(token, currentPassword, newPassword);
+      const accessToken = await getAccessToken();
+      const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
       if (response.status == 204) {
         history.push('/');
       }

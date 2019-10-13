@@ -18,13 +18,14 @@ export default function SightingDetails(props) {
   const sightingId = props.match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const [bird, setBird] = useState(null);
-  const { token } = useContext(AuthenticationContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const sightingService = new SightingService();
   const { history } = useReactRouter();
 
   const resolveData = async () => {
-    const response = await sightingService.fetchSighting(token, sightingId);
+    const accessToken = await getAccessToken();
+    const response = await sightingService.fetchSighting(accessToken, sightingId);
     if (response.status == 'success') {
       const sighting = response.result;
       const bird = await birdRepository.getBird(sighting.birdId);
@@ -42,7 +43,8 @@ export default function SightingDetails(props) {
   }
 
   const handleDelete = async () => {
-    const deleted = await sightingService.deleteSighting(token, sightingId);
+    const accessToken = await getAccessToken();
+    const deleted = await sightingService.deleteSighting(accessToken, sightingId);
     if (deleted) {
       history.push('/sighting');
     }

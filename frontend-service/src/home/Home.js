@@ -5,13 +5,14 @@ import { Link } from 'react-router-dom';
 import AccountService from '../account/AccountService';
 
 export default () => {
-  const { authenticated, token } = useContext(AuthenticationContext);
+  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const [usernames, setUsernames] = useState([]);
   const accountService = new AccountService();
 
   const fetchAccounts = async () => {
-    const accounts = await accountService.fetchAccounts(token);
+    const accessToken = await getAccessToken();
+    const accounts = await accountService.fetchAccounts(accessToken);
     setUsernames(accounts.map(a => a.username));
   }
 

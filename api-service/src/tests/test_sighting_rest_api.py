@@ -12,8 +12,8 @@ class TestGetSighting(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
-    token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'accessToken': token}
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
 
     response = self.client.get('/sighting/1', headers=headers)
 
@@ -34,8 +34,8 @@ class TestGetSighting(AppTestCase):
     self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
-    token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'accessToken': token}
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
 
     response = self.client.get('/sighting/2', headers=headers)
 
@@ -50,8 +50,8 @@ class TestGetSightings(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
-    token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'accessToken': token}
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
 
     response = self.client.get('/profile/hulot/sighting', headers=headers)
 
@@ -73,8 +73,8 @@ class TestGetSightings(AppTestCase):
 
   def test_get_sightings_when_username_missing(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'accessToken': token}
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
 
     response = self.client.get('/profile/godzilla/sighting', headers=headers)
 
@@ -110,8 +110,8 @@ class TestGetSightings(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
-    token = self.get_authentication_token('hulot', 'myPassword')
-    headers = {'accessToken': token}
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
 
     response = self.client.get('/profile/dude/sighting', headers=headers)
 
@@ -140,27 +140,27 @@ class TestPostSighting(AppTestCase):
     self.db_setup_account(1, 1, 'kenny', 'bostick!', 'kenny@mail.com')
 
   def test_post_sighting_when_everything_ok(self) -> None:
-    token = self.get_authentication_token('kenny', 'bostick!')
+    token = self.create_access_token(1)
 
-    response = self.post_sighting(1, token, 'pica pica', '17:42')
+    response = self.post_sighting(1, token.jwt, 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
 
   def test_post_sighting_when_person_id_not_match_authentication(self) -> None:
-    token = self.get_authentication_token('kenny', 'bostick!')
-    response = self.post_sighting(2, token, 'pica pica', '17:42')
+    token = self.create_access_token(1)
+    response = self.post_sighting(2, token.jwt, 'pica pica', '17:42')
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
   def test_post_sighting_when_bird_not_present(self) -> None:
-    token = self.get_authentication_token('kenny', 'bostick!')
-    response = self.post_sighting(1, token, 'pikachu', '17:42')
+    token = self.create_access_token(1)
+    response = self.post_sighting(1, token.jwt, 'pikachu', '17:42')
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
   def test_post_sighting_when_no_time(self) -> None:
-    token = self.get_authentication_token('kenny', 'bostick!')
+    token = self.create_access_token(1)
 
-    response = self.post_sighting(1, token, 'pica pica')
+    response = self.post_sighting(1, token.jwt, 'pica pica')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
@@ -210,17 +210,17 @@ class TestDeleteSighting(AppTestCase):
   def test_delete_sighting_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
-    authentication_token = self.get_authentication_token('hulot', 'myPassword')
+    authentication_token = self.create_access_token(1)
 
-    response = self.delete_sighting(authentication_token, 1)
+    response = self.delete_sighting(authentication_token.jwt, 1)
 
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
   def test_delete_sighting_when_not_exist(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    authentication_token = self.get_authentication_token('hulot', 'myPassword')
+    authentication_token = self.create_access_token(1)
 
-    response = self.delete_sighting(authentication_token, 1)
+    response = self.delete_sighting(authentication_token.jwt, 1)
 
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
@@ -236,9 +236,9 @@ class TestDeleteSighting(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 10, 4), time(16, 9))
     self.db_setup_account(2, 2, 'harry', 'wizardboy', 'harry@hogwarts.com')
-    harry_token = self.get_authentication_token('harry', 'wizardboy')
+    harry_token = self.create_access_token(2)
 
-    response = self.delete_sighting(harry_token, 1)
+    response = self.delete_sighting(harry_token.jwt, 1)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 

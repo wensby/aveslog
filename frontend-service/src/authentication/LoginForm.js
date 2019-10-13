@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
-import { Link } from 'react-router-dom';
 import { AuthenticationContext } from './AuthenticationContext.js';
 import { useReactRouter } from '../reactRouterHook.js';
 import './spinner.scss';
@@ -13,15 +12,24 @@ export default ({ onError }) => {
   const [password, setPassword] = useState('');
   const authentication = new AuthenticationService();
   const { t } = useTranslation();
-  const { onAuthenticated } = useContext(AuthenticationContext);
+  const { setRefreshToken } = useContext(AuthenticationContext);
+
+  const postRefreshToken = async () => {
+    return authentication.postRefreshToken(username, password);
+  }
 
   const handleLoginFormSubmit = async (event) => {
     try {
       event.preventDefault();
       setLoading(true);
-      const response = await authentication.fetchAuthenticationToken(username, password);
+      const response = await postRefreshToken();
       if (response.status === 200) {
-        await onAuthenticated((await response.json()).accessToken);
+        const refreshResponseJson = await response.json();
+        setRefreshToken({
+          id: refreshResponseJson.id,
+          jwt: refreshResponseJson.refreshToken, 
+          expiration: Date.parse(refreshResponseJson.expirationDate),
+        });
         history.push('/');
       }
       else {

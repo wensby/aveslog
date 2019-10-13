@@ -4,7 +4,7 @@ export default class AccountService {
     const url = `${window._env_.API_URL}/account`;
     const response = await fetch(url, {
       'headers': {
-        'accessToken': accessToken
+        'accessToken': accessToken.jwt
       }
     });
     const jsonResponse = await response.json();
@@ -15,7 +15,7 @@ export default class AccountService {
     const url = `${window._env_.API_URL}/account/me`;
     const response = await fetch(url, {
       'headers': {
-        'accessToken': accessToken
+        'accessToken': accessToken.jwt
       }
     });
     const jsonResponse = await response.json();

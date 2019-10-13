@@ -5,11 +5,11 @@ from flask import Blueprint, make_response, jsonify
 from .account import Account
 from .authentication_rest_api import require_authentication
 from birding import AccountRepository
-from .authentication import AuthenticationTokenDecoder
+from .authentication import JwtDecoder
 
 
 def create_account_rest_api_blueprint(
-      token_decoder: AuthenticationTokenDecoder,
+      token_decoder: JwtDecoder,
       account_repository: AccountRepository
 ) -> Blueprint:
   blueprint = Blueprint('account', __name__, url_prefix='/account')

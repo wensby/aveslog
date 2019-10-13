@@ -6,7 +6,7 @@ const sightingService = new SightingService();
 const SightingContext = React.createContext();
 
 const SightingProvider = props => {
-  const { account, token, unauthenticate } = useContext(AuthenticationContext);
+  const { account, getAccessToken, unauthenticate } = useContext(AuthenticationContext);
   const [sightingsAccount, setSightingsAccount] = useState(null);
   const [sightings, setSightings] = useState([]);
 
@@ -18,8 +18,9 @@ const SightingProvider = props => {
   });
 
   const refreshSightings = async () => {
+    const accessToken = await getAccessToken();
     const username = account.username;
-    const response = await sightingService.fetchSightings(username, token);
+    const response = await sightingService.fetchSightings(username, accessToken);
     if (response.status == 401) {
       unauthenticate();
     }

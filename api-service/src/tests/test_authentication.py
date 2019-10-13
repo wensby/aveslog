@@ -3,10 +3,11 @@ from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from birding.authentication import AccountRegistrationController
+from birding.authentication import AccessToken
 from birding.authentication import PasswordUpdateController
 from birding.authentication import JwtFactory
 from birding.authentication import AuthenticationTokenFactory
-from birding.authentication import AuthenticationTokenDecoder
+from birding.authentication import JwtDecoder
 from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
@@ -29,6 +30,22 @@ from tests.test_util import mock_return, mock_database_transaction
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
 valid_password = 'myPassword'
+
+
+class TestAccessToken(TestCase):
+
+  def test_eq_when_other_type(self):
+    access_token = AccessToken('jwt', 1, datetime(2019, 10, 13))
+    self.assertNotEqual(access_token, 'AccessToken(jwt, 1, 2019-10-13)')
+
+  def test_hash(self):
+    access_token = AccessToken('jwt', 1, datetime(2019, 10, 13))
+    self.assertIsInstance(hash(access_token), int)
+
+  def test_repr(self):
+    access_token = AccessToken('jwt', 1, datetime(2019, 10, 13))
+    token_repr = repr(access_token)
+    self.assertEqual(token_repr, 'AccessToken(jwt, 1, 2019-10-13 00:00:00)')
 
 
 class TestAuthenticator(TestCase):
@@ -252,40 +269,42 @@ class TestAuthenticationTokenFactory(TestCase):
 
     token = factory.create_access_token(1)
 
-    self.assertEqual(token, (
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjYwNjAsImlhdCI6MTU'
-      '2NDg2NDI2MCwic3ViIjoxfQ.WSvE-OCzvVPVayHicY1viqLYYA560cCK-9FOZ6NY2o0'))
+    self.assertEqual(
+      token, AccessToken(
+        'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NjQ4NjYwNjAsImlhdCI6M'
+        'TU2NDg2NDI2MCwic3ViIjoxfQ.WSvE-OCzvVPVayHicY1viqLYYA560cCK-9FOZ6NY2o0',
+        1, datetime(2019, 8, 3, 21, 1)))
 
 
-class TestAuthenticationTokenDecoder(TestCase):
+class TestJwtDecoder(TestCase):
 
-  def test_decode_token(self):
+  def test_decode_jwt(self):
     jwt_factory = JwtFactory('secret')
     factory = AuthenticationTokenFactory(jwt_factory, datetime.utcnow)
     token = factory.create_access_token(1)
-    decoder = AuthenticationTokenDecoder('secret')
+    decoder = JwtDecoder('secret')
 
-    result = decoder.decode_authentication_token(token)
+    result = decoder.decode_jwt(token.jwt)
 
     self.assertTrue(result.ok)
     self.assertEqual(result.payload['sub'], 1)
 
-  def test_decode_expired_token(self):
+  def test_decode_expired_jwt(self):
     utc_now_supplier = lambda: datetime(2008, 8, 3, 20, 31)
     jwt_factory = JwtFactory('secret')
     factory = AuthenticationTokenFactory(jwt_factory, utc_now_supplier)
     token = factory.create_access_token(1)
-    decoder = AuthenticationTokenDecoder('secret')
+    decoder = JwtDecoder('secret')
 
-    result = decoder.decode_authentication_token(token)
+    result = decoder.decode_jwt(token.jwt)
 
     self.assertFalse(result.ok)
     self.assertEqual(result.error, 'signature-expired')
 
-  def test_decode_invalid_token(self):
-    decoder = AuthenticationTokenDecoder('secret')
+  def test_decode_invalid_jwt(self):
+    decoder = JwtDecoder('secret')
 
-    result = decoder.decode_authentication_token('asdfasf.dsafasd.asdfasdf')
+    result = decoder.decode_jwt('asdfasf.dsafasd.asdfasdf')
 
     self.assertFalse(result.ok)
     self.assertEqual(result.error, 'token-invalid')

@@ -4,10 +4,30 @@ export default class AuthenticationService {
     this.apiUrl = window._env_.API_URL;
   }
 
-  async fetchAuthenticationToken(username, password) {
-    const url = `${this.apiUrl}/authentication/token`;
+  async postRefreshToken(username, password) {
+    const url = `${this.apiUrl}/authentication/refresh-token`;
     const parameters = `?username=${username}&password=${password}`;
-    return await fetch(url + parameters);
+    return await fetch(url + parameters, {
+      method: 'POST',
+    });
+  }
+
+  async deleteRefreshToken(refreshToken, accessToken) {
+    const url = `${this.apiUrl}/authentication/refresh-token/${refreshToken.id}`
+    return await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'accessToken': accessToken.jwt,
+      },
+    });
+  }
+
+  async getAccessToken(refreshToken) {
+    return await fetch(`${this.apiUrl}/authentication/access-token`, {
+      headers: {
+        'refreshToken': refreshToken,
+      },
+    });
   }
 
   async postPasswordResetEmail(email) {

@@ -46,6 +46,26 @@ class RefreshToken:
     return self.__dict__ == other.__dict__
 
 
+class AccessToken:
+
+  def __init__(self, jwt: str, account_id: int, expiration_date: datetime):
+    self.jwt = jwt
+    self.account_id = account_id
+    self.expiration_date = expiration_date
+
+  def __eq__(self, other: Any) -> bool:
+    if isinstance(other, self.__class__):
+      return self.__dict__ == other.__dict__
+    return False
+
+  def __hash__(self) -> int:
+    return hash((self.jwt, self.account_id, self.expiration_date))
+
+  def __repr__(self) -> str:
+    return (f'{self.__class__.__name__}({self.jwt}, {self.account_id}, '
+            f'{self.expiration_date})')
+
+
 class RefreshTokenRepository:
 
   def __init__(self, database: Database):
@@ -59,15 +79,23 @@ class RefreshTokenRepository:
   def refresh_token_by_jwt(self, jwt: str) -> Optional[RefreshToken]:
     query = read_script_file('select-refresh-token-by-jwt.sql')
     values = {'token': jwt}
-    tokens = self.__query_tokens(query, values)
-    if not tokens:
-      return None
-    return tokens[0]
+    return self.__query_token(query, values)
 
   def remove_refresh_tokens(self, account: Account) -> List[RefreshToken]:
     query = read_script_file('delete-account-refresh-tokens.sql')
     values = {'account_id': account.id}
     return self.__query_tokens(query, values)
+
+  def refresh_token(self, refresh_token_id: int) -> Optional[RefreshToken]:
+    query = read_script_file('refresh-token-by-id.sql')
+    values = {'id': refresh_token_id}
+    return self.__query_token(query, values)
+
+  def remove_refresh_token(self,
+        refresh_token: RefreshToken) -> Optional[RefreshToken]:
+    query = read_script_file('delete-refresh-token.sql')
+    values = {'id': refresh_token.id}
+    return self.__query_token(query, values)
 
   def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
     query = read_script_file('insert-refresh-token.sql')
@@ -87,6 +115,12 @@ class RefreshTokenRepository:
       'expiration_date': token.expiration_date,
     }
     return self.__query_tokens(query, values)[0]
+
+  def __query_token(self, query, values):
+    tokens = self.__query_tokens(query, values)
+    if not tokens:
+      return None
+    return tokens[0]
 
   def __query_tokens(self, query: str, values: dict) -> List[RefreshToken]:
     with self.database.transaction() as transaction:
@@ -293,10 +327,11 @@ class AuthenticationTokenFactory:
 
   def create_access_token(self,
         account_id: int,
-        expiration: timedelta = timedelta(days=0, minutes=30)) -> str:
+        expiration: timedelta = timedelta(days=0, minutes=30)) -> AccessToken:
     time = self.time_supplier()
     expiration_date = time + expiration
-    return self.jwt_factory.create_token(account_id, time, expiration_date)
+    jwt = self.jwt_factory.create_token(account_id, time, expiration_date)
+    return AccessToken(jwt, account_id, expiration_date)
 
   def create_refresh_token(self, account_id: int) -> RefreshToken:
     time = self.time_supplier()
@@ -313,14 +348,14 @@ class DecodeResult:
     self.payload = payload
 
 
-class AuthenticationTokenDecoder:
+class JwtDecoder:
 
   def __init__(self, secret: str):
     self.secret = secret
 
-  def decode_authentication_token(self, token: str) -> DecodeResult:
+  def decode_jwt(self, jwt: str) -> DecodeResult:
     try:
-      payload = decode(token, self.secret, algorithms=['HS256'])
+      payload = decode(jwt, self.secret, algorithms=['HS256'])
       return DecodeResult(payload)
     except ExpiredSignatureError:
       return DecodeResult({}, error='signature-expired')

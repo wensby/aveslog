@@ -11,9 +11,9 @@ class TestGetActiveAccounts(AppTestCase):
 
   def test_get_active_accounts_ok_when_authenticated(self):
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
-    token = self.get_authentication_token('hulot', 'password')
+    token = self.create_access_token(1)
 
-    response = self.client.get('/account', headers={'accessToken': token})
+    response = self.client.get('/account', headers={'accessToken': token.jwt})
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -39,7 +39,7 @@ class TestAccount(AppTestCase):
   def test_get_account_when_authenticated_account_disappears(self):
     token = self.token_factory.create_access_token(1)
 
-    response = self.get_own_account(token)
+    response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -68,7 +68,7 @@ class TestAccount(AppTestCase):
     expiration = timedelta(seconds=-1)
     token = self.token_factory.create_access_token(1, expiration)
 
-    response = self.get_own_account(token)
+    response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     data = json.loads(response.data.decode('utf-8'))
@@ -79,7 +79,7 @@ class TestAccount(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     token = self.token_factory.create_access_token(1)
 
-    response = self.get_own_account(token)
+    response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     data = json.loads(response.data.decode('utf-8'))

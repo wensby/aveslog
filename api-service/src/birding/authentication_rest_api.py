@@ -12,12 +12,13 @@ from .localization import LocaleLoader
 from .localization import LoadedLocale
 from .localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
+from .authentication import AccessToken
 from .authentication import PasswordUpdateController
 from .authentication import RefreshToken
 from .authentication import RefreshTokenRepository
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
-from .authentication import AuthenticationTokenDecoder
+from .authentication import JwtDecoder
 from .account import AccountRepository
 from .account import AccountRegistration
 from .account import Password
@@ -32,7 +33,7 @@ def create_unauthorized_response(message):
 
 
 def require_authentication(
-      token_decoder: AuthenticationTokenDecoder,
+      jwt_decoder: JwtDecoder,
       account_repository: AccountRepository) -> RouteFunction:
   """Wraps a route to require a valid authentication token
 
@@ -46,8 +47,7 @@ def require_authentication(
       access_token = request.headers.get('accessToken')
       if not access_token:
         return authentication_token_missing_response()
-      decode_result = token_decoder.decode_authentication_token(
-        access_token)
+      decode_result = jwt_decoder.decode_jwt(access_token)
       if not decode_result.ok:
         if decode_result.error == 'token-invalid':
           return create_unauthorized_response('authentication token invalid')
@@ -78,7 +78,7 @@ def create_authentication_rest_api_blueprint(
       registration_controller: AccountRegistrationController,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
-      token_decoder: AuthenticationTokenDecoder,
+      jwt_decoder: JwtDecoder,
       password_update_controller: PasswordUpdateController,
       refresh_token_repository: RefreshTokenRepository,
       token_factory: AuthenticationTokenFactory) -> Blueprint:
@@ -113,8 +113,8 @@ def create_authentication_rest_api_blueprint(
     elif response == 'username taken':
       return username_taken_response()
 
-  @blueprint.route('/token')
-  def get_token() -> Response:
+  @blueprint.route('/refresh-token', methods=['POST'])
+  def post_refresh_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')
     account = account_repository.find_account(username)
@@ -122,9 +122,25 @@ def create_authentication_rest_api_blueprint(
       return token_failure_response()
     if not authenticator.is_account_password_correct(account, password):
       return token_failure_response()
-    access_token = token_factory.create_access_token(account.id)
     refresh_token = create_persistent_refresh_token(account)
-    return token_response(access_token, refresh_token)
+    return refresh_token_response(refresh_token)
+
+  @blueprint.route('/access-token')
+  def get_access_token() -> Response:
+    refresh_token_jwt = request.headers.get('refreshToken')
+    if not refresh_token_jwt:
+      return create_unauthorized_response('refresh token required')
+    decode_result = jwt_decoder.decode_jwt(refresh_token_jwt)
+    if not decode_result.ok:
+      if decode_result.error == 'token-invalid':
+        return create_unauthorized_response('refresh token invalid')
+      elif decode_result.error == 'signature-expired':
+        return create_unauthorized_response('refresh token expired')
+    if not refresh_token_repository.refresh_token_by_jwt(refresh_token_jwt):
+      return create_unauthorized_response('refresh token revoked')
+    account_id = decode_result.payload['sub']
+    access_token = token_factory.create_access_token(account_id)
+    return access_token_response(access_token)
 
   @blueprint.route('/password-reset', methods=['POST'])
   def post_password_reset_email() -> Response:
@@ -144,7 +160,7 @@ def create_authentication_rest_api_blueprint(
     return password_reset_success_response()
 
   @blueprint.route('/password', methods=['POST'])
-  @require_authentication(token_decoder, account_repository)
+  @require_authentication(jwt_decoder, account_repository)
   def post_password_update(account: Account) -> Response:
     old_password = request.json['oldPassword']
     raw_new_password = request.json['newPassword']
@@ -156,6 +172,17 @@ def create_authentication_rest_api_blueprint(
     new_password = Password(raw_new_password)
     password_update_controller.update_password(account, new_password)
     return password_update_success_response()
+
+  @blueprint.route('/refresh-token/<int:refresh_token_id>', methods=['DELETE'])
+  @require_authentication(jwt_decoder, account_repository)
+  def delete_refresh_token(account: Account, refresh_token_id: int) -> Response:
+    refresh_token = refresh_token_repository.refresh_token(refresh_token_id)
+    if not refresh_token:
+      return refresh_token_deleted_response()
+    if refresh_token.account_id != account.id:
+      return delete_refresh_token_unauthorized_response()
+    refresh_token_repository.remove_refresh_token(refresh_token)
+    return refresh_token_deleted_response()
 
   def password_reset_failure_response() -> Response:
     return make_response(jsonify({
@@ -219,13 +246,17 @@ def create_authentication_rest_api_blueprint(
       'message': 'username already taken',
     }), HTTPStatus.CONFLICT)
 
-  def token_response(
-        access_token: str,
-        refresh_token: RefreshToken,
-  ) -> Response:
+  def refresh_token_response(refresh_token: RefreshToken) -> Response:
     return make_response(jsonify({
-      'accessToken': access_token,
+      'id': refresh_token.id,
       'refreshToken': refresh_token.jwt_token,
+      'expirationDate': refresh_token.expiration_date.isoformat(),
+    }), HTTPStatus.OK)
+
+  def access_token_response(access_token: AccessToken) -> Response:
+    return make_response(jsonify({
+      'accessToken': access_token.jwt,
+      'expirationDate': access_token.expiration_date.isoformat(),
     }), HTTPStatus.OK)
 
   def token_failure_response() -> Response:
@@ -283,6 +314,12 @@ def create_authentication_rest_api_blueprint(
 
   def password_update_success_response() -> Response:
     return make_response('', HTTPStatus.NO_CONTENT)
+
+  def refresh_token_deleted_response() -> Response:
+    return make_response('', HTTPStatus.NO_CONTENT)
+
+  def delete_refresh_token_unauthorized_response() -> Response:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
 
   def load_english_locale() -> LoadedLocale:
     locale = locale_repository.find_locale_by_code('en')

@@ -15,7 +15,7 @@ from .authentication import AccountRegistrationController
 from .authentication import PasswordUpdateController
 from .authentication import RefreshTokenRepository
 from .authentication import JwtFactory
-from .authentication import AuthenticationTokenDecoder
+from .authentication import JwtDecoder
 from .authentication import AuthenticationTokenFactory
 from .authentication import Authenticator
 from .authentication import PasswordResetController
@@ -97,7 +97,7 @@ def create_app(test_config: dict = None) -> Flask:
   jwt_factory = JwtFactory(app.secret_key)
   authentication_token_factory = AuthenticationTokenFactory(
     jwt_factory, datetime.datetime.utcnow)
-  authentication_token_decoder = AuthenticationTokenDecoder(app.secret_key)
+  jwt_decoder = JwtDecoder(app.secret_key)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_rest_api_blueprint(
@@ -107,13 +107,13 @@ def create_app(test_config: dict = None) -> Flask:
     account_registration_controller,
     locale_repository,
     locale_loader,
-    authentication_token_decoder,
+    jwt_decoder,
     password_update_controller,
     refresh_token_repository,
     authentication_token_factory,
   )
   account_rest_api = create_account_rest_api_blueprint(
-    authentication_token_decoder, account_repository)
+    jwt_decoder, account_repository)
   bird_rest_api = create_bird_rest_api_blueprint(
     bird_search_controller,
     bird_repository,
@@ -122,7 +122,7 @@ def create_app(test_config: dict = None) -> Flask:
     bird_view_factory
   )
   sighting_api = create_sighting_rest_api_blueprint(
-    authentication_token_decoder,
+    jwt_decoder,
     account_repository,
     sighting_repository,
     bird_repository,

@@ -4,32 +4,35 @@ from typing import Optional
 from datetime import timedelta
 from flask import Response
 from birding.authentication import AuthenticationTokenFactory
+from birding.authentication import AccessToken
 from birding.authentication import JwtFactory
 from test_util import AppTestCase
 
 
-class TestGetAuthenticationTokens(AppTestCase):
+class TestPostRefreshToken(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
 
-  def test_get_token_when_ok(self) -> None:
-    response = self.get_authentication_token('george', 'costanza')
+  def test_post_refresh_token_when_ok(self) -> None:
+    response = self.post_refresh_token('george', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertIn('accessToken', response.json)
+    self.assertIn('id', response.json)
     self.assertIn('refreshToken', response.json)
+    self.assertIn('expirationDate', response.json)
 
-  def test_get_token_when_username_differently_cased(self) -> None:
-    response = self.get_authentication_token('GeOrGe', 'costanza')
+  def test_post_refresh_token_when_username_differently_cased(self) -> None:
+    response = self.post_refresh_token('GeOrGe', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertIn('accessToken', response.json)
+    self.assertIn('id', response.json)
     self.assertIn('refreshToken', response.json)
+    self.assertIn('expirationDate', response.json)
 
-  def test_get_token_when_incorrect_username(self) -> None:
-    response = self.get_authentication_token('tbone', 'costanza')
+  def test_post_refresh_token_when_incorrect_username(self) -> None:
+    response = self.post_refresh_token('tbone', 'costanza')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -37,14 +40,55 @@ class TestGetAuthenticationTokens(AppTestCase):
       'message': 'Try again',
     })
 
-  def test_get_token_when_incorrect_password(self) -> None:
-    response = self.get_authentication_token('george', 'festivus')
+  def test_post_refresh_token_when_incorrect_password(self) -> None:
+    response = self.post_refresh_token('george', 'festivus')
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
-  def get_authentication_token(self, username: str, password: str) -> Response:
-    resource = '/authentication/token'
-    query = f'username={username}&password={password}'
-    return self.client.get(f'{resource}?{query}')
+
+class TestGetAccessToken(AppTestCase):
+
+  def test_get_access_token_when_ok(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    post_refresh_token_response = self.post_refresh_token('george', 'costanza')
+    refresh_token = post_refresh_token_response.json['refreshToken']
+    headers = {'refreshToken': refresh_token}
+
+    response = self.client.get('/authentication/access-token', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertIn('accessToken', response.json)
+    self.assertIn('expirationDate', response.json)
+
+  def test_get_access_token_when_no_refresh_token(self):
+    response = self.client.get('/authentication/access-token')
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def test_get_access_token_when_refresh_token_removed_from_database(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    post_refresh_token_response = self.post_refresh_token('george', 'costanza')
+    json = post_refresh_token_response.json
+    headers = {'refreshToken': (json['refreshToken'])}
+    self.db_delete_refresh_token(json['id'])
+
+    response = self.client.get('/authentication/access-token', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def test_get_access_token_when_refresh_token_invalid(self):
+    headers = {'refreshToken': 'asdfasdf.asdfasdf.asdfasdf'}
+    response = self.client.get('/authentication/access-token', headers=headers)
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def test_get_access_token_when_refresh_token_expired(self):
+    jwt_factory = JwtFactory(self._app.secret_key)
+    time_supplier = lambda: datetime.datetime(2015, 1, 1)
+    token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
+    refresh_token = token_factory.create_refresh_token(1)
+    headers = {'refreshToken': (refresh_token.jwt_token)}
+
+    response = self.client.get('/authentication/access-token', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
 
 class TestPasswordReset(AppTestCase):
@@ -218,9 +262,10 @@ class TestPasswordUpdate(AppTestCase):
     self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
 
   def test_post_password_update_when_ok(self) -> None:
-    token = self.get_authentication_token('hulot', 'oldPassword')
+    token = self.token_factory.create_access_token(1, timedelta(1))
 
-    response = self.post_password_update(token, 'oldPassword', 'newPassword')
+    response = self.post_password_update(token.jwt, 'oldPassword',
+                                         'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
@@ -247,7 +292,8 @@ class TestPasswordUpdate(AppTestCase):
     expiration = timedelta(seconds=-1)
     token = self.token_factory.create_access_token(1, expiration)
 
-    response = self.post_password_update(token, 'oldPassword', 'newPassword')
+    response = self.post_password_update(token.jwt, 'oldPassword',
+                                         'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -256,9 +302,9 @@ class TestPasswordUpdate(AppTestCase):
     })
 
   def test_post_password_update_when_old_password_incorrect(self) -> None:
-    token = self.get_authentication_token('hulot', 'oldPassword')
+    token = self.token_factory.create_access_token(1, timedelta(1))
 
-    response = self.post_password_update(token, 'incorrect', 'newPassword')
+    response = self.post_password_update(token.jwt, 'incorrect', 'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
     self.assertEqual(response.json, {
@@ -267,9 +313,9 @@ class TestPasswordUpdate(AppTestCase):
     })
 
   def test_post_password_update_when_new_password_invalid(self) -> None:
-    token = self.get_authentication_token('hulot', 'oldPassword')
+    token = self.token_factory.create_access_token(1, timedelta(1))
 
-    response = self.post_password_update(token, 'oldPassword', 'invalid')
+    response = self.post_password_update(token.jwt, 'oldPassword', 'invalid')
 
     self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
     self.assertEqual(response.json, {
@@ -285,3 +331,41 @@ class TestPasswordUpdate(AppTestCase):
     headers = {'accessToken': token} if token else {}
     json = {'oldPassword': old_password, 'newPassword': new_password}
     return self.client.post(resource, headers=headers, json=json)
+
+
+class TestDeleteRefreshToken(AppTestCase):
+
+  def test_delete_refresh_token_when_ok(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    refresh_token = self.post_refresh_token('george', 'costanza').json
+    access_token = self.create_access_token(1)
+    refresh_token_id = refresh_token['id']
+
+    response = self.delete_refresh_token(refresh_token_id, access_token)
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+  def test_delete_refresh_token_when_already_missing(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    access_token = self.create_access_token(1)
+
+    response = self.delete_refresh_token(1, access_token)
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+
+  def test_delete_refresh_token_when_not_your_own(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    self.db_setup_account(2, 2, 'kenny', 'bostick!', 'birds@mail.com')
+    kenny_refresh_token = self.post_refresh_token('kenny', 'bostick!').json
+    george_access_token = self.create_access_token(1)
+
+    response = self.delete_refresh_token(kenny_refresh_token['id'],
+                                         george_access_token)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def delete_refresh_token(self, refresh_token_id: int,
+        access_token: AccessToken) -> Response:
+    return self.client.delete(
+      f'/authentication/refresh-token/{refresh_token_id}',
+      headers={'accessToken': access_token.jwt})

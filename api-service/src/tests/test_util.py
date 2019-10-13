@@ -1,9 +1,11 @@
 import os
+from datetime import datetime
+from datetime import timedelta
 from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock
 
-from flask import url_for
+from flask import url_for, Response
 from flask.testing import FlaskClient
 from requests_html import HTML
 from werkzeug.datastructures import Headers
@@ -11,6 +13,9 @@ from werkzeug.datastructures import Headers
 import birding
 from birding.account import PasswordHasher, Password, Account
 from birding.authentication import SaltFactory
+from birding.authentication import AccessToken
+from birding.authentication import JwtFactory
+from birding.authentication import AuthenticationTokenFactory
 from birding.database import Transaction
 from birding.database import Database
 
@@ -88,6 +93,11 @@ class AppTestCase(TestCase):
       transaction.execute(
         'DELETE FROM account WHERE id = %s;', (account_id,))
 
+  def db_delete_refresh_token(self, refresh_token_id: int) -> None:
+    with self.database.transaction() as transaction:
+      transaction.execute(
+        'DELETE FROM refresh_token WHERE id = %s;', (refresh_token_id,))
+
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
     p = Password(password)
@@ -154,10 +164,15 @@ class AppTestCase(TestCase):
     self.db_insert_account(account_id, username, email, person_id, None)
     self.db_insert_password(account_id, password)
 
-  def get_authentication_token(self, username, password) -> str:
-    resource = '/authentication/token'
-    query = f'?username={username}&password={password}'
-    return self.client.get(f'{resource}{query}').json['accessToken']
+  def create_access_token(self, account_id: int) -> AccessToken:
+    jwt_factory = JwtFactory(self._app.secret_key)
+    token_factory = AuthenticationTokenFactory(jwt_factory, datetime.utcnow)
+    return token_factory.create_access_token(account_id, timedelta(1))
+
+  def post_refresh_token(self, username: str, password: str) -> Response:
+    resource = '/authentication/refresh-token'
+    query = f'username={username}&password={password}'
+    return self.client.post(f'{resource}?{query}')
 
   def get_flashed_messages(self, category='message'):
     with self.client.session_transaction() as session:

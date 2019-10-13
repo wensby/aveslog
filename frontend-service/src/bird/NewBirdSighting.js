@@ -15,7 +15,7 @@ export default ({ match }) => {
   const { t } = useTranslation();
   const birdService = new BirdService();
   const sightingService = new SightingService();
-  const { token, account } = useContext(AuthenticationContext);
+  const { getAccessToken, account } = useContext(AuthenticationContext);
   const { history } = useReactRouter();
 
   useEffect(() => {
@@ -41,8 +41,9 @@ export default ({ match }) => {
 
   const handleFormSubmit = async event => {
     event.preventDefault();
+    const accessToken = await getAccessToken();
     const response = await sightingService.postSighting(
-      token, account.personId, bird.binomialName, date, time
+      accessToken, account.personId, bird.binomialName, date, time
     );
     if (response.status == 201) {
       history.push('/sighting');

@@ -7,7 +7,7 @@ export default class SightingService {
   async fetchSightings(username, accessToken) {
     return await fetch(`${this.apiUrl}/profile/${username}/sighting`, {
       'headers': {
-        'accessToken': accessToken,
+        'accessToken': accessToken.jwt,
       },
     });
   }

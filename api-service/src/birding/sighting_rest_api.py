@@ -9,11 +9,11 @@ from .sighting import SightingRepository, SightingPost, Sighting
 from .time import parse_date
 from .time import parse_time
 from .account import AccountRepository, Account
-from .authentication import AuthenticationTokenDecoder
+from .authentication import JwtDecoder
 
 
 def create_sighting_rest_api_blueprint(
-      token_decoder: AuthenticationTokenDecoder,
+      token_decoder: JwtDecoder,
       account_repository: AccountRepository,
       sighting_repository: SightingRepository,
       bird_repository: BirdRepository) -> Blueprint:
