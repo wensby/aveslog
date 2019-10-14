@@ -24,7 +24,9 @@ function AuthenticationProvider(props) {
         expiration: localStorageRefreshTokenExp,
       });
     }
-    setResolvingLocalStorage(false);
+    else {
+      setResolvingLocalStorage(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -51,6 +53,7 @@ function AuthenticationProvider(props) {
   async function fetchAccount(accessToken) {
     if (accessToken) {
       setAccount(await accountService.fetchAccount(accessToken));
+      setResolvingLocalStorage(false);
     }
   }
 
