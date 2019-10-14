@@ -3,7 +3,7 @@ import queryString from 'query-string';
 import BirdService from './BirdService.js';
 import './style.css';
 import Loading from '../loading/Loading';
-import BirdCard from './BirdCard';
+import BirdResultCard from './BirdResultCard';
 
 export default function BirdQueryResult(props) {
   const query = queryString.parse(props.location.search).q;
@@ -28,7 +28,9 @@ export default function BirdQueryResult(props) {
   }, [query, displayedQuery]);
 
   const renderItems = () => {
-    return resultItems.map((item, index) => <BirdCard bird={item} key={index} />);
+    return resultItems.map((item, index) => {
+      return <BirdResultCard searchResult={item} key={index} />
+    });
   };
 
   const renderLoading = () => {

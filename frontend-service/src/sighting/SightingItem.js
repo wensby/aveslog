@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
+import BirdCardPicture from '../bird/BirdCardPicture.js';
 
 export default ({ sighting }) => {
   const { account } = useContext(AuthenticationContext);
@@ -22,11 +23,10 @@ export default ({ sighting }) => {
 
   const renderPicture = () => {
     const formattedName = bird.binomialName.toLowerCase().replace(' ', '-');
-    const url = bird.thumbnailUrl || '/placeholder-bird.jpg';
     return (
       <div className='col-sm-4' id='card-bird-thumbnail-col'>
         <Link to={`/bird/${formattedName}`}>
-          <img src={url} className='img-fluid card-bird-thumbnail' />
+          <BirdCardPicture bird={bird} />
         </Link>
       </div>
     );
