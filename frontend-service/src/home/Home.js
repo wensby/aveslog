@@ -25,7 +25,7 @@ export default () => {
       <>
         <h1>{t("It's birding time!")}</h1>
         {usernames.map(name => (
-          <div>
+          <div key={name}>
             <Link to={`/profile/${name}`}>{name}</Link>
           </div>
         ))}
