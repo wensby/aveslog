@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from "react-router-dom";
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import BirdCardPicture from './BirdCardPicture';
+import NewBirdSightingLink from './NewBirdSightingLink';
 
 export default ({bird, key}) => {
   const { t } = useTranslation();
@@ -25,9 +26,7 @@ export default ({bird, key}) => {
 
   const renderAddSightingLink = item => {
     if (authenticated) {
-      const formattedName = item.binomialName.toLowerCase().replace(' ', '-');
-      const path = `/bird/${formattedName}/new-sighting`;
-      return <Link to={path}>{t('add-sighting-link')}</Link>;
+      return <NewBirdSightingLink bird={item}>{t('add-sighting-link')}</NewBirdSightingLink>;
     }
     else {
       return null;
