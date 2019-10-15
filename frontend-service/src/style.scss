@@ -15,7 +15,7 @@ a:hover {
 }
 
 .navbar-pushed {
-  padding-bottom: $footer-height + 20px;
+  padding-bottom: $footer-height + 40px;
 }
 
 .button {
@@ -238,7 +238,8 @@ body {
 }
 
 .navbar-pushed {
-  padding-top: 128px;
+  padding-top: 112px;
+  padding-bottom: $footer-height + 40px;
 }
 
 .sidemenu {
@@ -257,7 +258,7 @@ main {
   }
 
   .navbar-pushed {
-    padding-top: 82px;
+    padding-top: 64px;
   }
 
   .sidemenu {
@@ -269,4 +270,12 @@ main {
   .main-grid {
     grid: auto / 1fr 750px 1fr;
   }
+}
+
+.sidebar {
+  padding-top: 15px;
+}
+
+main {
+  padding-top: 15px;
 }
