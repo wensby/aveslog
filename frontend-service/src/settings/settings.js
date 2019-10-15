@@ -31,7 +31,7 @@ const PasswordChangeForm = () => {
     if (newPassword) {
       const accessToken = await getAccessToken();
       const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
-      if (response.status == 204) {
+      if (response.status === 204) {
         history.push('/');
       }
       else {

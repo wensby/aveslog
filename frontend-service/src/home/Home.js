@@ -8,19 +8,17 @@ export default () => {
   const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const { t } = useTranslation();
   const [usernames, setUsernames] = useState([]);
-  const accountService = new AccountService();
-
-  const fetchAccounts = async () => {
-    const accessToken = await getAccessToken();
-    const accounts = await accountService.fetchAccounts(accessToken);
-    setUsernames(accounts.map(a => a.username));
-  }
 
   useEffect(() => {
+    const fetchAccounts = async () => {
+      const accessToken = await getAccessToken();
+      const accounts = await new AccountService().fetchAccounts(accessToken);
+      setUsernames(accounts.map(a => a.username));
+    }
     if (authenticated) {
       fetchAccounts();
     }
-  }, []);
+  }, [authenticated, getAccessToken]);
 
   if (authenticated) {
     return (

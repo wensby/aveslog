@@ -13,7 +13,7 @@ export default function BirdDetails(props) {
       setData(data.result);
     }
     fetchData();
-  }, []);
+  }, [props.match.params.binomialName]);
 
   const renderCoverNameCard = () => {
     return (

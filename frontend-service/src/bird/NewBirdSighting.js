@@ -13,26 +13,25 @@ export default ({ match }) => {
   const [time, setTime] = useState('');
   const [timeEnabled, setTimeEnabled] = useState(true);
   const { t } = useTranslation();
-  const birdService = new BirdService();
   const sightingService = new SightingService();
   const { getAccessToken, account } = useContext(AuthenticationContext);
   const { history } = useReactRouter();
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await birdService.getBird(binomialName);
+      const data = await new BirdService().getBird(binomialName);
       setBird(data.result);
     }
     fetchData();
     const now = new Date();
-    setDate(now.toDateInputValue());
-    setTime(now.toTimeInputValue());
-  }, []);
+    setDate(toDateInputValue(now));
+    setTime(toTimeInputValue(now));
+  }, [binomialName]);
 
   useEffect(() => {
     if (timeEnabled) {
       const now = new Date();
-      setTime(now.toTimeInputValue());
+      setTime(toTimeInputValue(now));
     }
     else {
       setTime('');
@@ -45,22 +44,22 @@ export default ({ match }) => {
     const response = await sightingService.postSighting(
       accessToken, account.personId, bird.binomialName, date, time
     );
-    if (response.status == 201) {
+    if (response.status === 201) {
       history.push('/sighting');
     }
   }
 
-  Date.prototype.toDateInputValue = (function () {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+  const toDateInputValue = date => {
+    var local = new Date(date);
+    local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     return local.toJSON().slice(0, 10);
-  });
+  }
 
-  Date.prototype.toTimeInputValue = (function () {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+  const toTimeInputValue = date => {
+    var local = new Date(date);
+    local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     return local.toJSON().slice(11, 16);
-  });
+  }
 
   if (!bird) {
     return null;

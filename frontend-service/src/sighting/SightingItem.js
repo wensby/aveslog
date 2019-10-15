@@ -12,14 +12,13 @@ export default ({ sighting }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
+    const resolveBird = async () => {
+      const bird = await birdRepository.getBird(sighting.birdId);
+      setBird(bird);
+      setLoading(false);
+    };
     resolveBird();
   }, [sighting]);
-
-  const resolveBird = async () => {
-    const bird = await birdRepository.getBird(sighting.birdId);
-    setBird(bird);
-    setLoading(false);
-  };
 
   const renderPicture = () => {
     const formattedName = bird.binomialName.toLowerCase().replace(' ', '-');
@@ -69,7 +68,7 @@ export default ({ sighting }) => {
   };
 
   const renderCardBodyRight = () => {
-    if (sighting.personId == account.personId) {
+    if (sighting.personId === account.personId) {
       return (<div className='card-body text-right'>
         <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
           {t('sighting-item-edit-link')}

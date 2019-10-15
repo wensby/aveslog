@@ -10,15 +10,29 @@ footer {
   padding: 20px;
 }
 
-footer a {
+footer .language-option {
   color: $lightgrey;
+  box-sizing: content-box;
+  background: none!important;
+  display: inline;
+  border: none;
+  padding: 0!important;
+  font-family: inherit;
+  transform-origin: 0 0;
+  padding: 0;
+  perspective-origin: 0 0;
+  cursor: pointer;
 }
 
-footer a:hover {
+footer .language-option:focus {
+  outline: none;
+}
+
+footer .language-option:hover {
   color: $primary;
 }
 
-footer .selected {
+footer .language-option.selected {
   color: $darkgrey;
 }
 

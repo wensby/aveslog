@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import SightingList from './SightingList.js';
 import { SightingContext } from './SightingContext';
 
@@ -7,7 +7,7 @@ export default () => {
 
   useEffect(() => {
     refreshSightings();
-  }, []);
+  }, [refreshSightings]);
 
   return <SightingList sightings={sightings} />;
 }

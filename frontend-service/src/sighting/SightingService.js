@@ -16,7 +16,7 @@ export default class SightingService {
     const url = `${this.apiUrl}/sighting/${sightingId}`;
     const response = await fetch(url, {
       'headers': {
-        'accessToken': accessToken,
+        'accessToken': accessToken.jwt,
       },
     });
     return await response.json();
@@ -36,7 +36,7 @@ export default class SightingService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'accessToken': accessToken,
+        'accessToken': accessToken.jwt,
       },
       body: JSON.stringify(body),
     });
@@ -47,9 +47,9 @@ export default class SightingService {
     const response = await fetch(`${this.apiUrl}/sighting/${sightingId}`, {
       method: 'DELETE',
       headers: {
-        'accessToken': accessToken,
+        'accessToken': accessToken.jwt,
       },
     });
-    return response.status == 204;
+    return response.status === 204;
   }
 }

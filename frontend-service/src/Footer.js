@@ -11,10 +11,10 @@ const LanguageLink = ({ languageCode, label }) => {
 
   const handleClick = () => changeLanguage(languageCode);
 
-  if (i18n.language == languageCode) {
+  if (i18n.language === languageCode) {
     return <p className='selected'>{label}</p>;
   }
-  return <a href='javascript:void(0);' onClick={handleClick}>{label}</a>;
+  return <button className='language-option' onClick={handleClick}>{label}</button>;
 }
 
 export default () => {

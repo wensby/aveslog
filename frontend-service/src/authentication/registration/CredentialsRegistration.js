@@ -16,16 +16,15 @@ export default () => {
   const { t } = useTranslation();
   const authentication = new AuthenticationService();
 
-  const fetchEmail = async () => {
-    const registration = await authentication.fetchRegistration(token);
-    if (registration) {
-      setEmail(registration['email']);
-    }
-  }
-
   useEffect(() => {
+    const fetchEmail = async () => {
+      const registration = await new AuthenticationService().fetchRegistration(token);
+      if (registration) {
+        setEmail(registration['email']);
+      }
+    }
     fetchEmail();
-  }, []);
+  }, [token]);
 
   const renderAlert = () => {
     if (alert) {
@@ -42,10 +41,10 @@ export default () => {
   const handleFormSubmit = async credentials => {
     try {
       const response = await authentication.postRegistration(token, credentials);
-      if (response['status'] == 'success') {
+      if (response['status'] === 'success') {
         setSuccess(true);
       }
-      else if (response['message'] == 'username already taken') {
+      else if (response['message'] === 'username already taken') {
         setTakenUsernames(takenUsernames.concat([credentials[0]]))
         setAlert({
           category: 'danger',

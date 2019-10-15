@@ -9,13 +9,13 @@ export default ({ onChange, showFeedback }) => {
 
   useEffect(() => {
     setValidPattern(/^.{8,128}$/.test(password));
-    setPasswordsMatch(password == passwordConfirmation);
+    setPasswordsMatch(password === passwordConfirmation);
   }, [password, passwordConfirmation]);
 
   useEffect(() => {
     const validPassword = validPattern && passwordsMatch ? password : '';
     onChange(validPassword);
-  }, [validPattern, passwordsMatch])
+  }, [validPattern, passwordsMatch, onChange, password])
 
   return <>
     <PasswordFormGroup value={password} onChange={setPassword}

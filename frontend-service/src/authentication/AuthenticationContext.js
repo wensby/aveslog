@@ -45,6 +45,15 @@ function AuthenticationProvider(props) {
   }, [refreshToken]);
 
   useEffect(() => {
+    const resolveAccessToken = async () => {
+      const accessToken = await fetchAccessToken(refreshToken);
+      if (accessToken) {
+        setAccessToken(accessToken);
+      }
+      else {
+        setRefreshToken(null);
+      }
+    }
     if (refreshToken) {
       resolveAccessToken();
     }
@@ -69,16 +78,6 @@ function AuthenticationProvider(props) {
       return { jwt: json.accessToken, expiration: json.expirationDate };
     }
     return null;
-  }
-
-  const resolveAccessToken = async () => {
-    const accessToken = await fetchAccessToken(refreshToken);
-    if (accessToken) {
-      setAccessToken(accessToken);
-    }
-    else {
-      setRefreshToken(null);
-    }
   }
 
   const asyncUnauthenticate = async () => {
