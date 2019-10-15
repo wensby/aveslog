@@ -13,9 +13,7 @@ export default ({bird, key, children}) => {
           <BirdCardPicture bird={bird} />
         </Link>
       </div>
-      <div className="card-body">
-        {children}
-      </div>
+      {children}
     </div>
   </div>);
 };

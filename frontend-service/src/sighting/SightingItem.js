@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
-import BirdCardPicture from '../bird/BirdCardPicture.js';
+import BirdCard from '../bird/BirdCard.js';
 
-export default ({ sighting }) => {
+export default ({ sighting, ...other }) => {
   const { account } = useContext(AuthenticationContext);
   const [bird, setBird] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,17 +19,6 @@ export default ({ sighting }) => {
     };
     resolveBird();
   }, [sighting]);
-
-  const renderPicture = () => {
-    const formattedName = bird.binomialName.toLowerCase().replace(' ', '-');
-    return (
-      <div className='col-sm-4' id='card-bird-thumbnail-col'>
-        <Link to={`/bird/${formattedName}`}>
-          <BirdCardPicture bird={bird} className={'card-bird-thumbnail'} />
-        </Link>
-      </div>
-    );
-  };
 
   const getSightingTimeFormatted = () => {
     if (sighting.time) {
@@ -82,13 +71,10 @@ export default ({ sighting }) => {
   }
   else {
     return (
-      <div className='card'>
-        <div className='row no-gutters'>
-          {renderPicture()}
-          {renderCardBody()}
-          {renderCardBodyRight()}
-        </div>
-      </div>
+      <BirdCard bird={bird} {...other}>
+        {renderCardBody()}
+        {renderCardBodyRight()}
+      </BirdCard>
     );
   }
 }

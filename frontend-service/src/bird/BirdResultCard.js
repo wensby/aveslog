@@ -48,8 +48,10 @@ export default ({ searchResult, ...other }) => {
   
   return (
     <BirdCard bird={bird} {...other} >
-      {renderItemName(bird)}
-      {renderAddSightingLink(bird)}
+      <div className="card-body">
+        {renderItemName(bird)}
+        {renderAddSightingLink(bird)}
+      </div>
     </BirdCard>
   );
 }
