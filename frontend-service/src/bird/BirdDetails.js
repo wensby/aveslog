@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import BirdService from './BirdService';
 import { useTranslation } from 'react-i18next';
+import NewBirdSightingLink from './NewBirdSightingLink';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export default function BirdDetails(props) {
   const { t } = useTranslation();
+  const { authenticated } = useContext(AuthenticationContext);
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -46,11 +49,18 @@ export default function BirdDetails(props) {
     );
   }
 
+  const renderAddSighting = () => {
+    if (authenticated) {
+      return <NewBirdSightingLink bird={data}>{t('add-sighting-link')}</NewBirdSightingLink>;
+    }
+  }
+
   if (data) {
     return (
       <div>
         {renderCover()}
         {renderPhotoCredits()}
+        {renderAddSighting()}
       </div>
     );
   }
