@@ -74,6 +74,34 @@
   transition: position .5s;
 }
 
+.search-bar {
+  display: flex;
+  font-size: 1.25rem;
+  height: 48px;
+}
+
+.search-bar .form-input {
+  padding: .75rem 1rem;
+  font-size: inherit;
+  border-radius: 0;
+  height: inherit;
+}
+
+.search-bar button {
+  border: 1px solid transparent;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  color: $white;
+  background-color: $primary;
+  border-radius: 0;
+  border-width: 0;
+  padding: .5rem 1rem;
+
+  &:hover {
+    color: $white;
+    background-color: $black;
+  }
+}
+
 @media only screen and (min-width : 768px) {
   .navbar .grid {
     grid: 64px/ 3fr 7fr;

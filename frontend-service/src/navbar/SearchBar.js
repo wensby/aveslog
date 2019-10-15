@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Form from 'react-bootstrap/Form';
 import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 
@@ -9,21 +7,9 @@ export default () => {
   const [query, setQuery] = useState('');
   const { t } = useTranslation();
 
-  const renderTextInput = () => {
-    return (
-      <Form.Control variant='light' aria-describedby='button-addon'
-        name='query' placeholder={t('Search bird')} aria-label='Search bird'
-        onChange={event => setQuery(event.target.value)}
-        value={query}/>
-    );
-  };
-
-  const renderButton = () => {
-    return (
-      <button variant="dark" className="rounded-0 btn btn-dark search-button"
-        type="submit" id="button-addon">{t('Search')}</button>
-    );
-  };
+  const syncQueryState = event => {
+    setQuery(event.target.value);
+  }
 
   const onFormSubmit = event => {
     event.preventDefault();
@@ -32,13 +18,12 @@ export default () => {
   }
 
   return (
-    <form id="birdSearchForm" onSubmit={onFormSubmit}>
-      <InputGroup size="lg">
-        {renderTextInput()}
-        <InputGroup.Append>
-          {renderButton()}
-        </InputGroup.Append>
-      </InputGroup>
+    <form onSubmit={onFormSubmit}>
+      <div className='search-bar'>
+        <input className='form-input' placeholder={t('Search bird')} 
+          aria-label='Search bird' onChange={syncQueryState} value={query} />
+        <button type='submit'>{t('Search')}</button>
+      </div>
     </form>
   );
 }

@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import './index.css';
 
 import React, { Suspense } from 'react';
 import Page from './Page.js'

@@ -1,6 +1,5 @@
 @import './colors.scss';
-
-$footer-height: 60px;
+@import './layout.scss';
 
 a {
   color: $primary;
@@ -109,4 +108,121 @@ input:focus {
   box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25);
   outline-color: transparent;
   outline-width: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+body {
+  font-size: .875rem;
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-main {
+  padding: 7px;
+  font-size: 1rem;
+}
+
+#navbarLogo {
+  display: inline;
+}
+
+#navbarLogoImage {
+  width: 50px;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-radius: 0;
+}
+
+.navbar-brand {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+.sidebar {
+  position: sticky;
+  top: 64px;
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+}
+
+/*
+ * Content
+ */
+
+.picture-cover-container {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 35%;
+}
+
+.picture-cover {
+  height: 150px;
+}
+
+.bird-page-name {
+  font-size: 25px;
+  z-index: 1;
+}
+
+/* => md */
+@media (min-width: 768px) {
+  .bird-page-name {
+    font-size: 35px;
+  }
+}
+
+.card-bird-thumbnail {
+  object-fit: cover;
+  object-position: 0% 15%;
+  width: 100%;
+  max-height: 100px;
+}
+
+@media (min-width: 576px) {
+  .card-bird-thumbnail {
+    max-height: 150px;
+    height: 100%;
+    object-position: 50%;
+  }
+
+  #card-bird-thumbnail-col {
+    max-width: 150px;
+    height: 150px;
+  }
+}
+
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+/* => md */
+@media (min-width: 768px) {
+  #registerRequestFormContainer {
+    width: 520px;
+  }
 }

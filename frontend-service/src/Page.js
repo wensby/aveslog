@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import './index.css';
 
 import React from 'react';
 import TopNavbar from './navbar/TopNavbar.js';
