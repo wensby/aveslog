@@ -67,6 +67,7 @@ function AuthenticationProvider(props) {
   }
 
   useEffect(() => {
+    console.log(`new access token: ${JSON.stringify(accessToken)}`)
     fetchAccount(accessToken);
   }, [accessToken]);
 
@@ -75,7 +76,9 @@ function AuthenticationProvider(props) {
     const response = await authenticationService.getAccessToken(refreshToken.jwt);
     if (response.status === 200) {
       const json = await response.json();
-      return { jwt: json.accessToken, expiration: json.expirationDate };
+      const expirationDate = new Date();
+      expirationDate.setSeconds(expirationDate.getSeconds() + json.expiresIn);
+      return { jwt: json.jwt, expiration: expirationDate };
     }
     return null;
   }
@@ -96,21 +99,9 @@ function AuthenticationProvider(props) {
     }
   }
 
-  const currentUtcTime = () => {
-    const date = new Date();
-    return Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate(),
-      date.getUTCHours(),
-      date.getUTCMinutes(),
-      date.getUTCSeconds());
-  }
-
   const getAccessToken = async () => {
-    const currentTime = currentUtcTime();
     const tenSeconds = 10000;
-    if (!accessToken || (currentTime + tenSeconds) > accessToken.expiration) {
+    if (!accessToken || (new Date().getTime() + tenSeconds) > accessToken.expiration) {
       console.log("access token need refreshing");
       const accessToken = await fetchAccessToken(refreshToken);
       if (accessToken) {

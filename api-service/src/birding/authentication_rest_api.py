@@ -7,6 +7,7 @@ from flask import Blueprint, Response
 from flask import make_response
 from flask import jsonify
 from flask import request
+from datetime import datetime
 
 from .localization import LocaleLoader
 from .localization import LoadedLocale
@@ -255,8 +256,8 @@ def create_authentication_rest_api_blueprint(
 
   def access_token_response(access_token: AccessToken) -> Response:
     return make_response(jsonify({
-      'accessToken': access_token.jwt,
-      'expirationDate': access_token.expiration_date.isoformat(),
+      'jwt': access_token.jwt,
+      'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
     }), HTTPStatus.OK)
 
   def token_failure_response() -> Response:

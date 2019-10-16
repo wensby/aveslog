@@ -56,8 +56,8 @@ class TestGetAccessToken(AppTestCase):
     response = self.client.get('/authentication/access-token', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertIn('accessToken', response.json)
-    self.assertIn('expirationDate', response.json)
+    self.assertIn('jwt', response.json)
+    self.assertIn('expiresIn', response.json)
 
   def test_get_access_token_when_no_refresh_token(self):
     response = self.client.get('/authentication/access-token')
