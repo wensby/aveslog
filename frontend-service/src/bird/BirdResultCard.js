@@ -4,6 +4,7 @@ import birdRepository from './BirdRepository';
 import NewBirdSightingLink from './NewBirdSightingLink';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { useTranslation } from 'react-i18next';
+import BirdCardName from './BirdCardName';
 
 export default ({ searchResult, ...other }) => {
   const [bird, setBird] = useState(null);
@@ -17,21 +18,6 @@ export default ({ searchResult, ...other }) => {
   useEffect(() => {
     resultBird(searchResult.birdId);
   }, [searchResult]);
-
-  const renderItemName = item => {
-    const localeName = t(`bird:${item.binomialName}`, {fallbackLng: []});
-    if (localeName !== item.binomialName) {
-      return [
-        <h5 key='1' className="card-title">{localeName}</h5>,
-        <h6 key='2' className="card-subtitle mb-2 text-muted">
-          {item.binomialName}
-        </h6>
-      ];
-    }
-    else {
-      return <h5 key='1' className="card-title">{item.binomialName}</h5>;
-    }
-  };
 
   const renderAddSightingLink = item => {
     if (authenticated) {
@@ -49,7 +35,7 @@ export default ({ searchResult, ...other }) => {
   return (
     <BirdCard bird={bird} {...other} >
       <div className="card-body">
-        {renderItemName(bird)}
+        <BirdCardName bird={bird} />
         {renderAddSightingLink(bird)}
       </div>
     </BirdCard>
