@@ -78,10 +78,13 @@ class BirdSearchController:
   def __init__(self, bird_searcher: BirdSearcher):
     self.bird_searcher = bird_searcher
 
-  def search(self, name: str) -> List[BirdMatch]:
+  def search(self, name: str, limit: Optional[int]) -> List[BirdMatch]:
     bird_matches = self.bird_searcher.search(name)
     bird_matches.sort(key=lambda m: m.query_match, reverse=True)
-    return bird_matches
+    if limit:
+      return bird_matches[:limit]
+    else:
+      return bird_matches[:100]
 
 
 class ResultBuilder:

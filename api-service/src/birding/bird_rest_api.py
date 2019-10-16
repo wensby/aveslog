@@ -32,7 +32,8 @@ def create_bird_rest_api_blueprint(
   @blueprint.route('')
   def query_birds():
     name = request.args.get('q')
-    bird_matches = list(map(result_item, controller.search(name)))
+    limit = request.args.get('limit', type=int)
+    bird_matches = list(map(result_item, controller.search(name, limit)))
     return make_response(jsonify({
       'status': 'success',
       'result': bird_matches,

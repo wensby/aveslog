@@ -42,6 +42,15 @@ class TestSearch(AppTestCase):
       'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg'
     })
 
+  def test_get_birds_with_limit(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_bird(2, 'Passer domesticus')
+
+    response = self.client.get('/bird?q=P&limit=1')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(len(response.json['result']), 1)
+
   def test_search_pica_pica(self):
     self.db_insert_bird(1, 'Pica pica')
 
