@@ -5,6 +5,7 @@ import birdRepository from '../bird/BirdRepository.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
 import BirdCard from '../bird/BirdCard.js';
 import BirdCardName from '../bird/BirdCardName.js';
+import SightingTime from './SightingTime.js';
 
 export default ({ sighting, ...other }) => {
   const { account } = useContext(AuthenticationContext);
@@ -21,19 +22,10 @@ export default ({ sighting, ...other }) => {
     resolveBird();
   }, [sighting]);
 
-  const getSightingTimeFormatted = () => {
-    if (sighting.time) {
-      return `${sighting.date} ${sighting.time}`;
-    }
-    else {
-      return sighting.date;
-    }
-  };
-
   const renderCardBody = () => {
     return (<div className='card-body'>
       <BirdCardName bird={bird} />
-      <p className='card-text'>{getSightingTimeFormatted()}</p>
+      <SightingTime sighting={sighting} className='card-text'/>
     </div>);
   };
 
