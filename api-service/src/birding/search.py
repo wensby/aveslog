@@ -84,7 +84,7 @@ class BirdSearchController:
     if limit:
       return bird_matches[:limit]
     else:
-      return bird_matches[:100]
+      return bird_matches[:20]
 
 
 class ResultBuilder:
