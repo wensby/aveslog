@@ -22,13 +22,6 @@ export default ({ sighting, ...other }) => {
     resolveBird();
   }, [sighting]);
 
-  const renderCardBody = () => {
-    return (<div className='card-body'>
-      <BirdCardName bird={bird} />
-      <SightingTime sighting={sighting} className='card-text'/>
-    </div>);
-  };
-
   const renderCardBodyRight = () => {
     if (sighting.personId === account.personId) {
       return (<div className='card-body text-right'>
@@ -45,7 +38,10 @@ export default ({ sighting, ...other }) => {
   else {
     return (
       <BirdCard bird={bird} {...other}>
-        {renderCardBody()}
+        <div className='card-body'>
+          <BirdCardName bird={bird} />
+          <SightingTime sighting={sighting} className='card-text'/>
+        </div>
         {renderCardBodyRight()}
       </BirdCard>
     );
