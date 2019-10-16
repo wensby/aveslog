@@ -84,6 +84,7 @@
   padding: .75rem 1rem;
   font-size: inherit;
   border-radius: 0;
+  border-right-width: 0;
   height: inherit;
 }
 
@@ -119,6 +120,16 @@
 
   .menu {
     display: none !important;
+  }
+
+  .search-bar .form-input {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+  }
+
+  .search-bar button {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
   }
 }
 
