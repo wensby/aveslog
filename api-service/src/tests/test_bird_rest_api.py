@@ -52,7 +52,7 @@ class TestSearch(AppTestCase):
     self.assertEqual(data['status'], 'success')
     result = data['result']
     self.assertEqual(len(result), 1)
-    self.assertEqual(result[0], { 'birdId': 1, 'binomialName': 'Pica pica' })
+    self.assertEqual(result[0], {'birdId': 1, 'binomialName': 'Pica pica'})
 
   def test_search_by_locale_name(self):
     self.db_insert_locale(1, 'sv')
@@ -65,7 +65,7 @@ class TestSearch(AppTestCase):
     self.assertEqual(data['status'], 'success')
     result = data['result']
     self.assertEqual(len(result), 1)
-    self.assertEqual(result[0], { 'birdId': 1, 'binomialName': 'Pica pica' })
+    self.assertEqual(result[0], {'birdId': 1, 'binomialName': 'Pica pica'})
 
 
 class TestBird(AppTestCase):
