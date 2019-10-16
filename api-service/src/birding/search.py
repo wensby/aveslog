@@ -36,23 +36,27 @@ class BirdSearcher:
     result_builder = ResultBuilder()
     birds = self.bird_repository.birds
     if name:
-      binomial_name_matches = self.search_by_binomial_name(name)
+      binomial_name_matches = self.search_by_binomial_name(birds, name)
       result_builder.add_matches(binomial_name_matches)
-      language_name_matches = self.search_by_language_names(name)
+      language_name_matches = self.search_by_language_names(birds, name)
       result_builder.add_matches(language_name_matches)
     return result_builder.create_bird_matches()
 
-  def search_by_binomial_name(self, name) -> Dict[Bird, List[float]]:
+  def search_by_binomial_name(self,
+        birds: List[Bird],
+        name: str,
+  ) -> Dict[Bird, List[float]]:
     matches = dict()
-    birds = self.bird_repository.birds
     for bird in birds:
       if name.lower() in bird.binomial_name.lower():
         matches[bird] = [self.string_matcher.match(name, bird.binomial_name)]
     return matches
 
-  def search_by_language_names(self, name) -> Dict[Bird, List[float]]:
+  def search_by_language_names(self,
+        birds: List[Bird],
+        name: str,
+  ) -> Dict[Bird, List[float]]:
     matches = dict()
-    birds = self.bird_repository.birds
     for dictionary in self.__get_bird_dictionaries():
       for bird in birds:
         binomial_name = bird.binomial_name
