@@ -33,8 +33,8 @@ class BirdSearcher:
     self.locale_loader = locale_loader
 
   def search(self, name: Optional[str] = None) -> List[BirdMatch]:
-    result_builder = ResultBuilder()
     birds = self.bird_repository.birds
+    result_builder = ResultBuilder(birds)
     if name:
       binomial_name_matches = self.search_by_binomial_name(birds, name)
       result_builder.add_matches(binomial_name_matches)
@@ -89,8 +89,8 @@ class BirdSearchController:
 
 class ResultBuilder:
 
-  def __init__(self):
-    self.matches_by_bird: Dict[Bird, List[float]] = dict()
+  def __init__(self, birds: List[Bird]):
+    self.matches_by_bird: Dict[Bird, List[float]] = {bird: [] for bird in birds}
 
   def add_matches(self, matches: Dict[Bird, List[float]]):
     if matches:
@@ -99,8 +99,6 @@ class ResultBuilder:
           self.add_match(k, match)
 
   def add_match(self, bird: Bird, match: float):
-    if bird not in self.matches_by_bird:
-      self.matches_by_bird[bird] = []
     self.matches_by_bird[bird].append(match)
 
   def create_bird_matches(self) -> List[BirdMatch]:
@@ -111,4 +109,6 @@ class ResultBuilder:
     return bird_matches
 
   def __average_query_match(self, bird: Bird) -> float:
-    return sum(self.matches_by_bird[bird]) / len(self.matches_by_bird[bird])
+    if self.matches_by_bird[bird]:
+      return sum(self.matches_by_bird[bird]) / len(self.matches_by_bird[bird])
+    return 0.0

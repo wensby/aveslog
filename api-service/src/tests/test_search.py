@@ -81,14 +81,14 @@ class TestBirdSearcher(TestCase):
 
     self.assertEqual(len(matches), 1)
 
-  def test_search_finds_nothing_with_only_empty_string_name_query(self):
+  def test_search_finds_all_with_only_empty_string_name_query(self):
     bird_repository = Simple(birds=[picapica])
     searcher = BirdSearcher(bird_repository, self.locale_repository,
                             self.string_matcher, self.locale_loader)
 
     matches = searcher.search('')
 
-    self.assertEqual(matches, [])
+    self.assertEqual(len(matches), 1)
 
 
 class TestBirdMatch(TestCase):

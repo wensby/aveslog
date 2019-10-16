@@ -22,7 +22,7 @@ class TestSearch(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     data = json.loads(response.data.decode('utf-8'))
     self.assertEqual(data['status'], 'success')
-    self.assertEqual(len(data['result']), 0)
+    self.assertEqual(len(data['result']), 1)
 
   def test_search_pica_pica_with_thumbnail(self):
     self.db_insert_bird(1, 'Pica pica')
