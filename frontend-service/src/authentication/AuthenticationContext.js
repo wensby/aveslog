@@ -110,7 +110,7 @@ function AuthenticationProvider(props) {
   const getAccessToken = async () => {
     const currentTime = currentUtcTime();
     const tenSeconds = 10000;
-    if (!accessToken || accessToken.expiration > currentTime + tenSeconds) {
+    if (!accessToken || (currentTime + tenSeconds) > accessToken.expiration) {
       console.log("access token need refreshing");
       const accessToken = await fetchAccessToken(refreshToken);
       if (accessToken) {
