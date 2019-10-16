@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
-import SightingItem from '../sighting/SightingItem';
+import SightingCard from '../sighting/SightingCard';
 
 export default ({ username }) => {
   const [sightings, setSightings] = useState([]);
@@ -25,7 +25,7 @@ export default ({ username }) => {
   }, [username, getAccessToken]);
 
   const renderSightings = () => {
-    return sightings.map(sighting => <SightingItem sighting={sighting} />);
+    return sightings.map(sighting => <SightingCard sighting={sighting} />);
   }
 
   return (

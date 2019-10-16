@@ -1,11 +1,11 @@
 import React from 'react';
-import SightingItem from './SightingItem.js';
+import SightingCard from './SightingCard.js';
 
 export default ({ sightings }) => {
 
-  const renderSightingItem = sighting => {
-    return <SightingItem sighting={sighting} key={sighting.sightingId} />;
+  const renderSightingCard = sighting => {
+    return <SightingCard sighting={sighting} key={sighting.sightingId} />;
   };
 
-  return <div className='text-break'>{sightings.map(renderSightingItem)}</div>;
+  return <div className='text-break'>{sightings.map(renderSightingCard)}</div>;
 }
