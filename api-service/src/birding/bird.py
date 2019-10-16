@@ -1,6 +1,7 @@
 from typing import Any, Type, TypeVar, Optional, List
 
 from .database import Database
+from .database import read_script_file
 
 BirdType = TypeVar('BirdType', bound='Bird')
 
@@ -86,5 +87,5 @@ class BirdRepository:
   @property
   def birds(self) -> List[Bird]:
     with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT * FROM bird;', mapper=Bird.from_row)
-      return result.rows
+      query = read_script_file('select-birds.sql')
+      return transaction.execute(query, mapper=Bird.from_row).rows
