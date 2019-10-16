@@ -26,13 +26,13 @@ class TestBirdSearchController(TestCase):
     result_bird_ids = list(map(lambda x: x.bird.id, result))
     self.assertListEqual(result_bird_ids, list(range(0, 5))[::-1])
 
-  def test_search_return_result_of_max_100_items(self):
+  def test_search_returns_all_items(self):
     search_result = [Simple(query_match=1) for i in range(0, 1000)]
     self.searcher.search = mock_return(search_result)
 
     result = self.controller.search('name')
 
-    self.assertEqual(len(result), 100)
+    self.assertEqual(len(result), 1000)
 
 
 class TestBirdSearcher(TestCase):
