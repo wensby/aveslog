@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
 import BirdCard from '../bird/BirdCard.js';
+import BirdCardName from '../bird/BirdCardName.js';
 
 export default ({ sighting, ...other }) => {
   const { account } = useContext(AuthenticationContext);
@@ -31,29 +32,9 @@ export default ({ sighting, ...other }) => {
 
   const renderCardBody = () => {
     return (<div className='card-body'>
-      {renderItemName()}
+      <BirdCardName bird={bird} />
       <p className='card-text'>{getSightingTimeFormatted()}</p>
     </div>);
-  };
-
-  const renderItemName = () => {
-    if (bird) {
-      const localeName = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
-      if (localeName !== bird.binomialName) {
-        return [
-          <h5 key='1' className="card-title">{localeName}</h5>,
-          <h6 key='2' className="card-subtitle mb-2 text-muted">
-            {bird.binomialName}
-          </h6>
-        ];
-      }
-      else {
-        return <h5 key='1' className="card-title">{bird.binomialName}</h5>;
-      }
-    }
-    else {
-      return <h5>...</h5>;
-    }
   };
 
   const renderCardBodyRight = () => {
