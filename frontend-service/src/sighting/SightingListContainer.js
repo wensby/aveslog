@@ -7,7 +7,7 @@ export default () => {
 
   useEffect(() => {
     refreshSightings();
-  }, [refreshSightings]);
+  }, []);
 
   return <SightingList sightings={sightings} />;
 }
