@@ -254,9 +254,8 @@ class AccountRepository:
 
   def accounts(self) -> List[Account]:
     with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT * FROM account;', mapper=Account.fromrow)
-      return result.rows
+      query = read_script_file('select-accounts.sql')
+      return transaction.execute(query, mapper=Account.fromrow).rows
 
 
 class PasswordRepository:
