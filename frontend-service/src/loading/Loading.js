@@ -1,14 +1,10 @@
 import React from 'react';
 import './style.scss';
+import Spinner from './Spinner';
 
 export default () => {
   return (
     <div className='loading-overlay' >
-      <div className='lds-ring-container'>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
+      <Spinner />
     </div>);
 };
