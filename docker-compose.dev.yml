@@ -10,6 +10,7 @@ services:
       - '3003:3000'
     environment:
       API_URL: http://127.0.0.1:3002
+      APP_VERSION: "${FRONTEND_APP_VERSION}"
       NODE_ENV: development
 
   api-service:

@@ -33,7 +33,7 @@ ssh $remote_host "mkdir -p $remote_directory"
 
 # Copy over required directories to build and start the application
 rsync -rav -e ssh --exclude-from ./deploy/rsync-exclude-list.txt \
-  ./docker-compose.yml ./docker-compose.prod.yml \
+  ./.env ./docker-compose.yml ./docker-compose.prod.yml \
   $remote_host:$remote_directory
 
 rsync -rav -e ssh --delete --exclude-from ./deploy/rsync-exclude-list.txt \

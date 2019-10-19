@@ -7,6 +7,8 @@ RUN npm install react-scripts@3.0.1 -g
 COPY . /app
 ARG apiurl
 ENV API_URL=${apiurl}
+ARG appversion
+ENV APP_VERSION=${appversion}
 RUN ./env.sh
 RUN npm run build
 CMD ["npm", "run", "start"]

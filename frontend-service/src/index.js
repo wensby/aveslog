@@ -4,12 +4,9 @@ import "./i18n";
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-// Remove data stored in local storage in previous app version
-localStorage.removeItem('refreshTokenJwt');
-localStorage.removeItem('refreshTokenExpiration');
-localStorage.removeItem('refreshTokenId');
+const appVersion = window._env_.APP_VERSION
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App version={appVersion}/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
