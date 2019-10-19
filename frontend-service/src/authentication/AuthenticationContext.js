@@ -13,16 +13,10 @@ function AuthenticationProvider(props) {
   const authenticationService = new AuthenticationService();
 
   useEffect(() => {
-    const localStorageRefreshToken = localStorage.getItem('refreshTokenJwt');
-    const localStorageRefreshTokenExp = localStorage.getItem('refreshTokenExpiration');
-    const localStorageRefreshTokenId = localStorage.getItem('refreshTokenId');
-    if (localStorageRefreshToken && localStorageRefreshTokenExp && localStorageRefreshTokenId) {
+    const localStorageRefreshToken = localStorage.getItem('refreshToken');
+    if (localStorageRefreshToken) {
       console.log('Refresh token recovered from local storage.');
-      setRefreshToken({
-        id: localStorageRefreshTokenId,
-        jwt: localStorageRefreshToken,
-        expiration: localStorageRefreshTokenExp,
-      });
+      setRefreshToken(JSON.parse(localStorageRefreshToken));
     }
     else {
       setResolvingLocalStorage(false);
@@ -32,15 +26,11 @@ function AuthenticationProvider(props) {
   useEffect(() => {
     if (refreshToken) {
       console.log('storing refresh token in storage');
-      localStorage.setItem('refreshTokenJwt', refreshToken.jwt);
-      localStorage.setItem('refreshTokenExpiration', refreshToken.expiration);
-      localStorage.setItem('refreshTokenId', refreshToken.id);
+      localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
     }
     else {
       console.log('clearing refresh token from storage');
-      localStorage.removeItem('refreshTokenJwt');
-      localStorage.removeItem('refreshTokenExpiration');
-      localStorage.removeItem('refreshTokenId');
+      localStorage.removeItem('refreshToken');
     }
   }, [refreshToken]);
 

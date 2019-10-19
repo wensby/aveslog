@@ -8,7 +8,6 @@ import { SightingProvider } from './sighting/SightingContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 
 export default () => {
-
   return (
     <Router>
       <AuthenticationProvider>
