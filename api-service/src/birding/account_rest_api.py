@@ -31,7 +31,7 @@ def create_account_rest_api_blueprint(
       'result': list(map(account_response_dict, accounts)),
     }))
 
-  def account_response_dict(account):
+  def account_response_dict(account: Account):
     return {
       'username': account.username,
       'personId': account.person_id

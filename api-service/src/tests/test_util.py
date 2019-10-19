@@ -79,8 +79,13 @@ class AppTestCase(TestCase):
       transaction.execute(
         'INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
 
-  def db_insert_account(self, account_id, username, email, person_id,
-        locale_id):
+  def db_insert_account(self,
+        account_id: int,
+        username: str,
+        email: str,
+        person_id: int,
+        locale_id: int,
+  ) -> None:
     self.database.query(
       'INSERT INTO account '
       '(id, username, email, person_id, locale_id) '
