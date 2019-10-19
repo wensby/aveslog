@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 import SightingCard from '../sighting/SightingCard';
 
 export default ({ username }) => {
   const [sightings, setSightings] = useState([]);
-  const { getAccessToken } = useContext(AuthenticationContext);
+  const { getAccessToken } = useContext(UserContext);
 
   useEffect(() => {
     const fetchSightings = async () => {

@@ -3,9 +3,9 @@ import AccountService from '../account/AccountService.js';
 import AuthenticationService from './AuthenticationService.js';
 
 const accountService = new AccountService()
-const AuthenticationContext = React.createContext();
+const UserContext = React.createContext();
 
-function AuthenticationProvider(props) {
+function UserProvider(props) {
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [account, setAccount] = useState(null);
@@ -109,7 +109,7 @@ function AuthenticationProvider(props) {
     return null;
   }
   return (
-    <AuthenticationContext.Provider value={{
+    <UserContext.Provider value={{
       authenticated: refreshToken,
       account,
       unauthenticate,
@@ -119,8 +119,8 @@ function AuthenticationProvider(props) {
       getAccessToken,
     }}>
       {props.children}
-    </AuthenticationContext.Provider>
+    </UserContext.Provider>
   );
 }
 
-export { AuthenticationProvider, AuthenticationContext }
+export { UserProvider, UserContext }

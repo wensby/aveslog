@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
-import { AuthenticationContext } from './AuthenticationContext.js';
+import { UserContext } from './UserContext.js';
 import { useReactRouter } from '../reactRouterHook.js';
 import './spinner.scss';
 
@@ -12,7 +12,7 @@ export default ({ onError }) => {
   const [password, setPassword] = useState('');
   const authentication = new AuthenticationService();
   const { t } = useTranslation();
-  const { setRefreshToken } = useContext(AuthenticationContext);
+  const { setRefreshToken } = useContext(UserContext);
 
   const postRefreshToken = async () => {
     return authentication.postRefreshToken(username, password);

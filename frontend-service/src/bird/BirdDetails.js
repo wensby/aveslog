@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import BirdService from './BirdService';
 import { useTranslation } from 'react-i18next';
 import NewBirdSightingLink from './NewBirdSightingLink';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 
 export default function BirdDetails(props) {
   const { t } = useTranslation();
-  const { authenticated } = useContext(AuthenticationContext);
+  const { authenticated } = useContext(UserContext);
   const [data, setData] = useState(null);
 
   useEffect(() => {

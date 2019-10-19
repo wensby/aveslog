@@ -2,13 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository.js';
-import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
+import { UserContext } from '../authentication/UserContext.js';
 import BirdCard from '../bird/BirdCard.js';
 import BirdCardName from '../bird/BirdCardName.js';
 import SightingTime from './SightingTime.js';
 
 export default ({ sighting, ...other }) => {
-  const { account } = useContext(AuthenticationContext);
+  const { account } = useContext(UserContext);
   const [bird, setBird] = useState(null);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();

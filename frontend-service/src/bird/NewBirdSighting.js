@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BirdService from './BirdService';
 import SightingService from '../sighting/SightingService';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 import { useReactRouter } from '../reactRouterHook';
 
 export default ({ match }) => {
@@ -14,7 +14,7 @@ export default ({ match }) => {
   const [timeEnabled, setTimeEnabled] = useState(true);
   const { t } = useTranslation();
   const sightingService = new SightingService();
-  const { getAccessToken, account } = useContext(AuthenticationContext);
+  const { getAccessToken, account } = useContext(UserContext);
   const { history } = useReactRouter();
 
   useEffect(() => {

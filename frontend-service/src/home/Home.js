@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 import { Link } from 'react-router-dom';
 import AccountService from '../account/AccountService';
 
 export default () => {
-  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
+  const { authenticated, getAccessToken } = useContext(UserContext);
   const { t } = useTranslation();
   const [usernames, setUsernames] = useState([]);
 

@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { AuthenticationContext } from './authentication/AuthenticationContext.js';
+import { UserContext } from './authentication/UserContext.js';
 import { getMenuItems } from './navbar/MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
 
 export default () => {
   const { t } = useTranslation();
-  const { authenticated, account, unauthenticate } = useContext(AuthenticationContext);
+  const { authenticated, account, unauthenticate } = useContext(UserContext);
   const items = getMenuItems(authenticated, account, unauthenticate, t);
 
   const renderItem = (item, index) => {

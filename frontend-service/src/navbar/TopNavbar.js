@@ -5,7 +5,7 @@ import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import './navbar.scss';
 import Menu from './Menu.js';
 import SearchBar from './SearchBar';
-import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
+import { UserContext } from '../authentication/UserContext.js';
 import { getMenuItems } from './MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +21,7 @@ function Brand() {
 
 export default () => {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
-  const { authenticated, account, unauthenticate } = useContext(AuthenticationContext);
+  const { authenticated, account, unauthenticate } = useContext(UserContext);
   const { t } = useTranslation();
   let fullNavbarRef = null;
   let gridRef = null;

@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import BirdCard from './BirdCard';
 import birdRepository from './BirdRepository';
 import NewBirdSightingLink from './NewBirdSightingLink';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import BirdCardName from './BirdCardName';
 
 export default ({ searchResult, ...other }) => {
   const [bird, setBird] = useState(null);
   const { t } = useTranslation();
-  const { authenticated } = useContext(AuthenticationContext);
+  const { authenticated } = useContext(UserContext);
 
   const resultBird = async birdId => {
     setBird(await birdRepository.getBird(birdId));

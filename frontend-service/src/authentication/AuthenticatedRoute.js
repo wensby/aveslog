@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { AuthenticationContext } from './AuthenticationContext.js';
+import { UserContext } from './UserContext.js';
 
 export default ({ component, ...routeProps }) => {
-  const { authenticated } = useContext(AuthenticationContext);
+  const { authenticated } = useContext(UserContext);
   const path = '/authentication/login';
 
   if (authenticated) {

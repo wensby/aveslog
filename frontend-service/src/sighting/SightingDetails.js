@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import birdRepository from '../bird/BirdRepository';
 import SightingService from './SightingService';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserContext } from '../authentication/UserContext';
 import { useReactRouter } from '../reactRouterHook';
 import Icon from '../Icon';
 
@@ -18,7 +18,7 @@ export default function SightingDetails(props) {
   const sightingId = props.match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const [bird, setBird] = useState(null);
-  const { getAccessToken } = useContext(AuthenticationContext);
+  const { getAccessToken } = useContext(UserContext);
   const { t } = useTranslation();
   const { history } = useReactRouter();
 
