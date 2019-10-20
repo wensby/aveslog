@@ -55,5 +55,7 @@
   "current-password": "현재 비밀번호",
   "new-password": "새로운 비밀번호",
   "password-change-button": "비밀번호 변경",
+  "total-label": "관찰한 새의 수",
+  "unique-label": "관찰한 새의 종류",
   "Logout": "로그아웃"
 }

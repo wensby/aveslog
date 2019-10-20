@@ -55,5 +55,7 @@
   "current-password": "Current password",
   "new-password": "New password",
   "password-change-button": "Change password",
+  "total-label": "Total",
+  "unique-label": "Unique",
   "Logout": "Logout"
 }

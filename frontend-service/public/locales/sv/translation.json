@@ -55,5 +55,7 @@
   "current-password": "Nuvarande lösenord",
   "new-password": "Nytt lösenord",
   "password-change-button": "Byt lösenord",
+  "total-label": "Totalt",
+  "unique-label": "Unika",
   "Logout": "Logga ut"
 }
