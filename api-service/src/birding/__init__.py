@@ -163,22 +163,19 @@ def configure_app(app: Flask, test_config: dict) -> None:
     raise Exception('Flask secret key not set')
   if not os.path.isdir(app.config['LOGS_DIR_PATH']):
     os.makedirs(app.config['LOGS_DIR_PATH'])
+  if 'FRONTEND_HOST' not in app.config and 'FRONTEND_HOST' in os.environ:
+    app.config['FRONTEND_HOST'] = os.environ['FRONTEND_HOST']
+  elif 'FRONTEND_HOST' not in app.config:
+    raise Exception('FRONTEND_HOST not set in environment variables or config.')
   configure_cross_origin_resource_sharing(app)
 
 
 def configure_cross_origin_resource_sharing(app: Flask) -> None:
-  if 'FRONTEND_HOST' in app.config:
-    frontend_host = app.config['FRONTEND_HOST']
-  elif 'FRONTEND_HOST' in os.environ:
-    frontend_host = os.environ['FRONTEND_HOST']
-    app.config['FRONTEND_HOST'] = frontend_host
-  else:
-    raise Exception('FRONTEND_HOST not set in environment variables or config.')
   logging.getLogger('flask_cors').level = logging.DEBUG
   CORS(app, resources={
     r'/*': {
       'supports_credentials': True,
-      'origins': frontend_host
+      'origins': app.config['FRONTEND_HOST']
     }
   })
 
