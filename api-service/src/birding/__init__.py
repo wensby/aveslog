@@ -175,6 +175,7 @@ def configure_cross_origin_resource_sharing(app: Flask) -> None:
   CORS(app, resources={
     r'/*': {
       'supports_credentials': True,
+      'expose_headers': 'Location',
       'origins': app.config['FRONTEND_HOST']
     }
   })
