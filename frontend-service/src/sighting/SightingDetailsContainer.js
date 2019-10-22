@@ -10,7 +10,7 @@ export default function SightingDetailsContainer(props) {
   const sightingService = new SightingService();
 
   useEffect(() => {
-    const resolveData = async () => {
+    const resolveSighting = async () => {
       const accessToken = await getAccessToken();
       const response = await sightingService.fetchSighting(accessToken, sightingId);
       if (response.status === 'success') {
@@ -18,7 +18,7 @@ export default function SightingDetailsContainer(props) {
         setSighting(sighting);
       }
     }
-    resolveData();
+    resolveSighting();
   }, [sightingId]);
 
   if (!sighting) {
