@@ -1,6 +1,7 @@
 @import '../colors.scss';
+@import '../layout.scss';
 
-.navbar .grid {
+.navbar-grid {
   width: 100%;
   display: grid;
   background-color: $white;
@@ -9,18 +10,31 @@
   grid-template-areas:
     "main button"
     "search search";
+
+  @media #{$tablet-landscape-up} {
+    grid: 64px/ 3fr 7fr;
+    grid-template-areas:
+      'main search';
+  }
+
+  @media #{$desktop-up} {
+    grid: 64px / 1fr 750px 1fr;
+    padding-right: 0;
+    grid-template-areas:
+      "main search _";
+  }
 }
 
-.navbar-toggler:hover {
-  background-color: $primary;
-}
-
-.navbar-toggler:active {
-  background-color: $white!important;
-}
-
-.navbar-toggler:focus {
-  box-shadow: none!important;
+.navbar-toggler {
+  &:hover {
+    background-color: $primary;
+  }
+  &:active {
+    background-color: $white!important;
+  }
+  &:focus {
+    box-shadow: none!important;
+  }
 }
 
 .brand-name {
@@ -28,10 +42,10 @@
   font-size: larger;
   margin-left: 10px;
   color: $primary;
-}
 
-.brand-name:hover {
-  color: $darkgrey;
+  &:hover {
+    color: $darkgrey;
+  }
 }
 
 .menu {
@@ -42,33 +56,49 @@
   height: auto;
   max-height: 0px;
   overflow-y: hidden;
+
+  &.collapsed {
+    visibility: hidden;
+  }
+
+  &.expanding, &.expanded, &.collapsing {
+    display: block;
+  }
+
+  @media #{$tablet-landscape-up} {
+    display: none !important;
+  }
 }
 
-.menu.collapsed {
-  visibility: hidden;
-}
-
-.menu.expanding, .menu.expanded, .menu.collapsing {
-  display: block;
-}
-
-.navbar .grid .navbar-main {
+.navbar-main {
   grid-area: main;
 }
 
-.navbar .grid .menu-button {
+.navbar-grid .menu-button {
   grid-area: button;
   align-self: center;
   justify-self: end;
   padding: 7px;
+
+  @media #{$tablet-landscape-up} {
+    display: none;
+  }
 }
 
-.navbar .grid .search-bar-item {
+.navbar-grid .search-bar-item {
   grid-area: search;
   align-self: center;
+
+  @media #{$tablet-landscape-up} {
+    padding-right: 7px;
+  }
+
+  @media #{$desktop-up} {
+    padding-right: 0px;
+  }
 }
 
-.navbar .grid .menu {
+.navbar-grid .menu {
   grid-area: menu;
   align-self: center;
   transition: position .5s;
@@ -86,6 +116,11 @@
   border-radius: 0;
   border-right-width: 0;
   height: inherit;
+
+  @media #{$tablet-landscape-up} {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+  }
 }
 
 .search-bar button {
@@ -102,47 +137,9 @@
     color: $white;
     background-color: $black;
   }
-}
 
-@media only screen and (min-width : 768px) {
-  .navbar .grid {
-    grid: 64px/ 3fr 7fr;
-    grid-template-areas:
-      'main search';
-  }
-
-  .navbar .grid .search-bar-item {
-    padding-right: 7px;
-  }
-
-  .navbar .grid .menu-button {
-    display: none;
-  }
-
-  .menu {
-    display: none !important;
-  }
-
-  .search-bar .form-input {
-    border-top-left-radius: 0.5rem;
-    border-bottom-left-radius: 0.5rem;
-  }
-
-  .search-bar button {
+  @media #{$tablet-landscape-up} {
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
-  }
-}
-
-@media only screen and (min-width : 1224px) {
-  .navbar .grid {
-    grid: 64px / 1fr 750px 1fr;
-    padding-right: 0;
-    grid-template-areas:
-      "main search _";
-  }
-
-  .navbar .grid .search-bar-item {
-    padding-right: 0px;
   }
 }

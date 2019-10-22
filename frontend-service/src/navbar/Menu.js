@@ -1,6 +1,6 @@
 import React from 'react';
 import Nav from 'react-bootstrap/Nav';
-import './navbar.scss';
+import './style.scss';
 
 export default ({ onClick, items }) => {
 

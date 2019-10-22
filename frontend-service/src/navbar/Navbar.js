@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
-import './navbar.scss';
+import './style.scss';
 import Menu from './Menu.js';
 import SearchBar from './SearchBar';
 import { UserContext } from '../authentication/UserContext.js';
@@ -19,7 +19,7 @@ function Brand() {
   );
 }
 
-export default () => {
+export default function Navbar() {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
   const { authenticated, account, unauthenticate } = useContext(UserContext);
   const { t } = useTranslation();
@@ -104,7 +104,7 @@ export default () => {
   }
 
   const renderStaticPart = () =>
-    <div ref={setGridRef} className='grid'>
+    <div ref={setGridRef} className='navbar-grid'>
       <div className='navbar-main d-flex mr-0 flex-grow-1 align-self-center'>
         <div className='flex-grow-1 align-self-center'>
           <Brand />
