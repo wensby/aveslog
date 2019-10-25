@@ -16,7 +16,7 @@ const DeleteButton = ({ onClick }) => {
 }
 
 export default function SightingDetails({sighting}) {
-  const bird = useBird(sighting.sightingId);
+  const bird = useBird(sighting.birdId);
   const { t } = useTranslation();
   const { getAccessToken } = useContext(UserContext);
   const { history } = useReactRouter();
