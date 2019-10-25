@@ -8,7 +8,7 @@ import Footer from './Footer.js';
 import './style.scss';
 
 const Between = () => (
-  <div className='between main-grid'>
+  <div className='between'>
     <SideMenu />
     <Main />
   </div>

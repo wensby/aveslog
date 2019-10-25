@@ -380,6 +380,7 @@ input:focus {
 }
 
 .main-grid {
+  overflow: hidden;
   background-color: white;
   height: auto;
   display: grid;
@@ -390,7 +391,7 @@ input:focus {
   @media only screen and (min-width : 768px) {
     grid: auto / 3fr 7fr;
     grid-template-areas:
-      'side main';
+      '_ main';
   }
 }
 
@@ -399,13 +400,15 @@ input:focus {
 }
 
 main {
+  grid-area: main;
   padding: 0 10px;
-  overflow: hidden;
+  padding-top: 15px;
 }
 
 @media only screen and (min-width : 768px) {
   .sidemenu {
     display: block;
+    position: absolute;
   }
 }
 

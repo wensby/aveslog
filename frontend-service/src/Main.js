@@ -10,13 +10,15 @@ import AuthenticatedRoute from './authentication/AuthenticatedRoute';
 
 export default () => {
   return (
-    <main role="main">
-      <Route path='/' exact component={Home} />
-      <Route path='/authentication' component={Authentication} />
-      <Route path='/profile' component={Profile} />
-      <AuthenticatedRoute path='/settings' exact component={Settings} />
-      <Route path='/bird' component={Bird} />
-      <Route path='/sighting' component={Sighting} />
-    </main>
+    <div className='main-grid'>
+      <main role="main">
+        <Route path='/' exact component={Home} />
+        <Route path='/authentication' component={Authentication} />
+        <Route path='/profile' component={Profile} />
+        <AuthenticatedRoute path='/settings' exact component={Settings} />
+        <Route path='/bird' component={Bird} />
+        <Route path='/sighting' component={Sighting} />
+      </main>
+    </div>
   );
 }
