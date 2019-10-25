@@ -1,6 +1,21 @@
 @import './colors.scss';
 @import './layout.scss';
 
+html {
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: .875rem;
+  width: inherit;
+}
+
 a {
   color: $primary;
   text-decoration: none;
@@ -97,16 +112,6 @@ a {
 
 .form-input.is-invalid ~ .invalid-feedback {
   display: block;
-}
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: .875rem;
 }
 
 #root {
@@ -259,7 +264,13 @@ input:focus {
   display: grid;
   grid: 1fr / 1fr;
   grid-template-areas:
-    'main'
+    'main';
+
+  @media only screen and (min-width : 768px) {
+    grid: auto / 3fr 7fr;
+    grid-template-areas:
+      'side main';
+  }
 }
 
 .sidemenu {
@@ -268,15 +279,10 @@ input:focus {
 
 main {
   padding: 0 10px;
+  overflow: hidden;
 }
 
 @media only screen and (min-width : 768px) {
-  .main-grid {
-    grid: auto / 3fr 7fr;
-    grid-template-areas:
-      'side main';
-  }
-
   .sidemenu {
     display: block;
   }
