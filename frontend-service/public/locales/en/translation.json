@@ -57,5 +57,7 @@
   "password-change-button": "Change password",
   "total-label": "Total",
   "unique-label": "Unique",
+  "sighting-success": "Success!",
+  "sightings-link": "See your sightings",
   "Logout": "Logout"
 }

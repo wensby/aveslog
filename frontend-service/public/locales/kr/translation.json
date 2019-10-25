@@ -57,5 +57,7 @@
   "password-change-button": "비밀번호 변경",
   "total-label": "관찰한 새의 수",
   "unique-label": "관찰한 새의 종류",
+  "sighting-success": "성공!",
+  "sightings-link": "관찰 리스트 보기",
   "Logout": "로그아웃"
 }

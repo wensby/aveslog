@@ -12,6 +12,16 @@ export default class SightingService {
     });
   }
 
+  async fetchSightingByLocation(accessToken, location) {
+    const url = `${this.apiUrl}${location}`;
+    const response = await fetch(url, {
+      'headers': {
+        'accessToken': accessToken.jwt,
+      },
+    });
+    return await response.json();
+  }
+
   async fetchSighting(accessToken, sightingId) {
     const url = `${this.apiUrl}/sighting/${sightingId}`;
     const response = await fetch(url, {

@@ -5,9 +5,11 @@ import BirdService from './BirdService';
 import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
 import { useReactRouter } from '../reactRouterHook';
+import SightingSuccess from '../sighting/SightingSuccess';
 
 export default ({ match }) => {
   const binomialName = match.params.binomialName;
+  const [addedSighting, setAddedSighting] = useState(null);
   const [bird, setBird] = useState(null);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -45,7 +47,9 @@ export default ({ match }) => {
       accessToken, account.personId, bird.binomialName, date, time
     );
     if (response.status === 201) {
-      history.push('/sighting');
+      const sightingLocation = response.headers.get('Location');
+      const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
+      setAddedSighting(sighting.result);
     }
   }
 
@@ -63,6 +67,10 @@ export default ({ match }) => {
 
   if (!bird) {
     return null;
+  }
+
+  if (addedSighting) {
+    return <SightingSuccess sighting={addedSighting}/>;
   }
 
   return (
