@@ -1,17 +1,15 @@
 import React from 'react';
-import { Link } from "react-router-dom";
 import BirdCardPicture from './BirdCardPicture';
+import BirdLink from './BirdLink';
 
 export default function BirdCard({ bird, key, children }) {
-  const formattedName = bird.binomialName.toLowerCase().replace(' ', '-');
-
   return (
     <div key={key} className="card">
       <div className="card-horizontal">
         <div className="img-square-wrapper">
-          <Link to={`/bird/${formattedName}`}>
+          <BirdLink bird={bird} >
             <BirdCardPicture bird={bird} />
-          </Link>
+          </BirdLink>
         </div>
         {children}
       </div>
