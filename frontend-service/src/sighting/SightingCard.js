@@ -7,22 +7,10 @@ import BirdCardName from '../bird/BirdCardName.js';
 import SightingTime from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
 
-export default ({ sighting, ...other }) => {
+export default function SightingCard({ sighting, ...other }) {
   const bird = useBird(sighting.birdId);
-  const { account } = useContext(UserContext);
-  const { t } = useTranslation();
 
-  const renderCardBodyRight = () => {
-    if (sighting.personId === account.personId) {
-      return (<div className='card-body text-right'>
-        <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
-          {t('sighting-item-edit-link')}
-        </Link>
-      </div>);
-    }
-  };
-
-  if (!account || !bird) {
+  if (!bird) {
     return null;
   }
   else {
@@ -30,10 +18,25 @@ export default ({ sighting, ...other }) => {
       <BirdCard bird={bird} {...other}>
         <div className='card-body'>
           <BirdCardName bird={bird} />
-          <SightingTime sighting={sighting} className='card-text'/>
+          <SightingTime className='card-text' sighting={sighting} />
         </div>
-        {renderCardBodyRight()}
+        <CardBodyRight sighting={sighting} />
       </BirdCard>
     );
   }
+}
+
+function CardBodyRight({ sighting }) {
+  const { account } = useContext(UserContext);
+  const { t } = useTranslation();
+  if (sighting.personId !== account.personId) {
+    return null;
+  }
+  return (
+    <div className='card-body text-right'>
+      <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
+        {t('sighting-item-edit-link')}
+      </Link>
+    </div>
+  );
 }
