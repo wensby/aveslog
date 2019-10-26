@@ -5,11 +5,12 @@ import Login from './Login.js';
 import Registration from './registration/Registration.js';
 
 export default ({ match }) => {
+  const { path } = match;
   return (
     <Switch>
-      <Route path={`${match.path}/login`} component={Login}/>
-      <Route path={`${match.path}/registration`} component={Registration}/>
-      <Route path={`${match.path}/password-reset`} component={PasswordReset}/>
+      <Route path={`${path}/login`} component={Login}/>
+      <Route path={`${path}/registration`} component={Registration}/>
+      <Route path={`${path}/password-reset`} component={PasswordReset}/>
     </Switch>
   );
 }

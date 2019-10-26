@@ -9,7 +9,7 @@ export default ({match}) => {
   return (
     <Switch>
       <AuthenticatedRoute exact path={`${path}`} component={SightingsPage} />
-      <Route path={`${match.path}/:sightingId`} component={SightingDetailsContainer} />
+      <Route path={`${path}/:sightingId`} component={SightingDetailsContainer} />
     </Switch>
   );
 }

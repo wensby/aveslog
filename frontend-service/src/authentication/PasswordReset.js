@@ -5,6 +5,7 @@ import CreatePasswordReset from './CreatePasswordReset.js';
 import PasswordResetForm from './PasswordResetForm.js';
 
 function PasswordReset({ match }) {
+  const { path } = match;
 
   const renderCreatePasswordReset = props => {
     return <CreatePasswordReset {...props}/>
@@ -16,8 +17,8 @@ function PasswordReset({ match }) {
 
   return (
     <div>
-      <Route exact path={match.path} render={renderCreatePasswordReset}/>
-      <Route path={`${match.path}/:token`} render={renderPasswordResetForm}/>
+      <Route exact path={path} render={renderCreatePasswordReset}/>
+      <Route path={`${path}/:token`} render={renderPasswordResetForm}/>
     </div>
   );
 }

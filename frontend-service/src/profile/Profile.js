@@ -4,13 +4,15 @@ import ProfilePage from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 
 export default ({ match }) => {
+  const { path } = match;
+
   const renderProfilePage = props => {
     return <ProfilePage username={props.match.params.username}/>;
   }
 
   return (
     <Switch>
-      <AuthenticatedRoute path={`${match.path}/:username`} render={renderProfilePage} />
+      <AuthenticatedRoute path={`${path}/:username`} render={renderProfilePage} />
     </Switch>
   );
 }
