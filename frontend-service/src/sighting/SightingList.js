@@ -4,7 +4,11 @@ import SightingCard from './SightingCard.js';
 export default ({ sightings }) => {
 
   const renderSightingCard = sighting => {
-    return <SightingCard sighting={sighting} key={sighting.sightingId} />;
+    return (
+      <React.Fragment key={sighting.sightingId}>
+        <SightingCard sighting={sighting} key={sighting.sightingId} />
+      </React.Fragment>
+    );
   };
 
   return <div className='text-break'>{sightings.map(renderSightingCard)}</div>;

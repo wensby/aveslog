@@ -7,7 +7,7 @@ import BirdCardName from '../bird/BirdCardName.js';
 import SightingTime from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
 
-export default function SightingCard({ sighting, ...other }) {
+export default function SightingCard({ sighting }) {
   const bird = useBird(sighting.birdId);
 
   if (!bird) {
@@ -15,7 +15,7 @@ export default function SightingCard({ sighting, ...other }) {
   }
   else {
     return (
-      <BirdCard bird={bird} {...other}>
+      <BirdCard bird={bird}>
         <div className='card-body'>
           <BirdCardName bird={bird} />
           <SightingTime className='card-text' sighting={sighting} />

@@ -29,7 +29,11 @@ export default function BirdQueryResult(props) {
 
   const renderItems = () => {
     return resultItems.map((item, index) => {
-      return <BirdResultCard searchResult={item} key={index} />
+      return (
+        <React.Fragment key={index}>
+          <BirdResultCard searchResult={item} />
+        </React.Fragment>
+      );
     });
   };
 
