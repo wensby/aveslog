@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
-import Accounts from './Accounts';
 
 export default () => {
   const { authenticated } = useContext(UserContext);
@@ -13,7 +12,6 @@ export default () => {
   return (
     <>
       <h1>{t("It's birding time!")}</h1>
-      <Accounts />
     </>
   );
 }

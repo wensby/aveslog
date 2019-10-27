@@ -8,6 +8,7 @@ const getMenuItems = (authenticated, account, unauthenticate, t) => {
           to={`/profile/${account.username}`}>{t('Profile')}</Link>,
       <Link className="nav-link"
           to={'/sighting'}>{t('Sightings')}</Link>,
+      <Link className='nav-link' to={'/profile'}>{t('birders')}</Link>,
       <Link className="nav-link"
           to={'/settings'}>{t('Settings')}</Link>,
       <Link className="nav-link" onClick={unauthenticate}
