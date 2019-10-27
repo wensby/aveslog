@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
 
-export default () => {
+export default function HomePage({ }) {
   const { authenticated } = useContext(UserContext);
   const { t } = useTranslation();
 

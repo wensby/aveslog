@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from "react-router-dom";
 import Settings from './settings/settings'
-import Home from './home/Home.js';
+import HomePage from './home/HomePage';
 import Authentication from './authentication/Authentication.js'
 import Bird from './bird/Bird.js';
 import Sighting from './sighting/Sighting.js';
@@ -12,7 +12,7 @@ export default () => {
   return (
     <div className='main-grid'>
       <main role="main">
-        <Route path='/' exact component={Home} />
+        <Route path='/' exact component={HomePage} />
         <Route path='/authentication' component={Authentication} />
         <Route path='/profile' component={Profile} />
         <AuthenticatedRoute path='/settings' exact component={Settings} />
