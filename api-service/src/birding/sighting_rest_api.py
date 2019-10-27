@@ -12,6 +12,8 @@ from .account import AccountRepository, Account
 from .authentication import JwtDecoder
 
 
+
+
 def create_sighting_rest_api_blueprint(
       token_decoder: JwtDecoder,
       account_repository: AccountRepository,
@@ -25,8 +27,18 @@ def create_sighting_rest_api_blueprint(
     account = account_repository.find_account(username)
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
-    sightings = sighting_repository.sightings(account.person_id)
-    return sightings_response(sightings)
+    (sightings, total_rows) = sighting_repository.sightings(person_id=account.person_id)
+    return sightings_response(sightings, False)
+
+  @blueprint.route('/sighting')
+  @require_authentication(token_decoder, account_repository)
+  def get_sightings(account: Account):
+    limit = request.args.get('limit', type=int)
+    if limit is not None and limit <= 0:
+      return sightings_failure_response('limit-invalid')
+    (sightings, total_rows) = sighting_repository.sightings(limit=limit)
+    has_more = total_rows > limit if limit is not None else False
+    return sightings_response(sightings, has_more)
 
   @blueprint.route('/sighting/<int:sighting_id>')
   @require_authentication(token_decoder, account_repository)
@@ -79,13 +91,16 @@ def create_sighting_rest_api_blueprint(
     time = parse_time(post_data['time']) if 'time' in post_data else None
     return SightingPost(person_id, bird.id, date, time)
 
-  def sightings_response(sightings: List[Sighting]) -> Response:
+  def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:
     return make_response(jsonify({
-      'status': 'success',
-      'result': {
-        'sightings': list(map(convert_sighting, sightings)),
-      },
+      'items': list(map(convert_sighting, sightings)),
+      'hasMore': has_more,
     }), HTTPStatus.OK)
+
+  def sightings_failure_response(error_message):
+    return make_response(jsonify({
+      'error': error_message,
+    }), HTTPStatus.BAD_REQUEST)
 
   def sighting_response(sighting: Sighting) -> Response:
     return make_response(jsonify({

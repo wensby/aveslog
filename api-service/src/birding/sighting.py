@@ -1,7 +1,32 @@
 from datetime import date, time
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Tuple
+from .database import Database
 
-from .database import Database, read_script_file
+
+def create_sightings_query(
+      person_id: Optional[int],
+      limit: Optional[int]
+) -> str:
+  def where_clause():
+    return 'WHERE person_id = %(person_id)s ' if person_id else ''
+
+  def limit_clause():
+    return 'LIMIT %(limit)s ' if limit else ''
+
+  return (
+    'WITH cte AS ('
+    'SELECT * '
+    'FROM sighting '
+    f'{where_clause()}'
+    ') '
+    'SELECT id, person_id, bird_id, sighting_date, sighting_time, full_count '
+    'FROM ('
+    'TABLE cte '
+    'ORDER BY sighting_date DESC, sighting_time DESC '
+    f'{limit_clause()}'
+    ') sub '
+    'RIGHT JOIN (SELECT count(*) FROM cte) c(full_count) ON TRUE;'
+  )
 
 
 class SightingPost:
@@ -85,7 +110,16 @@ class SightingRepository:
       else:
         return result.rows[0]
 
-  def sightings(self, person_id: int) -> List[Sighting]:
+  def sightings(self,
+        person_id: Optional[int] = None,
+        limit: Optional[int] = None
+  ) -> Tuple[List[Sighting], bool]:
+    query = create_sightings_query(person_id, limit)
+    values = {'person_id': person_id, 'limit': limit}
     with self.database.transaction() as transaction:
-      query = read_script_file('select_sighting_item_data.sql')
-      return transaction.execute(query, (person_id,), Sighting.fromrow).rows
+      result = transaction.execute(query, values)
+    sightings_present = result.rows[0][0]
+    sightings = list(
+      map(Sighting.fromrow, result.rows)) if sightings_present else []
+    total_rows = result.rows[0][5]
+    return sightings, total_rows
