@@ -34,7 +34,7 @@ function CardBodyRight({ sighting }) {
   }
   return (
     <div className='card-body text-right'>
-      <Link to={`/sighting/${sighting.sightingId}`} className='card-link'>
+      <Link to={`/sighting/${sighting.id}`} className='card-link'>
         {t('sighting-item-edit-link')}
       </Link>
     </div>

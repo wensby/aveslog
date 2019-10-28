@@ -76,7 +76,7 @@ def create_sighting_rest_api_blueprint(
 
   def convert_sighting(sighting: Sighting) -> dict:
     result = {
-      'sightingId': sighting.id,
+      'id': sighting.id,
       'personId': sighting.person_id,
       'birdId': sighting.bird_id,
       'date': sighting.sighting_date.isoformat(),

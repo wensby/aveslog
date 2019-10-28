@@ -5,8 +5,8 @@ export default ({ sightings }) => {
 
   const renderSightingCard = sighting => {
     return (
-      <React.Fragment key={sighting.sightingId}>
-        <SightingCard sighting={sighting} key={sighting.sightingId} />
+      <React.Fragment key={sighting.id}>
+        <SightingCard sighting={sighting} key={sighting.id} />
       </React.Fragment>
     );
   };

@@ -20,7 +20,7 @@ export default ({ username }) => {
   }, [username, getAccessToken]);
 
   const renderSightings = () => {
-    return sightings.map(sighting => <SightingCard sighting={sighting} key={sighting.sightingId} />);
+    return sightings.map(sighting => <SightingCard sighting={sighting} key={sighting.id} />);
   }
 
   return (

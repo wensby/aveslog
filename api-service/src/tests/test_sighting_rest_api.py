@@ -27,21 +27,21 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.json, {
       'items': [
         {
-          'sightingId': 1,
+          'id': 1,
           'personId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
-          'sightingId': 2,
+          'id': 2,
           'personId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
-          'sightingId': 3,
+          'id': 3,
           'personId': 2,
           'birdId': 1,
           'date': '2019-08-28',
@@ -61,7 +61,7 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.json, {
       'items': [
         {
-          'sightingId': 1,
+          'id': 1,
           'personId': 1,
           'birdId': 1,
           'date': '2019-08-28',
@@ -92,14 +92,14 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.json, {
       'items': [
         {
-          'sightingId': 1,
+          'id': 1,
           'personId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
-          'sightingId': 2,
+          'id': 2,
           'personId': 1,
           'birdId': 1,
           'date': '2019-08-28',
@@ -147,7 +147,7 @@ class TestGetSightings(AppTestCase):
     self.assertEqual(response.json, {
       'items': [
         {
-          'sightingId': 3,
+          'id': 3,
           'personId': 2,
           'birdId': 1,
           'date': '2019-08-28',
@@ -173,7 +173,7 @@ class TestGetSighting(AppTestCase):
     self.assertEqual(response.json, {
       'status': 'success',
       'result': {
-        'sightingId': 1,
+        'id': 1,
         'personId': 1,
         'birdId': 1,
         'date': '2019-08-28',

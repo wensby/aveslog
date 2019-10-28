@@ -27,7 +27,7 @@ export default function SightingDetails({sighting}) {
 
   const handleDelete = async () => {
     const accessToken = await getAccessToken();
-    const deleted = await new SightingService().deleteSighting(accessToken, sighting.sightingId);
+    const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
     if (deleted) {
       history.push('/sighting');
     }
