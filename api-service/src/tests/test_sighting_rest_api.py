@@ -6,42 +6,6 @@ from flask import Response
 from test_util import AppTestCase
 
 
-class TestGetSighting(AppTestCase):
-
-  def test_get_sighting_when_ok(self):
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/sighting/1', headers=headers)
-
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'result': {
-        'sightingId': 1,
-        'personId': 1,
-        'birdId': 1,
-        'date': '2019-08-28',
-        'time': '11:52:00'
-      },
-    })
-
-  def test_get_sighting_when_not_authorized(self):
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
-    self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/sighting/2', headers=headers)
-
-    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-
-
 class TestGetSightings(AppTestCase):
 
   def test_get_sightings(self):
@@ -195,6 +159,42 @@ class TestGetSightings(AppTestCase):
       ],
       'hasMore': False,
     })
+
+
+class TestGetSighting(AppTestCase):
+
+  def test_get_sighting_when_ok(self):
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
+
+    response = self.client.get('/sighting/1', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'result': {
+        'sightingId': 1,
+        'personId': 1,
+        'birdId': 1,
+        'date': '2019-08-28',
+        'time': '11:52:00'
+      },
+    })
+
+  def test_get_sighting_when_not_authorized(self):
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
+
+    response = self.client.get('/sighting/2', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
 
 class TestPostSighting(AppTestCase):
