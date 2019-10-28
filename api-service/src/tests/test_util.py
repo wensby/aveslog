@@ -70,9 +70,9 @@ class AppTestCase(TestCase):
       self.assertIn(key, session)
       self.assertEqual(session[key], value)
 
-  def db_insert_person(self, person_id):
+  def db_insert_person(self, person_id, name):
     self.database.query(
-      'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, 'name'))
+      'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, name))
 
   def db_insert_locale(self, locale_id, code):
     with self.database.transaction() as transaction:
@@ -165,7 +165,7 @@ class AppTestCase(TestCase):
         username: str,
         password: str,
         email: str) -> None:
-    self.db_insert_person(person_id)
+    self.db_insert_person(person_id, username)
     self.db_insert_account(account_id, username, email, person_id, None)
     self.db_insert_password(account_id, password)
 

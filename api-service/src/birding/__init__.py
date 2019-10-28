@@ -6,6 +6,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
+from .person_rest_api import create_person_rest_api_blueprint
 from .sighting_rest_api import create_sighting_rest_api_blueprint
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
@@ -112,6 +113,11 @@ def create_app(test_config: dict = None) -> Flask:
     refresh_token_repository,
     authentication_token_factory,
   )
+  person_rest_api = create_person_rest_api_blueprint(
+    jwt_decoder,
+    account_repository,
+    person_repository,
+  )
   account_rest_api = create_account_rest_api_blueprint(
     jwt_decoder, account_repository)
   bird_rest_api = create_bird_rest_api_blueprint(
@@ -131,6 +137,7 @@ def create_app(test_config: dict = None) -> Flask:
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
+  app.register_blueprint(person_rest_api)
 
   @app.before_request
   def before_request():
