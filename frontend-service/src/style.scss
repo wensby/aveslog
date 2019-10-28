@@ -145,6 +145,7 @@ a {
   @extend %padding-to-footer;
   -webkit-perspective: 500px;
   perspective: 500px;
+  display: flex;
 }
 
 .sighting-stats {
@@ -265,6 +266,7 @@ input:focus {
 }
 
 .main-grid {
+  width: 100%;
   overflow: hidden;
   background-color: white;
   height: auto;
@@ -282,6 +284,12 @@ input:focus {
 
 .sidemenu {
   display: none;
+
+  @media only screen and (min-width : 768px) {
+    display: block;
+    position: absolute;
+    height: 100%;
+  }
 }
 
 main {
@@ -290,12 +298,7 @@ main {
   padding-top: 15px;
 }
 
-@media only screen and (min-width : 768px) {
-  .sidemenu {
-    display: block;
-    position: absolute;
-  }
-}
+
 
 @media only screen and (min-width : 1224px) {
   .main-grid {
