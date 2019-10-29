@@ -226,6 +226,12 @@ input:focus {
   z-index: 1;
 }
 
+.bird-picture {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+}
+
 /* => md */
 @media (min-width: 768px) {
   .bird-page-name {
