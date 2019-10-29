@@ -12,8 +12,6 @@ from .account import AccountRepository, Account
 from .authentication import JwtDecoder
 
 
-
-
 def create_sighting_rest_api_blueprint(
       token_decoder: JwtDecoder,
       account_repository: AccountRepository,
@@ -27,7 +25,8 @@ def create_sighting_rest_api_blueprint(
     account = account_repository.find_account(username)
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
-    (sightings, total_rows) = sighting_repository.sightings(person_id=account.person_id)
+    (sightings, total_rows) = sighting_repository.sightings(
+      person_id=account.person_id)
     return sightings_response(sightings, False)
 
   @blueprint.route('/sighting')
