@@ -117,6 +117,7 @@ def create_app(test_config: dict = None) -> Flask:
     jwt_decoder,
     account_repository,
     person_repository,
+    sighting_repository,
   )
   account_rest_api = create_account_rest_api_blueprint(
     jwt_decoder, account_repository)

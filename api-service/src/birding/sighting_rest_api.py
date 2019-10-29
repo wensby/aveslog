@@ -73,28 +73,11 @@ def create_sighting_rest_api_blueprint(
     sighting = sighting_repository.add_sighting(sighting_post)
     return post_sighting_success_response(sighting.id)
 
-  def convert_sighting(sighting: Sighting) -> dict:
-    result = {
-      'id': sighting.id,
-      'personId': sighting.person_id,
-      'birdId': sighting.bird_id,
-      'date': sighting.sighting_date.isoformat(),
-    }
-    if sighting.sighting_time:
-      result['time'] = sighting.sighting_time.isoformat()
-    return result
-
   def create_sighting_post(post_data: dict, bird: Bird) -> SightingPost:
     person_id = post_data['person']['id']
     date = parse_date(post_data['date'])
     time = parse_time(post_data['time']) if 'time' in post_data else None
     return SightingPost(person_id, bird.id, date, time)
-
-  def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:
-    return make_response(jsonify({
-      'items': list(map(convert_sighting, sightings)),
-      'hasMore': has_more,
-    }), HTTPStatus.OK)
 
   def sightings_failure_response(error_message):
     return make_response(jsonify({
@@ -127,3 +110,22 @@ def create_sighting_rest_api_blueprint(
     }), HTTPStatus.UNAUTHORIZED)
 
   return blueprint
+
+
+def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:
+  return make_response(jsonify({
+    'items': list(map(convert_sighting, sightings)),
+    'hasMore': has_more,
+  }), HTTPStatus.OK)
+
+
+def convert_sighting(sighting: Sighting) -> dict:
+  result = {
+    'id': sighting.id,
+    'personId': sighting.person_id,
+    'birdId': sighting.bird_id,
+    'date': sighting.sighting_date.isoformat(),
+  }
+  if sighting.sighting_time:
+    result['time'] = sighting.sighting_time.isoformat()
+  return result
