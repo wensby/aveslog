@@ -30,7 +30,7 @@ def create_person_rest_api_blueprint(
   @require_authentication(jwt_decoder, account_repository)
   def get_birder_sightings(birder_id: int, account: Account):
     (sightings, total_rows) = sighting_repository.sightings(
-      person_id=account.person_id)
+      person_id=birder_id)
     return sightings_response(sightings, False)
 
   return blueprint

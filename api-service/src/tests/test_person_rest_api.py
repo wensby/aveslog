@@ -24,7 +24,9 @@ class TestGetPersonsSightings(AppTestCase):
   def test_get_person_sightings(self):
     self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_setup_account(2, 2, 'george', 'costanza', 'tbone@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
+    self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(11, 52))
     token = self.create_access_token(1)
     headers = {'accessToken': token.jwt}
 
