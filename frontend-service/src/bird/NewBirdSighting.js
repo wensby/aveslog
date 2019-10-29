@@ -49,7 +49,7 @@ export default ({ match }) => {
     if (response.status === 201) {
       const sightingLocation = response.headers.get('Location');
       const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
-      setAddedSighting(sighting.result);
+      setAddedSighting(sighting);
     }
   }
 

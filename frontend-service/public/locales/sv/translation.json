@@ -60,5 +60,6 @@
   "sighting-success": "Succé!",
   "sightings-link": "Se dina observationer",
   "birders": "Fågelskådare",
+  "logged-by": "Loggad av <1>{{name}}</1>",
   "Logout": "Logga ut"
 }

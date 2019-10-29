@@ -4,6 +4,14 @@ export default class SightingService {
     this.apiUrl = window._env_.API_URL;
   }
 
+  async getSightingFeedSightings(accessToken) {
+    return await fetch(`${this.apiUrl}/sighting?limit=10`, {
+      'headers': {
+        'accessToken': accessToken.jwt,
+      },
+    });
+  }
+
   async fetchSightings(username, accessToken) {
     return await fetch(`${this.apiUrl}/profile/${username}/sighting`, {
       'headers': {

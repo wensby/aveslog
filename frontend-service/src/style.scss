@@ -232,6 +232,19 @@ input:focus {
   object-fit: cover;
 }
 
+.sighting-feed-card {
+  border: 1px solid $lighter;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: row;
+
+  & img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
 /* => md */
 @media (min-width: 768px) {
   .bird-page-name {
