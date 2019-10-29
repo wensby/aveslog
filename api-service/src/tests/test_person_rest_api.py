@@ -13,6 +13,6 @@ class TestGetPerson(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
-      'personId': 1,
+      'id': 1,
       'name': 'hulot',
     })
