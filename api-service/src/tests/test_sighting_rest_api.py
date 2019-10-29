@@ -171,14 +171,11 @@ class TestGetSighting(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
-      'status': 'success',
-      'result': {
-        'id': 1,
-        'personId': 1,
-        'birdId': 1,
-        'date': '2019-08-28',
-        'time': '11:52:00'
-      },
+      'id': 1,
+      'personId': 1,
+      'birdId': 1,
+      'date': '2019-08-28',
+      'time': '11:52:00'
     })
 
   def test_get_sighting_when_not_authorized(self):

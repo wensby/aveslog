@@ -13,8 +13,8 @@ export default function SightingDetailsContainer(props) {
     const resolveSighting = async () => {
       const accessToken = await getAccessToken();
       const response = await sightingService.fetchSighting(accessToken, sightingId);
-      if (response.status === 'success') {
-        const sighting = response.result;
+      if (response.status === 200) {
+        const sighting = await response.json();
         setSighting(sighting);
       }
     }

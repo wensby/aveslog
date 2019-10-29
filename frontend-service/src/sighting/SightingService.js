@@ -24,12 +24,11 @@ export default class SightingService {
 
   async fetchSighting(accessToken, sightingId) {
     const url = `${this.apiUrl}/sighting/${sightingId}`;
-    const response = await fetch(url, {
+    return await fetch(url, {
       'headers': {
         'accessToken': accessToken.jwt,
       },
     });
-    return await response.json();
   }
 
   async postSighting(accessToken, personId, binomialName, date, time) {

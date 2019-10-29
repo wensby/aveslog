@@ -45,7 +45,7 @@ def create_sighting_rest_api_blueprint(
   def get_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
     if sighting and sighting.person_id == account.person_id:
-      return sighting_response(sighting)
+      return make_response(jsonify(convert_sighting(sighting)), HTTPStatus.OK)
     else:
       return get_sighting_failure_response()
 
@@ -101,12 +101,6 @@ def create_sighting_rest_api_blueprint(
     return make_response(jsonify({
       'error': error_message,
     }), HTTPStatus.BAD_REQUEST)
-
-  def sighting_response(sighting: Sighting) -> Response:
-    return make_response(jsonify({
-      'status': 'success',
-      'result': convert_sighting(sighting),
-    }), HTTPStatus.OK)
 
   def get_sighting_failure_response() -> Response:
     return make_response(jsonify({
