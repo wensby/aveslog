@@ -20,6 +20,14 @@ export default class SightingService {
     });
   }
 
+  async fetchBirderSightings(birderId, accessToken) {
+    return await fetch(`${this.apiUrl}/birders/${birderId}/sightings`, {
+      'headers': {
+        'accessToken': accessToken.jwt,
+      },
+    });
+  }
+
   async fetchSightingByLocation(accessToken, location) {
     const url = `${this.apiUrl}${location}`;
     const response = await fetch(url, {
