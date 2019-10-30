@@ -140,14 +140,6 @@ a {
   padding-bottom: $footer-height + 40px;
 }
 
-.between {
-  @extend %navbar-pushed;
-  @extend %padding-to-footer;
-  -webkit-perspective: 500px;
-  perspective: 500px;
-  display: flex;
-}
-
 .sighting-stats {
   margin-bottom: 10px;
   display: flex;
@@ -196,11 +188,6 @@ input:focus {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-}
-
-.sidebar {
-  position: sticky;
-  top: 64px;
 }
 
 .sidebar .nav-link {
@@ -285,6 +272,8 @@ input:focus {
 }
 
 .main-grid {
+  @extend %navbar-pushed;
+  @extend %padding-to-footer;
   width: 100%;
   overflow: hidden;
   background-color: white;
@@ -293,6 +282,8 @@ input:focus {
   grid: 1fr / 1fr;
   grid-template-areas:
     'main';
+  -webkit-perspective: 500px;
+  perspective: 500px;
 
   @media only screen and (min-width : 768px) {
     grid: auto / 3fr 7fr;
@@ -302,13 +293,19 @@ input:focus {
 }
 
 .sidemenu {
+  @extend %navbar-pushed;
   display: none;
+  z-index: 1;
+  position: fixed;
+  top: 0px;
 
   @media only screen and (min-width : 768px) {
     display: block;
-    position: absolute;
-    height: 100%;
   }
+}
+
+.sidebar {
+  padding-top: 15px;
 }
 
 main {
@@ -323,10 +320,6 @@ main {
   .main-grid {
     grid: auto / 1fr 750px 1fr;
   }
-}
-
-.sidebar {
-  padding-top: 15px;
 }
 
 main {

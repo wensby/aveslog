@@ -1,6 +1,10 @@
 @import '../colors.scss';
 @import '../layout.scss';
 
+.navbar {
+  position: fixed;
+}
+
 .navbar-grid {
   width: 100%;
   display: grid;
