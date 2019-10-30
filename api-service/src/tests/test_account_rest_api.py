@@ -11,9 +11,8 @@ class TestGetActiveAccounts(AppTestCase):
 
   def test_get_active_accounts_ok_when_authenticated(self):
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
-    token = self.create_access_token(1)
 
-    response = self.client.get('/account', headers={'accessToken': token.jwt})
+    response = self.get_with_access_token('/account', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {

@@ -58,6 +58,10 @@ class AppTestCase(TestCase):
     self.app_context.push()
     self.client = self._app.test_client()
 
+  def get_with_access_token(self, uri: str, *, account_id: int) -> Response:
+    token = self.create_access_token(account_id)
+    return self.client.get(uri, headers={'accessToken': token.jwt})
+
   def assertFileExist(self, path):
     self.assertTrue(os.path.exists(path))
 

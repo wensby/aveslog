@@ -8,10 +8,8 @@ class TestGetBirder(AppTestCase):
 
   def test_get_birder(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
 
-    response = self.client.get('/birders/1', headers=headers)
+    response = self.get_with_access_token('/birders/1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -21,11 +19,7 @@ class TestGetBirder(AppTestCase):
 
   def test_get_birder_when_missing(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/birders/2', headers=headers)
-
+    response = self.get_with_access_token('/birders/2', account_id=1)
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
@@ -37,10 +31,8 @@ class TestGetBirderSightings(AppTestCase):
     self.db_setup_account(2, 2, 'george', 'costanza', 'tbone@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(11, 52))
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
 
-    response = self.client.get('/birders/1/sightings', headers=headers)
+    response = self.get_with_access_token('/birders/1/sightings', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {

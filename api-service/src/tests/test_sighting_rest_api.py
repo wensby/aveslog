@@ -18,10 +18,7 @@ class TestGetSightings(AppTestCase):
     self.db_insert_sighting(3, 2, 1, date(2019, 8, 28), time(11, 52))
 
   def test_get_sightings(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/sighting', headers=headers)
+    response = self.get_with_access_token('/sighting', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -52,10 +49,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_valid_limit(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/sighting?limit=1', headers=headers)
+    response = self.get_with_access_token('/sighting?limit=1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -72,10 +66,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_invalid_limit(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/sighting?limit=0', headers=headers)
+    response = self.get_with_access_token('/sighting?limit=0', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertEqual(response.json, {
@@ -83,10 +74,8 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_own_sightings_with_valid_auth_token(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/profile/hulot/sighting', headers=headers)
+    response = self.get_with_access_token('/profile/hulot/sighting',
+                                          account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -110,11 +99,8 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_when_username_missing(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/profile/godzilla/sighting', headers=headers)
-
+    response = self.get_with_access_token('/profile/godzilla/sighting',
+                                          account_id=1)
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
   def test_get_sightings_when_unauthorized(self):
@@ -138,10 +124,8 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
-
-    response = self.client.get('/profile/dude/sighting', headers=headers)
+    response = self.get_with_access_token('/profile/dude/sighting',
+                                          account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -164,10 +148,8 @@ class TestGetSighting(AppTestCase):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
 
-    response = self.client.get('/sighting/1', headers=headers)
+    response = self.get_with_access_token('/sighting/1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -183,10 +165,8 @@ class TestGetSighting(AppTestCase):
     self.db_setup_account(2, 2, 'dude', 'myPassword', 'dude@mail.com')
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
-    token = self.create_access_token(1)
-    headers = {'accessToken': token.jwt}
 
-    response = self.client.get('/sighting/2', headers=headers)
+    response = self.get_with_access_token('/sighting/2', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
