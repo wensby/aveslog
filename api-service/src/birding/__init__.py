@@ -22,7 +22,7 @@ from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_rest_api import create_authentication_rest_api_blueprint
-from .bird_rest_api import create_bird_rest_api_blueprint
+from .birds_rest_api import create_bird_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
