@@ -19,6 +19,16 @@ class TestGetBirder(AppTestCase):
       'name': 'hulot',
     })
 
+  def test_get_birder_when_missing(self):
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    token = self.create_access_token(1)
+    headers = {'accessToken': token.jwt}
+
+    response = self.client.get('/birders/2', headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+
 class TestGetBirderSightings(AppTestCase):
 
   def test_get_birder_sightings(self):
