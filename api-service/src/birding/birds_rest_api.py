@@ -19,21 +19,21 @@ def create_bird_rest_api_blueprint(
 ) -> Blueprint:
   blueprint = Blueprint('birds', __name__, url_prefix='/birds')
 
-  def result_item(match):
+  def result_item(bird):
     item = {
-      'birdId': match.bird.id,
-      'binomialName': match.bird.binomial_name,
+      'id': bird.id,
+      'binomialName': bird.binomial_name,
     }
-    bird_thumbnail = bird_repository.bird_thumbnail(match.bird)
+    bird_thumbnail = bird_repository.bird_thumbnail(bird)
     if bird_thumbnail:
       item['thumbnail'] = get_bird_thumbnail_url(bird_thumbnail)
     return item
 
   @blueprint.route('')
-  def query_birds():
+  def get_birds():
     name = request.args.get('q')
     limit = request.args.get('limit', type=int)
-    bird_matches = list(map(result_item, controller.search(name, limit)))
+    bird_matches = list(map(result_item, map(lambda match: match.bird, controller.search(name, limit))))
     return make_response(jsonify({
       'status': 'success',
       'result': bird_matches,
