@@ -35,8 +35,7 @@ def create_bird_rest_api_blueprint(
     limit = request.args.get('limit', type=int)
     bird_matches = list(map(result_item, map(lambda match: match.bird, controller.search(name, limit))))
     return make_response(jsonify({
-      'status': 'success',
-      'result': bird_matches,
+      'items': bird_matches,
     }), HTTPStatus.OK)
 
   @blueprint.route('/<string:binomial_name>')

@@ -10,9 +10,9 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    self.assertEqual(len(data['result']), 0)
+    self.assertEqual(response.json, {
+      'items': [],
+    })
 
   def test_search_empty_query_when_birds_exist(self):
     self.db_insert_bird(1, 'Pica pica')
@@ -20,9 +20,14 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    self.assertEqual(len(data['result']), 1)
+    self.assertEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'binomialName': 'Pica pica',
+        }
+      ]
+    })
 
   def test_search_pica_pica_with_thumbnail(self):
     self.db_insert_bird(1, 'Pica pica')
@@ -32,14 +37,14 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    result = data['result']
-    self.assertEqual(len(result), 1)
-    self.assertEqual(result[0], {
-      'id': 1,
-      'binomialName': 'Pica pica',
-      'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg'
+    self.assertEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'binomialName': 'Pica pica',
+          'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg'
+        }
+      ]
     })
 
   def test_get_birds_with_limit(self):
@@ -49,7 +54,14 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=P&limit=1')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(len(response.json['result']), 1)
+    self.assertEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'binomialName': 'Pica pica'
+        }
+      ]
+    })
 
   def test_search_pica_pica(self):
     self.db_insert_bird(1, 'Pica pica')
@@ -57,11 +69,14 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=Pica%20pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    result = data['result']
-    self.assertEqual(len(result), 1)
-    self.assertEqual(result[0], {'id': 1, 'binomialName': 'Pica pica'})
+    self.assertEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'binomialName': 'Pica pica'
+        }
+      ]
+    })
 
   def test_search_by_locale_name(self):
     self.db_insert_locale(1, 'sv')
@@ -70,11 +85,14 @@ class TestSearch(AppTestCase):
     response = self.client.get('/birds?q=Skata')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    result = data['result']
-    self.assertEqual(len(result), 1)
-    self.assertEqual(result[0], {'id': 1, 'binomialName': 'Pica pica'})
+    self.assertEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'binomialName': 'Pica pica'
+        }
+      ]
+    })
 
 
 class TestBird(AppTestCase):
