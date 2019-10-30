@@ -47,9 +47,9 @@ export default class SightingService {
     });
   }
 
-  async postSighting(accessToken, personId, binomialName, date, time) {
+  async postSighting(accessToken, birderId, binomialName, date, time) {
     const body = {
-      'person': { 'id': personId },
+      'birder': { 'id': birderId },
       'bird': { 'binomialName': binomialName },
       'date': date,
     };

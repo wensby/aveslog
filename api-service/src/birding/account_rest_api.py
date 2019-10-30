@@ -34,7 +34,7 @@ def create_account_rest_api_blueprint(
   def account_response_dict(account: Account):
     return {
       'username': account.username,
-      'personId': account.person_id
+      'birderId': account.birder_id
     }
 
   return blueprint

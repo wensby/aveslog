@@ -44,7 +44,7 @@ export default ({ match }) => {
     event.preventDefault();
     const accessToken = await getAccessToken();
     const response = await sightingService.postSighting(
-      accessToken, account.personId, bird.binomialName, date, time
+      accessToken, account.birderId, bird.binomialName, date, time
     );
     if (response.status === 201) {
       const sightingLocation = response.headers.get('Location');

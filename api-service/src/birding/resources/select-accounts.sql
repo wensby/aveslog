@@ -1,1 +1,1 @@
-SELECT id, username, email, person_id, locale_id FROM account;
+SELECT id, username, email, birder_id, locale_id FROM account;

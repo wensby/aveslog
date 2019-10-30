@@ -70,9 +70,9 @@ class AppTestCase(TestCase):
       self.assertIn(key, session)
       self.assertEqual(session[key], value)
 
-  def db_insert_person(self, person_id, name):
+  def db_insert_birder(self, birder_id, name):
     self.database.query(
-      'INSERT INTO person (id, name) VALUES (%s, %s);', (person_id, name))
+      'INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, name))
 
   def db_insert_locale(self, locale_id, code):
     with self.database.transaction() as transaction:
@@ -83,15 +83,15 @@ class AppTestCase(TestCase):
         account_id: int,
         username: str,
         email: str,
-        person_id: int,
+        birder_id: int,
         locale_id: int,
   ) -> None:
     self.database.query(
       'INSERT INTO account '
-      '(id, username, email, person_id, locale_id) '
+      '(id, username, email, birder_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
-      (account_id, username, email, person_id, locale_id))
+      (account_id, username, email, birder_id, locale_id))
 
   def db_delete_account(self, account_id):
     with self.database.transaction() as transaction:
@@ -144,13 +144,13 @@ class AppTestCase(TestCase):
         'VALUES (%s, %s);', (account_id, token))
 
   def db_insert_sighting(self,
-        sighting_id, person_id, bird_id, sighting_date, sighting_time):
+        sighting_id, birder_id, bird_id, sighting_date, sighting_time):
     with self.database.transaction() as transaction:
       transaction.execute(
         'INSERT INTO '
-        'sighting (id, person_id, bird_id, sighting_date, sighting_time) '
+        'sighting (id, birder_id, bird_id, sighting_date, sighting_time) '
         'VALUES (%s, %s, %s, %s, %s);',
-        (sighting_id, person_id, bird_id, sighting_date, sighting_time))
+        (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
 
   def db_get_account(self, account_id) -> Account:
     with self.database.transaction() as transaction:
@@ -160,13 +160,13 @@ class AppTestCase(TestCase):
       return next(iter(result.rows), None)
 
   def db_setup_account(self,
-        person_id: int,
+        birder_id: int,
         account_id: int,
         username: str,
         password: str,
         email: str) -> None:
-    self.db_insert_person(person_id, username)
-    self.db_insert_account(account_id, username, email, person_id, None)
+    self.db_insert_birder(birder_id, username)
+    self.db_insert_account(account_id, username, email, birder_id, None)
     self.db_insert_password(account_id, password)
 
   def create_access_token(self, account_id: int) -> AccessToken:
@@ -218,7 +218,7 @@ class AppTestCase(TestCase):
       transaction.execute('DELETE FROM bird_thumbnail;')
       transaction.execute('DELETE FROM picture;')
       transaction.execute('DELETE FROM bird;')
-      transaction.execute('DELETE FROM person;')
+      transaction.execute('DELETE FROM birder;')
       transaction.execute('DELETE FROM account_registration;')
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()

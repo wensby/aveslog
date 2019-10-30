@@ -21,7 +21,7 @@ class TestGetActiveAccounts(AppTestCase):
       'result': [
         {
           'username': 'hulot',
-          'personId': 1,
+          'birderId': 1,
         },
       ],
     })
@@ -85,7 +85,7 @@ class TestAccount(AppTestCase):
     data = json.loads(response.data.decode('utf-8'))
     self.assertEqual(data['status'], 'success')
     self.assertEqual(data['account']['username'], 'hulot')
-    self.assertEqual(data['account']['personId'], 1)
+    self.assertEqual(data['account']['birderId'], 1)
 
   def get_own_account(self, token):
     if not token:

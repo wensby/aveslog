@@ -3,7 +3,7 @@ import { Switch } from 'react-router-dom';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 import BirderPage from './BirderPage';
 import Spinner from '../loading/Spinner';
-import { usePerson } from '../person/PersonHooks';
+import { useBirder } from '../birder/BirderHooks';
 
 
 export default function Birder({ match }) {
@@ -18,7 +18,7 @@ export default function Birder({ match }) {
 }
 
 function BirderPageContiner({ birderId }) {
-  const birder = usePerson(birderId);
+  const birder = useBirder(birderId);
 
   if (!birder) {
     return <div><Spinner /></div>;

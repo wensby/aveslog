@@ -53,7 +53,7 @@ class TestSightingRepository(TestCase):
     self.database.query().rows = []
     self.repository.find_sighting(1337)
     self.database.query.assert_called_with(
-      'SELECT id, person_id, bird_id, sighting_date, sighting_time '
+      'SELECT id, birder_id, bird_id, sighting_date, sighting_time '
       'FROM sighting WHERE id = %s;', (1337,))
 
   def test_delete_sighting_queries_database_correctly(self):

@@ -4,11 +4,11 @@ from .database import Database
 
 
 def create_sightings_query(
-      person_id: Optional[int],
+      birder_id: Optional[int],
       limit: Optional[int]
 ) -> str:
   def where_clause():
-    return 'WHERE person_id = %(person_id)s ' if person_id else ''
+    return 'WHERE birder_id = %(birder_id)s ' if birder_id else ''
 
   def limit_clause():
     return 'LIMIT %(limit)s ' if limit else ''
@@ -19,7 +19,7 @@ def create_sightings_query(
     'FROM sighting '
     f'{where_clause()}'
     ') '
-    'SELECT id, person_id, bird_id, sighting_date, sighting_time, full_count '
+    'SELECT id, birder_id, bird_id, sighting_date, sighting_time, full_count '
     'FROM ('
     'TABLE cte '
     'ORDER BY sighting_date DESC, sighting_time DESC '
@@ -32,11 +32,11 @@ def create_sightings_query(
 class SightingPost:
 
   def __init__(self,
-        person_id: int,
+        birder_id: int,
         bird_id: int,
         sighting_date: date,
         sighting_time: Optional[time] = None) -> None:
-    self.person_id: int = person_id
+    self.birder_id: int = birder_id
     self.bird_id: int = bird_id
     self.date: date = sighting_date
     self.time: Optional[time] = sighting_time
@@ -50,12 +50,12 @@ class Sighting:
 
   def __init__(self,
         id: int,
-        person_id: int,
+        birder_id: int,
         bird_id: int,
         sighting_date: date,
         sighting_time: Optional[time]) -> None:
     self.id: int = id
-    self.person_id: int = person_id
+    self.birder_id: int = birder_id
     self.bird_id: int = bird_id
     self.sighting_date: date = sighting_date
     self.sighting_time: Optional[time] = sighting_time
@@ -66,7 +66,7 @@ class Sighting:
     return False
 
   def __repr__(self) -> str:
-    return (f'{self.__class__.__name__}({self.id}, {self.person_id}, '
+    return (f'{self.__class__.__name__}({self.id}, {self.birder_id}, '
             f'{self.bird_id}, {self.sighting_date}, {self.sighting_time})')
 
 
@@ -76,7 +76,7 @@ class SightingRepository:
     self.database: Database = database
 
   def find_sighting(self, sighting_id: int) -> Optional[Sighting]:
-    query = ('SELECT id, person_id, bird_id, sighting_date, sighting_time '
+    query = ('SELECT id, birder_id, bird_id, sighting_date, sighting_time '
              'FROM sighting '
              'WHERE id = %s;')
     result = self.database.query(query, (sighting_id,))
@@ -96,11 +96,11 @@ class SightingRepository:
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'INSERT INTO sighting '
-        '(person_id, bird_id, sighting_date, sighting_time) '
+        '(birder_id, bird_id, sighting_date, sighting_time) '
         'VALUES (%s, %s, %s, %s) '
-        'RETURNING id, person_id, bird_id, sighting_date, sighting_time;'
+        'RETURNING id, birder_id, bird_id, sighting_date, sighting_time;'
         , (
-          sighting_post.person_id,
+          sighting_post.birder_id,
           sighting_post.bird_id,
           sighting_post.date,
           sighting_post.time
@@ -111,11 +111,11 @@ class SightingRepository:
         return result.rows[0]
 
   def sightings(self,
-        person_id: Optional[int] = None,
+        birder_id: Optional[int] = None,
         limit: Optional[int] = None
   ) -> Tuple[List[Sighting], bool]:
-    query = create_sightings_query(person_id, limit)
-    values = {'person_id': person_id, 'limit': limit}
+    query = create_sightings_query(birder_id, limit)
+    values = {'birder_id': birder_id, 'limit': limit}
     with self.database.transaction() as transaction:
       result = transaction.execute(query, values)
     sightings_present = result.rows[0][0]

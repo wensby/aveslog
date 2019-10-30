@@ -26,7 +26,7 @@ def create_sighting_rest_api_blueprint(
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
     (sightings, total_rows) = sighting_repository.sightings(
-      person_id=account.person_id)
+      birder_id=account.birder_id)
     return sightings_response(sightings, False)
 
   @blueprint.route('/sighting')
@@ -43,7 +43,7 @@ def create_sighting_rest_api_blueprint(
   @require_authentication(token_decoder, account_repository)
   def get_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
-    if sighting and sighting.person_id == account.person_id:
+    if sighting and sighting.birder_id == account.birder_id:
       return make_response(jsonify(convert_sighting(sighting)), HTTPStatus.OK)
     else:
       return get_sighting_failure_response()
@@ -54,7 +54,7 @@ def create_sighting_rest_api_blueprint(
     sighting = sighting_repository.find_sighting(sighting_id)
     if not sighting:
       return sighting_deleted_response()
-    if sighting.person_id != account.person_id:
+    if sighting.birder_id != account.birder_id:
       return sighting_delete_unauthorized_response()
     sighting_repository.delete_sighting(sighting_id)
     return sighting_deleted_response()
@@ -62,8 +62,8 @@ def create_sighting_rest_api_blueprint(
   @blueprint.route('/sighting', methods=['POST'])
   @require_authentication(token_decoder, account_repository)
   def post_sighting(account: Account) -> Response:
-    person_id = request.json['person']['id']
-    if account.person_id != person_id:
+    birder_id = request.json['birder']['id']
+    if account.birder_id != birder_id:
       return post_sighting_unauthorized_response()
     binomial_name = request.json['bird']['binomialName']
     bird = bird_repository.get_bird_by_binomial_name(binomial_name)
@@ -74,10 +74,10 @@ def create_sighting_rest_api_blueprint(
     return post_sighting_success_response(sighting.id)
 
   def create_sighting_post(post_data: dict, bird: Bird) -> SightingPost:
-    person_id = post_data['person']['id']
+    birder_id = post_data['birder']['id']
     date = parse_date(post_data['date'])
     time = parse_time(post_data['time']) if 'time' in post_data else None
-    return SightingPost(person_id, bird.id, date, time)
+    return SightingPost(birder_id, bird.id, date, time)
 
   def sightings_failure_response(error_message):
     return make_response(jsonify({
@@ -122,7 +122,7 @@ def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:
 def convert_sighting(sighting: Sighting) -> dict:
   result = {
     'id': sighting.id,
-    'personId': sighting.person_id,
+    'birderId': sighting.birder_id,
     'birdId': sighting.bird_id,
     'date': sighting.sighting_date.isoformat(),
   }

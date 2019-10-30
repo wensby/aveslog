@@ -2,7 +2,7 @@ CREATE TABLE account (
   id SERIAL,
   username TEXT,
   email TEXT,
-  person_id INTEGER,
+  birder_id INTEGER,
   locale_id INTEGER,
   CONSTRAINT account_id_primary_key PRIMARY KEY (id),
   CONSTRAINT account_username_not_null CHECK (username IS NOT NULL),

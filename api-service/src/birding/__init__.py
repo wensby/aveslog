@@ -6,7 +6,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
-from .person_rest_api import create_person_rest_api_blueprint
+from .birders_rest_api import create_birder_rest_api_blueprint
 from .sighting_rest_api import create_sighting_rest_api_blueprint
 from .account import AccountRepository, AccountFactory
 from .account import PasswordHasher
@@ -32,7 +32,7 @@ from .localization import LocaleRepository, LocaleDeterminerFactory
 from .localization import LoadedLocale
 from .localization import LocaleLoader, Locale
 from .mail import MailDispatcherFactory
-from .person import PersonRepository
+from .birder import BirderRepository
 from .picture import PictureRepository
 from .search import BirdSearchController
 from .search import BirdSearcher
@@ -58,7 +58,7 @@ def create_app(test_config: dict = None) -> Flask:
   account_repository = AccountRepository(database, hasher, token_factory)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
-  person_repository = PersonRepository(database)
+  birder_repository = BirderRepository(database)
   authenticator = Authenticator(account_repository, hasher)
   localespath = os.path.join(app.root_path, 'locales')
   locales_misses_repository = {}
@@ -79,7 +79,7 @@ def create_app(test_config: dict = None) -> Flask:
   account_factory = AccountFactory(database, hasher)
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,
-    person_repository)
+    birder_repository)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
   password_repository = PasswordRepository(token_factory, database, hasher)
@@ -113,10 +113,10 @@ def create_app(test_config: dict = None) -> Flask:
     refresh_token_repository,
     authentication_token_factory,
   )
-  person_rest_api = create_person_rest_api_blueprint(
+  birder_rest_api = create_birder_rest_api_blueprint(
     jwt_decoder,
     account_repository,
-    person_repository,
+    birder_repository,
     sighting_repository,
   )
   account_rest_api = create_account_rest_api_blueprint(
@@ -138,7 +138,7 @@ def create_app(test_config: dict = None) -> Flask:
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
-  app.register_blueprint(person_rest_api)
+  app.register_blueprint(birder_rest_api)
 
   @app.before_request
   def before_request():

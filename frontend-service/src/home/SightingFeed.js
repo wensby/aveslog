@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useBird } from '../bird/BirdHooks';
-import { usePerson } from '../person/PersonHooks';
+import { useBirder } from '../birder/BirderHooks';
 import BirdCardPicture from '../bird/BirdCardPicture';
 import BirdLink from '../bird/BirdLink';
 import { useTranslation, Trans } from 'react-i18next';
@@ -13,11 +13,11 @@ export default function SightingFeed({ sightings }) {
 
 function SightingFeedItemContainer({ sighting }) {
   const bird = useBird(sighting.birdId);
-  const person = usePerson(sighting.personId);
-  if (!bird || !person) {
+  const birder = useBirder(sighting.birderId);
+  if (!bird || !birder) {
     return null;
   }
-  return <SightingFeedItem sighting={sighting} bird={bird} birder={person} />;
+  return <SightingFeedItem sighting={sighting} bird={bird} birder={birder} />;
 }
 
 function SightingFeedItem({ birder, sighting, bird }) {

@@ -3,41 +3,41 @@ from flask import Blueprint, make_response, jsonify
 
 from .sighting_rest_api import sightings_response
 from .sighting import SightingRepository
-from .person import PersonRepository
-from .person import Person
+from .birder import BirderRepository
+from .birder import Birder
 from .account import AccountRepository, Account
 from .authentication import JwtDecoder
 from .authentication_rest_api import require_authentication
 
 
-def create_person_rest_api_blueprint(
+def create_birder_rest_api_blueprint(
       jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
-      person_repository: PersonRepository,
+      birder_repository: BirderRepository,
       sighting_repository: SightingRepository,
 ) -> Blueprint:
-  blueprint = Blueprint('person', __name__)
+  blueprint = Blueprint('birders', __name__)
 
-  @blueprint.route('/person/<int:person_id>')
+  @blueprint.route('/birders/<int:birder_id>')
   @require_authentication(jwt_decoder, account_repository)
-  def get_person(person_id: int, account: Account):
-    person = person_repository.person_by_id(person_id)
-    if not person:
+  def get_birder(birder_id: int, account: Account):
+    birder = birder_repository.birder_by_id(birder_id)
+    if not birder:
       return make_response('', HTTPStatus.NOT_FOUND)
-    return make_response(jsonify(convert_person(person)), HTTPStatus.OK)
+    return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
 
   @blueprint.route('/birders/<int:birder_id>/sightings')
   @require_authentication(jwt_decoder, account_repository)
   def get_birder_sightings(birder_id: int, account: Account):
     (sightings, total_rows) = sighting_repository.sightings(
-      person_id=birder_id)
+      birder_id=birder_id)
     return sightings_response(sightings, False)
 
   return blueprint
 
 
-def convert_person(person: Person) -> dict:
+def convert_birder(birder: Birder) -> dict:
   return {
-    'id': person.id,
-    'name': person.name,
+    'id': birder.id,
+    'name': birder.name,
   }

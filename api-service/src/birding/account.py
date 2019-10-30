@@ -7,7 +7,7 @@ from typing import Optional, Union, Any, List, TypeVar, Type
 from birding.database import Database
 from .database import read_script_file
 from birding.mail import EmailAddress
-from birding.person import Person
+from birding.birder import Birder
 
 
 class Username:
@@ -67,11 +67,11 @@ class Account:
   def fromrow(cls, row):
     return cls(row[0], row[1], row[2], row[3], row[4])
 
-  def __init__(self, account_id, username, email, person_id, locale_id):
+  def __init__(self, account_id, username, email, birder_id, locale_id):
     self.id = account_id
     self.username = username
     self.email = email
-    self.person_id = person_id
+    self.birder_id = birder_id
     self.locale_id = locale_id
 
   def __eq__(self, other):
@@ -81,7 +81,7 @@ class Account:
 
   def __repr__(self):
     return (f'Account({self.id}, {self.username}, {self.email}, '
-            f'{self.person_id}, {self.locale_id})')
+            f'{self.birder_id}, {self.locale_id})')
 
 
 class PasswordHasher:
@@ -121,7 +121,7 @@ class AccountFactory:
       result = transaction.execute(
         ('INSERT INTO account (username, email) '
          'VALUES (%s, %s) '
-         'RETURNING id, username, email, person_id, locale_id;'),
+         'RETURNING id, username, email, birder_id, locale_id;'),
         (credentials.username.raw, email.raw))
       account = next(map(Account.fromrow, result.rows), None)
       if not account:
@@ -226,14 +226,14 @@ class AccountRepository:
         username: Union[Username, str]) -> Optional[Account]:
     if isinstance(username, Username):
       username = username.raw
-    query = ('SELECT id, username, email, person_id, locale_id '
+    query = ('SELECT id, username, email, birder_id, locale_id '
              'FROM account '
              'WHERE username ILIKE %s;')
     result = self.database.query(query, (username,))
     return next(map(Account.fromrow, result.rows), None)
 
   def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
-    query = ('SELECT id, username, email, person_id, locale_id '
+    query = ('SELECT id, username, email, birder_id, locale_id '
              'FROM account '
              'WHERE email LIKE %s;')
     result = self.database.query(query, (email.raw,))
@@ -246,11 +246,11 @@ class AccountRepository:
     result = self.database.query(query, (account.id,))
     return next(map(HashedPassword.fromrow, result.rows), None)
 
-  def set_account_person(self, account: Account, person: Person) -> None:
+  def set_account_birder(self, account: Account, birder: Birder) -> None:
     query = ('UPDATE account '
-             'SET person_id = %s '
+             'SET birder_id = %s '
              'WHERE id = %s;')
-    self.database.query(query, (person.id, account.id))
+    self.database.query(query, (birder.id, account.id))
 
   def accounts(self) -> List[Account]:
     with self.database.transaction() as transaction:

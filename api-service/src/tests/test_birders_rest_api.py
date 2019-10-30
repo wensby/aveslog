@@ -4,14 +4,14 @@ from test_util import AppTestCase
 from http import HTTPStatus
 
 
-class TestGetPerson(AppTestCase):
+class TestGetBirder(AppTestCase):
 
-  def test_get_person(self):
+  def test_get_birder(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     token = self.create_access_token(1)
     headers = {'accessToken': token.jwt}
 
-    response = self.client.get('/person/1', headers=headers)
+    response = self.client.get('/birders/1', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -19,9 +19,9 @@ class TestGetPerson(AppTestCase):
       'name': 'hulot',
     })
 
-class TestGetPersonsSightings(AppTestCase):
+class TestGetBirderSightings(AppTestCase):
 
-  def test_get_person_sightings(self):
+  def test_get_birder_sightings(self):
     self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_setup_account(2, 2, 'george', 'costanza', 'tbone@mail.com')
@@ -37,7 +37,7 @@ class TestGetPersonsSightings(AppTestCase):
       'items': [
         {
           'id': 1,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00',

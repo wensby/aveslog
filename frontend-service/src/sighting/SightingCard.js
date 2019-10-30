@@ -29,7 +29,7 @@ export default function SightingCard({ sighting }) {
 function CardBodyRight({ sighting }) {
   const { account } = useContext(UserContext);
   const { t } = useTranslation();
-  if (sighting.personId !== account.personId) {
+  if (sighting.birderId !== account.birderId) {
     return null;
   }
   return (

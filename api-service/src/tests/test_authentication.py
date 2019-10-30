@@ -18,7 +18,7 @@ from birding.account import PasswordRepository
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
   AccountFactory
-from birding.person import PersonRepository
+from birding.birder import BirderRepository
 from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
@@ -71,13 +71,13 @@ class TestAccountRegistrationController(TestCase):
     self.account_repository = Mock(spec=AccountRepository)
     self.mail_dispatcher = Mock(spec=MailServerDispatcher)
     self.link_factory = Mock(spec=LinkFactory)
-    self.person_repository = Mock(spec=PersonRepository)
+    self.birder_repository = Mock(spec=BirderRepository)
     self.controller = AccountRegistrationController(
       self.account_factory,
       self.account_repository,
       self.mail_dispatcher,
       self.link_factory,
-      self.person_repository,
+      self.birder_repository,
     )
 
   def test_initiate_registration_when_invalid_email(self) -> None:
@@ -159,16 +159,16 @@ class TestAccountRegistrationController(TestCase):
       registration.id)
     self.assertEqual(result, 'success')
 
-  def test_perform_registration_initializes_account_person_on_success(self):
+  def test_perform_registration_initializes_account_birder_on_success(self):
     account = self.account_factory.create_account()
-    person = self.person_repository.add_person()
+    birder = self.birder_repository.add_birder()
     self.account_repository.find_account = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
                                                   valid_username,
                                                   valid_password)
-    self.person_repository.add_person.assert_called_with(account.username)
-    self.account_repository.set_account_person.assert_called_with(account,
-                                                                  person)
+    self.birder_repository.add_birder.assert_called_with(account.username)
+    self.account_repository.set_account_birder.assert_called_with(account,
+                                                                  birder)
     self.assertEqual(result, 'success')
 
 

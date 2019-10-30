@@ -7,7 +7,7 @@ from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
 from .database import Database
 from .database import read_script_file
-from .person import PersonRepository
+from .birder import BirderRepository
 from .link import LinkFactory
 from .localization import LoadedLocale
 from .mail import EmailAddress
@@ -155,12 +155,12 @@ class AccountRegistrationController:
         account_repository: AccountRepository,
         mail_dispatcher: MailDispatcher,
         link_factory: LinkFactory,
-        person_repository: PersonRepository) -> None:
+        birder_repository: BirderRepository) -> None:
     self.account_factory = account_factory
     self.account_repository = account_repository
     self.mail_dispatcher = mail_dispatcher
     self.link_factory = link_factory
-    self.person_repository = person_repository
+    self.birder_repository = birder_repository
 
   def initiate_registration(
         self,
@@ -219,15 +219,15 @@ class AccountRegistrationController:
     credentials = Credentials(username, password)
     account = self.account_factory.create_account(email, credentials)
     self.__remove_registration(registration.id)
-    self.__initialize_account_person(account)
+    self.__initialize_account_birder(account)
     return 'success'
 
   def __remove_registration(self, registration_id: int) -> None:
     self.account_repository.remove_account_registration_by_id(registration_id)
 
-  def __initialize_account_person(self, account: Account) -> None:
-    person = self.person_repository.add_person(account.username)
-    self.account_repository.set_account_person(account, person)
+  def __initialize_account_birder(self, account: Account) -> None:
+    birder = self.birder_repository.add_birder(account.username)
+    self.account_repository.set_account_birder(account, birder)
 
 
 class PasswordUpdateController:

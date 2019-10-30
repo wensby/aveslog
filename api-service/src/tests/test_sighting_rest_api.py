@@ -28,21 +28,21 @@ class TestGetSightings(AppTestCase):
       'items': [
         {
           'id': 1,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 2,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 3,
-          'personId': 2,
+          'birderId': 2,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
@@ -62,7 +62,7 @@ class TestGetSightings(AppTestCase):
       'items': [
         {
           'id': 1,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
@@ -93,14 +93,14 @@ class TestGetSightings(AppTestCase):
       'items': [
         {
           'id': 1,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 2,
-          'personId': 1,
+          'birderId': 1,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
@@ -148,7 +148,7 @@ class TestGetSightings(AppTestCase):
       'items': [
         {
           'id': 3,
-          'personId': 2,
+          'birderId': 2,
           'birdId': 1,
           'date': '2019-08-28',
           'time': '11:52:00'
@@ -172,7 +172,7 @@ class TestGetSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
       'id': 1,
-      'personId': 1,
+      'birderId': 1,
       'birdId': 1,
       'date': '2019-08-28',
       'time': '11:52:00'
@@ -206,7 +206,7 @@ class TestPostSighting(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
 
-  def test_post_sighting_when_person_id_not_match_authentication(self) -> None:
+  def test_post_sighting_when_birder_id_not_match_authentication(self) -> None:
     token = self.create_access_token(1)
     response = self.post_sighting(2, token.jwt, 'pica pica', '17:42')
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
@@ -235,14 +235,14 @@ class TestPostSighting(AppTestCase):
 
   def post_sighting(
         self,
-        person_id: int,
+        birder_id: int,
         token: str,
         binomial_name: str,
         time: str = None
   ) -> Response:
     data = {
-      'person': {
-        'id': person_id
+      'birder': {
+        'id': birder_id
       },
       'bird': {
         'binomialName': binomial_name,

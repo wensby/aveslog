@@ -1,6 +1,6 @@
 CREATE TABLE sighting (
   id SERIAL,
-  person_id INTEGER,
+  birder_id INTEGER,
   bird_id INTEGER,
   sighting_date DATE,
   sighting_time TIME WITHOUT TIME ZONE,

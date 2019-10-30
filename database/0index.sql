@@ -5,7 +5,7 @@
 \i /schema/public/table/hashed_password.sql
 \i /schema/public/table/locale.sql
 \i /schema/public/table/password_reset_token.sql
-\i /schema/public/table/person.sql
+\i /schema/public/table/birder.sql
 \i /schema/public/table/picture.sql
 \i /schema/public/table/refresh_token.sql
 \i /schema/public/table/sighting.sql
