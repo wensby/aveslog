@@ -6,9 +6,11 @@ from http import HTTPStatus
 
 class TestGetBirder(AppTestCase):
 
-  def test_get_birder(self):
+  def setUp(self):
+    super().setUp()
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
 
+  def test_get_birder(self):
     response = self.get_with_access_token('/birders/1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -18,7 +20,6 @@ class TestGetBirder(AppTestCase):
     })
 
   def test_get_birder_when_missing(self):
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     response = self.get_with_access_token('/birders/2', account_id=1)
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
