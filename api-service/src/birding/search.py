@@ -6,11 +6,11 @@ from .bird import BirdRepository
 from .localization import LocaleRepository, LocaleLoader
 
 
-class BirdMatch:
+class BirdSearchMatch:
 
-  def __init__(self, bird: Bird, query_match: float):
+  def __init__(self, bird: Bird, score: float):
     self.bird = bird
-    self.query_match = query_match
+    self.score = score
 
 
 class StringMatcher:
@@ -32,7 +32,7 @@ class BirdSearcher:
     self.string_matcher = string_matcher
     self.locale_loader = locale_loader
 
-  def search(self, name: Optional[str] = None) -> List[BirdMatch]:
+  def search(self, name: Optional[str] = None) -> List[BirdSearchMatch]:
     birds = self.bird_repository.birds
     result_builder = ResultBuilder(birds)
     if name:
@@ -78,13 +78,13 @@ class BirdSearchController:
   def __init__(self, bird_searcher: BirdSearcher):
     self.bird_searcher = bird_searcher
 
-  def search(self, name: str, limit: Optional[int]) -> List[BirdMatch]:
-    bird_matches = self.bird_searcher.search(name)
-    bird_matches.sort(key=lambda m: m.query_match, reverse=True)
+  def search(self, name: str, limit: Optional[int]) -> List[BirdSearchMatch]:
+    matches = self.bird_searcher.search(name)
+    matches.sort(key=lambda m: m.score, reverse=True)
     if limit:
-      return bird_matches[:limit]
+      return matches[:limit]
     else:
-      return bird_matches[:20]
+      return matches[:20]
 
 
 class ResultBuilder:
@@ -94,21 +94,21 @@ class ResultBuilder:
 
   def add_matches(self, matches: Dict[Bird, List[float]]):
     if matches:
-      for k, v in matches.items():
-        for match in v:
-          self.add_match(k, match)
+      for bird, scores in matches.items():
+        for score in scores:
+          self.add_match_score(bird, score)
 
-  def add_match(self, bird: Bird, match: float):
-    self.matches_by_bird[bird].append(match)
+  def add_match_score(self, bird: Bird, score: float):
+    self.matches_by_bird[bird].append(score)
 
-  def create_bird_matches(self) -> List[BirdMatch]:
-    bird_matches = []
+  def create_bird_matches(self) -> List[BirdSearchMatch]:
+    matches = []
     for bird in self.matches_by_bird:
-      query_match = self.__average_query_match(bird)
-      bird_matches.append(BirdMatch(bird, query_match))
-    return bird_matches
+      score = self.__average_score(bird)
+      matches.append(BirdSearchMatch(bird, score))
+    return matches
 
-  def __average_query_match(self, bird: Bird) -> float:
+  def __average_score(self, bird: Bird) -> float:
     if self.matches_by_bird[bird]:
       return sum(self.matches_by_bird[bird]) / len(self.matches_by_bird[bird])
     return 0.0

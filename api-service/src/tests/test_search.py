@@ -5,7 +5,7 @@ from unittest.mock import Mock
 from birding import BirdSearchController, StringMatcher, BirdSearcher
 from birding import Locale, LoadedLocale
 from birding.bird import Bird
-from birding.search import BirdMatch
+from birding.search import BirdSearchMatch
 from tests.test_util import mock_return
 
 picapica = Bird(1, 'Pica pica')
@@ -17,8 +17,8 @@ class TestBirdSearchController(TestCase):
     self.searcher = Mock()
     self.controller = BirdSearchController(self.searcher)
 
-  def test_search_return_result_sorted_based_on_query_match(self):
-    search_result = [Simple(bird=Simple(id=i), query_match=i) for i in range(5)]
+  def test_search_return_result_sorted_based_on_score(self):
+    search_result = [Simple(bird=Simple(id=i), score=i) for i in range(5)]
     self.searcher.search = mock_return(search_result)
 
     result = self.controller.search('name', None)
@@ -27,7 +27,7 @@ class TestBirdSearchController(TestCase):
     self.assertListEqual(result_bird_ids, list(range(0, 5))[::-1])
 
   def test_search_returns_limited_items(self):
-    search_result = [Simple(query_match=1) for i in range(0, 1000)]
+    search_result = [Simple(score=1) for i in range(0, 1000)]
     self.searcher.search = mock_return(search_result)
 
     result = self.controller.search('name', limit=100)
@@ -50,7 +50,7 @@ class TestBirdSearcher(TestCase):
 
     matches = searcher.search('Pica pica')
 
-    self.assertIsInstance(matches[0], BirdMatch)
+    self.assertIsInstance(matches[0], BirdSearchMatch)
 
   def test_search_finds_bird_by_binomial_name(self):
     swedish_locale = Locale(1, 'sv')
@@ -91,16 +91,16 @@ class TestBirdSearcher(TestCase):
     self.assertEqual(len(matches), 1)
 
 
-class TestBirdMatch(TestCase):
+class TestBirdSearchMatch(TestCase):
 
-  def test_query_match(self):
-    query_match = 1
-    match = BirdMatch(picapica, query_match)
-    self.assertIs(match.query_match, query_match)
+  def test_score(self):
+    score = 1
+    match = BirdSearchMatch(picapica, score)
+    self.assertIs(match.score, score)
 
   def test_bird(self):
     bird = picapica
-    match = BirdMatch(bird, 1)
+    match = BirdSearchMatch(bird, 1)
     self.assertIs(match.bird, bird)
 
 

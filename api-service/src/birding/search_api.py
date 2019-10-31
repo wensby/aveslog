@@ -6,7 +6,7 @@ from flask import Blueprint, make_response, jsonify, request
 from .bird import BirdRepository
 from .link import LinkFactory
 from .picture import PictureRepository, Picture
-from .search import BirdSearchController
+from .search import BirdSearchController, BirdSearchMatch
 
 
 def create_search_api_blueprint(
@@ -17,12 +17,13 @@ def create_search_api_blueprint(
 ) -> Blueprint:
   blueprint = Blueprint('search', __name__, url_prefix='/search')
 
-  def result_item(bird):
+  def result_item(match: BirdSearchMatch):
     item = {
-      'id': bird.id,
-      'binomialName': bird.binomial_name,
+      'id': match.bird.id,
+      'binomialName': match.bird.binomial_name,
+      'score': match.score,
     }
-    bird_thumbnail = bird_repository.bird_thumbnail(bird)
+    bird_thumbnail = bird_repository.bird_thumbnail(match.bird)
     if bird_thumbnail:
       item['thumbnail'] = get_bird_thumbnail_url(bird_thumbnail)
     return item
@@ -31,8 +32,7 @@ def create_search_api_blueprint(
   def search_birds():
     name = request.args.get('q')
     limit = request.args.get('limit', type=int)
-    bird_matches = list(map(result_item, map(
-      lambda match: match.bird, controller.search(name, limit))))
+    bird_matches = list(map(result_item, controller.search(name, limit)))
     return make_response(jsonify({
       'items': bird_matches,
     }), HTTPStatus.OK)

@@ -24,6 +24,7 @@ class TestSearchBirds(AppTestCase):
         {
           'id': 1,
           'binomialName': 'Pica pica',
+          'score': 0
         }
       ]
     })
@@ -41,7 +42,8 @@ class TestSearchBirds(AppTestCase):
         {
           'id': 1,
           'binomialName': 'Pica pica',
-          'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg'
+          'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+          'score': 0.6153846153846154,
         }
       ]
     })
@@ -57,7 +59,8 @@ class TestSearchBirds(AppTestCase):
       'items': [
         {
           'id': 1,
-          'binomialName': 'Pica pica'
+          'binomialName': 'Pica pica',
+          'score': 0.2
         }
       ]
     })
@@ -72,7 +75,8 @@ class TestSearchBirds(AppTestCase):
       'items': [
         {
           'id': 1,
-          'binomialName': 'Pica pica'
+          'binomialName': 'Pica pica',
+          'score': 1,
         }
       ]
     })
@@ -88,7 +92,8 @@ class TestSearchBirds(AppTestCase):
       'items': [
         {
           'id': 1,
-          'binomialName': 'Pica pica'
+          'binomialName': 'Pica pica',
+          'score': 1,
         }
       ]
     })
