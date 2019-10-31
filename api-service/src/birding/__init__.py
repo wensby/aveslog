@@ -6,6 +6,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
+from .search_api import create_search_api_blueprint
 from .birders_rest_api import create_birder_rest_api_blueprint
 from .sighting_rest_api import create_sighting_rest_api_blueprint
 from .account import AccountRepository, AccountFactory
@@ -122,9 +123,6 @@ def create_app(test_config: dict = None) -> Flask:
   account_rest_api = create_account_rest_api_blueprint(
     jwt_decoder, account_repository)
   bird_rest_api = create_bird_rest_api_blueprint(
-    bird_search_controller,
-    bird_repository,
-    picture_repository,
     link_factory,
     bird_view_factory
   )
@@ -134,11 +132,18 @@ def create_app(test_config: dict = None) -> Flask:
     sighting_repository,
     bird_repository,
   )
+  search_api_blueprint = create_search_api_blueprint(
+    bird_search_controller,
+    bird_repository,
+    picture_repository,
+    link_factory
+  )
   app.register_blueprint(sighting_api)
   app.register_blueprint(bird_rest_api)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
   app.register_blueprint(birder_rest_api)
+  app.register_blueprint(search_api_blueprint)
 
   @app.before_request
   def before_request():

@@ -1,42 +1,18 @@
 import os
 from http import HTTPStatus
 
-from flask import Blueprint, make_response, jsonify, request, Response
+from flask import Blueprint, make_response, jsonify, Response
 
 from .bird_view import BirdViewFactory, BirdPageView
-from .bird import BirdRepository
 from .link import LinkFactory
-from .picture import PictureRepository, Picture
-from .search import BirdSearchController
+from .picture import Picture
 
 
 def create_bird_rest_api_blueprint(
-      controller: BirdSearchController,
-      bird_repository: BirdRepository,
-      picture_repository: PictureRepository,
       link_factory: LinkFactory,
       bird_view_factory: BirdViewFactory,
 ) -> Blueprint:
   blueprint = Blueprint('birds', __name__, url_prefix='/birds')
-
-  def result_item(bird):
-    item = {
-      'id': bird.id,
-      'binomialName': bird.binomial_name,
-    }
-    bird_thumbnail = bird_repository.bird_thumbnail(bird)
-    if bird_thumbnail:
-      item['thumbnail'] = get_bird_thumbnail_url(bird_thumbnail)
-    return item
-
-  @blueprint.route('')
-  def get_birds():
-    name = request.args.get('q')
-    limit = request.args.get('limit', type=int)
-    bird_matches = list(map(result_item, map(lambda match: match.bird, controller.search(name, limit))))
-    return make_response(jsonify({
-      'items': bird_matches,
-    }), HTTPStatus.OK)
 
   @blueprint.route('/<string:binomial_name>')
   def get_bird(binomial_name: str) -> Response:
@@ -64,11 +40,6 @@ def create_bird_rest_api_blueprint(
       result['thumbnailCredit'] = view.thumbnail_picture.credit
       result['thumbnailUrl'] = external_picture_url(view.thumbnail_picture)
     return result
-
-  def get_bird_thumbnail_url(bird_thumbnail):
-    pictures = picture_repository.pictures()
-    picture = [x for x in pictures if x.id == bird_thumbnail.picture_id][0]
-    return external_picture_url(picture)
 
   def external_picture_url(picture: Picture) -> str:
     static_picture_url = os.path.join('/static/', picture.filepath)

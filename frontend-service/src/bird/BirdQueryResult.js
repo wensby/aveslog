@@ -16,7 +16,7 @@ export default function BirdQueryResult(props) {
       if (query !== displayedQuery) {
         setLoading(true);
         const service = new BirdService();
-        const response = await service.queryBirds(query);
+        const response = await service.searchBirds(query);
           if (response.status === 200) {
           setResultItems((await response.json()).items);
         }

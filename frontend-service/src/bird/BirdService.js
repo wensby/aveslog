@@ -4,8 +4,8 @@ export default class BirdService {
     this.apiUrl = window._env_.API_URL;
   }
 
-  async queryBirds(query) {
-    return await fetch(`${this.apiUrl}/birds?q=${query}`);
+  async searchBirds(query) {
+    return await fetch(`${this.apiUrl}/search/birds?q=${query}`);
   }
 
   async getBird(binomialName) {
