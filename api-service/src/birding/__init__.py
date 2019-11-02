@@ -6,6 +6,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 
+from .sqlalchemy_database import EngineFactory, SessionFactory
 from .search_api import create_search_api_blueprint
 from .birders_rest_api import create_birder_rest_api_blueprint
 from .sighting_rest_api import create_sighting_rest_api_blueprint
@@ -50,6 +51,10 @@ def create_app(test_config: dict = None) -> Flask:
   user_locale_cookie_key = 'user_locale'
   database_connection_factory = DatabaseFactory(app.logger)
   database_connection_details = create_database_connection_details()
+  engine_factory = EngineFactory()
+  engine = engine_factory.create_engine(**database_connection_details)
+  session_factory = SessionFactory(engine)
+  session = session_factory.create_session()
   database = database_connection_factory.create_database(
     **database_connection_details)
   app.db = database
@@ -59,7 +64,7 @@ def create_app(test_config: dict = None) -> Flask:
   account_repository = AccountRepository(database, hasher, token_factory)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
-  birder_repository = BirderRepository(database)
+  birder_repository = BirderRepository(session)
   authenticator = Authenticator(account_repository, hasher)
   localespath = os.path.join(app.root_path, 'locales')
   locales_misses_repository = {}

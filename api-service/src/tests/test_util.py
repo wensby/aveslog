@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 from datetime import timedelta
@@ -57,6 +58,7 @@ class AppTestCase(TestCase):
     self.app_context = self._app.test_request_context()
     self.app_context.push()
     self.client = self._app.test_client()
+    logging.disable(logging.CRITICAL)
 
   def get_with_access_token(self, uri: str, *, account_id: int) -> Response:
     token = self.create_access_token(account_id)
@@ -226,6 +228,7 @@ class AppTestCase(TestCase):
       transaction.execute('DELETE FROM account_registration;')
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()
+    logging.disable(logging.NOTSET)
 
   def assertFlashedMessage(self, category, message):
     self.assertEqual(self.get_flashed_messages(category), message)
