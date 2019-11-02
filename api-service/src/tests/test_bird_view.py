@@ -32,8 +32,8 @@ class TestBirdViewFactory(TestCase):
 
   def test_eq_false_when_other_type(self):
     bird = Bird(4, 'Pica pica')
-    cover_picture = Picture(8, 'filepath1', 'credit1')
-    thumbnail_picture = Picture(15, 'filepath2', 'credit2')
+    cover_picture = Picture(filepath='filepath1', credit='credit1')
+    thumbnail_picture = Picture(filepath='filepath2', credit='credit2')
     page_view = BirdPageView(bird, cover_picture, thumbnail_picture)
     self.assertNotEqual(
       page_view,
