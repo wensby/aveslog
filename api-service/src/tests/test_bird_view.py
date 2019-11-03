@@ -31,7 +31,7 @@ class TestBirdViewFactory(TestCase):
     self.picture_repository.pictures.assert_called()
 
   def test_eq_false_when_other_type(self):
-    bird = Bird(4, 'Pica pica')
+    bird = Bird(binomial_name='Pica pica')
     cover_picture = Picture(filepath='filepath1', credit='credit1')
     thumbnail_picture = Picture(filepath='filepath2', credit='credit2')
     page_view = BirdPageView(bird, cover_picture, thumbnail_picture)

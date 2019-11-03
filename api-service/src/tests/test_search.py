@@ -8,7 +8,7 @@ from birding.bird import Bird
 from birding.search import BirdSearchMatch
 from tests.test_util import mock_return
 
-picapica = Bird(1, 'Pica pica')
+picapica = Bird(binomial_name='Pica pica')
 
 
 class TestBirdSearchController(TestCase):

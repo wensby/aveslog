@@ -72,7 +72,7 @@ def create_app(test_config: dict = None) -> Flask:
   locale_repository = LocaleRepository(localespath, locale_loader, database)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
                                                       locale_repository)
-  bird_repository = BirdRepository(database)
+  bird_repository = BirdRepository(database, session)
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository, locale_repository, string_matcher, locale_loader)

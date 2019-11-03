@@ -1,28 +1,23 @@
 from typing import Any, Type, TypeVar, Optional, List
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Session
 
 from .database import Database
-from .database import read_script_file
-
-BirdType = TypeVar('BirdType', bound='Bird')
+from .sqlalchemy_database import Base
 
 
-class Bird:
+class Bird(Base):
+  __tablename__ = 'bird'
+  id = Column(Integer, primary_key=True)
+  binomial_name = Column(String, nullable=False)
 
-  @classmethod
-  def from_row(cls: Type[BirdType], row: list) -> BirdType:
-    return cls(row[0], row[1])
-
-  def __init__(self, bird_id: int, binomial_name: str) -> None:
-    self.id: int = bird_id
-    self.binomial_name: str = binomial_name
-
-  def __eq__(self, other: Any) -> bool:
+  def __eq__(self, other: Any):
     if isinstance(other, Bird):
-      return self.__dict__ == other.__dict__
+      return self.id == other.id and self.binomial_name == other.binomial_name
     return False
 
-  def __repr__(self) -> str:
-    return f'{self.__class__.__name__}({self.id}, {self.binomial_name})'
+  def __repr__(self):
+    return f"<Bird(binomial_name='{self.binomial_name}')>"
 
   def __hash__(self) -> int:
     return hash((self.id, self.binomial_name))
@@ -53,18 +48,9 @@ class BirdThumbnail:
 
 class BirdRepository:
 
-  def __init__(self, database: Database) -> None:
-    self.database: Database = database
-
-  def fetchonebird(self,
-        query: str,
-        vars: Optional[tuple] = None) -> Optional[Bird]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(query, vars, Bird.from_row)
-      if not result.rows:
-        return None
-      else:
-        return result.rows[0]
+  def __init__(self, database: Database, sqlalchemy_session: Session):
+    self.database = database
+    self.session = sqlalchemy_session
 
   def bird_thumbnail(self, bird: Bird) -> Optional[BirdThumbnail]:
     query = (
@@ -76,16 +62,12 @@ class BirdRepository:
     return next(map(BirdThumbnail.fromrow, result.rows), None)
 
   def get_bird_by_id(self, id: int) -> Optional[Bird]:
-    return self.fetchonebird(
-      "SELECT id, binomial_name FROM bird WHERE id = %s;", (id,))
+    return self.session.query(Bird).get(id)
 
   def get_bird_by_binomial_name(self, binomial_name: str) -> Optional[Bird]:
-    return self.fetchonebird(
-      "SELECT id, binomial_name FROM bird WHERE binomial_name ILIKE %s;",
-      (binomial_name,))
+    return self.session.query(Bird).filter(
+      Bird.binomial_name.ilike(binomial_name)).first()
 
   @property
   def birds(self) -> List[Bird]:
-    with self.database.transaction() as transaction:
-      query = read_script_file('select-birds.sql')
-      return transaction.execute(query, mapper=Bird.from_row).rows
+    return self.session.query(Bird).all()
