@@ -1,6 +1,6 @@
-from typing import Any, Type, TypeVar, Optional, List
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Session
+from typing import Any, Optional, List
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import Session, relationship
 
 from .database import Database
 from .sqlalchemy_database import Base
@@ -10,6 +10,7 @@ class Bird(Base):
   __tablename__ = 'bird'
   id = Column(Integer, primary_key=True)
   binomial_name = Column(String, nullable=False)
+  thumbnail = relationship('BirdThumbnail', back_populates='bird')
 
   def __eq__(self, other: Any):
     if isinstance(other, Bird):
@@ -23,43 +24,29 @@ class Bird(Base):
     return hash((self.id, self.binomial_name))
 
 
-T = TypeVar('T', bound='BirdThumbnail')
-
-
-class BirdThumbnail:
-
-  def __init__(self, bird_id: int, picture_id: int) -> None:
-    self.bird_id: int = bird_id
-    self.picture_id: int = picture_id
-
-  @classmethod
-  def fromrow(cls: Type[T], row: list) -> T:
-    return cls(row[0], row[1])
+class BirdThumbnail(Base):
+  __tablename__ = 'bird_thumbnail'
+  bird_id = Column(Integer, ForeignKey('bird.id'), primary_key=True)
+  picture_id = Column(Integer, ForeignKey('picture.id'))
+  bird = relationship('Bird', back_populates='thumbnail')
 
   def __repr__(self) -> str:
     return \
-      f'BirdThumbnail<bird_id={self.bird_id}, picture_id={self.picture_id}>'
+      f"<BirdThumbnail(bird_id='{self.bird_id}', picture_id='{self.picture_id}')>"
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, BirdThumbnail):
-      return self.__dict__ == other.__dict__
+      return self.bird_id == other.bird_id and self.picture_id == other.picture_id
     return False
 
 
 class BirdRepository:
 
-  def __init__(self, database: Database, sqlalchemy_session: Session):
-    self.database = database
+  def __init__(self, sqlalchemy_session: Session):
     self.session = sqlalchemy_session
 
   def bird_thumbnail(self, bird: Bird) -> Optional[BirdThumbnail]:
-    query = (
-      'SELECT bird_id, picture_id '
-      'FROM bird_thumbnail '
-      'WHERE bird_id = %s;'
-    )
-    result = self.database.query(query, (bird.id,))
-    return next(map(BirdThumbnail.fromrow, result.rows), None)
+    return self.session.query(BirdThumbnail).filter_by(bird_id=bird.id).first()
 
   def get_bird_by_id(self, id: int) -> Optional[Bird]:
     return self.session.query(Bird).get(id)
