@@ -5,7 +5,7 @@ from flask import Blueprint, Response, make_response, jsonify, request
 
 from .authentication_rest_api import require_authentication
 from .bird import BirdRepository, Bird
-from .sighting import SightingRepository, SightingPost, Sighting
+from .sighting import SightingRepository, Sighting
 from .time import parse_date
 from .time import parse_time
 from .account import AccountRepository, Account
@@ -69,15 +69,15 @@ def create_sighting_rest_api_blueprint(
     bird = bird_repository.get_bird_by_binomial_name(binomial_name)
     if not bird:
       return make_response('', HTTPStatus.BAD_REQUEST)
-    sighting_post = create_sighting_post(request.json, bird)
-    sighting = sighting_repository.add_sighting(sighting_post)
+    sighting = create_sighting(request.json, bird)
+    sighting = sighting_repository.add_sighting(sighting)
     return post_sighting_success_response(sighting.id)
 
-  def create_sighting_post(post_data: dict, bird: Bird) -> SightingPost:
-    birder_id = post_data['birder']['id']
-    date = parse_date(post_data['date'])
-    time = parse_time(post_data['time']) if 'time' in post_data else None
-    return SightingPost(birder_id, bird.id, date, time)
+  def create_sighting(post_data: dict, bird: Bird) -> Sighting:
+    return Sighting(
+      birder_id=post_data['birder']['id'], bird_id=bird.id,
+      sighting_date=parse_date(post_data['date']),
+      sighting_time=parse_time(post_data['time']) if 'time' in post_data else None)
 
   def sightings_failure_response(error_message):
     return make_response(jsonify({

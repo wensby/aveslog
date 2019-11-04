@@ -1,21 +1,7 @@
-from datetime import date, time
 from typing import Optional, Any, List, Tuple
 from sqlalchemy.orm import Session
 from .sqlalchemy_database import Base
 from sqlalchemy import Column, Integer, ForeignKey, Date, Time
-
-
-class SightingPost:
-
-  def __init__(self,
-        birder_id: int,
-        bird_id: int,
-        sighting_date: date,
-        sighting_time: Optional[time] = None) -> None:
-    self.birder_id: int = birder_id
-    self.bird_id: int = bird_id
-    self.date: date = sighting_date
-    self.time: Optional[time] = sighting_time
 
 
 class Sighting(Base):
@@ -54,11 +40,7 @@ class SightingRepository:
     self.session.commit()
     return count == 1
 
-  def add_sighting(self, sighting_post: SightingPost) -> Optional[Sighting]:
-    sighting = Sighting(birder_id=sighting_post.birder_id,
-                        bird_id=sighting_post.bird_id,
-                        sighting_date=sighting_post.date,
-                        sighting_time=sighting_post.time)
+  def add_sighting(self, sighting: Sighting) -> Optional[Sighting]:
     self.session.add(sighting)
     self.session.commit()
     return sighting
