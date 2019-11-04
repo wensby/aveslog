@@ -249,11 +249,13 @@ class TestDeleteSighting(AppTestCase):
   def test_delete_sighting_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_sighting(1, 1, 1, date(2019, 9, 14), time(14, 25))
+    self.db_insert_sighting(2, 1, 1, date(2019, 9, 14), time(14, 25))
     authentication_token = self.create_access_token(1)
 
     response = self.delete_sighting(authentication_token.jwt, 1)
 
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+    self.assertEqual(len(self.db_get_sighting_rows()), 1)
 
   def test_delete_sighting_when_not_exist(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')

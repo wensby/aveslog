@@ -1,32 +1,8 @@
 from datetime import date, time
 from typing import Optional, Any, List, Tuple
-from .database import Database
-
-
-def create_sightings_query(
-      birder_id: Optional[int],
-      limit: Optional[int]
-) -> str:
-  def where_clause():
-    return 'WHERE birder_id = %(birder_id)s ' if birder_id else ''
-
-  def limit_clause():
-    return 'LIMIT %(limit)s ' if limit else ''
-
-  return (
-    'WITH cte AS ('
-    'SELECT * '
-    'FROM sighting '
-    f'{where_clause()}'
-    ') '
-    'SELECT id, birder_id, bird_id, sighting_date, sighting_time, full_count '
-    'FROM ('
-    'TABLE cte '
-    'ORDER BY sighting_date DESC, sighting_time DESC '
-    f'{limit_clause()}'
-    ') sub '
-    'RIGHT JOIN (SELECT count(*) FROM cte) c(full_count) ON TRUE;'
-  )
+from sqlalchemy.orm import Session
+from .sqlalchemy_database import Base
+from sqlalchemy import Column, Integer, ForeignKey, Date, Time
 
 
 class SightingPost:
@@ -42,84 +18,59 @@ class SightingPost:
     self.time: Optional[time] = sighting_time
 
 
-class Sighting:
-
-  @classmethod
-  def fromrow(cls, row: list):
-    return cls(row[0], row[1], row[2], row[3], row[4])
-
-  def __init__(self,
-        id: int,
-        birder_id: int,
-        bird_id: int,
-        sighting_date: date,
-        sighting_time: Optional[time]) -> None:
-    self.id: int = id
-    self.birder_id: int = birder_id
-    self.bird_id: int = bird_id
-    self.sighting_date: date = sighting_date
-    self.sighting_time: Optional[time] = sighting_time
+class Sighting(Base):
+  __tablename__ = 'sighting'
+  id = Column(Integer, primary_key=True)
+  birder_id = Column(Integer, ForeignKey('birder.id'))
+  bird_id = Column(Integer, ForeignKey('bird.id'))
+  sighting_date = Column(Date, nullable=False)
+  sighting_time = Column(Time)
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, Sighting):
-      return self.__dict__ == other.__dict__
+      return (self.id == other.id
+              and self.birder_id == other.birder_id
+              and self.bird_id == other.bird_id
+              and self.sighting_date == other.sighting_date
+              and self.sighting_time == other.sighting_time)
     return False
 
   def __repr__(self) -> str:
-    return (f'{self.__class__.__name__}({self.id}, {self.birder_id}, '
-            f'{self.bird_id}, {self.sighting_date}, {self.sighting_time})')
+    return (f"<Sighting(birder_id='{self.birder_id}', "
+            f"bird_id='{self.bird_id}', sighting_date='{self.sighting_date}', "
+            f"sighting_time='{self.sighting_time}')>")
 
 
 class SightingRepository:
 
-  def __init__(self, database: Database) -> None:
-    self.database: Database = database
+  def __init__(self, sqlalchemy_session: Session) -> None:
+    self.session = sqlalchemy_session
 
   def find_sighting(self, sighting_id: int) -> Optional[Sighting]:
-    query = ('SELECT id, birder_id, bird_id, sighting_date, sighting_time '
-             'FROM sighting '
-             'WHERE id = %s;')
-    result = self.database.query(query, (sighting_id,))
-    return next(map(self.sighting_from_row, result.rows), None)
+    return self.session.query(Sighting).get(sighting_id)
 
   def delete_sighting(self, sighting_id: int) -> bool:
-    query = ('DELETE '
-             'FROM sighting '
-             'WHERE id = %s;')
-    result = self.database.query(query, (sighting_id,))
-    return 'DELETE' in result.status
-
-  def sighting_from_row(self, row: list) -> Sighting:
-    return Sighting(row[0], row[1], row[2], row[3], row[4])
+    count = self.session.query(Sighting).filter_by(id=sighting_id).delete()
+    self.session.commit()
+    return count == 1
 
   def add_sighting(self, sighting_post: SightingPost) -> Optional[Sighting]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'INSERT INTO sighting '
-        '(birder_id, bird_id, sighting_date, sighting_time) '
-        'VALUES (%s, %s, %s, %s) '
-        'RETURNING id, birder_id, bird_id, sighting_date, sighting_time;'
-        , (
-          sighting_post.birder_id,
-          sighting_post.bird_id,
-          sighting_post.date,
-          sighting_post.time
-        ), Sighting.fromrow)
-      if not result.rows:
-        return None
-      else:
-        return result.rows[0]
+    sighting = Sighting(birder_id=sighting_post.birder_id,
+                        bird_id=sighting_post.bird_id,
+                        sighting_date=sighting_post.date,
+                        sighting_time=sighting_post.time)
+    self.session.add(sighting)
+    self.session.commit()
+    return sighting
 
   def sightings(self,
         birder_id: Optional[int] = None,
         limit: Optional[int] = None
   ) -> Tuple[List[Sighting], bool]:
-    query = create_sightings_query(birder_id, limit)
-    values = {'birder_id': birder_id, 'limit': limit}
-    with self.database.transaction() as transaction:
-      result = transaction.execute(query, values)
-    sightings_present = result.rows[0][0]
-    sightings = list(
-      map(Sighting.fromrow, result.rows)) if sightings_present else []
-    total_rows = result.rows[0][5]
-    return sightings, total_rows
+    query = self.session.query(Sighting)
+    if birder_id:
+      query = query.filter_by(birder_id=birder_id)
+    count = query.count()
+    if limit:
+      query = query.limit(limit)
+    return query.order_by(Sighting.sighting_date.desc(), Sighting.sighting_time.desc()).all(), count

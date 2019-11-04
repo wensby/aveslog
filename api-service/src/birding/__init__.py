@@ -76,7 +76,7 @@ def create_app(test_config: dict = None) -> Flask:
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository, locale_repository, string_matcher, locale_loader)
-  sighting_repository = SightingRepository(database)
+  sighting_repository = SightingRepository(session)
   picture_repository = PictureRepository(session)
   link_factory = LinkFactory(
     os.environ['EXTERNAL_HOST'],
