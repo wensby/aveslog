@@ -71,6 +71,8 @@ class SightingRepository:
     if birder_id:
       query = query.filter_by(birder_id=birder_id)
     count = query.count()
+    query = query.order_by(
+      Sighting.sighting_date.desc(), Sighting.sighting_time.desc())
     if limit:
       query = query.limit(limit)
-    return query.order_by(Sighting.sighting_date.desc(), Sighting.sighting_time.desc()).all(), count
+    return query.all(), count
