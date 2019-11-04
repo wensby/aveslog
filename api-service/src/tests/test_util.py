@@ -2,13 +2,11 @@ import logging
 import os
 from datetime import datetime
 from datetime import timedelta
-from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock
 
-from flask import url_for, Response
+from flask import Response
 from flask.testing import FlaskClient
-from requests_html import HTML
 from werkzeug.datastructures import Headers
 
 import birding
@@ -66,15 +64,6 @@ class AppTestCase(TestCase):
 
   def assertFileExist(self, path):
     self.assertTrue(os.path.exists(path))
-
-  def populate_session(self, key, value):
-    with self.client.session_transaction() as session:
-      session[key] = value
-
-  def assertSessionContains(self, key, value):
-    with self.client.session_transaction() as session:
-      self.assertIn(key, session)
-      self.assertEqual(session[key], value)
 
   def db_insert_birder(self, birder_id, name):
     self.database.query(
@@ -185,35 +174,6 @@ class AppTestCase(TestCase):
     query = f'username={username}&password={password}'
     return self.client.post(f'{resource}?{query}')
 
-  def get_flashed_messages(self, category='message'):
-    with self.client.session_transaction() as session:
-      if '_flashes' in session:
-        return dict(session['_flashes']).get(category)
-
-  def set_logged_in(self, account_id):
-    self.populate_session('account_id', account_id)
-
-  def assertRedirect(self, response, endpoint, **values):
-    self.assertEqual(response.status_code, HTTPStatus.FOUND)
-    html = HTML(html=response.data)
-    self.assertListEqual(list(html.links), [url_for(endpoint, **values)])
-
-  def assertOkHtmlResponse(self, response):
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    return HTML(html=response.data)
-
-  def assertOkHtmlResponseWithText(self, response, member):
-    html = self.assertOkHtmlResponse(response)
-    self.assertIn(member, html.full_text)
-
-  def assertOkHtmlResponseWithoutText(self, response, member):
-    html = self.assertOkHtmlResponse(response)
-    self.assertNotIn(member, html.full_text)
-
-  def assertOkHtmlResponseWith(self, response, xpath):
-    html = self.assertOkHtmlResponse(response)
-    self.assertTrue(html.xpath(xpath, first=True))
-
   def tearDown(self) -> None:
     with self.database.transaction() as transaction:
       transaction.execute('DELETE FROM refresh_token;')
@@ -229,9 +189,6 @@ class AppTestCase(TestCase):
       transaction.execute('DELETE FROM locale;')
     self.app_context.pop()
     logging.disable(logging.NOTSET)
-
-  def assertFlashedMessage(self, category, message):
-    self.assertEqual(self.get_flashed_messages(category), message)
 
   def db_get_password_reset_token_rows(self):
     with self.database.transaction() as transaction:
