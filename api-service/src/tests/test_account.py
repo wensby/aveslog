@@ -74,29 +74,17 @@ class TestAccount(TestCase):
 class TestAccountRepository(TestCase):
 
   def setUp(self):
-    self.database = Mock(spec=Database)
     self.password_hasher = Mock(spec=PasswordHasher)
     self.token_factory = Mock(spec=TokenFactory)
     self.session = Mock()
-    self.repository = AccountRepository(
-      self.database,
-      self.password_hasher,
-      self.session,
-    )
+    self.repository = AccountRepository(self.password_hasher, self.session)
 
   def test_find_account_by_id_queries_database_correctly(self) -> None:
-    self.database.transaction.return_value = mock_database_transaction()
-    self.database.transaction().execute.return_value = Simple(rows=[])
-
     self.repository.account_by_id(4)
-
     self.session.query.assert_called_with(Account)
 
   def test_create_account_registration_queries_database_correctly(self):
     email = EmailAddress('e@mail.com')
-    token = self.token_factory.create_token()
-    self.database.query.side_effect = [
-      Simple(rows=[[4, 'e@mail.com', 'myToken']])]
     token = self.token_factory.create_token()
     account_registration = AccountRegistration(email=email.raw, token=token)
 
@@ -184,7 +172,8 @@ class TestPasswordResetToken(TestCase):
 
   def test_repr(self):
     token = PasswordResetToken(account_id=4, token='token')
-    self.assertEqual(repr(token), "<PasswordResetToken(account_id='4', token='token')>")
+    self.assertEqual(repr(token),
+                     "<PasswordResetToken(account_id='4', token='token')>")
 
   def test_eq_false_when_other_type(self):
     token = PasswordResetToken(account_id=4, token='token')

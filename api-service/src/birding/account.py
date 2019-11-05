@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from .sqlalchemy_database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 
-from birding.database import Database
 from birding.mail import EmailAddress
 from birding.birder import Birder
 
@@ -133,11 +132,9 @@ class TokenFactory:
 class AccountRepository:
 
   def __init__(self,
-        database: Database,
         password_hasher: PasswordHasher,
         sqlalchemy_session: Session,
   ):
-    self.database = database
     self.hasher = password_hasher
     self.session = sqlalchemy_session
 
@@ -150,9 +147,10 @@ class AccountRepository:
     return self.session.query(Account).get(account_id)
 
   def remove_account_registration_by_id(self, account_id: int) -> None:
-    query = ('DELETE FROM account_registration '
-             'WHERE id = %s;')
-    self.database.query(query, (account_id,))
+    account_registration = self.session.query(AccountRegistration). \
+      filter_by(id=account_id).first()
+    self.session.delete(account_registration)
+    self.session.commit()
 
   def add_account_registration(self,
         account_registration: AccountRegistration,
@@ -191,10 +189,9 @@ class AccountRepository:
       account_id=account.id).first()
 
   def set_account_birder(self, account: Account, birder: Birder) -> None:
-    query = ('UPDATE account '
-             'SET birder_id = %s '
-             'WHERE id = %s;')
-    self.database.query(query, (birder.id, account.id))
+    account = self.session.query(Account).filter_by(id=account.id).first()
+    account.birder_id = birder.id
+    self.session.commit()
 
   def accounts(self) -> List[Account]:
     return self.session.query(Account).all()

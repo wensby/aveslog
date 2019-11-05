@@ -62,8 +62,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
   token_factory = TokenFactory()
-  account_repository = AccountRepository(
-    database, hasher, session)
+  account_repository = AccountRepository(hasher, session)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   birder_repository = BirderRepository(session)
