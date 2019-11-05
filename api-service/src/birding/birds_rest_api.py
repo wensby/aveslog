@@ -3,42 +3,42 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify, Response
 
-from .bird_view import BirdViewFactory, BirdPageView
+from .bird_resource import BirdResourceAccessor, BirdResource
 from .link import LinkFactory
 from .picture import Picture
 
 
 def create_birds_rest_api_blueprint(
       link_factory: LinkFactory,
-      bird_view_factory: BirdViewFactory,
+      bird_resource_accessor: BirdResourceAccessor,
 ) -> Blueprint:
   blueprint = Blueprint('birds', __name__, url_prefix='/birds')
 
   @blueprint.route('/<string:binomial_name>')
   def get_bird(binomial_name: str) -> Response:
     reformatted = binomial_name.replace('-', ' ')
-    view = bird_view_factory.create_bird_page_view(binomial_name=reformatted)
-    return create_bird_response(view)
+    bird = bird_resource_accessor.access_bird(binomial_name=reformatted)
+    return create_bird_response(bird)
 
   @blueprint.route('/<int:bird_id>')
   def get_bird_by_id(bird_id: str) -> Response:
-    view = bird_view_factory.create_bird_page_view(bird_id=bird_id)
-    return create_bird_response(view)
+    bird = bird_resource_accessor.access_bird(bird_id=bird_id)
+    return create_bird_response(bird)
 
-  def create_bird_response(view: BirdPageView) -> Response:
-    result = create_result(view)
+  def create_bird_response(bird: BirdResource) -> Response:
+    result = create_result(bird)
     return make_response(jsonify({
       'status': 'success',
       'result': result,
     }), HTTPStatus.OK)
 
-  def create_result(view: BirdPageView) -> dict:
-    result = {'binomialName': view.bird.binomial_name}
-    if view.cover_picture:
-      result['coverUrl'] = external_picture_url(view.cover_picture)
-    if view.thumbnail_picture:
-      result['thumbnailCredit'] = view.thumbnail_picture.credit
-      result['thumbnailUrl'] = external_picture_url(view.thumbnail_picture)
+  def create_result(bird: BirdResource) -> dict:
+    result = {'binomialName': bird.bird.binomial_name}
+    if bird.cover_picture:
+      result['coverUrl'] = external_picture_url(bird.cover_picture)
+    if bird.thumbnail_picture:
+      result['thumbnailCredit'] = bird.thumbnail_picture.credit
+      result['thumbnailUrl'] = external_picture_url(bird.thumbnail_picture)
     return result
 
   def external_picture_url(picture: Picture) -> str:
