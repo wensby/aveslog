@@ -3,7 +3,11 @@ import json
 import os
 from typing import Optional, List, Union, Any, Set
 from flask import Request
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Session
+
 from birding.database import Database
+from .sqlalchemy_database import Base
 from .bird import Bird
 
 
@@ -16,22 +20,17 @@ def replace_text_variables(text: str, variables: List[str] = None) -> str:
   return text
 
 
-class Locale:
-
-  def __init__(self, locale_id: int, code: str) -> None:
-    self.id = locale_id
-    self.code = code
-
-  @classmethod
-  def from_row(cls, row: list) -> Locale:
-    return cls(row[0], row[1])
+class Locale(Base):
+  __tablename__ = 'locale'
+  id = Column(Integer, primary_key=True)
+  code = Column(String, nullable=False)
 
   def __repr__(self) -> str:
-    return f'{self.__class__.__name__}({self.id}, {self.code})'
+    return f"<Locale(code='{self.code}')>"
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, self.__class__):
-      return self.__dict__ == other.__dict__
+      return self.id == other.id and self.code == other.code
     return False
 
   def __hash__(self) -> int:
@@ -112,11 +111,11 @@ class LocaleRepository:
   def __init__(self,
         locales_directory_path: str,
         locale_loader: LocaleLoader,
-        database: Database,
+        sqlalchemy_session: Session,
   ):
     self.locales_directory_path = locales_directory_path
     self.locale_loader = locale_loader
-    self.database = database
+    self.session = sqlalchemy_session
 
   def available_locale_codes(self) -> Set[str]:
     is_length_2 = lambda x: len(x) == 2
@@ -134,29 +133,17 @@ class LocaleRepository:
     return os.listdir(path)
 
   def enabled_locale_codes(self) -> List[str]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT id, code FROM locale;')
-      return list(map(lambda x: x[1], result.rows))
+    return list(map(lambda l : l.code, self.locales))
 
   def find_locale_by_id(self, id: int) -> Optional[Locale]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT id, code FROM locale WHERE id = %s;', (id,), Locale.from_row)
-      return next(iter(result.rows), None)
+    return self.session.query(Locale).filter_by(id=id).first()
 
   def find_locale_by_code(self, code: str) -> Optional[Locale]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT id, code FROM locale WHERE code LIKE %s;', (code,),
-        Locale.from_row)
-      return next(iter(result.rows), None)
+    return self.session.query(Locale).filter_by(code=code).first()
 
   @property
   def locales(self) -> List[Locale]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT id, code FROM locale;', mapper=Locale.from_row)
-      return result.rows
+    return self.session.query(Locale).all()
 
 
 class LocaleDeterminerFactory:

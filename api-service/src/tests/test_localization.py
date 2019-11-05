@@ -1,32 +1,31 @@
 import os
 import shutil
 import tempfile
-from types import SimpleNamespace as Simple
 from typing import Set
 from unittest import TestCase
 from unittest.mock import Mock
 
+from sqlalchemy.orm import Session
+
 from birding.localization import Locale, LocaleDeterminer, LoadedLocale
 from birding.localization import LocaleRepository
 from birding.localization import LocaleLoader
-from birding.database import Database
-from test_util import mock_database_transaction
 
 
 class TestLocale(TestCase):
 
   def test_eq_false_when_other_type(self):
-    self.assertNotEqual(Locale(1, 'en'), 'Locale(1, en)')
+    self.assertNotEqual(Locale(id=1, code='en'), 'Locale(1, en)')
 
   def test_eq_true_when_other_equal_instance(self):
-    self.assertEqual(Locale(1, 'en'), Locale(1, 'en'))
+    self.assertEqual(Locale(id=1, code='en'), Locale(id=1, code='en'))
 
   def test_repr(self):
-    self.assertEqual(repr(Locale(1, 'en')), 'Locale(1, en)')
+    self.assertEqual(repr(Locale(id=1, code='en')), "<Locale(code='en')>")
 
 
 class TestLoadedLocale(TestCase):
-  locale = Locale(1, 'en')
+  locale = Locale(id=1, code='en')
 
   def test_text_returns_argument_when_not_in_dictionary(self):
     loaded_locale = LoadedLocale(self.locale, dict(), None, None)
@@ -71,14 +70,14 @@ class TestLoadedLocale(TestCase):
 
   def test_bird_name(self):
     bird_dictionary = {'Pica pica': 'Eurasian Magpie'}
-    locale = LoadedLocale(Locale(1, 'en'), None, bird_dictionary, None)
+    locale = LoadedLocale(Locale(id=1, code='en'), None, bird_dictionary, None)
 
     name = locale.name('Pica pica')
 
     self.assertEqual(name, 'Eurasian Magpie')
 
   def test_bird_name_when_missing(self):
-    locale = LoadedLocale(Locale(1, 'en'), None, None, None)
+    locale = LoadedLocale(Locale(id=1, code='en'), None, None, None)
     name = locale.name('Pica pica')
     self.assertEqual(name, 'Pica pica')
 
@@ -121,41 +120,28 @@ class TestLocaleDeterminer(TestCase):
 class TestLocaleRepository(TestCase):
 
   def setUp(self) -> None:
-    self.database = Mock(spec=Database)
     self.loader = Mock(spec=LocaleLoader)
+    self.session = Mock(spec=Session)
     self.temp_dir = tempfile.mkdtemp()
 
   def test_available_locale_codes_when_multiple(self) -> None:
     codes = {'en', 'sv', 'ko'}
     self.create_temporary_locale_directories(codes)
-    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
+    repository = LocaleRepository(self.temp_dir, self.loader, self.session)
 
     result = repository.available_locale_codes()
 
     self.assertSetEqual(result, codes)
 
   def test_available_locale_codes_when_none(self) -> None:
-    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
+    repository = LocaleRepository(self.temp_dir, self.loader, self.session)
     result = repository.available_locale_codes()
     self.assertSetEqual(result, set())
 
   def test_available_locale_codes_when_locales_directory_missing(self) -> None:
-    repository = LocaleRepository('missing_dir', self.loader, self.database)
+    repository = LocaleRepository('missing_dir', self.loader, self.session)
     result = repository.available_locale_codes()
     self.assertSetEqual(result, set())
-
-  def test_find_locale_by_id_when_present(self) -> None:
-    locale = Locale(1, 'en')
-    self.database.transaction.return_value = mock_database_transaction()
-    self.database.transaction().execute.return_value = Simple(rows=[locale])
-    repository = LocaleRepository(self.temp_dir, self.loader, self.database)
-
-    result = repository.find_locale_by_id(1)
-
-    self.assertEqual(result, locale)
-    self.database.transaction().execute.assert_called_with(
-      'SELECT id, code FROM locale WHERE id = %s;',
-      (1,), Locale.from_row)
 
   def create_temporary_locale_directories(self, codes: Set[str]) -> None:
     for code in codes:

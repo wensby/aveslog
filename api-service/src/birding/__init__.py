@@ -71,7 +71,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   localespath = os.path.join(app.root_path, 'locales')
   locales_misses_repository = {}
   locale_loader = LocaleLoader(localespath, locales_misses_repository)
-  locale_repository = LocaleRepository(localespath, locale_loader, database)
+  locale_repository = LocaleRepository(localespath, locale_loader, session)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
                                                       locale_repository)
   bird_repository = BirdRepository(session)
@@ -167,7 +167,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     else:
       update_locale_context(
         user_locale_cookie_key,
-        LoadedLocale(Locale(None, None), None, None, None))
+        LoadedLocale(Locale(id=None, code=None), None, None, None))
 
   app.logger.info('Flask app constructed')
   return app

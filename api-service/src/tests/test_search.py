@@ -53,7 +53,7 @@ class TestBirdSearcher(TestCase):
     self.assertIsInstance(matches[0], BirdSearchMatch)
 
   def test_search_finds_bird_by_binomial_name(self):
-    swedish_locale = Locale(1, 'sv')
+    swedish_locale = Locale(id=1, code='sv')
     swedish_loaded_locale = LoadedLocale(swedish_locale, None, None, None)
     bird_repository = Simple(birds=[picapica])
     self.locale_repository.locales = [swedish_locale]
@@ -68,7 +68,7 @@ class TestBirdSearcher(TestCase):
 
   def test_search_finds_bird_by_swedish_name(self):
     bird_repository = Simple(birds=[picapica])
-    swedish_locale = Locale(1, 'sv')
+    swedish_locale = Locale(id=1, code='sv')
     swedish_loaded_locale = LoadedLocale(
       swedish_locale, None, {'Pica pica': 'Skata'}, None)
     self.locale_repository.locales = [swedish_locale]
