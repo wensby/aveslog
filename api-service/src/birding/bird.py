@@ -1,8 +1,6 @@
 from typing import Any, Optional, List
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import Session, relationship
-
-from .database import Database
 from .sqlalchemy_database import Base
 
 

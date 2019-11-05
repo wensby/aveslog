@@ -5,8 +5,6 @@ from typing import Optional, List, Union, Any, Set
 from flask import Request
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
-
-from birding.database import Database
 from .sqlalchemy_database import Base
 from .bird import Bird
 
