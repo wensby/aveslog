@@ -25,7 +25,7 @@ from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_rest_api import create_authentication_rest_api_blueprint
-from .birds_rest_api import create_birds_rest_api_blueprint
+from .birds_rest_api import create_birds_rest_api_blueprint, BirdsRestApi
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_resource import BirdResourceAccessor
@@ -105,6 +105,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   authentication_token_factory = AuthenticationTokenFactory(
     jwt_factory, datetime.datetime.utcnow)
   jwt_decoder = JwtDecoder(app.secret_key)
+  birds_rest_api = BirdsRestApi(bird_resource_accessor, link_factory)
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_rest_api_blueprint(
@@ -127,10 +128,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   )
   account_rest_api = create_account_rest_api_blueprint(
     jwt_decoder, account_repository)
-  birds_rest_api_blueprint = create_birds_rest_api_blueprint(
-    link_factory,
-    bird_resource_accessor
-  )
+  birds_rest_api_blueprint = create_birds_rest_api_blueprint(birds_rest_api)
   sighting_api = create_sighting_rest_api_blueprint(
     jwt_decoder,
     account_repository,
