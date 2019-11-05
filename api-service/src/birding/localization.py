@@ -135,9 +135,6 @@ class LocaleRepository:
   def enabled_locale_codes(self) -> List[str]:
     return list(map(lambda l : l.code, self.locales))
 
-  def find_locale_by_id(self, id: int) -> Optional[Locale]:
-    return self.session.query(Locale).filter_by(id=id).first()
-
   def find_locale_by_code(self, code: str) -> Optional[Locale]:
     return self.session.query(Locale).filter_by(code=code).first()
 
