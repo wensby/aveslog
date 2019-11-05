@@ -3,9 +3,11 @@ import binascii
 import os
 import re
 from typing import Optional, Union, Any, List, TypeVar, Type
+from sqlalchemy.orm import Session
+from .sqlalchemy_database import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from birding.database import Database
-from .database import read_script_file
 from birding.mail import EmailAddress
 from birding.birder import Birder
 
@@ -61,27 +63,28 @@ class Credentials:
     return False
 
 
-class Account:
-
-  @classmethod
-  def fromrow(cls, row):
-    return cls(row[0], row[1], row[2], row[3], row[4])
-
-  def __init__(self, account_id, username, email, birder_id, locale_id):
-    self.id = account_id
-    self.username = username
-    self.email = email
-    self.birder_id = birder_id
-    self.locale_id = locale_id
+class Account(Base):
+  __tablename__ = 'account'
+  id = Column(Integer, primary_key=True)
+  username = Column(String, nullable=False)
+  email = Column(String, nullable=False)
+  birder_id = Column(Integer, ForeignKey('birder.id'))
+  locale_id = Column(Integer, nullable=True)
 
   def __eq__(self, other):
     if isinstance(other, Account):
-      return self.__dict__ == other.__dict__
+      return (
+            self.id == other.id and
+            self.username == other.username and
+            self.email == other.email and
+            self.birder_id == other.birder_id and
+            self.locale_id == other.locale_id
+      )
     return False
 
   def __repr__(self):
-    return (f'Account({self.id}, {self.username}, {self.email}, '
-            f'{self.birder_id}, {self.locale_id})')
+    return (f"<Account(username='{self.username}', email='{self.email}', "
+            f"birder_id='{self.birder_id}', locale_id='{self.locale_id}')>")
 
 
 class PasswordHasher:
@@ -103,39 +106,6 @@ class PasswordHasher:
     return binascii.hexlify(binary_hash).decode()
 
 
-class AccountFactory:
-
-  def __init__(self, database: Database, hasher: PasswordHasher) -> None:
-    self.database: Database = database
-    self.hasher: PasswordHasher = hasher
-
-  def create_account(self,
-        email: EmailAddress,
-        credentials: Credentials) -> Optional[Account]:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT 1 FROM account WHERE username LIKE %s;',
-        (credentials.username.raw,))
-      if len(result.rows) > 0:
-        return
-      result = transaction.execute(
-        ('INSERT INTO account (username, email) '
-         'VALUES (%s, %s) '
-         'RETURNING id, username, email, birder_id, locale_id;'),
-        (credentials.username.raw, email.raw))
-      account = next(map(Account.fromrow, result.rows), None)
-      if not account:
-        return
-      salt_hashed_password = self.hasher.create_salt_hashed_password(
-        credentials.password)
-      salt = salt_hashed_password[0]
-      hash = salt_hashed_password[1]
-      transaction.execute(
-        'INSERT INTO hashed_password (account_id, salt, salted_hash) '
-        'VALUES (%s, %s, %s);', (account.id, salt, hash))
-      return account
-
-
 AccountRegistrationType = TypeVar(
   'AccountRegistrationType', bound='AccountRegistration')
 
@@ -153,16 +123,11 @@ class AccountRegistration:
     return cls(row[0], row[1], row[2])
 
 
-class HashedPassword:
-
-  def __init__(self, account_id, salt, salted_hash):
-    self.account_id = account_id
-    self.salt = salt
-    self.salted_hash = salted_hash
-
-  @classmethod
-  def fromrow(cls, row):
-    return cls(row[0], row[1], row[2])
+class HashedPassword(Base):
+  __tablename__ = 'hashed_password'
+  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
+  salt = Column(String, nullable=False)
+  salted_hash = Column(String, nullable=False)
 
 
 class TokenFactory:
@@ -176,18 +141,21 @@ class AccountRepository:
   def __init__(self,
         database: Database,
         password_hasher: PasswordHasher,
-        token_factory: TokenFactory):
+        token_factory: TokenFactory,
+        sqlalchemy_session: Session,
+  ):
     self.database = database
     self.hasher = password_hasher
     self.token_factory = token_factory
+    self.session = sqlalchemy_session
+
+  def add(self, account: Account) -> Account:
+    self.session.add(account)
+    self.session.commit()
+    return account
 
   def account_by_id(self, account_id: int) -> Optional[Account]:
-    with self.database.transaction() as transaction:
-      query = read_script_file('select-account-by-id.sql')
-      result = transaction.execute(query, (account_id,), Account.fromrow)
-      if not result.rows:
-        return None
-      return result.rows[0]
+    return self.session.query(Account).get(account_id)
 
   def remove_account_registration_by_id(self, account_id: int) -> None:
     query = ('DELETE FROM account_registration '
@@ -226,25 +194,16 @@ class AccountRepository:
         username: Union[Username, str]) -> Optional[Account]:
     if isinstance(username, Username):
       username = username.raw
-    query = ('SELECT id, username, email, birder_id, locale_id '
-             'FROM account '
-             'WHERE username ILIKE %s;')
-    result = self.database.query(query, (username,))
-    return next(map(Account.fromrow, result.rows), None)
+    return self.session.query(Account). \
+      filter(Account.username.ilike(username)).first()
 
   def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
-    query = ('SELECT id, username, email, birder_id, locale_id '
-             'FROM account '
-             'WHERE email LIKE %s;')
-    result = self.database.query(query, (email.raw,))
-    return next(map(Account.fromrow, result.rows), None)
+    return self.session.query(Account). \
+      filter(Account.email.like(email.raw)).first()
 
   def find_hashed_password(self, account: Account) -> Optional[HashedPassword]:
-    query = ('SELECT account_id, salt, salted_hash '
-             'FROM hashed_password '
-             'WHERE account_id = %s;')
-    result = self.database.query(query, (account.id,))
-    return next(map(HashedPassword.fromrow, result.rows), None)
+    return self.session.query(HashedPassword).filter_by(
+      account_id=account.id).first()
 
   def set_account_birder(self, account: Account, birder: Birder) -> None:
     query = ('UPDATE account '
@@ -253,17 +212,17 @@ class AccountRepository:
     self.database.query(query, (birder.id, account.id))
 
   def accounts(self) -> List[Account]:
-    with self.database.transaction() as transaction:
-      query = read_script_file('select-accounts.sql')
-      return transaction.execute(query, mapper=Account.fromrow).rows
+    return self.session.query(Account).all()
 
 
 class PasswordRepository:
 
-  def __init__(self, token_factory, database, password_hasher):
+  def __init__(self, token_factory, database, password_hasher,
+        sqlalchemy_session: Session):
     self.token_factory = token_factory
     self.database = database
     self.hasher = password_hasher
+    self.session = sqlalchemy_session
 
   def create_password_reset_token(self, account):
     token = self.token_factory.create_token()
@@ -306,6 +265,38 @@ class PasswordRepository:
       'DELETE FROM password_reset_token '
       'WHERE token LIKE %s;')
     self.database.query(query, (token,))
+
+  def add(self, hashed_password: HashedPassword):
+    self.session.add(hashed_password)
+    self.session.commit()
+
+
+class AccountFactory:
+
+  def __init__(self,
+        password_hasher: PasswordHasher,
+        account_repository: AccountRepository,
+        password_repository: PasswordRepository,
+  ):
+    self.password_hasher = password_hasher
+    self.account_repository = account_repository
+    self.password_repository = password_repository
+
+  def create_account(self,
+        email: EmailAddress,
+        credentials: Credentials) -> Optional[Account]:
+    if self.account_repository.find_account(credentials.username.raw):
+      return
+    account = Account(username=credentials.username.raw, email=email.raw)
+    account = self.account_repository.add(account)
+    salt_hashed_password = self.password_hasher.create_salt_hashed_password(
+      credentials.password)
+    salt = salt_hashed_password[0]
+    hash = salt_hashed_password[1]
+    hashed_password = HashedPassword(
+      account_id=account.id, salt=salt, salted_hash=hash)
+    self.password_repository.add(hashed_password)
+    return account
 
 
 class PasswordResetToken:

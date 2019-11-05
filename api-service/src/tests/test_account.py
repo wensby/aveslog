@@ -1,6 +1,6 @@
 from hashlib import pbkdf2_hmac
 from unittest import TestCase
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, MagicMock
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
@@ -57,7 +57,8 @@ class TestAccount(TestCase):
 
   @classmethod
   def setUpClass(cls) -> None:
-    cls.account = Account(4, 'hulot', 'hulot@mail.com', 8, 15)
+    cls.account = Account(id=4, username='hulot', email='hulot@mail.com',
+                          birder_id=8, locale_id=15)
 
   def test_eq_false_when_another_type(self):
     string_account = 'Account(4, hulot, hulot@email.com, 8, 15)'
@@ -65,7 +66,10 @@ class TestAccount(TestCase):
 
   def test_repr(self):
     representation = repr(self.account)
-    self.assertEqual(representation, 'Account(4, hulot, hulot@mail.com, 8, 15)')
+    self.assertEqual(
+      representation,
+      "<Account(username='hulot', email='hulot@mail.com', "
+      "birder_id='8', locale_id='15')>")
 
 
 class TestAccountRepository(TestCase):
@@ -74,10 +78,12 @@ class TestAccountRepository(TestCase):
     self.database = Mock(spec=Database)
     self.password_hasher = Mock(spec=PasswordHasher)
     self.token_factory = Mock(spec=TokenFactory)
+    self.session = Mock()
     self.repository = AccountRepository(
       self.database,
       self.password_hasher,
       self.token_factory,
+      self.session,
     )
 
   def test_find_account_by_id_queries_database_correctly(self) -> None:
@@ -86,8 +92,7 @@ class TestAccountRepository(TestCase):
 
     self.repository.account_by_id(4)
 
-    self.database.transaction().execute.assert_called_with(
-      read_script_file('select-account-by-id.sql'), (4,), Account.fromrow)
+    self.session.query.assert_called_with(Account)
 
   def test_create_account_registration_queries_database_correctly(self):
     email = EmailAddress('e@mail.com')
@@ -123,20 +128,24 @@ class TestAccountFactory(TestCase):
   def setUp(self) -> None:
     self.database = Mock()
     self.password_hasher = Mock()
-    self.factory = AccountFactory(self.database, self.password_hasher)
+    self.account_repository: AccountRepository = Mock(spec=AccountRepository)
+    self.password_repository = Mock()
+    self.factory = AccountFactory(
+      self.password_hasher,
+      self.account_repository, self.password_repository)
 
   def test_create_account_returns_account_when_success(self):
+    added_account = Account(
+      id=4, username='alice', email='alice@email.com',
+      birder_id=None, locale_id=None)
     self.password_hasher.create_salt_hashed_password.return_value = (
       'mySalt', 'mySaltedHash')
-    self.database.transaction.return_value = mock_database_transaction()
-    self.database.transaction().execute.side_effect = [
-      Simple(rows=[]),
-      Simple(rows=[[4, 'alice', 'alice@email.com', None, None]]),
-      Simple()]
+    self.account_repository.find_account.return_value = None
+    self.account_repository.add.return_value = added_account
 
     result = self.factory.create_account(self.email, self.credentials)
 
-    self.assertEqual(result, Account(4, 'alice', 'alice@email.com', None, None))
+    self.assertEqual(result, added_account)
 
   def test_create_account_fails_when_username_already_taken(self):
     self.database.transaction.return_value = mock_database_transaction()
@@ -188,10 +197,12 @@ class TestPasswordRepository(TestCase):
     self.database = Mock()
     self.password_hasher = Mock()
     self.salt_factory = Mock()
+    self.session = Mock()
     self.repository = PasswordRepository(
       self.token_factory,
       self.database,
       self.password_hasher,
+      self.session,
     )
 
   def test_create_password_reset_token_queries_database_correctly(self):

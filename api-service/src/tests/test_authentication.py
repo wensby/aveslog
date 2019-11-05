@@ -55,7 +55,7 @@ class TestAuthenticator(TestCase):
     self.password_hasher = Mock(spec=PasswordHasher)
 
   def test_is_password_incorrect_when_hashed_password_missing(self) -> None:
-    account = Account(1, 'hulot', 'hulot@mail.com', 1, None)
+    account = Account()
     authenticator = Authenticator(self.account_repository, self.password_hasher)
     self.account_repository.find_hashed_password.return_value = None
 
@@ -243,7 +243,7 @@ class TestPasswordResetController(TestCase):
         self):
     token = 'myToken'
     self.password_repository.find_password_reset_account_id.return_value = 4
-    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    account = Account()
     self.account_repository.account_by_id.return_value = account
 
     result = self.controller.perform_password_reset(token, valid_password)
@@ -381,7 +381,7 @@ class TestRefreshTokenRepository(TestCase):
 
   def test_remove_all_accounts_refresh_tokens(self):
     expiration_date = datetime(2019, 10, 9, 14, 34)
-    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    account = Account(id=1)
     database_token = RefreshToken(1, 'jwt', 1, expiration_date)
     self.transaction.execute.return_value = QueryResult('', [database_token])
     repository = RefreshTokenRepository(self.database)
@@ -403,7 +403,7 @@ class TestPasswordUpdateController(TestCase):
       spec=RefreshTokenRepository)
 
   def test_invokes_correct_methods(self):
-    account = Account(1, 'george', 'tbone@mail.com', 1, None)
+    account = Account(id=1)
     password = Password('costanza')
     controller = PasswordUpdateController(
       self.password_repository, self.refresh_token_repository)

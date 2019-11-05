@@ -151,7 +151,7 @@ class AppTestCase(TestCase):
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'SELECT * FROM account WHERE id = %s;',
-        (account_id,), Account.fromrow)
+        (account_id,), lambda r : Account(r[0], r[1], r[2], r[3], r[4]))
       return next(iter(result.rows), None)
 
   def db_setup_account(self,
