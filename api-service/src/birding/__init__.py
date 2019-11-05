@@ -83,7 +83,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     os.environ['EXTERNAL_HOST'],
     app.config['FRONTEND_HOST'],
   )
-  password_repository = PasswordRepository(token_factory, database, hasher, session)
+  password_repository = PasswordRepository(token_factory, hasher, session)
   account_factory = AccountFactory(hasher, account_repository, password_repository)
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,

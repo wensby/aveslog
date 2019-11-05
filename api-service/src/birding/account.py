@@ -219,10 +219,12 @@ class PasswordResetToken(Base):
 
 class PasswordRepository:
 
-  def __init__(self, token_factory, database, password_hasher,
-        sqlalchemy_session: Session):
+  def __init__(self,
+        token_factory,
+        password_hasher,
+        sqlalchemy_session: Session,
+  ):
     self.token_factory = token_factory
-    self.database = database
     self.hasher = password_hasher
     self.session = sqlalchemy_session
 
@@ -243,10 +245,11 @@ class PasswordRepository:
     salt_hashed_password = self.hasher.create_salt_hashed_password(password)
     salt = salt_hashed_password[0]
     hash = salt_hashed_password[1]
-    query = ('UPDATE hashed_password '
-             'SET salt = %s, salted_hash = %s '
-             'WHERE account_id = %s;')
-    self.database.query(query, (salt, hash, account_id))
+    hashed_password = self.session.query(HashedPassword). \
+      filter(HashedPassword.account_id == account_id).first()
+    hashed_password.salt = salt
+    hashed_password.salted_hash = hash
+    self.session.commit()
 
   def remove_password_reset_token(self, token):
     password_reset_token = self.session.query(PasswordResetToken). \
