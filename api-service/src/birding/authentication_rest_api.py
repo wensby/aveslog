@@ -250,7 +250,7 @@ def create_authentication_rest_api_blueprint(
   def refresh_token_response(refresh_token: RefreshToken) -> Response:
     return make_response(jsonify({
       'id': refresh_token.id,
-      'refreshToken': refresh_token.jwt_token,
+      'refreshToken': refresh_token.token,
       'expirationDate': refresh_token.expiration_date.isoformat(),
     }), HTTPStatus.OK)
 

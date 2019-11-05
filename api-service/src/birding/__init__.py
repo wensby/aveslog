@@ -90,7 +90,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     birder_repository, token_factory)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
-  refresh_token_repository = RefreshTokenRepository(database)
+  refresh_token_repository = RefreshTokenRepository(session)
   password_update_controller = PasswordUpdateController(
     password_repository,
     refresh_token_repository,

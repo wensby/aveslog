@@ -22,10 +22,7 @@ from birding.birder import BirderRepository
 from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
-from birding.database import Database
-from birding.database import read_script_file
-from birding.database import QueryResult
-from tests.test_util import mock_return, mock_database_transaction
+from tests.test_util import mock_return
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
@@ -315,85 +312,21 @@ class TestJwtDecoder(TestCase):
 class TestRefreshToken(TestCase):
 
   def test_init(self):
-    RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
+    RefreshToken(
+      id=1, token='jwt', account_id=1,
+      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
 
   def test_eq_when_identical(self):
-    a = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
-    b = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 12, 28, 0))
+    a = RefreshToken(id=1, token='jwt', account_id=1,
+                     expiration_date=datetime(2019, 10, 8, 12, 28, 0))
+    b = RefreshToken(id=1, token='jwt', account_id=1,
+                     expiration_date=datetime(2019, 10, 8, 12, 28, 0))
     self.assertEqual(a, b)
 
-  def test_from_row(self):
-    expiration_date = datetime(2019, 10, 8, 20, 41)
-    token = RefreshToken.from_row([1, 'jwt', 1, expiration_date])
-    self.assertEqual(token, RefreshToken(1, 'jwt', 1, expiration_date))
-
   def test_eq_when_other_type(self):
-    token = RefreshToken(1, 'jwt', 1, datetime(2019, 10, 8, 20, 46))
+    token = RefreshToken(id=1, token='jwt', account_id=1,
+                         expiration_date=datetime(2019, 10, 8, 20, 46))
     self.assertNotEqual(token, 'RefreshToken(1, jwt, 1, 2019-10-08 20:46)')
-
-
-class TestRefreshTokenRepository(TestCase):
-
-  def setUp(self) -> None:
-    self.database: Database = Mock(spec=Database)
-    self.transaction = mock_database_transaction()
-    self.database.transaction.return_value = self.transaction
-
-  def test_init(self):
-    RefreshTokenRepository(self.database)
-
-  def test_refresh_token_by_jwt_when_missing(self):
-    self.transaction.execute.return_value = QueryResult('', [])
-    repository = RefreshTokenRepository(self.database)
-
-    token = repository.refresh_token_by_jwt('jwt')
-
-    self.assertIsNone(token)
-
-  def test_refresh_token_by_jwt_when_found_in_database(self):
-    expiration_date = datetime(2019, 10, 8, 12, 57)
-    refresh_token = RefreshToken(1, 'jwt', 1, expiration_date)
-    self.transaction.execute.return_value = QueryResult('', [refresh_token])
-    repository = RefreshTokenRepository(self.database)
-
-    result = repository.refresh_token_by_jwt('jwt')
-
-    self.assertIs(result, refresh_token)
-
-  def test_put_refresh_token_with_no_id(self):
-    expiration_date = datetime(2019, 10, 9, 12, 49)
-    new_token = RefreshToken(None, 'jwt', 1, expiration_date)
-    repository = RefreshTokenRepository(self.database)
-    added_token = RefreshToken(1, 'jwt', 1, expiration_date)
-    self.transaction.execute.return_value = QueryResult('', [added_token])
-
-    result = repository.put_refresh_token(new_token)
-
-    self.assertEqual(result, added_token)
-
-  def test_put_refresh_token_with_id(self):
-    expiration_date = datetime(2019, 10, 9, 12, 49)
-    new_token = RefreshToken(1, 'jwt', 1, expiration_date)
-    repository = RefreshTokenRepository(self.database)
-    self.transaction.execute.return_value = QueryResult('', [new_token])
-
-    result = repository.put_refresh_token(new_token)
-
-    self.assertEqual(result, new_token)
-
-  def test_remove_all_accounts_refresh_tokens(self):
-    expiration_date = datetime(2019, 10, 9, 14, 34)
-    account = Account(id=1)
-    database_token = RefreshToken(1, 'jwt', 1, expiration_date)
-    self.transaction.execute.return_value = QueryResult('', [database_token])
-    repository = RefreshTokenRepository(self.database)
-
-    result = repository.remove_refresh_tokens(account)
-
-    self.assertListEqual(result, [database_token])
-    self.transaction.execute.assert_called_with(
-      read_script_file('delete-account-refresh-tokens.sql'),
-      {'account_id': 1}, RefreshToken.from_row)
 
 
 class TestPasswordUpdateController(TestCase):

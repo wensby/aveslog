@@ -84,7 +84,7 @@ class TestGetAccessToken(AppTestCase):
     time_supplier = lambda: datetime.datetime(2015, 1, 1)
     token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
     refresh_token = token_factory.create_refresh_token(1)
-    headers = {'refreshToken': (refresh_token.jwt_token)}
+    headers = {'refreshToken': (refresh_token.token)}
 
     response = self.client.get('/authentication/access-token', headers=headers)
 

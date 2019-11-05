@@ -1,12 +1,13 @@
 import os
 from base64 import b64encode
 from datetime import timedelta, datetime
-from typing import Union, Optional, Callable, Any, TypeVar, Type, List
+from typing import Union, Optional, Callable, Any, List
 
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import Session
 
-from .database import Database
-from .database import read_script_file
+from .sqlalchemy_database import Base
 from .birder import BirderRepository
 from .link import LinkFactory
 from .localization import LoadedLocale
@@ -21,29 +22,23 @@ from .account import AccountRepository
 from .account import AccountRegistration
 from .account import Password
 
-RefreshTokenType = TypeVar('RefreshTokenType', bound='RefreshToken')
 
-
-class RefreshToken:
-
-  @classmethod
-  def from_row(cls: Type[RefreshTokenType], row: list) -> RefreshTokenType:
-    return cls(row[0], row[1], row[2], row[3])
-
-  def __init__(self,
-        refresh_token_id: Optional[int],
-        jwt_token: str,
-        account_id: int,
-        expiration_date: datetime) -> None:
-    self.id = refresh_token_id
-    self.jwt_token = jwt_token
-    self.account_id = account_id
-    self.expiration_date = expiration_date
+class RefreshToken(Base):
+  __tablename__ = 'refresh_token'
+  id = Column(Integer, primary_key=True)
+  token = Column(String, nullable=False)
+  account_id = Column(Integer, ForeignKey('account.id'), nullable=False)
+  expiration_date = Column(DateTime, nullable=False)
 
   def __eq__(self, other: Any) -> bool:
     if not isinstance(other, RefreshToken):
       return False
-    return self.__dict__ == other.__dict__
+    return (
+          self.id == other.id and
+          self.token == other.token and
+          self.account_id == other.account_id and
+          self.expiration_date == other.expiration_date
+    )
 
 
 class AccessToken:
@@ -68,8 +63,8 @@ class AccessToken:
 
 class RefreshTokenRepository:
 
-  def __init__(self, database: Database):
-    self.database = database
+  def __init__(self, sqlalchemy_session: Session):
+    self.session = sqlalchemy_session
 
   def put_refresh_token(self, token: RefreshToken) -> RefreshToken:
     if not token.id:
@@ -77,54 +72,37 @@ class RefreshTokenRepository:
     return self.__update_refresh_token(token)
 
   def refresh_token_by_jwt(self, jwt: str) -> Optional[RefreshToken]:
-    query = read_script_file('select-refresh-token-by-jwt.sql')
-    values = {'token': jwt}
-    return self.__query_token(query, values)
+    return self.session.query(RefreshToken).filter_by(token=jwt).first()
 
   def remove_refresh_tokens(self, account: Account) -> List[RefreshToken]:
-    query = read_script_file('delete-account-refresh-tokens.sql')
-    values = {'account_id': account.id}
-    return self.__query_tokens(query, values)
+    refresh_tokens = self.session.query(RefreshToken).filter_by(
+      account_id=account.id).all()
+    for refresh_token in refresh_tokens:
+      self.session.delete(refresh_token)
+    self.session.commit()
+    return refresh_tokens
 
   def refresh_token(self, refresh_token_id: int) -> Optional[RefreshToken]:
-    query = read_script_file('refresh-token-by-id.sql')
-    values = {'id': refresh_token_id}
-    return self.__query_token(query, values)
+    return self.session.query(RefreshToken).get(refresh_token_id)
 
   def remove_refresh_token(self,
         refresh_token: RefreshToken) -> Optional[RefreshToken]:
-    query = read_script_file('delete-refresh-token.sql')
-    values = {'id': refresh_token.id}
-    return self.__query_token(query, values)
+    self.session.delete(refresh_token)
+    self.session.commit()
+    return refresh_token
 
   def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    query = read_script_file('insert-refresh-token.sql')
-    values = {
-      'token': token.jwt_token,
-      'account_id': token.account_id,
-      'expiration_date': token.expiration_date,
-    }
-    return self.__query_tokens(query, values)[0]
+    self.session.add(token)
+    self.session.commit()
+    return token
 
   def __update_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    query = read_script_file('update-refresh-token.sql')
-    values = {
-      'id': token.id,
-      'token': token.jwt_token,
-      'account_id': token.account_id,
-      'expiration_date': token.expiration_date,
-    }
-    return self.__query_tokens(query, values)[0]
-
-  def __query_token(self, query, values):
-    tokens = self.__query_tokens(query, values)
-    if not tokens:
-      return None
-    return tokens[0]
-
-  def __query_tokens(self, query: str, values: dict) -> List[RefreshToken]:
-    with self.database.transaction() as transaction:
-      return transaction.execute(query, values, RefreshToken.from_row).rows
+    current = self.refresh_token(token.id)
+    current.token = token.token
+    current.account_id = token.account_id
+    current.expiration_date = token.expiration_date
+    self.session.commit()
+    return current
 
 
 class Authenticator:
@@ -293,7 +271,8 @@ class PasswordResetController:
     return locale.text(message) + link
 
   def perform_password_reset(self, token: str, password: str) -> Optional[str]:
-    reset_token = self.password_repository.find_password_reset_token_by_token(token)
+    reset_token = self.password_repository.find_password_reset_token_by_token(
+      token)
     if not reset_token:
       return None
     account = self.account_repository.account_by_id(reset_token.account_id)
@@ -347,7 +326,8 @@ class AuthenticationTokenFactory:
     time = self.time_supplier()
     expiration_date = time + timedelta(days=90)
     jwt_token = self.jwt_factory.create_token(account_id, time, expiration_date)
-    return RefreshToken(None, jwt_token, account_id, expiration_date)
+    return RefreshToken(
+      token=jwt_token, account_id=account_id, expiration_date=expiration_date)
 
 
 class DecodeResult:
