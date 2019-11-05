@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Union, Any, List, TypeVar, Type
+from typing import Optional, Union, Any, List, TypeVar
 from sqlalchemy.orm import Session
 from .sqlalchemy_database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
@@ -200,6 +200,26 @@ class AccountRepository:
     return self.session.query(Account).all()
 
 
+class PasswordResetToken(Base):
+  __tablename__ = 'password_reset_token'
+  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
+  token = Column(String)
+
+  def __repr__(self):
+    return (
+      f"<PasswordResetToken(account_id='{self.account_id}', "
+      f"token='{self.token}')>"
+    )
+
+  def __eq__(self, other):
+    if isinstance(other, PasswordResetToken):
+      return (
+            self.account_id == other.account_id and
+            self.token == other.token
+      )
+    return False
+
+
 class PasswordRepository:
 
   def __init__(self, token_factory, database, password_hasher,
@@ -209,32 +229,18 @@ class PasswordRepository:
     self.hasher = password_hasher
     self.session = sqlalchemy_session
 
-  def create_password_reset_token(self, account):
-    token = self.token_factory.create_token()
-    query = (
-      'INSERT INTO password_reset_token (account_id, token) '
-      'VALUES (%s, %s) '
-      'ON CONFLICT (account_id) '
-      'DO UPDATE SET token = excluded.token;')
-    result = self.database.query(query, (account.id, token))
-    if 'INSERT' in result.status:
-      return self.find_password_reset_token(account)
+  def add_password_reset_token(self, password_reset_token: PasswordResetToken):
+    current_reset_token = self.session.query(PasswordResetToken). \
+      filter_by(account_id=password_reset_token.account_id).first()
+    if current_reset_token:
+      current_reset_token.token = password_reset_token.token
+    else:
+      self.session.add(password_reset_token)
+    self.session.commit()
 
-  def find_password_reset_token(self, account):
-    query = (
-      'SELECT account_id, token '
-      'FROM password_reset_token '
-      'WHERE account_id = %s;')
-    result = self.database.query(query, (account.id,))
-    return next(map(PasswordResetToken.fromrow, result.rows), None)
-
-  def find_password_reset_account_id(self, token):
-    query = (
-      'SELECT account_id '
-      'FROM password_reset_token '
-      'WHERE token LIKE %s;')
-    result = self.database.query(query, (token,))
-    return next(map(lambda row: row[0], result.rows), None)
+  def find_password_reset_token_by_token(self, token):
+    return self.session.query(PasswordResetToken). \
+      filter(PasswordResetToken.token.like(token)).first()
 
   def update_password(self, account_id, password):
     salt_hashed_password = self.hasher.create_salt_hashed_password(password)
@@ -246,10 +252,11 @@ class PasswordRepository:
     self.database.query(query, (salt, hash, account_id))
 
   def remove_password_reset_token(self, token):
-    query = (
-      'DELETE FROM password_reset_token '
-      'WHERE token LIKE %s;')
-    self.database.query(query, (token,))
+    password_reset_token = self.session.query(PasswordResetToken). \
+      filter(PasswordResetToken.token.like(token)).first()
+    if password_reset_token:
+      self.session.delete(password_reset_token)
+      self.session.commit()
 
   def add(self, hashed_password: HashedPassword):
     self.session.add(hashed_password)
@@ -282,22 +289,3 @@ class AccountFactory:
       account_id=account.id, salt=salt, salted_hash=hash)
     self.password_repository.add(hashed_password)
     return account
-
-
-class PasswordResetToken:
-
-  def __init__(self, account_id, token):
-    self.account_id = account_id
-    self.token = token
-
-  @classmethod
-  def fromrow(cls, row):
-    return cls(row[0], row[1])
-
-  def __repr__(self):
-    return f'{self.__class__.__name__}({self.account_id}, {self.token})'
-
-  def __eq__(self, other):
-    if isinstance(other, PasswordResetToken):
-      return self.__dict__ == other.__dict__
-    return False

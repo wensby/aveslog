@@ -185,18 +185,20 @@ class TestPasswordResetController(TestCase):
       spec=PasswordUpdateController)
     self.refresh_token_repository: RefreshTokenRepository = Mock(
       spec=RefreshTokenRepository)
+    self.token_factory = Mock()
     self.controller = PasswordResetController(
       self.account_repository,
       self.password_repository,
       self.link_factory,
       self.mail_dispatcher,
       self.password_update_controller,
+      self.token_factory,
     )
 
   def test_initiate_password_reset_creates_token_when_account_present(self):
     locale = Mock()
     locale.text.return_value = 'translated: '
-    account = Simple()
+    account = Account(id=4)
     self.link_factory.create_frontend_link = mock_return('myLink')
     self.account_repository.find_account_by_email = mock_return(account)
 
@@ -204,8 +206,7 @@ class TestPasswordResetController(TestCase):
 
     self.account_repository.find_account_by_email.assert_called_with(
       EmailAddress(valid_email))
-    self.password_repository.create_password_reset_token.assert_called_with(
-      account)
+    self.password_repository.add_password_reset_token.assert_called()
 
   def test_initiate_password_reset_not_create_token_when_account_not_present(
         self):
@@ -215,7 +216,7 @@ class TestPasswordResetController(TestCase):
 
     self.account_repository.find_account_by_email.assert_called_with(
       EmailAddress(valid_email))
-    self.password_repository.create_password_reset_token.assert_not_called()
+    self.password_repository.add_password_reset_token.assert_not_called()
 
   def test_initiate_password_reset_dispatches_email_with_link(self):
     locale = Mock()
@@ -231,10 +232,8 @@ class TestPasswordResetController(TestCase):
   def test_initiate_password_reset_creates_correct_frontend_link(self):
     locale = Mock()
     locale.text.return_value = 'translated: '
-    password_reset_token = Simple(token='myToken')
+    self.token_factory.create_token.return_value = 'myToken'
     self.link_factory.create_frontend_link = mock_return('myLink')
-    self.password_repository.create_password_reset_token = mock_return(
-      password_reset_token)
 
     self.controller.initiate_password_reset(valid_email, locale)
 
@@ -244,13 +243,14 @@ class TestPasswordResetController(TestCase):
   def test_perform_password_reset_updates_password_when_reset_token_present(
         self):
     token = 'myToken'
-    self.password_repository.find_password_reset_account_id.return_value = 4
+    self.password_repository.find_password_reset_token_by_token.return_value = Simple(
+      account_id=4)
     account = Account()
     self.account_repository.account_by_id.return_value = account
 
     result = self.controller.perform_password_reset(token, valid_password)
 
-    self.password_repository.find_password_reset_account_id.assert_called_with(
+    self.password_repository.find_password_reset_token_by_token.assert_called_with(
       token)
     self.assertEqual(result, 'success')
     self.password_update_controller.update_password.assert_called_with(

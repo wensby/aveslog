@@ -1,6 +1,6 @@
 from hashlib import pbkdf2_hmac
 from unittest import TestCase
-from unittest.mock import Mock, call, MagicMock
+from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
@@ -180,103 +180,12 @@ class TestPasswordHasher(TestCase):
     self.assertTrue(hasher.hash_password(Password('password'), 'salt') == hash)
 
 
-class TestPasswordRepository(TestCase):
-
-  def setUp(self):
-    self.token_factory = Mock()
-    self.database = Mock()
-    self.password_hasher = Mock()
-    self.salt_factory = Mock()
-    self.session = Mock()
-    self.repository = PasswordRepository(
-      self.token_factory,
-      self.database,
-      self.password_hasher,
-      self.session,
-    )
-
-  def test_create_password_reset_token_queries_database_correctly(self):
-    account = Simple(id=1)
-    self.token_factory.create_token.return_value = 'myToken'
-    self.database.query.side_effect = [
-      Simple(status='INSERT'),
-      Simple(rows=[[1, 'some token, hopefully the just inserted one']])
-    ]
-
-    self.repository.create_password_reset_token(account)
-
-    insert_call = call(
-      'INSERT INTO password_reset_token (account_id, token) VALUES (%s, %s) ON CONFLICT (account_id) DO UPDATE SET token = excluded.token;',
-      (1, 'myToken'))
-    select_call = call(
-      'SELECT account_id, token FROM password_reset_token WHERE account_id = %s;',
-      (account.id,))
-    self.database.query.assert_has_calls([insert_call, select_call])
-
-  def test_create_password_reset_token_returns_selected_token(self):
-    account = Simple(id=1)
-    self.database.query.side_effect = [
-      Simple(status='INSERT'),
-      Simple(rows=[[1, 'selectedToken']])
-    ]
-
-    result = self.repository.create_password_reset_token(account)
-
-    self.assertEqual(result, PasswordResetToken(1, 'selectedToken'))
-
-  def test_create_password_reset_token_replaces_previously_existing_token(self):
-    account = Simple(id=1)
-    self.database.query.side_effect = [
-      Simple(status='INSERT'),
-      Simple(rows=[[1, 'selectedToken']])
-    ]
-
-    result = self.repository.create_password_reset_token(account)
-
-    self.assertEqual(result, PasswordResetToken(1, 'selectedToken'))
-
-  def test_find_password_reset_token_queries_database_correctly(self):
-    account = Simple(id=1)
-    self.database.query.return_value = Simple(rows=[[1, 'token']])
-
-    self.repository.find_password_reset_token(account)
-
-    self.database.query.assert_called_with(
-      'SELECT account_id, token FROM password_reset_token WHERE account_id = %s;',
-      (account.id,))
-
-  def test_find_password_reset_account_id_queries_database_correctly(self):
-    self.database.query.return_value = Simple(rows=[])
-    self.repository.find_password_reset_account_id('myToken')
-    self.database.query.assert_called_with(
-      'SELECT account_id FROM password_reset_token WHERE token LIKE %s;',
-      ('myToken',))
-
-  def test_find_password_reset_account_id_parses_response_correctly(self):
-    self.database.query.return_value = Simple(rows=[[4]])
-    result = self.repository.find_password_reset_account_id('myToken')
-    self.assertEqual(result, 4)
-
-  def test_update_password_queries_database_correctly(self):
-    self.password_hasher.create_salt_hashed_password.return_value = (
-      'mySalt', 'myHashedPassword')
-    self.repository.update_password(4, 'myNewPassword')
-    self.database.query.assert_called_with(
-      'UPDATE hashed_password SET salt = %s, salted_hash = %s WHERE account_id = %s;',
-      ('mySalt', 'myHashedPassword', 4))
-
-  def test_remove_password_reset_token_queries_database_correctly(self):
-    self.repository.remove_password_reset_token('myToken')
-    self.database.query.assert_called_with(
-      'DELETE FROM password_reset_token WHERE token LIKE %s;', ('myToken',))
-
-
 class TestPasswordResetToken(TestCase):
 
   def test_repr(self):
-    token = PasswordResetToken(4, 'token')
-    self.assertEqual(repr(token), 'PasswordResetToken(4, token)')
+    token = PasswordResetToken(account_id=4, token='token')
+    self.assertEqual(repr(token), "<PasswordResetToken(account_id='4', token='token')>")
 
   def test_eq_false_when_other_type(self):
-    token = PasswordResetToken(4, 'token')
+    token = PasswordResetToken(account_id=4, token='token')
     self.assertNotEqual(token, 'PasswordResetToken(4, token)')

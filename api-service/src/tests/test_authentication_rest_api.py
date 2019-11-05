@@ -105,6 +105,19 @@ class TestPasswordReset(AppTestCase):
       'message': 'Password reset link sent to e-mail',
     })
 
+  def test_post_password_reset_email_when_already_exist(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+    self.db_insert_locale(1, 'en')
+    self.db_insert_password_reset_token(1, 'myToken')
+
+    response = self.post_password_reset_email('tbone@mail.com')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'status': 'success',
+      'message': 'Password reset link sent to e-mail',
+    })
+
   def test_post_password_reset_email_when_email_not_linked_with_account(self):
     self.db_insert_locale(1, 'en')
 

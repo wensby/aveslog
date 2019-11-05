@@ -101,6 +101,7 @@ def create_app(test_config: dict = None) -> Flask:
     link_factory,
     mail_dispatcher,
     password_update_controller,
+    token_factory,
   )
   jwt_factory = JwtFactory(app.secret_key)
   authentication_token_factory = AuthenticationTokenFactory(

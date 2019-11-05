@@ -12,7 +12,7 @@ from .link import LinkFactory
 from .localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
-from .account import Username, AccountFactory, TokenFactory
+from .account import Username, AccountFactory, TokenFactory, PasswordResetToken
 from .account import Credentials
 from .account import PasswordRepository
 from .account import Account
@@ -176,7 +176,8 @@ class AccountRegistrationController:
       return 'email taken'
     token = self.token_factory.create_token()
     registration = AccountRegistration(email=email.raw, token=token)
-    registration = self.account_repository.add_account_registration(registration)
+    registration = self.account_repository.add_account_registration(
+      registration)
     self.__send_registration_email(email, registration, locale)
     return registration
 
@@ -256,12 +257,14 @@ class PasswordResetController:
         link_factory: LinkFactory,
         mail_dispatcher: MailDispatcher,
         password_update_controller: PasswordUpdateController,
+        token_factory: TokenFactory,
   ) -> None:
     self.account_repository = account_repository
     self.password_repository = password_repository
     self.link_factory = link_factory
     self.mail_dispatcher = mail_dispatcher
     self.password_update_controller = password_update_controller
+    self.token_factory = token_factory
 
   def initiate_password_reset(
         self,
@@ -271,7 +274,9 @@ class PasswordResetController:
     account = self.account_repository.find_account_by_email(email)
     if not account:
       return False
-    token = self.password_repository.create_password_reset_token(account).token
+    token = self.token_factory.create_token()
+    reset_token = PasswordResetToken(account_id=account.id, token=token)
+    self.password_repository.add_password_reset_token(reset_token)
     link = self.__create_password_reset_link(token)
     message = self.__create_mail_message(link, locale)
     self.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
@@ -288,10 +293,10 @@ class PasswordResetController:
     return locale.text(message) + link
 
   def perform_password_reset(self, token: str, password: str) -> Optional[str]:
-    account_id = self.password_repository.find_password_reset_account_id(token)
-    if not account_id:
+    reset_token = self.password_repository.find_password_reset_token_by_token(token)
+    if not reset_token:
       return None
-    account = self.account_repository.account_by_id(account_id)
+    account = self.account_repository.account_by_id(reset_token.account_id)
     self.password_update_controller.update_password(account, Password(password))
     self.password_repository.remove_password_reset_token(token)
     return 'success'
