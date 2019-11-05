@@ -8,7 +8,7 @@ from .link import LinkFactory
 from .picture import Picture
 
 
-def create_bird_rest_api_blueprint(
+def create_birds_rest_api_blueprint(
       link_factory: LinkFactory,
       bird_view_factory: BirdViewFactory,
 ) -> Blueprint:

@@ -25,7 +25,7 @@ from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_rest_api import create_authentication_rest_api_blueprint
-from .birds_rest_api import create_bird_rest_api_blueprint
+from .birds_rest_api import create_birds_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
@@ -129,7 +129,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   )
   account_rest_api = create_account_rest_api_blueprint(
     jwt_decoder, account_repository)
-  bird_rest_api = create_bird_rest_api_blueprint(
+  birds_rest_api_blueprint = create_birds_rest_api_blueprint(
     link_factory,
     bird_view_factory
   )
@@ -146,7 +146,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     link_factory
   )
   app.register_blueprint(sighting_api)
-  app.register_blueprint(bird_rest_api)
+  app.register_blueprint(birds_rest_api_blueprint)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
   app.register_blueprint(birder_rest_api)
