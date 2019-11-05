@@ -6,10 +6,9 @@ from binascii import hexlify
 
 from birding.account import Account, PasswordRepository, PasswordResetToken, \
   PasswordHasher, TokenFactory, \
-  AccountRepository, Username, Password, AccountFactory
+  AccountRepository, Username, Password, AccountFactory, AccountRegistration
 from birding.account import Credentials
 from birding.database import Database
-from birding.database import read_script_file
 from birding.mail import EmailAddress
 
 from test_util import mock_database_transaction
@@ -82,7 +81,6 @@ class TestAccountRepository(TestCase):
     self.repository = AccountRepository(
       self.database,
       self.password_hasher,
-      self.token_factory,
       self.session,
     )
 
@@ -99,24 +97,16 @@ class TestAccountRepository(TestCase):
     token = self.token_factory.create_token()
     self.database.query.side_effect = [
       Simple(rows=[[4, 'e@mail.com', 'myToken']])]
+    token = self.token_factory.create_token()
+    account_registration = AccountRegistration(email=email.raw, token=token)
 
-    self.repository.create_account_registration(email)
+    self.repository.add_account_registration(account_registration)
 
-    self.database.query.assert_has_calls([
-      call(
-        'INSERT INTO account_registration (email, token) '
-        'VALUES (%s, %s) '
-        'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
-        'RETURNING id, email, token;',
-        (email.raw, token)),
-    ])
+    self.session.add.assert_called_with(account_registration)
 
   def test_find_account_registration_by_token_queries_database_correctly(self):
-    self.database.query().rows = []
     self.repository.find_account_registration_by_token('myToken')
-    self.database.query.assert_called_with(
-      'SELECT id, email, token FROM account_registration WHERE token LIKE %s;',
-      ('myToken',))
+    self.session.query.assert_called_with(AccountRegistration)
 
 
 class TestAccountFactory(TestCase):

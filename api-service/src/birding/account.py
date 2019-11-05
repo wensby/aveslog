@@ -110,17 +110,11 @@ AccountRegistrationType = TypeVar(
   'AccountRegistrationType', bound='AccountRegistration')
 
 
-class AccountRegistration:
-
-  def __init__(self, account_registration_id: int, email: str, token: str):
-    self.id = account_registration_id
-    self.email = email
-    self.token = token
-
-  @classmethod
-  def fromrow(cls: Type[AccountRegistrationType],
-        row: list) -> AccountRegistrationType:
-    return cls(row[0], row[1], row[2])
+class AccountRegistration(Base):
+  __tablename__ = 'account_registration'
+  id = Column(Integer, primary_key=True)
+  email = Column(String, nullable=False)
+  token = Column(String, nullable=False)
 
 
 class HashedPassword(Base):
@@ -141,12 +135,10 @@ class AccountRepository:
   def __init__(self,
         database: Database,
         password_hasher: PasswordHasher,
-        token_factory: TokenFactory,
         sqlalchemy_session: Session,
   ):
     self.database = database
     self.hasher = password_hasher
-    self.token_factory = token_factory
     self.session = sqlalchemy_session
 
   def add(self, account: Account) -> Account:
@@ -162,33 +154,26 @@ class AccountRepository:
              'WHERE id = %s;')
     self.database.query(query, (account_id,))
 
-  def create_account_registration(self,
-        email: EmailAddress) -> Optional[AccountRegistration]:
-    token = self.token_factory.create_token()
-    query = (
-      'INSERT INTO account_registration (email, token) '
-      'VALUES (%s, %s) '
-      'ON CONFLICT (email) DO UPDATE SET token = EXCLUDED.token '
-      'RETURNING id, email, token;')
-    result = self.database.query(query, (email.raw, token))
-    return next(map(AccountRegistration.fromrow, result.rows), None)
+  def add_account_registration(self,
+        account_registration: AccountRegistration,
+  ) -> Optional[AccountRegistration]:
+    self.session.add(account_registration)
+    self.session.commit()
+    return account_registration
 
   def find_account_registration(self,
         email: EmailAddress,
-        token: str) -> Optional[AccountRegistration]:
-    query = ('SELECT id, email, token '
-             'FROM account_registration '
-             'WHERE email LIKE %s AND token LIKE %s;')
-    result = self.database.query(query, (email.raw, token))
-    return next(map(AccountRegistration.fromrow, result.rows), None)
+        token: str,
+  ) -> Optional[AccountRegistration]:
+    return self.session.query(AccountRegistration). \
+      filter(AccountRegistration.email.like(email.raw)). \
+      filter(AccountRegistration.token.like(token)).first()
 
   def find_account_registration_by_token(self,
-        token: str) -> Optional[AccountRegistration]:
-    query = ('SELECT id, email, token '
-             'FROM account_registration '
-             'WHERE token LIKE %s;')
-    result = self.database.query(query, (token,))
-    return next(map(AccountRegistration.fromrow, result.rows), None)
+        token: str,
+  ) -> Optional[AccountRegistration]:
+    return self.session.query(AccountRegistration). \
+      filter(AccountRegistration.token.like(token)).first()
 
   def find_account(self,
         username: Union[Username, str]) -> Optional[Account]:

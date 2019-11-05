@@ -13,7 +13,7 @@ from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
 from birding.authentication import RefreshToken
 from birding.authentication import RefreshTokenRepository
-from birding.account import Account
+from birding.account import Account, TokenFactory
 from birding.account import PasswordRepository
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \
@@ -72,12 +72,14 @@ class TestAccountRegistrationController(TestCase):
     self.mail_dispatcher = Mock(spec=MailServerDispatcher)
     self.link_factory = Mock(spec=LinkFactory)
     self.birder_repository = Mock(spec=BirderRepository)
+    self.token_factory = Mock(spec=TokenFactory)
     self.controller = AccountRegistrationController(
       self.account_factory,
       self.account_repository,
       self.mail_dispatcher,
       self.link_factory,
       self.birder_repository,
+      self.token_factory
     )
 
   def test_initiate_registration_when_invalid_email(self) -> None:
@@ -92,7 +94,7 @@ class TestAccountRegistrationController(TestCase):
         self):
     locale = Mock()
     locale.text.return_value = 'translated'
-    self.account_repository.create_account_registration().token = 'myToken'
+    self.account_repository.add_account_registration().token = 'myToken'
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
 
@@ -117,7 +119,7 @@ class TestAccountRegistrationController(TestCase):
   def test_initiate_registration_returns_registration_when_success(self):
     locale = Mock()
     locale.text.return_value = 'translated'
-    registration = self.account_repository.create_account_registration()
+    registration = self.account_repository.add_account_registration()
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
 

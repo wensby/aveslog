@@ -62,7 +62,7 @@ def create_app(test_config: dict = None) -> Flask:
   hasher = PasswordHasher(salt_factory)
   token_factory = TokenFactory()
   account_repository = AccountRepository(
-    database, hasher, token_factory, session)
+    database, hasher, session)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   birder_repository = BirderRepository(session)
@@ -87,7 +87,7 @@ def create_app(test_config: dict = None) -> Flask:
   account_factory = AccountFactory(hasher, account_repository, password_repository)
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,
-    birder_repository)
+    birder_repository, token_factory)
   bird_view_factory = BirdViewFactory(bird_repository, picture_repository)
   bird_search_controller = BirdSearchController(bird_searcher)
   refresh_token_repository = RefreshTokenRepository(database)

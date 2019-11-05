@@ -12,7 +12,7 @@ from .link import LinkFactory
 from .localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
-from .account import Username, AccountFactory
+from .account import Username, AccountFactory, TokenFactory
 from .account import Credentials
 from .account import PasswordRepository
 from .account import Account
@@ -155,12 +155,15 @@ class AccountRegistrationController:
         account_repository: AccountRepository,
         mail_dispatcher: MailDispatcher,
         link_factory: LinkFactory,
-        birder_repository: BirderRepository) -> None:
+        birder_repository: BirderRepository,
+        token_factory: TokenFactory,
+  ):
     self.account_factory = account_factory
     self.account_repository = account_repository
     self.mail_dispatcher = mail_dispatcher
     self.link_factory = link_factory
     self.birder_repository = birder_repository
+    self.token_factory = token_factory
 
   def initiate_registration(
         self,
@@ -171,7 +174,9 @@ class AccountRegistrationController:
     email = EmailAddress(raw_email)
     if self.account_repository.find_account_by_email(email):
       return 'email taken'
-    registration = self.account_repository.create_account_registration(email)
+    token = self.token_factory.create_token()
+    registration = AccountRegistration(email=email.raw, token=token)
+    registration = self.account_repository.add_account_registration(registration)
     self.__send_registration_email(email, registration, locale)
     return registration
 
