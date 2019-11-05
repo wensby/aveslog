@@ -4,6 +4,7 @@ from unittest import TestCase
 import birding
 from birding.mail import EmailAddress, MailServerDispatcher
 from birding.mail import MailDispatcher
+from test_util import IntegrationTestCase
 
 
 class TestMailDispatcher(TestCase):
@@ -25,7 +26,11 @@ class TestEmailAddress(TestCase):
       repr(EmailAddress('my@mail.com')), 'EmailAddress<my@mail.com>')
 
 
-class TestMailDispatcherFactory(TestCase):
+class TestMailDispatcherFactory(IntegrationTestCase):
+
+  @classmethod
+  def setUpClass(cls) -> None:
+    super().setUpClass()
 
   def setUp(self) -> None:
     os.environ['MAIL_SERVER'] = 'myMailServer'
@@ -53,7 +58,11 @@ class TestMailDispatcherFactory(TestCase):
     del os.environ['MAIL_USE_SSL']
 
 
-class TestMailServerDispatcher(TestCase):
+class TestMailServerDispatcher(IntegrationTestCase):
+
+  @classmethod
+  def setUpClass(cls) -> None:
+    super().setUpClass()
 
   def setUp(self) -> None:
     test_config = {

@@ -1,5 +1,6 @@
 import logging
 import os
+import unittest
 from datetime import datetime
 from datetime import timedelta
 from unittest import TestCase
@@ -15,7 +16,7 @@ from birding.authentication import SaltFactory
 from birding.authentication import AccessToken
 from birding.authentication import JwtFactory
 from birding.authentication import AuthenticationTokenFactory
-from birding.database import Transaction
+from birding.database import Transaction, DatabaseFactory
 from birding.database import Database
 
 
@@ -38,10 +39,20 @@ class TestClient(FlaskClient):
     return super().open(*args, **kwargs)
 
 
-class AppTestCase(TestCase):
+class IntegrationTestCase(TestCase):
+
+  @classmethod
+  def setUpClass(cls) -> None:
+    if 'DATABASE_HOST' not in os.environ:
+      raise unittest.SkipTest(
+        'Skipping database depending test case ' + str(cls.__name__))
+
+
+class AppTestCase(IntegrationTestCase):
 
   @classmethod
   def setUpClass(cls):
+    super().setUpClass()
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
@@ -50,6 +61,11 @@ class AppTestCase(TestCase):
     }
     cls._app = birding.create_app(test_config=test_config)
     cls._app.test_client_class = TestClient
+    database_connection_factory = DatabaseFactory(cls._app.logger)
+    database_connection_details = birding.create_database_connection_details()
+    database = database_connection_factory.create_database(
+      **database_connection_details)
+    cls._app.db = database
 
   def setUp(self) -> None:
     self.database: Database = self._app.db
@@ -151,7 +167,7 @@ class AppTestCase(TestCase):
     with self.database.transaction() as transaction:
       result = transaction.execute(
         'SELECT * FROM account WHERE id = %s;',
-        (account_id,), lambda r : Account(r[0], r[1], r[2], r[3], r[4]))
+        (account_id,), lambda r: Account(r[0], r[1], r[2], r[3], r[4]))
       return next(iter(result.rows), None)
 
   def db_setup_account(self,

@@ -1,11 +1,15 @@
 import os
 import shutil
-from unittest import TestCase
 
 import birding
+from test_util import IntegrationTestCase
 
 
-class TestAppCreation(TestCase):
+class TestAppCreation(IntegrationTestCase):
+
+  @classmethod
+  def setUpClass(cls) -> None:
+    super().setUpClass()
 
   def test_creation(self):
     test_config = {

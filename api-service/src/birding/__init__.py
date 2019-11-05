@@ -29,7 +29,6 @@ from .birds_rest_api import create_birds_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
 from .bird_view import BirdViewFactory
-from .database import DatabaseFactory
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
 from .localization import LoadedLocale
@@ -50,15 +49,11 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
-  database_connection_factory = DatabaseFactory(app.logger)
   database_connection_details = create_database_connection_details()
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
   session = session_factory.create_session()
-  database = database_connection_factory.create_database(
-    **database_connection_details)
-  app.db = database
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
   token_factory = TokenFactory()
