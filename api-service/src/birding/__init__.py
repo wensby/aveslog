@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from typing import Optional
 
 from flask import Flask
 from flask import request
@@ -43,7 +44,7 @@ from .settings_blueprint import update_locale_context
 from .sighting import SightingRepository
 
 
-def create_app(test_config: dict = None) -> Flask:
+def create_app(test_config: Optional[dict] = None) -> Flask:
   app = Flask(__name__, instance_relative_config=True)
   configure_app(app, test_config)
 
