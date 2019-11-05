@@ -112,7 +112,8 @@ class LocaleRepository:
   def __init__(self,
         locales_directory_path: str,
         locale_loader: LocaleLoader,
-        database: Database) -> None:
+        database: Database,
+  ):
     self.locales_directory_path = locales_directory_path
     self.locale_loader = locale_loader
     self.database = database
