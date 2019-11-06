@@ -22,7 +22,7 @@ export default ({ match }) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await new BirdService().getBird(binomialName);
-      setBird(data.result);
+      setBird(data);
     }
     fetchData();
     const now = new Date();

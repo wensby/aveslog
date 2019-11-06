@@ -29,10 +29,7 @@ class BirdsRestApi:
       bird = self.get_bird_data(binomial_name=reformatted)
     else:
       bird = self.get_bird_data(bird_id=bird_identifier)
-    return RestApiResponse(HTTPStatus.OK, {
-      'status': 'success',
-      'result': bird,
-    })
+    return RestApiResponse(HTTPStatus.OK, bird)
 
   def get_bird_data(self, bird_id=None, binomial_name=None) -> dict:
     if bird_id:

@@ -14,13 +14,10 @@ class TestBird(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
-      'status': 'success',
-      'result': {
-        'binomialName': 'Pica pica',
-        'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
-        'thumbnailCredit': 'myCredit',
-        'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
-      }
+      'binomialName': 'Pica pica',
+      'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+      'thumbnailCredit': 'myCredit',
+      'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
     })
 
   def test_get_bird_by_id(self):
@@ -32,11 +29,8 @@ class TestBird(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
-      'status': 'success',
-      'result': {
-        'binomialName': 'Pica pica',
-        'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
-        'thumbnailCredit': 'myCredit',
-        'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
-      }
+      'binomialName': 'Pica pica',
+      'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+      'thumbnailCredit': 'myCredit',
+      'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
     })

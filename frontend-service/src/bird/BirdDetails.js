@@ -13,7 +13,7 @@ export default function BirdDetails(props) {
     const fetchData = async () => {
       const service = new BirdService();
       const data = await service.getBird(props.match.params.binomialName);
-      setData(data.result);
+      setData(data);
     }
     fetchData();
   }, [props.match.params.binomialName]);
