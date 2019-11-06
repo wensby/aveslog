@@ -28,7 +28,6 @@ from .authentication_rest_api import create_authentication_rest_api_blueprint
 from .birds_rest_api import create_birds_rest_api_blueprint, BirdsRestApi
 from .account_rest_api import create_account_rest_api_blueprint
 from .bird import BirdRepository
-from .bird_resource import BirdResourceAccessor
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
 from .localization import LoadedLocale
@@ -79,14 +78,11 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     app.config['FRONTEND_HOST'],
   )
   password_repository = PasswordRepository(token_factory, hasher, session)
-  account_factory = AccountFactory(hasher, account_repository, password_repository)
+  account_factory = AccountFactory(hasher, account_repository,
+                                   password_repository)
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,
     birder_repository, token_factory)
-  bird_resource_accessor = BirdResourceAccessor(
-    bird_repository,
-    picture_repository,
-  )
   bird_search_controller = BirdSearchController(bird_searcher)
   refresh_token_repository = RefreshTokenRepository(session)
   password_update_controller = PasswordUpdateController(
@@ -105,7 +101,11 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   authentication_token_factory = AuthenticationTokenFactory(
     jwt_factory, datetime.datetime.utcnow)
   jwt_decoder = JwtDecoder(app.secret_key)
-  birds_rest_api = BirdsRestApi(bird_resource_accessor, link_factory)
+  birds_rest_api = BirdsRestApi(
+    link_factory,
+    bird_repository,
+    picture_repository
+  )
 
   # Create and register blueprints
   authentication_blueprint = create_authentication_rest_api_blueprint(
