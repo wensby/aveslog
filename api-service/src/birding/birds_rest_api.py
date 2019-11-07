@@ -2,7 +2,7 @@ import os
 from http import HTTPStatus
 from typing import Union
 
-from flask import Blueprint, make_response, jsonify, Response
+from flask import make_response, jsonify, Response
 
 from .bird import BirdRepository
 from .rest_api import RestApiResponse
@@ -59,19 +59,3 @@ class BirdsRestApi:
 
 def create_flask_response(response: RestApiResponse) -> Response:
   return make_response(jsonify(response.data), response.status)
-
-
-def create_birds_rest_api_blueprint(birds_rest_api: BirdsRestApi) -> Blueprint:
-  blueprint = Blueprint('birds', __name__, url_prefix='/birds')
-
-  @blueprint.route('/<string:binomial_name>')
-  def get_bird(binomial_name: str) -> Response:
-    response = birds_rest_api.get_bird(binomial_name)
-    return create_flask_response(response)
-
-  @blueprint.route('/<int:bird_id>')
-  def get_bird_by_id(bird_id: str) -> Response:
-    response = birds_rest_api.get_bird(bird_id)
-    return create_flask_response(response)
-
-  return blueprint
