@@ -123,7 +123,7 @@ def convert_sighting(sighting: Sighting) -> dict:
   result = {
     'id': sighting.id,
     'birderId': sighting.birder_id,
-    'birdId': sighting.bird_id,
+    'birdId': sighting.bird.binomial_name.lower().replace(' ', '-'),
     'date': sighting.sighting_date.isoformat(),
   }
   if sighting.sighting_time:

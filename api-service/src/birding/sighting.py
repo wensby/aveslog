@@ -1,5 +1,5 @@
 from typing import Optional, Any, List, Tuple
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 from .sqlalchemy_database import Base
 from sqlalchemy import Column, Integer, ForeignKey, Date, Time
 
@@ -11,6 +11,7 @@ class Sighting(Base):
   bird_id = Column(Integer, ForeignKey('bird.id'))
   sighting_date = Column(Date, nullable=False)
   sighting_time = Column(Time)
+  bird = relationship('Bird')
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, Sighting):

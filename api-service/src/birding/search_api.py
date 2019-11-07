@@ -19,7 +19,7 @@ def create_search_api_blueprint(
 
   def result_item(match: BirdSearchMatch):
     item = {
-      'id': match.bird.id,
+      'id': match.bird.binomial_name.lower().replace(' ', '-'),
       'binomialName': match.bird.binomial_name,
       'score': match.score,
     }

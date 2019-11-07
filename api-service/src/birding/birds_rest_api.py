@@ -1,6 +1,5 @@
 import os
 from http import HTTPStatus
-from typing import Union
 
 from flask import make_response, jsonify, Response
 
@@ -21,24 +20,21 @@ class BirdsRestApi:
     self.bird_repository = bird_repository
     self.picture_repository = picture_repository
 
-  def get_bird(self, bird_identifier: Union[int, str]) -> RestApiResponse:
-    if not isinstance(bird_identifier, (int, str)):
+  def get_bird(self, bird_identifier: str) -> RestApiResponse:
+    if not isinstance(bird_identifier, str):
       raise Exception(f'Unexpected bird identifier: {bird_identifier}')
-    if isinstance(bird_identifier, str):
-      reformatted = bird_identifier.replace('-', ' ')
-      bird = self.get_bird_data(binomial_name=reformatted)
-    else:
-      bird = self.get_bird_data(bird_id=bird_identifier)
+    reformatted = bird_identifier.replace('-', ' ')
+    bird = self.get_bird_data(binomial_name=reformatted)
     return RestApiResponse(HTTPStatus.OK, bird)
 
-  def get_bird_data(self, bird_id=None, binomial_name=None) -> dict:
-    if bird_id:
-      bird = self.bird_repository.get_bird_by_id(bird_id)
-    else:
-      bird = self.bird_repository.get_bird_by_binomial_name(binomial_name)
+  def get_bird_data(self, binomial_name=None) -> dict:
+    bird = self.bird_repository.get_bird_by_binomial_name(binomial_name)
     thumbnail_picture = self.get_thumbnail(bird)
     cover_picture = thumbnail_picture
-    bird_data = {'binomialName': bird.binomial_name}
+    bird_data = {
+      'id': bird.binomial_name.lower().replace(' ', '-'),
+      'binomialName': bird.binomial_name,
+    }
     if cover_picture:
       bird_data['coverUrl'] = self.external_picture_url(cover_picture)
     if thumbnail_picture:

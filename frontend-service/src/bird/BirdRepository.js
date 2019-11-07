@@ -8,7 +8,7 @@ class BirdRepository {
   }
 
   setUpBirdPromise(birdId) {
-    this.birdPromisesById[birdId] = this.birdService.fetchBirdById(birdId);
+    this.birdPromisesById[birdId] = this.birdService.getBird(birdId);
   }
 
   async getBird(birdId) {

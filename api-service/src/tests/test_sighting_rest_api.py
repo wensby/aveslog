@@ -26,21 +26,21 @@ class TestGetSightings(AppTestCase):
         {
           'id': 1,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 2,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 3,
           'birderId': 2,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         }
@@ -57,7 +57,7 @@ class TestGetSightings(AppTestCase):
         {
           'id': 1,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         }
@@ -83,14 +83,14 @@ class TestGetSightings(AppTestCase):
         {
           'id': 1,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         },
         {
           'id': 2,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         }
@@ -133,7 +133,7 @@ class TestGetSightings(AppTestCase):
         {
           'id': 3,
           'birderId': 2,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00'
         }
@@ -155,7 +155,7 @@ class TestGetSighting(AppTestCase):
     self.assertEqual(response.json, {
       'id': 1,
       'birderId': 1,
-      'birdId': 1,
+      'birdId': 'pica-pica',
       'date': '2019-08-28',
       'time': '11:52:00'
     })

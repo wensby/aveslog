@@ -41,7 +41,7 @@ class TestGetBirderSightings(AppTestCase):
         {
           'id': 1,
           'birderId': 1,
-          'birdId': 1,
+          'birdId': 'pica-pica',
           'date': '2019-08-28',
           'time': '11:52:00',
         }
