@@ -170,6 +170,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
 
 def configure_app(app: Flask, test_config: dict) -> None:
+  app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
   if not os.path.isdir(app.instance_path):
     os.makedirs(app.instance_path)
   if test_config:
