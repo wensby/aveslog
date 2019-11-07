@@ -26,9 +26,14 @@ Status: 200 OK
 {
   "id": "pica-pica",
   "binomialName": "Pica pica",
-  "coverUrl": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg",
-  "thumbnailCredit": "Anna Larsson",
-  "thumbnailUrl": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg"
+  "thumbnail": {
+    "url": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg",
+    "credit": "Anna Larsson",
+  },
+  "cover": {
+    "url": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg",
+    "credit": "Anna Larsson",
+  }
 }
 ```
 

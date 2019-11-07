@@ -16,7 +16,23 @@ class TestBird(AppTestCase):
     self.assertEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
-      'coverUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
-      'thumbnailCredit': 'myCredit',
-      'thumbnailUrl': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+      'thumbnail': {
+        'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'credit': 'myCredit',
+      },
+      'cover': {
+        'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'credit': 'myCredit',
+      },
+    })
+
+  def test_get_bird_with_minimal_data(self):
+    self.db_insert_bird(1, 'Pica pica')
+
+    response = self.client.get('/birds/pica-pica')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.json, {
+      'id': 'pica-pica',
+      'binomialName': 'Pica pica',
     })

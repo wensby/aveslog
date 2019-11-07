@@ -8,7 +8,7 @@ class Bird(Base):
   __tablename__ = 'bird'
   id = Column(Integer, primary_key=True)
   binomial_name = Column(String, nullable=False)
-  thumbnail = relationship('BirdThumbnail', back_populates='bird')
+  thumbnail = relationship('BirdThumbnail', uselist=False)
 
   def __eq__(self, other: Any):
     if isinstance(other, Bird):
@@ -27,6 +27,7 @@ class BirdThumbnail(Base):
   bird_id = Column(Integer, ForeignKey('bird.id'), primary_key=True)
   picture_id = Column(Integer, ForeignKey('picture.id'))
   bird = relationship('Bird', back_populates='thumbnail')
+  picture = relationship('Picture')
 
   def __repr__(self) -> str:
     return \

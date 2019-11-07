@@ -32,9 +32,16 @@ export default function BirdDetails(props) {
   }
 
   const renderCover = () => {
+    let style = {};
+    if (data.cover) {
+      style = { backgroundImage: `url(${data.cover.url})` };
+    }
+    else {
+      style = {};
+    }
     return (
       <div className='picture-cover-container rounded-top overflow-hidden'
-        style={{ backgroundImage: `url(${data.coverUrl})` }}>
+        style={style}>
         <div className='picture-cover'></div>
         {renderCoverNameCard()}
       </div>

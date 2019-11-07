@@ -27,7 +27,7 @@ function CardHeader({ sighting }) {
     return null;
   }
 
-  const src = (bird && bird.thumbnailUrl) || placeholder;
+  const src = (bird && bird.thumbnail && bird.thumbnail.url) || placeholder;
   return (
     <div className='card-header'>
       <div className='background' style={style} />
