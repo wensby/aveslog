@@ -5,8 +5,11 @@ from test_util import AppTestCase
 
 class TestBird(AppTestCase):
 
-  def test_get_bird(self):
+  def setUp(self):
+    super().setUp()
     self.db_insert_bird(1, 'Pica pica')
+
+  def test_get_bird(self):
     self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', 'myCredit')
     self.db_insert_bird_thumbnail(1, 1)
 
@@ -27,8 +30,6 @@ class TestBird(AppTestCase):
     })
 
   def test_get_bird_with_minimal_data(self):
-    self.db_insert_bird(1, 'Pica pica')
-
     response = self.client.get('/birds/pica-pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
