@@ -72,3 +72,38 @@ Status: 200 OK
 }
 ```
 
+
+## Search
+
+The Search API helps you search for the specific item you want to find. Each
+item returned in a search response will have an extra field 'score', signaling
+how well it matched the search query. Items scoring 0 will not be returned.
+
+### Search Birds
+
+```
+GET /search/birds
+```
+
+#### Parameters
+
+| Name | Type | Description |
+|------|------|-------------|
+| q | string | **Required.** |
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "items": [
+    {
+      "binomialName": "Pica pica",
+      "id": "pica-pica",
+      "score": 1.0,
+      "thumbnail": "http://0.0.0.0:3002/static/image/bird/pica-pica-thumb.jpg"
+    }
+  ]
+}
+```
