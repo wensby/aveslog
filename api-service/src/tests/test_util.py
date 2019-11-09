@@ -8,6 +8,7 @@ from unittest.mock import Mock
 
 from flask import Response
 from flask.testing import FlaskClient
+from psycopg2.pool import SimpleConnectionPool
 from werkzeug.datastructures import Headers
 
 import birding
@@ -16,7 +17,7 @@ from birding.authentication import SaltFactory
 from birding.authentication import AccessToken
 from birding.authentication import JwtFactory
 from birding.authentication import AuthenticationTokenFactory
-from birding.database import Transaction, DatabaseFactory
+from birding.database import Transaction
 from birding.database import Database
 
 
@@ -66,12 +67,12 @@ class AppTestCase(IntegrationTestCase):
     }
     self._app = birding.create_app(test_config=test_config)
     self._app.test_client_class = TestClient
-    database_connection_factory = DatabaseFactory(self._app.logger)
     database_connection_details = birding.create_database_connection_details()
-    database = database_connection_factory.create_database(
-      **database_connection_details)
-    self._app.db = database
+    self.pool = SimpleConnectionPool(1, 20, **database_connection_details)
+    self._app.db = Database(self._app.logger, self.pool)
     self.database: Database = self._app.db
+    self.app_context = self._app.test_request_context()
+    self.app_context.push()
     self.client = self._app.test_client()
     logging.disable(logging.CRITICAL)
 
@@ -204,6 +205,8 @@ class AppTestCase(IntegrationTestCase):
       transaction.execute('DELETE FROM birder;')
       transaction.execute('DELETE FROM account_registration;')
       transaction.execute('DELETE FROM locale;')
+    self.app_context.pop()
+    self.pool.closeall()
     logging.disable(logging.NOTSET)
 
   def db_get_password_reset_token_rows(self):

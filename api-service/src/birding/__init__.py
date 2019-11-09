@@ -175,6 +175,9 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
 def configure_app(app: Flask, test_config: dict) -> None:
   app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+  app.config['RATELIMIT_HEADER_LIMIT'] = 'X-Rate-Limit-Limit'
+  app.config['RATELIMIT_HEADER_REMAINING'] = 'X-Rate-Limit-Remaining'
+  app.config['RATELIMIT_HEADER_RETRY_AFTER'] = 'X-Rate-Limit-Reset'
   if not os.path.isdir(app.instance_path):
     os.makedirs(app.instance_path)
   if test_config:

@@ -82,19 +82,3 @@ class Database:
   def __get_connection(self):
     self.logger.info('Getting database connection')
     return self.connection_pool.getconn()
-
-
-class DatabaseFactory:
-
-  def __init__(self, logger: Logger) -> None:
-    self.logger: Logger = logger
-
-  def create_database(self,
-        host: str,
-        dbname: str,
-        user: str,
-        password: str) -> Database:
-    pool = SimpleConnectionPool(1, 20, user=user, password=password, host=host,
-                                database=dbname)
-    self.logger.info(f'Database ({dbname}) connection pool created')
-    return Database(self.logger, pool)

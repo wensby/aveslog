@@ -16,7 +16,7 @@ class TestBird(AppTestCase):
     response = self.client.get('/birds/pica-pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
+    self.assertDictEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
       'thumbnail': {
@@ -34,7 +34,7 @@ class TestBird(AppTestCase):
     response = self.client.get('/birds/pica-pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
+    self.assertDictEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
     })
@@ -47,13 +47,13 @@ class TestBird(AppTestCase):
       response = self.client.get('/birds/pica-pica')
 
     self.assertEqual(response.status_code, HTTPStatus.TOO_MANY_REQUESTS)
-    self.assertEqual(response.json, {
+    self.assertDictEqual(response.json, {
       'error': 'rate limit exceeded 60 per 1 minute'
     })
     self.assert_rate_limit_headers(response)
 
   def assert_rate_limit_headers(self, response):
-    self.assertIn('X-RateLimit-Limit', response.headers)
-    self.assertIn('X-RateLimit-Remaining', response.headers)
-    self.assertIn('X-RateLimit-Reset', response.headers)
-    self.assertIn('Retry-After', response.headers)
+    self.assertIn('X-Rate-Limit-Limit', response.headers)
+    self.assertIn('X-Rate-Limit-Remaining', response.headers)
+    self.assertIn('X-Rate-Limit-Reset', response.headers)
+    self.assertNotIn('Retry-After', response.headers)
