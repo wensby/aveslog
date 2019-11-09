@@ -37,7 +37,7 @@ When trying to get a resource that isn't there, the API will naturally respond
 with:
 
 ```
-404 Not Found
+Status: 404 Not Found
 
 {
   "message": "Not Found"
