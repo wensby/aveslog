@@ -49,11 +49,13 @@ export default function BirdDetails(props) {
   }
 
   const renderPhotoCredits = () => {
-    return (
-      <div>
-        <p><small>{`Thumbnail Photo by: ${ data.thumbnailCredit }`}</small></p>
-      </div>
-    );
+    if (data.thumbnail) {
+      return (
+        <div>
+          <p><small>{`Thumbnail Photo by: ${ data.thumbnail.credit }`}</small></p>
+        </div>
+      );
+    }
   }
 
   const renderAddSighting = () => {

@@ -18,8 +18,8 @@ function CardHeader({ sighting }) {
   const [style, setStyle] = useState({});
 
   useEffect(() => {
-    if (bird) {
-      setStyle({ backgroundImage: `url(${bird.thumbnailUrl})` });
+    if (bird && bird.cover) {
+      setStyle({ backgroundImage: `url(${bird.cover.url})` });
     }
   }, [bird]);
 
