@@ -54,3 +54,10 @@ class BirdsRestApi:
 
 def create_flask_response(response: RestApiResponse) -> Response:
   return make_response(jsonify(response.data), response.status)
+
+
+def bird_summary_representation(bird: Bird) -> dict:
+  return {
+    'id': bird.binomial_name.lower().replace(' ', '-'),
+    'binomialName': bird.binomial_name,
+  }

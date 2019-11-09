@@ -2,6 +2,7 @@ import os
 from http import HTTPStatus
 
 from .bird import BirdRepository
+from .birds_rest_api import bird_summary_representation
 from birding.picture import PictureRepository
 from birding.link import LinkFactory
 from birding.picture import Picture
@@ -23,14 +24,11 @@ class SearchApi:
     self.link_factory = link_factory
 
   def result_item(self, match: BirdSearchMatch):
-    item = {
-      'id': match.bird.binomial_name.lower().replace(' ', '-'),
-      'binomialName': match.bird.binomial_name,
-      'score': match.score,
-    }
-    bird_thumbnail = self.bird_repository.bird_thumbnail(match.bird)
-    if bird_thumbnail:
-      item['thumbnail'] = self.get_bird_thumbnail_url(bird_thumbnail)
+    bird = match.bird
+    item = bird_summary_representation(bird)
+    item['score'] = match.score
+    if bird.thumbnail:
+      item['thumbnail'] = self.external_picture_url(bird.thumbnail.picture)
     return item
 
   def search_birds(self, query, page_size=30) -> RestApiResponse:
@@ -41,11 +39,6 @@ class SearchApi:
     return RestApiResponse(HTTPStatus.OK, {
       'items': bird_matches,
     })
-
-  def get_bird_thumbnail_url(self, bird_thumbnail):
-    pictures = self.picture_repository.pictures()
-    picture = [x for x in pictures if x.id == bird_thumbnail.picture_id][0]
-    return self.external_picture_url(picture)
 
   def external_picture_url(self, picture: Picture) -> str:
     static_picture_url = os.path.join('/static/', picture.filepath)

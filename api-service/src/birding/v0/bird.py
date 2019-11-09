@@ -4,24 +4,6 @@ from sqlalchemy.orm import Session, relationship
 from birding.sqlalchemy_database import Base
 
 
-class Bird(Base):
-  __tablename__ = 'bird'
-  id = Column(Integer, primary_key=True)
-  binomial_name = Column(String, nullable=False)
-  thumbnail = relationship('BirdThumbnail', uselist=False)
-
-  def __eq__(self, other: Any):
-    if isinstance(other, Bird):
-      return self.id == other.id and self.binomial_name == other.binomial_name
-    return False
-
-  def __repr__(self):
-    return f"<Bird(binomial_name='{self.binomial_name}')>"
-
-  def __hash__(self) -> int:
-    return hash((self.id, self.binomial_name))
-
-
 class BirdThumbnail(Base):
   __tablename__ = 'bird_thumbnail'
   bird_id = Column(Integer, ForeignKey('bird.id'), primary_key=True)
@@ -37,6 +19,24 @@ class BirdThumbnail(Base):
     if isinstance(other, BirdThumbnail):
       return self.bird_id == other.bird_id and self.picture_id == other.picture_id
     return False
+
+
+class Bird(Base):
+  __tablename__ = 'bird'
+  id = Column(Integer, primary_key=True)
+  binomial_name = Column(String, nullable=False)
+  thumbnail: BirdThumbnail = relationship('BirdThumbnail', uselist=False)
+
+  def __eq__(self, other: Any):
+    if isinstance(other, Bird):
+      return self.id == other.id and self.binomial_name == other.binomial_name
+    return False
+
+  def __repr__(self):
+    return f"<Bird(binomial_name='{self.binomial_name}')>"
+
+  def __hash__(self) -> int:
+    return hash((self.id, self.binomial_name))
 
 
 class BirdRepository:
