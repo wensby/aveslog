@@ -42,11 +42,11 @@ class TestSearchBirds(AppTestCase):
       ]
     })
 
-  def test_get_birds_with_limit(self):
+  def test_get_birds_with_custom_page_size(self):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_bird(2, 'Passer domesticus')
 
-    response = self.client.get('/search/birds?q=P&limit=1')
+    response = self.client.get('/search/birds?q=P&page_size=1')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {

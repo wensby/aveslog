@@ -10,6 +10,12 @@ extremely volatile and there are no guarantees to consistency or functionality.
 By default, all requests to https://api.aveslog.com will use the v0 routes. For
 explicit use, just prefix all routes with 'v0/'.
 
+### Pagination
+
+Requests that return multiple items will be paginated to 30 items by default.
+To specify a custom page size, use the parameter `page_size`, which will allow
+page sizes for up to 100 items.
+
 ### Rate Limiting
 
 The returned HTTP headers of any API request show your current rate limit

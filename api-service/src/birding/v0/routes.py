@@ -22,8 +22,8 @@ def create_birds_routes(birds_rest_api: BirdsRestApi):
 def create_search_routes(search_api: SearchApi):
   def search_birds() -> Response:
     query = request.args.get('q')
-    limit = request.args.get('limit', type=int)
-    response = search_api.search_birds(query, limit)
+    page_size = request.args.get('page_size', type=int)
+    response = search_api.search_birds(query, page_size)
     return create_flask_response(response)
 
   return [

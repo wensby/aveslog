@@ -34,9 +34,11 @@ class SearchApi:
       item['thumbnail'] = self.get_bird_thumbnail_url(bird_thumbnail)
     return item
 
-  def search_birds(self, query, limit):
+  def search_birds(self, query, page_size):
     bird_matches = list(
-      map(self.result_item, filter(lambda x : x.score > 0, self.controller.search(query, limit))))
+      map(self.result_item,
+          filter(lambda x: x.score > 0,
+                 self.controller.search(query, page_size))))
     return RestApiResponse(HTTPStatus.OK, {
       'items': bird_matches,
     })
