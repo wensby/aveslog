@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import make_response, jsonify, Response
 
-from .bird import BirdRepository
+from .bird import BirdRepository, Bird
 from .rest_api import RestApiResponse
 from .link import LinkFactory
 from .picture import Picture, PictureRepository
@@ -24,11 +24,13 @@ class BirdsRestApi:
     if not isinstance(bird_identifier, str):
       raise Exception(f'Unexpected bird identifier: {bird_identifier}')
     reformatted = bird_identifier.replace('-', ' ')
-    bird = self.get_bird_data(reformatted)
-    return RestApiResponse(HTTPStatus.OK, bird)
+    bird = self.bird_repository.get_bird_by_binomial_name(reformatted)
+    if not bird:
+      return RestApiResponse(HTTPStatus.NOT_FOUND, {'message': 'Not Found'})
+    bird_data = self.get_bird_data(bird)
+    return RestApiResponse(HTTPStatus.OK, bird_data)
 
-  def get_bird_data(self, binomial_name) -> dict:
-    bird = self.bird_repository.get_bird_by_binomial_name(binomial_name)
+  def get_bird_data(self, bird: Bird) -> dict:
     bird_data = {
       'id': bird.binomial_name.lower().replace(' ', '-'),
       'binomialName': bird.binomial_name,
