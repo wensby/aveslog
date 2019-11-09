@@ -23,8 +23,12 @@ def create_search_routes(search_api: SearchApi):
   def search_birds() -> Response:
     query = request.args.get('q')
     page_size = request.args.get('page_size', type=int)
-    response = search_api.search_birds(query, page_size)
+    embed = parse_embed_list(request.args)
+    response = search_api.search_birds(query, embed, page_size)
     return create_flask_response(response)
+
+  def parse_embed_list(args):
+    return args.get('embed', type=str).split(',') if 'embed' in args else []
 
   return [
     {

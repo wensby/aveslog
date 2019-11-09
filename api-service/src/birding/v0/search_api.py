@@ -23,21 +23,30 @@ class SearchApi:
     self.picture_repository = picture_repository
     self.link_factory = link_factory
 
-  def search_birds(self, query, page_size=30) -> RestApiResponse:
+  def search_birds(self,
+        query: str,
+        embed: list = None,
+        page_size: int = 30,
+  ) -> RestApiResponse:
     page_size = page_size if page_size else 30
+    embed = embed if embed else []
     search_matches = self.bird_searcher.search(query)
     search_matches.sort(key=lambda m: m.score, reverse=True)
-    bird_matches = list(map(self._result_item, search_matches[:page_size]))
+    bird_matches = list(
+      map(lambda x: self._result_item(x, embed), search_matches[:page_size]))
     return RestApiResponse(HTTPStatus.OK, {
       'items': bird_matches,
     })
 
-  def _result_item(self, match: BirdSearchMatch) -> dict:
+  def _result_item(self, match: BirdSearchMatch, embed: list) -> dict:
     bird = match.bird
     item = bird_summary_representation(bird)
     item['score'] = match.score
-    if bird.thumbnail:
-      item['thumbnail'] = self._external_picture_url(bird.thumbnail.picture)
+    if 'thumbnail' in embed and bird.thumbnail:
+      item['thumbnail'] = {
+        'url': self._external_picture_url(bird.thumbnail.picture),
+        'credit': bird.thumbnail.picture.credit
+      }
     return item
 
   def _external_picture_url(self, picture: Picture) -> str:

@@ -96,6 +96,7 @@ GET /search/birds
 | Name | Type | Description |
 |------|------|-------------|
 | q | string | **Required.** |
+| embed | string | Optional comma separated list of fields to be included in each result item. Supported field is: thumbnail. |
 
 #### Response
 
@@ -108,7 +109,6 @@ Status: 200 OK
       "binomialName": "Pica pica",
       "id": "pica-pica",
       "score": 1.0,
-      "thumbnail": "http://0.0.0.0:3002/static/image/bird/pica-pica-thumb.jpg"
     }
   ]
 }

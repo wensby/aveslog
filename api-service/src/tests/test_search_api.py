@@ -28,7 +28,7 @@ class TestSearchBirds(AppTestCase):
     self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', '')
     self.db_insert_bird_thumbnail(1, 1)
 
-    response = self.client.get('/search/birds?q=pica')
+    response = self.client.get('/search/birds?q=pica&embed=thumbnail')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -36,7 +36,10 @@ class TestSearchBirds(AppTestCase):
         {
           'id': 'pica-pica',
           'binomialName': 'Pica pica',
-          'thumbnail': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+          'thumbnail': {
+            'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+            'credit': '',
+          },
           'score': 0.6153846153846154,
         }
       ]
