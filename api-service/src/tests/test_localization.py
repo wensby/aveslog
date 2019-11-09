@@ -7,9 +7,9 @@ from unittest.mock import Mock
 
 from sqlalchemy.orm import Session
 
-from birding.localization import Locale, LocaleDeterminer, LoadedLocale
-from birding.localization import LocaleRepository
-from birding.localization import LocaleLoader
+from birding.v0.localization import Locale, LocaleDeterminer, LoadedLocale
+from birding.v0.localization import LocaleRepository
+from birding.v0.localization import LocaleLoader
 
 
 class TestLocale(TestCase):

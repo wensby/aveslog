@@ -12,7 +12,6 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .sqlalchemy_database import EngineFactory, SessionFactory
-from .search_api import create_search_api_blueprint
 from .birders_rest_api import create_birder_rest_api_blueprint
 from .sighting_rest_api import create_sighting_rest_api_blueprint
 from .account import AccountRepository, AccountFactory
@@ -32,15 +31,12 @@ from .authentication_rest_api import create_authentication_rest_api_blueprint
 from .account_rest_api import create_account_rest_api_blueprint
 from .v0.bird import BirdRepository
 from .link import LinkFactory
-from .localization import LocaleRepository, LocaleDeterminerFactory
-from .localization import LoadedLocale
-from .localization import LocaleLoader, Locale
+from .v0.localization import LocaleRepository, LocaleDeterminerFactory
+from .v0.localization import LoadedLocale
+from .v0.localization import LocaleLoader, Locale
 from .mail import MailDispatcherFactory
 from .birder import BirderRepository
 from .picture import PictureRepository
-from .search import BirdSearchController
-from .search import BirdSearcher
-from .search import StringMatcher
 from .settings_blueprint import update_locale_context
 from .sighting import SightingRepository
 from .v0 import create_api_v0_blueprint
@@ -72,9 +68,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
                                                       locale_repository)
   bird_repository = BirdRepository(session)
-  string_matcher = StringMatcher()
-  bird_searcher = BirdSearcher(
-    bird_repository, locale_repository, string_matcher, locale_loader)
   sighting_repository = SightingRepository(session)
   picture_repository = PictureRepository(session)
   link_factory = LinkFactory(
@@ -87,7 +80,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   account_registration_controller = AccountRegistrationController(
     account_factory, account_repository, mail_dispatcher, link_factory,
     birder_repository, token_factory)
-  bird_search_controller = BirdSearchController(bird_searcher)
+
   refresh_token_repository = RefreshTokenRepository(session)
   password_update_controller = PasswordUpdateController(
     password_repository,
@@ -131,6 +124,8 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     link_factory,
     bird_repository,
     picture_repository,
+    locale_repository,
+    locale_loader
   )
   sighting_api = create_sighting_rest_api_blueprint(
     jwt_decoder,
@@ -138,18 +133,11 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     sighting_repository,
     bird_repository,
   )
-  search_api_blueprint = create_search_api_blueprint(
-    bird_search_controller,
-    bird_repository,
-    picture_repository,
-    link_factory
-  )
   app.register_blueprint(api_v0_blueprint)
   app.register_blueprint(sighting_api)
   app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
   app.register_blueprint(birder_rest_api)
-  app.register_blueprint(search_api_blueprint)
 
   @app.before_request
   def before_request():

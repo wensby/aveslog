@@ -2,19 +2,27 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify
 
+from .localization import LocaleLoader
+from .localization import LocaleRepository
 from birding.link import LinkFactory
+from .search_api import SearchApi
 from .bird import BirdRepository
 from birding.picture import PictureRepository
 from .birds_rest_api import BirdsRestApi
 from .routes import create_birds_routes
+from .routes import create_search_routes
+from .search import StringMatcher
+from .search import BirdSearchController
+from .search import BirdSearcher
 
 
 def create_api_v0_blueprint(
       link_factory: LinkFactory,
       bird_repository: BirdRepository,
       picture_repository: PictureRepository,
+      locale_repository: LocaleRepository,
+      locale_loader: LocaleLoader,
 ) -> Blueprint:
-
   def register_routes(routes):
     for route in routes:
       rule = route['rule']
@@ -29,10 +37,23 @@ def create_api_v0_blueprint(
     bird_repository,
     picture_repository,
   )
+  string_matcher = StringMatcher()
+  bird_searcher = BirdSearcher(
+    bird_repository, locale_repository, string_matcher, locale_loader)
+  bird_search_controller = BirdSearchController(bird_searcher)
+
+  search_api = SearchApi(
+    bird_search_controller,
+    bird_repository,
+    picture_repository,
+    link_factory,
+  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
   register_routes(birds_routes)
+  search_routes = create_search_routes(search_api)
+  register_routes(search_routes)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):

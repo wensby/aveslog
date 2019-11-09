@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from .sqlalchemy_database import Base
 from .birder import BirderRepository
 from .link import LinkFactory
-from .localization import LoadedLocale
+from .v0.localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
 from .account import Username, AccountFactory, TokenFactory, PasswordResetToken

@@ -2,10 +2,13 @@ from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
 
-from birding import BirdSearchController, StringMatcher, BirdSearcher
-from birding import Locale, LoadedLocale
+from birding.v0.localization import Locale
+from birding.v0.localization import LoadedLocale
 from birding.v0.bird import Bird
-from birding.search import BirdSearchMatch
+from birding.v0.search import BirdSearchMatch
+from birding.v0.search import BirdSearchController
+from birding.v0.search import BirdSearcher
+from birding.v0.search import StringMatcher
 from tests.test_util import mock_return
 
 picapica = Bird(binomial_name='Pica pica')

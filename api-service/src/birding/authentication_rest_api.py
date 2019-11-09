@@ -9,9 +9,9 @@ from flask import jsonify
 from flask import request
 from datetime import datetime
 
-from .localization import LocaleLoader
-from .localization import LoadedLocale
-from .localization import LocaleRepository
+from .v0.localization import LocaleLoader
+from .v0.localization import LoadedLocale
+from .v0.localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import AccessToken
 from .authentication import PasswordUpdateController
