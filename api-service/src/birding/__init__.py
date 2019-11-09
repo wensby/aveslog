@@ -177,6 +177,12 @@ def configure_app(app: Flask, test_config: dict) -> None:
   app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
   app.config['RATELIMIT_HEADER_LIMIT'] = 'X-Rate-Limit-Limit'
   app.config['RATELIMIT_HEADER_REMAINING'] = 'X-Rate-Limit-Remaining'
+  app.config['RATELIMIT_HEADER_RESET'] = 'X-Rate-Limit-Reset'
+  # setting RATELIMIT_HEADER_RETRY_AFTER to the same as RATELIMIT_HEADER_RESET
+  # will effectively write over the value of X-Rate-Limit-Reset when the headers
+  # are later added by Flask-Limiter. This is intentional, since we want
+  # X-Rate-Limit-Reset to contain the time left until the next retry (in
+  # seconds), but don't want a RetryAfter header in the response.
   app.config['RATELIMIT_HEADER_RETRY_AFTER'] = 'X-Rate-Limit-Reset'
   if not os.path.isdir(app.instance_path):
     os.makedirs(app.instance_path)
@@ -222,6 +228,11 @@ def configure_rate_limiter(app):
     default_limits=[app.config.get('RATE_LIMIT', '100/second,1000/minute')],
     headers_enabled=True,
   )
+
+  @app.after_request
+  def clean_header(response):
+    del response.headers['X-RateLimit-Reset']
+    return response
 
 
 def create_database_connection_details() -> dict:

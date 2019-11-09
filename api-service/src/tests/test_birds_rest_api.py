@@ -28,7 +28,7 @@ class TestBird(AppTestCase):
         'credit': 'myCredit',
       },
     })
-    self.assert_rate_limit_headers(response)
+    self.assert_rate_limit_headers(response, 59)
 
   def test_get_bird_with_minimal_data(self):
     response = self.client.get('/birds/pica-pica')
@@ -38,7 +38,7 @@ class TestBird(AppTestCase):
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
     })
-    self.assert_rate_limit_headers(response)
+    self.assert_rate_limit_headers(response, 59)
 
   def test_get_bird_rate_limited(self):
     response = None
@@ -50,10 +50,18 @@ class TestBird(AppTestCase):
     self.assertDictEqual(response.json, {
       'error': 'rate limit exceeded 60 per 1 minute'
     })
-    self.assert_rate_limit_headers(response)
+    self.assert_rate_limit_headers(response, 0)
 
-  def assert_rate_limit_headers(self, response):
-    self.assertIn('X-Rate-Limit-Limit', response.headers)
-    self.assertIn('X-Rate-Limit-Remaining', response.headers)
-    self.assertIn('X-Rate-Limit-Reset', response.headers)
-    self.assertNotIn('Retry-After', response.headers)
+  def assert_rate_limit_headers(self, response, expected_remaining):
+    headers = response.headers
+    self.assertIn('X-Rate-Limit-Limit', headers)
+    self.assertIn('X-Rate-Limit-Remaining', headers)
+    self.assertIn('X-Rate-Limit-Reset', headers)
+    self.assertNotIn('Retry-After', headers)
+    self.assertNotIn('X-RateLimit-Reset', headers)
+    reset = int(headers['X-Rate-Limit-Reset'])
+    limit = int(headers['X-Rate-Limit-Limit'])
+    remaining = int(headers['X-Rate-Limit-Remaining'])
+    self.assertLessEqual(reset, self.test_rate_limit_per_minute)
+    self.assertEqual(limit, self.test_rate_limit_per_minute)
+    self.assertEqual(remaining, expected_remaining)

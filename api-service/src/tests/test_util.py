@@ -54,6 +54,7 @@ class AppTestCase(IntegrationTestCase):
   @classmethod
   def setUpClass(cls):
     super().setUpClass()
+    cls.test_rate_limit_per_minute = 60
 
 
   def setUp(self) -> None:
@@ -63,7 +64,7 @@ class AppTestCase(IntegrationTestCase):
       'SECRET_KEY': 'wowsosecret',
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002',
-      'RATE_LIMIT': '60/minute',
+      'RATE_LIMIT': f'{self.test_rate_limit_per_minute}/minute',
     }
     self._app = birding.create_app(test_config=test_config)
     self._app.test_client_class = TestClient
