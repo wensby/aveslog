@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify, request
 
-from .bird import BirdRepository
+from .v0.bird import BirdRepository
 from .link import LinkFactory
 from .picture import PictureRepository, Picture
 from .search import BirdSearchController, BirdSearchMatch

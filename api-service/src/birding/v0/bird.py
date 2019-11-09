@@ -1,7 +1,7 @@
 from typing import Any, Optional, List
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import Session, relationship
-from .sqlalchemy_database import Base
+from birding.sqlalchemy_database import Base
 
 
 class Bird(Base):

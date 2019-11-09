@@ -1,8 +1,8 @@
 from difflib import SequenceMatcher
 from typing import Dict, List, Optional
 
-from .bird import Bird
-from .bird import BirdRepository
+from .v0.bird import Bird
+from .v0.bird import BirdRepository
 from .localization import LocaleRepository, LocaleLoader
 
 

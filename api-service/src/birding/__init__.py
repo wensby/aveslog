@@ -29,9 +29,9 @@ from .authentication import Authenticator
 from .authentication import PasswordResetController
 from .authentication import SaltFactory
 from .authentication_rest_api import create_authentication_rest_api_blueprint
-from .birds_rest_api import BirdsRestApi
+from .v0.birds_rest_api import BirdsRestApi
 from .account_rest_api import create_account_rest_api_blueprint
-from .bird import BirdRepository
+from .v0.bird import BirdRepository
 from .link import LinkFactory
 from .localization import LocaleRepository, LocaleDeterminerFactory
 from .localization import LoadedLocale

@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from birding import BirdSearchController, StringMatcher, BirdSearcher
 from birding import Locale, LoadedLocale
-from birding.bird import Bird
+from birding.v0.bird import Bird
 from birding.search import BirdSearchMatch
 from tests.test_util import mock_return
 

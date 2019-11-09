@@ -4,7 +4,7 @@ from typing import List
 from flask import Blueprint, Response, make_response, jsonify, request
 
 from .authentication_rest_api import require_authentication
-from .bird import BirdRepository, Bird
+from .v0.bird import BirdRepository, Bird
 from .sighting import SightingRepository, Sighting
 from .time import parse_date
 from .time import parse_time

@@ -1,6 +1,6 @@
 from flask import Response
 
-from birding.birds_rest_api import BirdsRestApi, create_flask_response
+from .birds_rest_api import BirdsRestApi, create_flask_response
 
 
 def create_birds_routes(birds_rest_api: BirdsRestApi):

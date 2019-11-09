@@ -6,7 +6,7 @@ from flask import Request
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 from .sqlalchemy_database import Base
-from .bird import Bird
+from .v0.bird import Bird
 
 
 def replace_text_variables(text: str, variables: List[str] = None) -> str:

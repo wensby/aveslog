@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify
-from birding.birds_rest_api import BirdsRestApi
+from .birds_rest_api import BirdsRestApi
 from .routes import create_birds_routes
 
 

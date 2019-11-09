@@ -4,9 +4,9 @@ from http import HTTPStatus
 from flask import make_response, jsonify, Response
 
 from .bird import BirdRepository, Bird
-from .rest_api import RestApiResponse
-from .link import LinkFactory
-from .picture import Picture, PictureRepository
+from birding.rest_api import RestApiResponse
+from birding.link import LinkFactory
+from birding.picture import Picture, PictureRepository
 
 
 class BirdsRestApi:
