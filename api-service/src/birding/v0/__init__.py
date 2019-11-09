@@ -15,14 +15,6 @@ def create_api_v0_blueprint(
       picture_repository: PictureRepository,
 ) -> Blueprint:
 
-  birds_rest_api = BirdsRestApi(
-    link_factory,
-    bird_repository,
-    picture_repository,
-  )
-
-  blueprint = Blueprint('v0', __name__)
-
   def register_routes(routes):
     for route in routes:
       rule = route['rule']
@@ -32,6 +24,13 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
+  birds_rest_api = BirdsRestApi(
+    link_factory,
+    bird_repository,
+    picture_repository,
+  )
+
+  blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
   register_routes(birds_routes)
 
