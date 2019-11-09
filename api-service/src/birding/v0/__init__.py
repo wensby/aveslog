@@ -12,7 +12,6 @@ from .birds_rest_api import BirdsRestApi
 from .routes import create_birds_routes
 from .routes import create_search_routes
 from .search import StringMatcher
-from .search import BirdSearchController
 from .search import BirdSearcher
 
 
@@ -40,10 +39,9 @@ def create_api_v0_blueprint(
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository, locale_repository, string_matcher, locale_loader)
-  bird_search_controller = BirdSearchController(bird_searcher)
 
   search_api = SearchApi(
-    bird_search_controller,
+    bird_searcher,
     bird_repository,
     picture_repository,
     link_factory,

@@ -6,36 +6,10 @@ from birding.v0.localization import Locale
 from birding.v0.localization import LoadedLocale
 from birding.v0.bird import Bird
 from birding.v0.search import BirdSearchMatch
-from birding.v0.search import BirdSearchController
 from birding.v0.search import BirdSearcher
 from birding.v0.search import StringMatcher
-from tests.test_util import mock_return
 
 picapica = Bird(binomial_name='Pica pica')
-
-
-class TestBirdSearchController(TestCase):
-
-  def setUp(self):
-    self.searcher = Mock()
-    self.controller = BirdSearchController(self.searcher)
-
-  def test_search_return_result_sorted_based_on_score(self):
-    search_result = [Simple(bird=Simple(id=i), score=i) for i in range(5)]
-    self.searcher.search = mock_return(search_result)
-
-    result = self.controller.search('name', None)
-
-    result_bird_ids = list(map(lambda x: x.bird.id, result))
-    self.assertListEqual(result_bird_ids, list(range(0, 5))[::-1])
-
-  def test_search_returns_limited_items(self):
-    search_result = [Simple(score=1) for i in range(0, 1000)]
-    self.searcher.search = mock_return(search_result)
-
-    result = self.controller.search('name', limit=100)
-
-    self.assertEqual(len(result), 100)
 
 
 class TestBirdSearcher(TestCase):
@@ -84,14 +58,14 @@ class TestBirdSearcher(TestCase):
 
     self.assertEqual(len(matches), 1)
 
-  def test_search_finds_all_with_only_empty_string_name_query(self):
+  def test_search_finds_none_with_only_empty_string_name_query(self):
     bird_repository = Simple(birds=[picapica])
     searcher = BirdSearcher(bird_repository, self.locale_repository,
                             self.string_matcher, self.locale_loader)
 
     matches = searcher.search('')
 
-    self.assertEqual(len(matches), 1)
+    self.assertEqual(len(matches), 0)
 
 
 class TestBirdSearchMatch(TestCase):

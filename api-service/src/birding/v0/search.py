@@ -73,20 +73,6 @@ class BirdSearcher:
     return [l.bird_dictionary for l in loaded_locales if l.bird_dictionary]
 
 
-class BirdSearchController:
-
-  def __init__(self, bird_searcher: BirdSearcher):
-    self.bird_searcher = bird_searcher
-
-  def search(self, name: str, limit: Optional[int]) -> List[BirdSearchMatch]:
-    matches = self.bird_searcher.search(name)
-    matches.sort(key=lambda m: m.score, reverse=True)
-    if limit:
-      return matches[:limit]
-    else:
-      return matches[:20]
-
-
 class ResultBuilder:
 
   def __init__(self, birds: List[Bird]):
@@ -105,7 +91,8 @@ class ResultBuilder:
     matches = []
     for bird in self.matches_by_bird:
       score = self.__average_score(bird)
-      matches.append(BirdSearchMatch(bird, score))
+      if score > 0:
+        matches.append(BirdSearchMatch(bird, score))
     return matches
 
   def __average_score(self, bird: Bird) -> float:

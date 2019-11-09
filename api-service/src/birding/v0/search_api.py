@@ -6,19 +6,18 @@ from birding.picture import PictureRepository
 from birding.link import LinkFactory
 from birding.picture import Picture
 from birding.rest_api import RestApiResponse
-from .search import BirdSearchMatch
-from .search import BirdSearchController
+from .search import BirdSearchMatch, BirdSearcher
 
 
 class SearchApi:
 
   def __init__(self,
-        controller: BirdSearchController,
+        bird_searcher: BirdSearcher,
         bird_repository: BirdRepository,
         picture_repository: PictureRepository,
         link_factory: LinkFactory,
   ):
-    self.controller = controller
+    self.bird_searcher = bird_searcher
     self.bird_repository = bird_repository
     self.picture_repository = picture_repository
     self.link_factory = link_factory
@@ -34,11 +33,11 @@ class SearchApi:
       item['thumbnail'] = self.get_bird_thumbnail_url(bird_thumbnail)
     return item
 
-  def search_birds(self, query, page_size):
-    bird_matches = list(
-      map(self.result_item,
-          filter(lambda x: x.score > 0,
-                 self.controller.search(query, page_size))))
+  def search_birds(self, query, page_size=30) -> RestApiResponse:
+    page_size = page_size if page_size else 30
+    search_matches = self.bird_searcher.search(query)
+    search_matches.sort(key=lambda m: m.score, reverse=True)
+    bird_matches = list(map(self.result_item, search_matches[:page_size]))
     return RestApiResponse(HTTPStatus.OK, {
       'items': bird_matches,
     })
