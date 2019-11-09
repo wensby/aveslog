@@ -1,11 +1,26 @@
 from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify
+
+from birding.link import LinkFactory
+from .bird import BirdRepository
+from birding.picture import PictureRepository
 from .birds_rest_api import BirdsRestApi
 from .routes import create_birds_routes
 
 
-def create_api_v0_blueprint(birds_rest_api: BirdsRestApi) -> Blueprint:
+def create_api_v0_blueprint(
+      link_factory: LinkFactory,
+      bird_repository: BirdRepository,
+      picture_repository: PictureRepository,
+) -> Blueprint:
+
+  birds_rest_api = BirdsRestApi(
+    link_factory,
+    bird_repository,
+    picture_repository,
+  )
+
   blueprint = Blueprint('v0', __name__)
 
   def register_routes(routes):
