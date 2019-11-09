@@ -1,5 +1,5 @@
 from unittest import TestCase
-from birding.sighting import Sighting
+from birding.v0.models import Sighting
 from datetime import date
 
 

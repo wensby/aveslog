@@ -4,41 +4,21 @@ from datetime import timedelta, datetime
 from typing import Union, Optional, Callable, Any, List
 
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import Session
 
-from .sqlalchemy_database import Base
+from .v0.models import Account, AccountRegistration, PasswordResetToken, \
+  RefreshToken
 from .birder import BirderRepository
 from .link import LinkFactory
 from .v0.localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
-from .account import Username, AccountFactory, TokenFactory, PasswordResetToken
+from .account import Username, AccountFactory, TokenFactory
 from .account import Credentials
 from .account import PasswordRepository
-from .account import Account
 from .account import PasswordHasher
 from .account import AccountRepository
-from .account import AccountRegistration
 from .account import Password
-
-
-class RefreshToken(Base):
-  __tablename__ = 'refresh_token'
-  id = Column(Integer, primary_key=True)
-  token = Column(String, nullable=False)
-  account_id = Column(Integer, ForeignKey('account.id'), nullable=False)
-  expiration_date = Column(DateTime, nullable=False)
-
-  def __eq__(self, other: Any) -> bool:
-    if not isinstance(other, RefreshToken):
-      return False
-    return (
-          self.id == other.id and
-          self.token == other.token and
-          self.account_id == other.account_id and
-          self.expiration_date == other.expiration_date
-    )
 
 
 class AccessToken:

@@ -4,11 +4,10 @@ import os
 import re
 from typing import Optional, Union, Any, List, TypeVar
 from sqlalchemy.orm import Session
-from .sqlalchemy_database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from .v0.models import Birder, Account, AccountRegistration, \
+  HashedPassword, PasswordResetToken
 
 from birding.mail import EmailAddress
-from birding.birder import Birder
 
 
 class Username:
@@ -62,30 +61,6 @@ class Credentials:
     return False
 
 
-class Account(Base):
-  __tablename__ = 'account'
-  id = Column(Integer, primary_key=True)
-  username = Column(String, nullable=False)
-  email = Column(String, nullable=False)
-  birder_id = Column(Integer, ForeignKey('birder.id'))
-  locale_id = Column(Integer, nullable=True)
-
-  def __eq__(self, other):
-    if isinstance(other, Account):
-      return (
-            self.id == other.id and
-            self.username == other.username and
-            self.email == other.email and
-            self.birder_id == other.birder_id and
-            self.locale_id == other.locale_id
-      )
-    return False
-
-  def __repr__(self):
-    return (f"<Account(username='{self.username}', email='{self.email}', "
-            f"birder_id='{self.birder_id}', locale_id='{self.locale_id}')>")
-
-
 class PasswordHasher:
 
   def __init__(self, salt_factory):
@@ -107,20 +82,6 @@ class PasswordHasher:
 
 AccountRegistrationType = TypeVar(
   'AccountRegistrationType', bound='AccountRegistration')
-
-
-class AccountRegistration(Base):
-  __tablename__ = 'account_registration'
-  id = Column(Integer, primary_key=True)
-  email = Column(String, nullable=False)
-  token = Column(String, nullable=False)
-
-
-class HashedPassword(Base):
-  __tablename__ = 'hashed_password'
-  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
-  salt = Column(String, nullable=False)
-  salted_hash = Column(String, nullable=False)
 
 
 class TokenFactory:
@@ -195,26 +156,6 @@ class AccountRepository:
 
   def accounts(self) -> List[Account]:
     return self.session.query(Account).all()
-
-
-class PasswordResetToken(Base):
-  __tablename__ = 'password_reset_token'
-  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
-  token = Column(String)
-
-  def __repr__(self):
-    return (
-      f"<PasswordResetToken(account_id='{self.account_id}', "
-      f"token='{self.token}')>"
-    )
-
-  def __eq__(self, other):
-    if isinstance(other, PasswordResetToken):
-      return (
-            self.account_id == other.account_id and
-            self.token == other.token
-      )
-    return False
 
 
 class PasswordRepository:

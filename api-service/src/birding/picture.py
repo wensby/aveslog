@@ -1,16 +1,5 @@
 from sqlalchemy.orm import Session
-from .sqlalchemy_database import Base
-from sqlalchemy import Column, Integer, String
-
-
-class Picture(Base):
-  __tablename__ = 'picture'
-  id = Column(Integer, primary_key=True)
-  filepath = Column(String)
-  credit = Column(String)
-
-  def __repr__(self):
-    return f"<Picture(filepath='{self.filepath}', credit='{self.credit}')>"
+from .v0.models import Picture
 
 
 class PictureRepository:

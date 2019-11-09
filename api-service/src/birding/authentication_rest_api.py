@@ -15,15 +15,13 @@ from .v0.localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import AccessToken
 from .authentication import PasswordUpdateController
-from .authentication import RefreshToken
 from .authentication import RefreshTokenRepository
 from .authentication import PasswordResetController
 from .authentication import AccountRegistrationController
 from .authentication import JwtDecoder
 from .account import AccountRepository
-from .account import AccountRegistration
 from .account import Password
-from .account import Account
+from .v0.models import Account, AccountRegistration, RefreshToken
 
 RouteFunction = Callable[..., Response]
 

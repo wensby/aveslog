@@ -5,7 +5,7 @@ from .bird import BirdRepository
 from .birds_rest_api import bird_summary_representation
 from birding.picture import PictureRepository
 from birding.link import LinkFactory
-from birding.picture import Picture
+from .models import Picture
 from birding.rest_api import RestApiResponse
 from .search import BirdSearchMatch, BirdSearcher
 

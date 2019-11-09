@@ -4,8 +4,7 @@ from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
-from birding.account import Account
-from birding.account import PasswordResetToken
+from birding.v0.models import Account, PasswordResetToken
 from birding.account import PasswordHasher
 from birding.account import TokenFactory
 from birding.account import AccountRepository

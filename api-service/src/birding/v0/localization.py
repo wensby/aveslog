@@ -1,12 +1,12 @@
 from __future__ import annotations
 import json
 import os
-from typing import Optional, List, Union, Any, Set
+from typing import Optional, List, Union, Set
 from flask import Request
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
-from birding.sqlalchemy_database import Base
-from .bird import Bird
+
+from .models import Locale
+from .models import Bird
 
 
 def replace_text_variables(text: str, variables: List[str] = None) -> str:
@@ -16,23 +16,6 @@ def replace_text_variables(text: str, variables: List[str] = None) -> str:
       text = text.replace('{{}}', variables[i], 1)
       i += 1
   return text
-
-
-class Locale(Base):
-  __tablename__ = 'locale'
-  id = Column(Integer, primary_key=True)
-  code = Column(String, nullable=False)
-
-  def __repr__(self) -> str:
-    return f"<Locale(code='{self.code}')>"
-
-  def __eq__(self, other: Any) -> bool:
-    if isinstance(other, self.__class__):
-      return self.id == other.id and self.code == other.code
-    return False
-
-  def __hash__(self) -> int:
-    return hash(self.id) ^ hash(self.code)
 
 
 class LoadedLocale:
@@ -131,7 +114,7 @@ class LocaleRepository:
     return os.listdir(path)
 
   def enabled_locale_codes(self) -> List[str]:
-    return list(map(lambda l : l.code, self.locales))
+    return list(map(lambda l: l.code, self.locales))
 
   def find_locale_by_code(self, code: str) -> Optional[Locale]:
     return self.session.query(Locale).filter_by(code=code).first()

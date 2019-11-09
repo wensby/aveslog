@@ -33,7 +33,8 @@ from .v0.bird import BirdRepository
 from .link import LinkFactory
 from .v0.localization import LocaleRepository, LocaleDeterminerFactory
 from .v0.localization import LoadedLocale
-from .v0.localization import LocaleLoader, Locale
+from .v0.localization import LocaleLoader
+from .v0.models import Locale
 from .mail import MailDispatcherFactory
 from .birder import BirderRepository
 from .picture import PictureRepository

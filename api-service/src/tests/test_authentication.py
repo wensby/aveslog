@@ -11,9 +11,9 @@ from birding.authentication import JwtDecoder
 from birding.authentication import PasswordResetController
 from birding.authentication import Authenticator
 from birding.authentication import PasswordHasher
-from birding.authentication import RefreshToken
 from birding.authentication import RefreshTokenRepository
-from birding.account import Account, TokenFactory
+from birding.account import TokenFactory
+from birding.v0.models import Account, RefreshToken
 from birding.account import PasswordRepository
 from birding.account import Credentials
 from birding.account import AccountRepository, Username, Password, \

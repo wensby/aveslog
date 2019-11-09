@@ -1,18 +1,8 @@
 from typing import Optional
 
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 
-from .sqlalchemy_database import Base
-
-
-class Birder(Base):
-  __tablename__ = 'birder'
-  id = Column(Integer, primary_key=True)
-  name = Column(String)
-
-  def __repr__(self):
-    return f"<Birder(name='{self.name}')>"
+from birding.v0.models import Birder
 
 
 class BirderRepository:

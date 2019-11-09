@@ -1,31 +1,6 @@
-from typing import Optional, Any, List, Tuple
-from sqlalchemy.orm import Session, relationship
-from .sqlalchemy_database import Base
-from sqlalchemy import Column, Integer, ForeignKey, Date, Time
-
-
-class Sighting(Base):
-  __tablename__ = 'sighting'
-  id = Column(Integer, primary_key=True)
-  birder_id = Column(Integer, ForeignKey('birder.id'))
-  bird_id = Column(Integer, ForeignKey('bird.id'))
-  sighting_date = Column(Date, nullable=False)
-  sighting_time = Column(Time)
-  bird = relationship('Bird')
-
-  def __eq__(self, other: Any) -> bool:
-    if isinstance(other, Sighting):
-      return (self.id == other.id
-              and self.birder_id == other.birder_id
-              and self.bird_id == other.bird_id
-              and self.sighting_date == other.sighting_date
-              and self.sighting_time == other.sighting_time)
-    return False
-
-  def __repr__(self) -> str:
-    return (f"<Sighting(birder_id='{self.birder_id}', "
-            f"bird_id='{self.bird_id}', sighting_date='{self.sighting_date}', "
-            f"sighting_time='{self.sighting_time}')>")
+from typing import Optional, List, Tuple
+from sqlalchemy.orm import Session
+from .v0.models import Sighting
 
 
 class SightingRepository:

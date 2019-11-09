@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from birding.v0.bird import Bird, BirdThumbnail
+from birding.v0.models import BirdThumbnail, Bird
 
 
 class TestBird(TestCase):

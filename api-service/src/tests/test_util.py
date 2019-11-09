@@ -12,7 +12,8 @@ from psycopg2.pool import SimpleConnectionPool
 from werkzeug.datastructures import Headers
 
 import birding
-from birding.account import PasswordHasher, Password, Account
+from birding.account import PasswordHasher, Password
+from birding.v0.models import Account
 from birding.authentication import SaltFactory
 from birding.authentication import AccessToken
 from birding.authentication import JwtFactory
