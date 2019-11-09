@@ -20,13 +20,7 @@ class TestSearchBirds(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
-      'items': [
-        {
-          'id': 'pica-pica',
-          'binomialName': 'Pica pica',
-          'score': 0
-        }
-      ]
+      'items': []
     })
 
   def test_search_pica_pica_with_thumbnail(self):

@@ -36,7 +36,7 @@ class SearchApi:
 
   def search_birds(self, query, limit):
     bird_matches = list(
-      map(self.result_item, self.controller.search(query, limit)))
+      map(self.result_item, filter(lambda x : x.score > 0, self.controller.search(query, limit))))
     return RestApiResponse(HTTPStatus.OK, {
       'items': bird_matches,
     })
