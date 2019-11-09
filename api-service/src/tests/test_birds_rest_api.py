@@ -28,6 +28,7 @@ class TestBird(AppTestCase):
         'credit': 'myCredit',
       },
     })
+    self.assert_rate_limit_headers(response)
 
   def test_get_bird_with_minimal_data(self):
     response = self.client.get('/birds/pica-pica')
@@ -37,3 +38,22 @@ class TestBird(AppTestCase):
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
     })
+    self.assert_rate_limit_headers(response)
+
+  def test_get_bird_rate_limited(self):
+    response = None
+
+    for _ in range(61):
+      response = self.client.get('/birds/pica-pica')
+
+    self.assertEqual(response.status_code, HTTPStatus.TOO_MANY_REQUESTS)
+    self.assertEqual(response.json, {
+      'error': 'rate limit exceeded 60 per 1 minute'
+    })
+    self.assert_rate_limit_headers(response)
+
+  def assert_rate_limit_headers(self, response):
+    self.assertIn('X-RateLimit-Limit', response.headers)
+    self.assertIn('X-RateLimit-Remaining', response.headers)
+    self.assertIn('X-RateLimit-Reset', response.headers)
+    self.assertIn('Retry-After', response.headers)

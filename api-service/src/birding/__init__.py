@@ -1,11 +1,15 @@
 import datetime
 import logging
 import os
+from distutils.util import strtobool
 from typing import Optional
 
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .sqlalchemy_database import EngineFactory, SessionFactory
 from .search_api import create_search_api_blueprint
@@ -186,6 +190,9 @@ def configure_app(app: Flask, test_config: dict) -> None:
   elif 'FRONTEND_HOST' not in app.config:
     raise Exception('FRONTEND_HOST not set in environment variables or config.')
   configure_cross_origin_resource_sharing(app)
+  if is_behind_proxy():
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
+  configure_rate_limiter(app)
 
 
 def configure_cross_origin_resource_sharing(app: Flask) -> None:
@@ -197,6 +204,21 @@ def configure_cross_origin_resource_sharing(app: Flask) -> None:
       'origins': app.config['FRONTEND_HOST']
     }
   })
+
+
+def is_behind_proxy():
+  if not 'BEHIND_PROXY' in os.environ:
+    return False
+  return bool(strtobool(os.environ['BEHIND_PROXY']))
+
+
+def configure_rate_limiter(app):
+  Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=[app.config.get('RATE_LIMIT', '100/second,1000/minute')],
+    headers_enabled=True,
+  )
 
 
 def create_database_connection_details() -> dict:

@@ -53,24 +53,25 @@ class AppTestCase(IntegrationTestCase):
   @classmethod
   def setUpClass(cls):
     super().setUpClass()
+
+
+  def setUp(self) -> None:
+    self.maxDiff = None
     test_config = {
       'TESTING': True,
       'SECRET_KEY': 'wowsosecret',
       'LOGS_DIR_PATH': 'test-logs',
-      'FRONTEND_HOST': 'http://localhost:3002'
+      'FRONTEND_HOST': 'http://localhost:3002',
+      'RATE_LIMIT': '60/minute',
     }
-    cls._app = birding.create_app(test_config=test_config)
-    cls._app.test_client_class = TestClient
-    database_connection_factory = DatabaseFactory(cls._app.logger)
+    self._app = birding.create_app(test_config=test_config)
+    self._app.test_client_class = TestClient
+    database_connection_factory = DatabaseFactory(self._app.logger)
     database_connection_details = birding.create_database_connection_details()
     database = database_connection_factory.create_database(
       **database_connection_details)
-    cls._app.db = database
-
-  def setUp(self) -> None:
+    self._app.db = database
     self.database: Database = self._app.db
-    self.app_context = self._app.test_request_context()
-    self.app_context.push()
     self.client = self._app.test_client()
     logging.disable(logging.CRITICAL)
 
@@ -203,7 +204,6 @@ class AppTestCase(IntegrationTestCase):
       transaction.execute('DELETE FROM birder;')
       transaction.execute('DELETE FROM account_registration;')
       transaction.execute('DELETE FROM locale;')
-    self.app_context.pop()
     logging.disable(logging.NOTSET)
 
   def db_get_password_reset_token_rows(self):

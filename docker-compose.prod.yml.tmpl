@@ -22,6 +22,7 @@ services:
     expose:
       - 3000
     environment:
+      BEHIND_PROXY: 'true'
       FLASK_ENV: production
       EXTERNAL_HOST: https://yourrestapidomain.tld
       VIRTUAL_HOST: yourrestapidomain.tld
