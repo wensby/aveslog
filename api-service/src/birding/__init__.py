@@ -187,7 +187,7 @@ def configure_app(app: Flask, test_config: dict) -> None:
     raise Exception('FRONTEND_HOST not set in environment variables or config.')
   configure_cross_origin_resource_sharing(app)
   if is_behind_proxy():
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
   configure_rate_limiter(app)
 
 
