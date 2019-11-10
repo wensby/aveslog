@@ -13,7 +13,6 @@ from werkzeug.datastructures import Headers
 
 import birding
 from birding.account import PasswordHasher, Password
-from birding.v0.models import Account
 from birding.authentication import SaltFactory
 from birding.authentication import AccessToken
 from birding.authentication import JwtFactory
@@ -57,7 +56,6 @@ class AppTestCase(IntegrationTestCase):
     super().setUpClass()
     cls.test_rate_limit_per_minute = 60
 
-
   def setUp(self) -> None:
     self.maxDiff = None
     test_config = {
@@ -82,9 +80,6 @@ class AppTestCase(IntegrationTestCase):
     token = self.create_access_token(account_id)
     return self.client.get(uri, headers={'accessToken': token.jwt})
 
-  def assertFileExist(self, path):
-    self.assertTrue(os.path.exists(path))
-
   def db_insert_birder(self, birder_id, name):
     self.database.query(
       'INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, name))
@@ -107,11 +102,6 @@ class AppTestCase(IntegrationTestCase):
       'VALUES '
       '(%s, %s, %s, %s, %s);',
       (account_id, username, email, birder_id, locale_id))
-
-  def db_delete_account(self, account_id):
-    with self.database.transaction() as transaction:
-      transaction.execute(
-        'DELETE FROM account WHERE id = %s;', (account_id,))
 
   def db_delete_refresh_token(self, refresh_token_id: int) -> None:
     with self.database.transaction() as transaction:
@@ -167,13 +157,6 @@ class AppTestCase(IntegrationTestCase):
         'VALUES (%s, %s, %s, %s, %s);',
         (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
 
-  def db_get_account(self, account_id) -> Account:
-    with self.database.transaction() as transaction:
-      result = transaction.execute(
-        'SELECT * FROM account WHERE id = %s;',
-        (account_id,), lambda r: Account(r[0], r[1], r[2], r[3], r[4]))
-      return next(iter(result.rows), None)
-
   def db_setup_account(self,
         birder_id: int,
         account_id: int,
@@ -210,12 +193,6 @@ class AppTestCase(IntegrationTestCase):
     self.app_context.pop()
     self.pool.closeall()
     logging.disable(logging.NOTSET)
-
-  def db_get_password_reset_token_rows(self):
-    with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT * FROM password_reset_token;')
-      rows = result.rows
-    return rows
 
   def db_get_sighting_rows(self):
     with self.database.transaction() as transaction:
