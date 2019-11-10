@@ -5,11 +5,6 @@ from psycopg2.pool import SimpleConnectionPool
 from retrying import retry
 
 
-def read_script_file(filename: str) -> str:
-  with open(f'birding/resources/{filename}', 'r') as file:
-    return file.read()
-
-
 class QueryResult:
 
   def __init__(self, status: str, rows: list) -> None:
