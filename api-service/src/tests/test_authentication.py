@@ -361,24 +361,20 @@ class TestRefreshTokenRepository(TestCase):
     self.session: Session = sessionmaker(bind=engine)()
 
   def test_updates_already_existing_refresh_tokens(self):
+    tomorrow = datetime.now() + timedelta(1)
     account = Account(username='george', email='tbone@mail.com')
+    refresh_token = RefreshToken(token='myJwt', expiration_date=tomorrow)
+    account.refresh_tokens = [refresh_token]
     self.session.add(account)
-    self.session.commit()
-    refresh_token = RefreshToken(
-      token='myRefreshTokenJwt',
-      account_id=account.id,
-      expiration_date=datetime.now() + timedelta(days=1),
-    )
-    self.session.add(refresh_token)
     self.session.commit()
     repository = RefreshTokenRepository(self.session)
 
-    refresh_token.token = 'myNewRefreshTokenJwt'
+    refresh_token.token = 'myNewJwt'
     repository.put_refresh_token(refresh_token)
 
     database_refresh_token = self.session.query(RefreshToken). \
       filter_by(id=refresh_token.id).first()
-    self.assertEqual(database_refresh_token.token, 'myNewRefreshTokenJwt')
+    self.assertEqual(database_refresh_token.token, 'myNewJwt')
 
   def tearDown(self):
     self.session.close()

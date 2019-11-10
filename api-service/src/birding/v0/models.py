@@ -81,6 +81,7 @@ class Account(Base):
   email = Column(String, nullable=False)
   birder_id = Column(Integer, ForeignKey('birder.id'))
   locale_id = Column(Integer, nullable=True)
+  refresh_tokens = relationship('RefreshToken', back_populates='account')
 
   def __eq__(self, other):
     if isinstance(other, Account):
@@ -172,6 +173,7 @@ class RefreshToken(Base):
   token = Column(String, nullable=False)
   account_id = Column(Integer, ForeignKey('account.id'), nullable=False)
   expiration_date = Column(DateTime, nullable=False)
+  account = relationship('Account', back_populates='refresh_tokens')
 
   def __eq__(self, other: Any) -> bool:
     if not isinstance(other, RefreshToken):
@@ -182,3 +184,6 @@ class RefreshToken(Base):
           self.account_id == other.account_id and
           self.expiration_date == other.expiration_date
     )
+
+  def __hash__(self):
+    return hash((self.id, self.token, self.account_id, self.expiration_date))
