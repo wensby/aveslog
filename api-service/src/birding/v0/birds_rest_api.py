@@ -7,7 +7,6 @@ from .bird import BirdRepository
 from .models import Bird, Picture
 from birding.rest_api import RestApiResponse
 from birding.link import LinkFactory
-from birding.picture import PictureRepository
 
 
 class BirdsRestApi:
@@ -15,11 +14,9 @@ class BirdsRestApi:
   def __init__(self,
         link_factory: LinkFactory,
         bird_repository: BirdRepository,
-        picture_repository: PictureRepository,
   ):
     self.link_factory = link_factory
     self.bird_repository = bird_repository
-    self.picture_repository = picture_repository
 
   def get_bird(self, bird_identifier: str) -> RestApiResponse:
     if not isinstance(bird_identifier, str):

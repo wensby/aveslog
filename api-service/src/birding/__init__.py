@@ -37,7 +37,6 @@ from .v0.localization import LocaleLoader
 from .v0.models import Locale
 from .mail import MailDispatcherFactory
 from .birder import BirderRepository
-from .picture import PictureRepository
 from .settings_blueprint import update_locale_context
 from .sighting import SightingRepository
 from .v0 import create_api_v0_blueprint
@@ -70,7 +69,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
                                                       locale_repository)
   bird_repository = BirdRepository(session)
   sighting_repository = SightingRepository(session)
-  picture_repository = PictureRepository(session)
   link_factory = LinkFactory(
     os.environ['EXTERNAL_HOST'],
     app.config['FRONTEND_HOST'],
@@ -124,7 +122,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   api_v0_blueprint = create_api_v0_blueprint(
     link_factory,
     bird_repository,
-    picture_repository,
     locale_repository,
     locale_loader
   )

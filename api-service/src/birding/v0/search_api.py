@@ -3,7 +3,6 @@ from http import HTTPStatus
 
 from .bird import BirdRepository
 from .birds_rest_api import bird_summary_representation
-from birding.picture import PictureRepository
 from birding.link import LinkFactory
 from .models import Picture
 from birding.rest_api import RestApiResponse
@@ -15,12 +14,10 @@ class SearchApi:
   def __init__(self,
         bird_searcher: BirdSearcher,
         bird_repository: BirdRepository,
-        picture_repository: PictureRepository,
         link_factory: LinkFactory,
   ):
     self.bird_searcher = bird_searcher
     self.bird_repository = bird_repository
-    self.picture_repository = picture_repository
     self.link_factory = link_factory
 
   def search_birds(self,
