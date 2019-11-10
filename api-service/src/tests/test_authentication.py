@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
@@ -23,6 +23,9 @@ from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
 from tests.test_util import mock_return
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine
+from birding.v0.models import Base, Birder
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
@@ -348,3 +351,34 @@ class TestPasswordUpdateController(TestCase):
     self.password_repository.update_password.assert_called_with(1, password)
     self.refresh_token_repository.remove_refresh_tokens.assert_called_with(
       account)
+
+
+class TestRefreshTokenRepository(TestCase):
+
+  def setUp(self):
+    engine = create_engine('sqlite:///:memory:')
+    Base.metadata.create_all(engine)
+    self.session: Session = sessionmaker(bind=engine)()
+
+  def test_updates_already_existing_refresh_tokens(self):
+    account = Account(username='george', email='tbone@mail.com')
+    self.session.add(account)
+    self.session.commit()
+    refresh_token = RefreshToken(
+      token='myRefreshTokenJwt',
+      account_id=account.id,
+      expiration_date=datetime.now() + timedelta(days=1),
+    )
+    self.session.add(refresh_token)
+    self.session.commit()
+    repository = RefreshTokenRepository(self.session)
+
+    refresh_token.token = 'myNewRefreshTokenJwt'
+    repository.put_refresh_token(refresh_token)
+
+    database_refresh_token = self.session.query(RefreshToken). \
+      filter_by(id=refresh_token.id).first()
+    self.assertEqual(database_refresh_token.token, 'myNewRefreshTokenJwt')
+
+  def tearDown(self):
+    self.session.close()
