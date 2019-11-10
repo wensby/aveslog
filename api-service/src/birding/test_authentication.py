@@ -22,10 +22,10 @@ from birding.birder import BirderRepository
 from birding.mail import MailServerDispatcher
 from birding.mail import EmailAddress
 from birding.link import LinkFactory
-from tests.test_util import mock_return
+from test_util import mock_return
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
-from birding.v0.models import Base, Birder
+from birding.v0.models import Base
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
