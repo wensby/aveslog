@@ -2,7 +2,7 @@ from flask import after_this_request
 from flask import g
 from flask import request
 
-from .v0.localization import LoadedLocale
+from v0.localization import LoadedLocale
 from birding import Locale
 
 

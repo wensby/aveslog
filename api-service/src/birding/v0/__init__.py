@@ -4,7 +4,7 @@ from flask import Blueprint, make_response, jsonify
 
 from .localization import LocaleLoader
 from .localization import LocaleRepository
-from birding.link import LinkFactory
+from v0.link import LinkFactory
 from .search_api import SearchApi
 from .bird import BirdRepository
 from .birds_rest_api import BirdsRestApi

@@ -9,9 +9,9 @@ from flask import jsonify
 from flask import request
 from datetime import datetime
 
-from .v0.localization import LocaleLoader
-from .v0.localization import LoadedLocale
-from .v0.localization import LocaleRepository
+from v0.localization import LocaleLoader
+from v0.localization import LoadedLocale
+from v0.localization import LocaleRepository
 from .authentication import AuthenticationTokenFactory, Authenticator
 from .authentication import AccessToken
 from .authentication import PasswordUpdateController
@@ -21,7 +21,7 @@ from .authentication import AccountRegistrationController
 from .authentication import JwtDecoder
 from .account import AccountRepository
 from .account import Password
-from .v0.models import Account, AccountRegistration, RefreshToken
+from v0.models import Account, AccountRegistration, RefreshToken
 
 RouteFunction = Callable[..., Response]
 

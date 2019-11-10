@@ -4,10 +4,10 @@ import os
 import re
 from typing import Optional, Union, Any, List, TypeVar
 from sqlalchemy.orm import Session
-from .v0.models import Birder, Account, AccountRegistration, \
+from v0.models import Birder, Account, AccountRegistration, \
   HashedPassword, PasswordResetToken
 
-from birding.mail import EmailAddress
+from v0.mail import EmailAddress
 
 
 class Username:

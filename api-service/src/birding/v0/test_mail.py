@@ -2,8 +2,8 @@ import os
 from unittest import TestCase
 
 import birding
-from birding.mail import EmailAddress, MailServerDispatcher
-from birding.mail import MailDispatcher
+from v0.mail import EmailAddress, MailServerDispatcher
+from v0.mail import MailDispatcher
 from test_util import IntegrationTestCase
 
 

@@ -6,11 +6,11 @@ from typing import Union, Optional, Callable, Any, List
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.orm import Session
 
-from .v0.models import Account, AccountRegistration, PasswordResetToken, \
+from v0.models import Account, AccountRegistration, PasswordResetToken, \
   RefreshToken
 from .birder import BirderRepository
 from .link import LinkFactory
-from .v0.localization import LoadedLocale
+from v0.localization import LoadedLocale
 from .mail import EmailAddress
 from .mail import MailDispatcher
 from .account import Username, AccountFactory, TokenFactory

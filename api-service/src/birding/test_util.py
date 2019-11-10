@@ -12,13 +12,13 @@ from psycopg2.pool import SimpleConnectionPool
 from werkzeug.datastructures import Headers
 
 import birding
-from birding.account import PasswordHasher, Password
-from birding.authentication import SaltFactory
-from birding.authentication import AccessToken
-from birding.authentication import JwtFactory
-from birding.authentication import AuthenticationTokenFactory
-from birding.database import Transaction
-from birding.database import Database
+from v0.account import PasswordHasher, Password
+from v0.authentication import SaltFactory
+from v0.authentication import AccessToken
+from v0.authentication import JwtFactory
+from v0.authentication import AuthenticationTokenFactory
+from v0.database import Transaction
+from v0.database import Database
 
 
 def mock_return(value):

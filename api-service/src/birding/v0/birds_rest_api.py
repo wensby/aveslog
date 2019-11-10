@@ -5,8 +5,8 @@ from flask import make_response, jsonify, Response
 
 from .bird import BirdRepository
 from .models import Bird, Picture
-from birding.rest_api import RestApiResponse
-from birding.link import LinkFactory
+from v0.rest_api import RestApiResponse
+from v0.link import LinkFactory
 
 
 class BirdsRestApi:

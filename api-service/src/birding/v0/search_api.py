@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from .bird import BirdRepository
 from .birds_rest_api import bird_summary_representation
-from birding.link import LinkFactory
+from v0.link import LinkFactory
 from .models import Picture
-from birding.rest_api import RestApiResponse
+from v0.rest_api import RestApiResponse
 from .search import BirdSearchMatch, BirdSearcher
 
 

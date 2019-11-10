@@ -4,16 +4,16 @@ from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
-from birding.v0.models import Account, PasswordResetToken
-from birding.account import PasswordHasher
-from birding.account import TokenFactory
-from birding.account import AccountRepository
-from birding.account import Username
-from birding.account import Password
-from birding.account import AccountFactory
-from birding.account import AccountRegistration
-from birding.account import Credentials
-from birding.mail import EmailAddress
+from v0.models import Account, PasswordResetToken
+from v0.account import PasswordHasher
+from v0.account import TokenFactory
+from v0.account import AccountRepository
+from v0.account import Username
+from v0.account import Password
+from v0.account import AccountFactory
+from v0.account import AccountRegistration
+from v0.account import Credentials
+from v0.mail import EmailAddress
 
 from test_util import mock_database_transaction
 

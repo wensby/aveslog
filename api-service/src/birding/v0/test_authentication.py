@@ -2,26 +2,26 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
-from birding.authentication import AccountRegistrationController
-from birding.authentication import AccessToken
-from birding.authentication import PasswordUpdateController
-from birding.authentication import JwtFactory
-from birding.authentication import AuthenticationTokenFactory
-from birding.authentication import JwtDecoder
-from birding.authentication import PasswordResetController
-from birding.authentication import Authenticator
-from birding.authentication import PasswordHasher
-from birding.authentication import RefreshTokenRepository
-from birding.account import TokenFactory
+from v0.authentication import AccountRegistrationController
+from v0.authentication import AccessToken
+from v0.authentication import PasswordUpdateController
+from v0.authentication import JwtFactory
+from v0.authentication import AuthenticationTokenFactory
+from v0.authentication import JwtDecoder
+from v0.authentication import PasswordResetController
+from v0.authentication import Authenticator
+from v0.authentication import PasswordHasher
+from v0.authentication import RefreshTokenRepository
+from v0.account import TokenFactory
 from birding.v0.models import Account, RefreshToken
-from birding.account import PasswordRepository
-from birding.account import Credentials
-from birding.account import AccountRepository, Username, Password, \
+from v0.account import PasswordRepository
+from v0.account import Credentials
+from v0.account import AccountRepository, Username, Password, \
   AccountFactory
-from birding.birder import BirderRepository
-from birding.mail import MailServerDispatcher
-from birding.mail import EmailAddress
-from birding.link import LinkFactory
+from v0.birder import BirderRepository
+from v0.mail import MailServerDispatcher
+from v0.mail import EmailAddress
+from v0.link import LinkFactory
 from test_util import mock_return
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine

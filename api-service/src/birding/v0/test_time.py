@@ -1,7 +1,7 @@
 from datetime import time
 from unittest import TestCase
 
-from birding.time import parse_time
+from v0.time import parse_time
 
 
 class TestTime(TestCase):

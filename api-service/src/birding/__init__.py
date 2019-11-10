@@ -11,34 +11,34 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from .sqlalchemy_database import EngineFactory, SessionFactory
-from .birders_rest_api import create_birder_rest_api_blueprint
-from .sighting_rest_api import create_sighting_rest_api_blueprint
-from .account import AccountRepository, AccountFactory
-from .account import PasswordHasher
-from .account import PasswordRepository
-from .account import TokenFactory
-from .authentication import AccountRegistrationController
-from .authentication import PasswordUpdateController
-from .authentication import RefreshTokenRepository
-from .authentication import JwtFactory
-from .authentication import JwtDecoder
-from .authentication import AuthenticationTokenFactory
-from .authentication import Authenticator
-from .authentication import PasswordResetController
-from .authentication import SaltFactory
-from .authentication_rest_api import create_authentication_rest_api_blueprint
-from .account_rest_api import create_account_rest_api_blueprint
+from v0.sqlalchemy_database import EngineFactory, SessionFactory
+from v0.birders_rest_api import create_birder_rest_api_blueprint
+from v0.sighting_rest_api import create_sighting_rest_api_blueprint
+from v0.account import AccountRepository, AccountFactory
+from v0.account import PasswordHasher
+from v0.account import PasswordRepository
+from v0.account import TokenFactory
+from v0.authentication import AccountRegistrationController
+from v0.authentication import PasswordUpdateController
+from v0.authentication import RefreshTokenRepository
+from v0.authentication import JwtFactory
+from v0.authentication import JwtDecoder
+from v0.authentication import AuthenticationTokenFactory
+from v0.authentication import Authenticator
+from v0.authentication import PasswordResetController
+from v0.authentication import SaltFactory
+from v0.authentication_rest_api import create_authentication_rest_api_blueprint
+from v0.account_rest_api import create_account_rest_api_blueprint
 from .v0.bird import BirdRepository
-from .link import LinkFactory
+from v0.link import LinkFactory
 from .v0.localization import LocaleRepository, LocaleDeterminerFactory
 from .v0.localization import LoadedLocale
 from .v0.localization import LocaleLoader
 from .v0.models import Locale
-from .mail import MailDispatcherFactory
-from .birder import BirderRepository
-from .settings_blueprint import update_locale_context
-from .sighting import SightingRepository
+from v0.mail import MailDispatcherFactory
+from v0.birder import BirderRepository
+from v0.settings_blueprint import update_locale_context
+from v0.sighting import SightingRepository
 from .v0 import create_api_v0_blueprint
 
 
