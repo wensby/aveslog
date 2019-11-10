@@ -376,5 +376,18 @@ class TestRefreshTokenRepository(TestCase):
       filter_by(id=refresh_token.id).first()
     self.assertEqual(database_refresh_token.token, 'myNewJwt')
 
+  def test_remove_refresh_tokens_when_associated_tokens_present(self):
+    account = Account(username='george', email='tbone@mail.com')
+    refresh_token = RefreshToken(token='myJwt', expiration_date=datetime.now())
+    account.refresh_tokens = [refresh_token]
+    self.session.add(account)
+    self.session.commit()
+    repository = RefreshTokenRepository(self.session)
+
+    repository.remove_refresh_tokens(account)
+
+    database_refresh_tokens = self.session.query(RefreshToken).all()
+    self.assertListEqual(database_refresh_tokens, [])
+
   def tearDown(self):
     self.session.close()
