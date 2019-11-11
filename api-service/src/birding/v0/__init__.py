@@ -29,19 +29,12 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
-  birds_rest_api = BirdsRestApi(
-    link_factory,
-    bird_repository,
-  )
+  birds_rest_api = BirdsRestApi(link_factory, bird_repository)
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository, locale_repository, string_matcher, locale_loader)
 
-  search_api = SearchApi(
-    bird_searcher,
-    bird_repository,
-    link_factory,
-  )
+  search_api = SearchApi(bird_searcher, bird_repository, link_factory)
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
