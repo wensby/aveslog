@@ -6,7 +6,7 @@ from flask import Response
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 
 
 class TestPostRefreshToken(AppTestCase):
