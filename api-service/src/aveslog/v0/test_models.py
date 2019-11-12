@@ -1,10 +1,10 @@
 from datetime import date, time
 from unittest import TestCase
 
-from v0.models import Birder
-from v0.models import PasswordResetToken
-from v0.models import Picture
-from v0.models import Sighting
+from aveslog.v0.models import Birder
+from aveslog.v0.models import PasswordResetToken
+from aveslog.v0.models import Picture
+from aveslog.v0.models import Sighting
 
 
 class TestBirder(TestCase):

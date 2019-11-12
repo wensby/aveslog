@@ -4,10 +4,10 @@ from flask import Blueprint, make_response, jsonify
 from .sighting_rest_api import sightings_response
 from .sighting import SightingRepository
 from .birder import BirderRepository
-from v0.models import Birder, Account
+from aveslog.v0.models import Birder, Account
 from .account import AccountRepository
 from .authentication import JwtDecoder
-from v0.routes import require_authentication
+from aveslog.v0.routes import require_authentication
 
 
 def create_birder_rest_api_blueprint(

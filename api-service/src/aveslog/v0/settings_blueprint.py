@@ -2,8 +2,8 @@ from flask import after_this_request
 from flask import g
 from flask import request
 
-from v0.localization import LoadedLocale
-from birding import Locale
+from aveslog.v0.localization import LoadedLocale
+from aveslog import Locale
 
 
 def update_locale_context(user_locale_cookie_key, loaded_locale: LoadedLocale):

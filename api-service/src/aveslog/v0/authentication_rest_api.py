@@ -4,20 +4,20 @@ from typing import Union
 
 from datetime import datetime
 
-from v0.localization import LocaleLoader
-from v0.localization import LoadedLocale
-from v0.localization import LocaleRepository
-from v0.rest_api import RestApiResponse
-from v0.authentication import AuthenticationTokenFactory, Authenticator
-from v0.authentication import AccessToken
-from v0.authentication import PasswordUpdateController
-from v0.authentication import RefreshTokenRepository
-from v0.authentication import PasswordResetController
-from v0.authentication import AccountRegistrationController
-from v0.authentication import JwtDecoder
-from v0.account import AccountRepository
-from v0.account import Password
-from v0.models import Account, AccountRegistration, RefreshToken
+from aveslog.v0.localization import LocaleLoader
+from aveslog.v0.localization import LoadedLocale
+from aveslog.v0.localization import LocaleRepository
+from aveslog.v0.rest_api import RestApiResponse
+from aveslog.v0.authentication import AuthenticationTokenFactory, Authenticator
+from aveslog.v0.authentication import AccessToken
+from aveslog.v0.authentication import PasswordUpdateController
+from aveslog.v0.authentication import RefreshTokenRepository
+from aveslog.v0.authentication import PasswordResetController
+from aveslog.v0.authentication import AccountRegistrationController
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.account import Password
+from aveslog.v0.models import Account, AccountRegistration, RefreshToken
 
 
 def email_taken_response() -> RestApiResponse:

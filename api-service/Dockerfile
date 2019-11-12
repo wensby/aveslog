@@ -10,7 +10,7 @@ RUN apk del .build-deps
 COPY src/ /src
 WORKDIR /src
 
-ENV FLASK_APP=birding
+ENV FLASK_APP=aveslog
 
 VOLUME /src/logs
-CMD ["gunicorn", "-c", "gunicorn_config.py", "birding:create_app()"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "aveslog:create_app()"]

@@ -1,9 +1,9 @@
 import os
 from unittest import TestCase
 
-import birding
-from v0.mail import EmailAddress, MailServerDispatcher
-from v0.mail import MailDispatcher
+import aveslog
+from aveslog.v0.mail import EmailAddress, MailServerDispatcher
+from aveslog.v0.mail import MailDispatcher
 from test_util import IntegrationTestCase
 
 
@@ -47,7 +47,7 @@ class TestMailDispatcherFactory(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    birding.create_app(test_config=test_config)
+    aveslog.create_app(test_config=test_config)
 
   def tearDown(self) -> None:
     del os.environ['MAIL_SERVER']
@@ -71,7 +71,7 @@ class TestMailServerDispatcher(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    app = birding.create_app(test_config=test_config)
+    app = aveslog.create_app(test_config=test_config)
     self.dispatcher = MailServerDispatcher(
       app, None, None, 'myUsername', None, None, None)
     self.app_context = app.test_request_context()

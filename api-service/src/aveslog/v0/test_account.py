@@ -4,16 +4,16 @@ from unittest.mock import Mock
 from types import SimpleNamespace as Simple
 from binascii import hexlify
 
-from v0.models import Account, PasswordResetToken
-from v0.account import PasswordHasher
-from v0.account import TokenFactory
-from v0.account import AccountRepository
-from v0.account import Username
-from v0.account import Password
-from v0.account import AccountFactory
-from v0.account import AccountRegistration
-from v0.account import Credentials
-from v0.mail import EmailAddress
+from aveslog.v0.models import Account, PasswordResetToken
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.account import TokenFactory
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.account import Username
+from aveslog.v0.account import Password
+from aveslog.v0.account import AccountFactory
+from aveslog.v0.account import AccountRegistration
+from aveslog.v0.account import Credentials
+from aveslog.v0.mail import EmailAddress
 
 from test_util import mock_database_transaction
 

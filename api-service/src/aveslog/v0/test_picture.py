@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from birding.v0.models import Picture
+from aveslog.v0.models import Picture
 
 
 class TestPicture(TestCase):

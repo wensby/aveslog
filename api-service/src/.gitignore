@@ -16,6 +16,6 @@ dist/
 build/
 *.egg-info/
 
-/birding/static/script/*
-!/birding/static/script/src/*
-!/birding/static/script/src/
+/aveslog/static/script/*
+!/aveslog/static/script/src/*
+!/aveslog/static/script/src/

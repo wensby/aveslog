@@ -3,12 +3,12 @@ from typing import List
 
 from flask import Blueprint, Response, make_response, jsonify, request
 
-from v0.routes import require_authentication
-from v0.bird import BirdRepository
-from v0.models import Bird, Account, Sighting
+from aveslog.v0.routes import require_authentication
+from aveslog.v0.bird import BirdRepository
+from aveslog.v0.models import Bird, Account, Sighting
 from .sighting import SightingRepository
-from v0.time import parse_date
-from v0.time import parse_time
+from aveslog.v0.time import parse_date
+from aveslog.v0.time import parse_time
 from .account import AccountRepository
 from .authentication import JwtDecoder
 

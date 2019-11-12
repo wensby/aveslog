@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify
 
-from v0.models import Account
-from v0.routes import require_authentication
-from birding import AccountRepository
+from aveslog.v0.models import Account
+from aveslog.v0.routes import require_authentication
+from aveslog import AccountRepository
 from .authentication import JwtDecoder
 
 

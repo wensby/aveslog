@@ -2,9 +2,9 @@ from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock
 
-from birding import LinkFactory, BirdRepository
+from aveslog import LinkFactory, BirdRepository
 from test_util import AppTestCase
-from v0 import BirdsRestApi
+from aveslog.v0 import BirdsRestApi
 
 
 class TestBird(AppTestCase):

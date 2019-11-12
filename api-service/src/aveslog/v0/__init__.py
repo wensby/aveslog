@@ -4,30 +4,30 @@ from http import HTTPStatus
 from flask import Blueprint, make_response, jsonify
 from sqlalchemy.orm import Session
 
-from v0.birder import BirderRepository
-from v0.mail import MailDispatcher
-from v0.account import AccountRepository
-from v0.account import TokenFactory
-from v0.account import AccountFactory
-from v0.account import PasswordHasher
-from v0.account import PasswordRepository
-from v0.authentication import AccountRegistrationController, JwtFactory, \
+from aveslog.v0.birder import BirderRepository
+from aveslog.v0.mail import MailDispatcher
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.account import TokenFactory
+from aveslog.v0.account import AccountFactory
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.account import PasswordRepository
+from aveslog.v0.authentication import AccountRegistrationController, JwtFactory, \
   PasswordResetController, PasswordUpdateController
-from v0.authentication import JwtDecoder
-from v0.authentication import RefreshTokenRepository
-from v0.authentication import AuthenticationTokenFactory
-from v0.authentication import Authenticator
-from v0.authentication_rest_api import AuthenticationRestApi
-from v0.localization import LocaleLoader
-from v0.localization import LocaleRepository
-from v0.link import LinkFactory
-from v0.search_api import SearchApi
-from v0.bird import BirdRepository
-from v0.birds_rest_api import BirdsRestApi
-from v0.routes import create_birds_routes, create_authentication_routes
-from v0.routes import create_search_routes
-from v0.search import StringMatcher
-from v0.search import BirdSearcher
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import RefreshTokenRepository
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.authentication import Authenticator
+from aveslog.v0.authentication_rest_api import AuthenticationRestApi
+from aveslog.v0.localization import LocaleLoader
+from aveslog.v0.localization import LocaleRepository
+from aveslog.v0.link import LinkFactory
+from aveslog.v0.search_api import SearchApi
+from aveslog.v0.bird import BirdRepository
+from aveslog.v0.birds_rest_api import BirdsRestApi
+from aveslog.v0.routes import create_birds_routes, create_authentication_routes
+from aveslog.v0.routes import create_search_routes
+from aveslog.v0.search import StringMatcher
+from aveslog.v0.search import BirdSearcher
 
 
 def create_api_v0_blueprint(

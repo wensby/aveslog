@@ -10,25 +10,25 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from v0.sqlalchemy_database import EngineFactory, SessionFactory
-from v0.birders_rest_api import create_birder_rest_api_blueprint
-from v0.sighting_rest_api import create_sighting_rest_api_blueprint
-from v0.account import AccountRepository
-from v0.account import PasswordHasher
-from v0.authentication import JwtDecoder
-from v0.authentication import SaltFactory
-from v0.account_rest_api import create_account_rest_api_blueprint
-from v0.bird import BirdRepository
-from v0.link import LinkFactory
-from v0.localization import LocaleRepository, LocaleDeterminerFactory
-from v0.localization import LoadedLocale
-from v0.localization import LocaleLoader
-from v0.models import Locale
-from v0.mail import MailDispatcherFactory
-from v0.birder import BirderRepository
-from v0.settings_blueprint import update_locale_context
-from v0.sighting import SightingRepository
-from v0 import create_api_v0_blueprint
+from aveslog.v0.sqlalchemy_database import EngineFactory, SessionFactory
+from aveslog.v0.birders_rest_api import create_birder_rest_api_blueprint
+from aveslog.v0.sighting_rest_api import create_sighting_rest_api_blueprint
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.account_rest_api import create_account_rest_api_blueprint
+from aveslog.v0.bird import BirdRepository
+from aveslog.v0.link import LinkFactory
+from aveslog.v0.localization import LocaleRepository, LocaleDeterminerFactory
+from aveslog.v0.localization import LoadedLocale
+from aveslog.v0.localization import LocaleLoader
+from aveslog.v0.models import Locale
+from aveslog.v0.mail import MailDispatcherFactory
+from aveslog.v0.birder import BirderRepository
+from aveslog.v0.settings_blueprint import update_locale_context
+from aveslog.v0.sighting import SightingRepository
+from aveslog.v0 import create_api_v0_blueprint
 
 
 def create_app(test_config: Optional[dict] = None) -> Flask:

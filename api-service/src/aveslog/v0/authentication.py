@@ -6,23 +6,23 @@ from typing import Union, Optional, Callable, Any, List
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.orm import Session
 
-from v0.models import Account
-from v0.models import AccountRegistration
-from v0.models import PasswordResetToken
-from v0.models import RefreshToken
-from v0.birder import BirderRepository
-from v0.link import LinkFactory
-from v0.localization import LoadedLocale
-from v0.mail import EmailAddress
-from v0.mail import MailDispatcher
-from v0.account import Username
-from v0.account import AccountFactory
-from v0.account import TokenFactory
-from v0.account import Credentials
-from v0.account import PasswordRepository
-from v0.account import PasswordHasher
-from v0.account import AccountRepository
-from v0.account import Password
+from aveslog.v0.models import Account
+from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import PasswordResetToken
+from aveslog.v0.models import RefreshToken
+from aveslog.v0.birder import BirderRepository
+from aveslog.v0.link import LinkFactory
+from aveslog.v0.localization import LoadedLocale
+from aveslog.v0.mail import EmailAddress
+from aveslog.v0.mail import MailDispatcher
+from aveslog.v0.account import Username
+from aveslog.v0.account import AccountFactory
+from aveslog.v0.account import TokenFactory
+from aveslog.v0.account import Credentials
+from aveslog.v0.account import PasswordRepository
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.account import Password
 
 
 class AccessToken:
@@ -166,7 +166,7 @@ class AccountRegistrationController:
         link: str,
         locale: LoadedLocale) -> str:
     message = (
-      'Hi there, thanks for showing interest in birding. '
+      'Hi there, thanks for showing interest in aveslog. '
       'Here is your link to the registration form: ')
     return locale.text(message) + link
 

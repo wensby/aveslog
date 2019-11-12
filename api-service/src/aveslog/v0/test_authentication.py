@@ -2,30 +2,30 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
-from v0.authentication import AccountRegistrationController
-from v0.authentication import AccessToken
-from v0.authentication import PasswordUpdateController
-from v0.authentication import JwtFactory
-from v0.authentication import AuthenticationTokenFactory
-from v0.authentication import JwtDecoder
-from v0.authentication import PasswordResetController
-from v0.authentication import Authenticator
-from v0.authentication import PasswordHasher
-from v0.authentication import RefreshTokenRepository
-from v0.account import TokenFactory
-from birding.v0.models import Account, RefreshToken
-from v0.account import PasswordRepository
-from v0.account import Credentials
-from v0.account import AccountRepository, Username, Password, \
+from aveslog.v0.authentication import AccountRegistrationController
+from aveslog.v0.authentication import AccessToken
+from aveslog.v0.authentication import PasswordUpdateController
+from aveslog.v0.authentication import JwtFactory
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import PasswordResetController
+from aveslog.v0.authentication import Authenticator
+from aveslog.v0.authentication import PasswordHasher
+from aveslog.v0.authentication import RefreshTokenRepository
+from aveslog.v0.account import TokenFactory
+from aveslog.v0.models import Account, RefreshToken
+from aveslog.v0.account import PasswordRepository
+from aveslog.v0.account import Credentials
+from aveslog.v0.account import AccountRepository, Username, Password, \
   AccountFactory
-from v0.birder import BirderRepository
-from v0.mail import MailServerDispatcher
-from v0.mail import EmailAddress
-from v0.link import LinkFactory
+from aveslog.v0.birder import BirderRepository
+from aveslog.v0.mail import MailServerDispatcher
+from aveslog.v0.mail import EmailAddress
+from aveslog.v0.link import LinkFactory
 from test_util import mock_return
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
-from birding.v0.models import Base
+from aveslog.v0.models import Base
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'

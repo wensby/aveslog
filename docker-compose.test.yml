@@ -13,8 +13,7 @@ services:
     networks:
       - test
     volumes:
-      - ./api-service/src/birding:/src/birding
-      - ./api-service/src/tests:/src/tests
+      - ./api-service/src/aveslog:/src/aveslog
     environment:
       EXTERNAL_HOST: myExternalHost
       DATABASE_HOST: test-database-service

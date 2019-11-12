@@ -1,6 +1,6 @@
 from typing import Optional, List, Tuple
 from sqlalchemy.orm import Session
-from v0.models import Sighting
+from aveslog.v0.models import Sighting
 
 
 class SightingRepository:

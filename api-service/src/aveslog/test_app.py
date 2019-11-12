@@ -3,7 +3,7 @@ import os
 import shutil
 from http import HTTPStatus
 
-import birding
+import aveslog
 from test_util import IntegrationTestCase, TestClient
 
 
@@ -20,7 +20,7 @@ class TestAppCreation(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    birding.create_app(test_config=test_config)
+    aveslog.create_app(test_config=test_config)
 
   def test_creation_sets_frontend_host_from_environment_variable(self) -> None:
     test_config = {
@@ -30,7 +30,7 @@ class TestAppCreation(IntegrationTestCase):
     }
     os.environ['FRONTEND_HOST'] = 'http://localhost:3002'
 
-    app = birding.create_app(test_config=test_config)
+    app = aveslog.create_app(test_config=test_config)
 
     self.assertEqual(app.config['FRONTEND_HOST'], 'http://localhost:3002')
 
@@ -40,7 +40,7 @@ class TestAppCreation(IntegrationTestCase):
       'SECRET_KEY': 'wowsosecret',
       'LOGS_DIR_PATH': 'test-logs',
     }
-    self.assertRaises(Exception, birding.create_app, test_config=test_config)
+    self.assertRaises(Exception, aveslog.create_app, test_config=test_config)
 
   def test_creation_creates_instance_directory(self):
     shutil.rmtree('instance')
@@ -50,7 +50,7 @@ class TestAppCreation(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    birding.create_app(test_config=test_config)
+    aveslog.create_app(test_config=test_config)
     self.assertIn('instance', os.listdir('.'))
 
   def test_creation_fails_if_no_secret_key(self):
@@ -59,7 +59,7 @@ class TestAppCreation(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    self.assertRaises(Exception, birding.create_app, test_config=test_config)
+    self.assertRaises(Exception, aveslog.create_app, test_config=test_config)
 
   def test_creation_reads_from_instance_config(self):
     with open('instance/config.py', 'w') as file:
@@ -70,7 +70,7 @@ class TestAppCreation(IntegrationTestCase):
         "FRONTEND_HOST = 'http://localhost:3002'\n"
       ])
     self.assertTrue(os.path.exists('instance/config.py'))
-    birding.create_app()
+    aveslog.create_app()
 
   def test_creation_creates_logs_directory(self):
     shutil.rmtree('test-logs')
@@ -80,7 +80,7 @@ class TestAppCreation(IntegrationTestCase):
       'LOGS_DIR_PATH': 'test-logs',
       'FRONTEND_HOST': 'http://localhost:3002'
     }
-    birding.create_app(test_config=test_config)
+    aveslog.create_app(test_config=test_config)
     self.assertIn('test-logs', os.listdir('.'))
 
   def tearDown(self) -> None:
@@ -102,7 +102,7 @@ class TestAppBehindProxy(IntegrationTestCase):
       'FRONTEND_HOST': 'http://localhost:3002',
       'RATE_LIMIT': '1/hour',
     }
-    app = birding.create_app(test_config=test_config)
+    app = aveslog.create_app(test_config=test_config)
     app.test_client_class = TestClient
     with app.test_request_context():
       client = app.test_client()

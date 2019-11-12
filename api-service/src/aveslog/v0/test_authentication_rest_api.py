@@ -3,9 +3,9 @@ from http import HTTPStatus
 from typing import Optional
 from datetime import timedelta
 from flask import Response
-from v0.authentication import AuthenticationTokenFactory
-from v0.authentication import AccessToken
-from v0.authentication import JwtFactory
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.authentication import AccessToken
+from aveslog.v0.authentication import JwtFactory
 from test_util import AppTestCase
 
 

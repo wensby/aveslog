@@ -21,4 +21,4 @@ COPY run_tests.sh /run_tests.sh
 VOLUME /src
 WORKDIR /src
 
-ENV FLASK_APP=birding
+ENV FLASK_APP=aveslog

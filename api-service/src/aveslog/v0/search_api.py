@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from .bird import BirdRepository
 from .birds_rest_api import bird_summary_representation
-from v0.link import LinkFactory
+from aveslog.v0.link import LinkFactory
 from .models import Picture
-from v0.rest_api import RestApiResponse
+from aveslog.v0.rest_api import RestApiResponse
 from .search import BirdSearchMatch, BirdSearcher
 
 

@@ -4,13 +4,13 @@ from typing import Callable
 
 from flask import Response, request, make_response, jsonify
 
-from v0.account import AccountRepository
-from v0.authentication import JwtDecoder
-from v0.authentication_rest_api import AuthenticationRestApi
-from v0.models import Account
-from v0.search_api import SearchApi
-from v0.birds_rest_api import BirdsRestApi
-from v0.birds_rest_api import create_flask_response
+from aveslog.v0.account import AccountRepository
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication_rest_api import AuthenticationRestApi
+from aveslog.v0.models import Account
+from aveslog.v0.search_api import SearchApi
+from aveslog.v0.birds_rest_api import BirdsRestApi
+from aveslog.v0.birds_rest_api import create_flask_response
 
 RouteFunction = Callable[..., Response]
 

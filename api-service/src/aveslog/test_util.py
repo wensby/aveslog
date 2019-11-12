@@ -11,14 +11,14 @@ from flask.testing import FlaskClient
 from psycopg2.pool import SimpleConnectionPool
 from werkzeug.datastructures import Headers
 
-import birding
-from v0.account import PasswordHasher, Password
-from v0.authentication import SaltFactory
-from v0.authentication import AccessToken
-from v0.authentication import JwtFactory
-from v0.authentication import AuthenticationTokenFactory
-from v0.database import Transaction
-from v0.database import Database
+import aveslog
+from aveslog.v0.account import PasswordHasher, Password
+from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.authentication import AccessToken
+from aveslog.v0.authentication import JwtFactory
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.database import Transaction
+from aveslog.v0.database import Database
 
 
 def mock_return(value):
@@ -65,9 +65,9 @@ class AppTestCase(IntegrationTestCase):
       'FRONTEND_HOST': 'http://localhost:3002',
       'RATE_LIMIT': f'{self.test_rate_limit_per_minute}/minute',
     }
-    self._app = birding.create_app(test_config=test_config)
+    self._app = aveslog.create_app(test_config=test_config)
     self._app.test_client_class = TestClient
-    database_connection_details = birding.create_database_connection_details()
+    database_connection_details = aveslog.create_database_connection_details()
     self.pool = SimpleConnectionPool(1, 20, **database_connection_details)
     self._app.db = Database(self._app.logger, self.pool)
     self.database: Database = self._app.db
