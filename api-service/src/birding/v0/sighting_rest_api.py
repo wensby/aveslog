@@ -3,7 +3,7 @@ from typing import List
 
 from flask import Blueprint, Response, make_response, jsonify, request
 
-from .authentication_rest_api import require_authentication
+from v0.routes import require_authentication
 from v0.bird import BirdRepository
 from v0.models import Bird, Account, Sighting
 from .sighting import SightingRepository

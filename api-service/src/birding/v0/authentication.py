@@ -6,19 +6,23 @@ from typing import Union, Optional, Callable, Any, List
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.orm import Session
 
-from v0.models import Account, AccountRegistration, PasswordResetToken, \
-  RefreshToken
-from .birder import BirderRepository
-from .link import LinkFactory
+from v0.models import Account
+from v0.models import AccountRegistration
+from v0.models import PasswordResetToken
+from v0.models import RefreshToken
+from v0.birder import BirderRepository
+from v0.link import LinkFactory
 from v0.localization import LoadedLocale
-from .mail import EmailAddress
-from .mail import MailDispatcher
-from .account import Username, AccountFactory, TokenFactory
-from .account import Credentials
-from .account import PasswordRepository
-from .account import PasswordHasher
-from .account import AccountRepository
-from .account import Password
+from v0.mail import EmailAddress
+from v0.mail import MailDispatcher
+from v0.account import Username
+from v0.account import AccountFactory
+from v0.account import TokenFactory
+from v0.account import Credentials
+from v0.account import PasswordRepository
+from v0.account import PasswordHasher
+from v0.account import AccountRepository
+from v0.account import Password
 
 
 class AccessToken:
@@ -170,7 +174,8 @@ class AccountRegistrationController:
         raw_email: str,
         registration_token: str,
         raw_username: str,
-        raw_password: str) -> str:
+        raw_password: str,
+  ) -> str:
     email = EmailAddress(raw_email)
     registration = self.account_repository.find_account_registration(
       email, registration_token)

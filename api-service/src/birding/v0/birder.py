@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from birding.v0.models import Birder
+from v0.models import Birder
 
 
 class BirderRepository:

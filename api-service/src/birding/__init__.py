@@ -1,4 +1,3 @@
-import datetime
 import logging
 import os
 from distutils.util import strtobool
@@ -14,32 +13,22 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from v0.sqlalchemy_database import EngineFactory, SessionFactory
 from v0.birders_rest_api import create_birder_rest_api_blueprint
 from v0.sighting_rest_api import create_sighting_rest_api_blueprint
-from v0.account import AccountRepository, AccountFactory
+from v0.account import AccountRepository
 from v0.account import PasswordHasher
-from v0.account import PasswordRepository
-from v0.account import TokenFactory
-from v0.authentication import AccountRegistrationController
-from v0.authentication import PasswordUpdateController
-from v0.authentication import RefreshTokenRepository
-from v0.authentication import JwtFactory
 from v0.authentication import JwtDecoder
-from v0.authentication import AuthenticationTokenFactory
-from v0.authentication import Authenticator
-from v0.authentication import PasswordResetController
 from v0.authentication import SaltFactory
-from v0.authentication_rest_api import create_authentication_rest_api_blueprint
 from v0.account_rest_api import create_account_rest_api_blueprint
-from .v0.bird import BirdRepository
+from v0.bird import BirdRepository
 from v0.link import LinkFactory
-from .v0.localization import LocaleRepository, LocaleDeterminerFactory
-from .v0.localization import LoadedLocale
-from .v0.localization import LocaleLoader
-from .v0.models import Locale
+from v0.localization import LocaleRepository, LocaleDeterminerFactory
+from v0.localization import LoadedLocale
+from v0.localization import LocaleLoader
+from v0.models import Locale
 from v0.mail import MailDispatcherFactory
 from v0.birder import BirderRepository
 from v0.settings_blueprint import update_locale_context
 from v0.sighting import SightingRepository
-from .v0 import create_api_v0_blueprint
+from v0 import create_api_v0_blueprint
 
 
 def create_app(test_config: Optional[dict] = None) -> Flask:
@@ -55,12 +44,10 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   session = session_factory.create_session()
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
-  token_factory = TokenFactory()
   account_repository = AccountRepository(hasher, session)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   birder_repository = BirderRepository(session)
-  authenticator = Authenticator(account_repository, hasher)
   localespath = os.path.join(app.root_path, 'locales')
   locales_misses_repository = {}
   locale_loader = LocaleLoader(localespath, locales_misses_repository)
@@ -73,44 +60,10 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     os.environ['EXTERNAL_HOST'],
     app.config['FRONTEND_HOST'],
   )
-  password_repository = PasswordRepository(token_factory, hasher, session)
-  account_factory = AccountFactory(hasher, account_repository,
-                                   password_repository)
-  account_registration_controller = AccountRegistrationController(
-    account_factory, account_repository, mail_dispatcher, link_factory,
-    birder_repository, token_factory)
 
-  refresh_token_repository = RefreshTokenRepository(session)
-  password_update_controller = PasswordUpdateController(
-    password_repository,
-    refresh_token_repository,
-  )
-  password_reset_controller = PasswordResetController(
-    account_repository,
-    password_repository,
-    link_factory,
-    mail_dispatcher,
-    password_update_controller,
-    token_factory,
-  )
-  jwt_factory = JwtFactory(app.secret_key)
-  authentication_token_factory = AuthenticationTokenFactory(
-    jwt_factory, datetime.datetime.utcnow)
   jwt_decoder = JwtDecoder(app.secret_key)
 
   # Create and register blueprints
-  authentication_blueprint = create_authentication_rest_api_blueprint(
-    account_repository,
-    authenticator,
-    password_reset_controller,
-    account_registration_controller,
-    locale_repository,
-    locale_loader,
-    jwt_decoder,
-    password_update_controller,
-    refresh_token_repository,
-    authentication_token_factory,
-  )
   birder_rest_api = create_birder_rest_api_blueprint(
     jwt_decoder,
     account_repository,
@@ -123,7 +76,14 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     link_factory,
     bird_repository,
     locale_repository,
-    locale_loader
+    locale_loader,
+    account_repository,
+    hasher,
+    mail_dispatcher,
+    birder_repository,
+    jwt_decoder,
+    app.secret_key,
+    session,
   )
   sighting_api = create_sighting_rest_api_blueprint(
     jwt_decoder,
@@ -133,7 +93,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   )
   app.register_blueprint(api_v0_blueprint)
   app.register_blueprint(sighting_api)
-  app.register_blueprint(authentication_blueprint)
   app.register_blueprint(account_rest_api)
   app.register_blueprint(birder_rest_api)
 

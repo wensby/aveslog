@@ -3,7 +3,7 @@ import json
 from http import HTTPStatus
 from datetime import timedelta
 
-from birding import AuthenticationTokenFactory, JwtFactory
+from v0.authentication import AuthenticationTokenFactory, JwtFactory
 from test_util import AppTestCase
 
 

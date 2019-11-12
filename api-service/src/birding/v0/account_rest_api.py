@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import Blueprint, make_response, jsonify
 
 from v0.models import Account
-from .authentication_rest_api import require_authentication
+from v0.routes import require_authentication
 from birding import AccountRepository
 from .authentication import JwtDecoder
 

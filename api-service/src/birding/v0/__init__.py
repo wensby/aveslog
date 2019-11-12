@@ -1,17 +1,33 @@
+import datetime
 from http import HTTPStatus
 
 from flask import Blueprint, make_response, jsonify
+from sqlalchemy.orm import Session
 
-from .localization import LocaleLoader
-from .localization import LocaleRepository
-from .link import LinkFactory
-from .search_api import SearchApi
-from .bird import BirdRepository
-from .birds_rest_api import BirdsRestApi
-from .routes import create_birds_routes
-from .routes import create_search_routes
-from .search import StringMatcher
-from .search import BirdSearcher
+from v0.birder import BirderRepository
+from v0.mail import MailDispatcher
+from v0.account import AccountRepository
+from v0.account import TokenFactory
+from v0.account import AccountFactory
+from v0.account import PasswordHasher
+from v0.account import PasswordRepository
+from v0.authentication import AccountRegistrationController, JwtFactory, \
+  PasswordResetController, PasswordUpdateController
+from v0.authentication import JwtDecoder
+from v0.authentication import RefreshTokenRepository
+from v0.authentication import AuthenticationTokenFactory
+from v0.authentication import Authenticator
+from v0.authentication_rest_api import AuthenticationRestApi
+from v0.localization import LocaleLoader
+from v0.localization import LocaleRepository
+from v0.link import LinkFactory
+from v0.search_api import SearchApi
+from v0.bird import BirdRepository
+from v0.birds_rest_api import BirdsRestApi
+from v0.routes import create_birds_routes, create_authentication_routes
+from v0.routes import create_search_routes
+from v0.search import StringMatcher
+from v0.search import BirdSearcher
 
 
 def create_api_v0_blueprint(
@@ -19,6 +35,13 @@ def create_api_v0_blueprint(
       bird_repository: BirdRepository,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
+      account_repository: AccountRepository,
+      password_hasher: PasswordHasher,
+      mail_dispatcher: MailDispatcher,
+      birder_repository: BirderRepository,
+      jwt_decoder: JwtDecoder,
+      secret_key: str,
+      session: Session,
 ) -> Blueprint:
   def register_routes(routes):
     for route in routes:
@@ -29,18 +52,74 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
+
+  token_factory = TokenFactory()
+  password_repository = PasswordRepository(token_factory, password_hasher, session)
+  account_factory = AccountFactory(
+    password_hasher,
+    account_repository,
+    password_repository,
+  )
+  account_registration_controller = AccountRegistrationController(
+    account_factory,
+    account_repository,
+    mail_dispatcher,
+    link_factory,
+    birder_repository,
+    token_factory,
+  )
+  refresh_token_repository = RefreshTokenRepository(session)
+  password_update_controller = PasswordUpdateController(
+    password_repository,
+    refresh_token_repository,
+  )
+  password_reset_controller = PasswordResetController(
+    account_repository,
+    password_repository,
+    link_factory,
+    mail_dispatcher,
+    password_update_controller,
+    token_factory,
+  )
   birds_rest_api = BirdsRestApi(link_factory, bird_repository)
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
-    bird_repository, locale_repository, string_matcher, locale_loader)
-
+    bird_repository,
+    locale_repository,
+    string_matcher,
+    locale_loader,
+  )
+  jwt_factory = JwtFactory(secret_key)
+  authentication_token_factory = AuthenticationTokenFactory(
+    jwt_factory,
+    datetime.datetime.utcnow,
+  )
+  authenticator = Authenticator(account_repository, password_hasher)
   search_api = SearchApi(bird_searcher, bird_repository, link_factory)
+  authentication_rest_api = AuthenticationRestApi(
+    locale_repository,
+    locale_loader,
+    account_registration_controller,
+    account_repository,
+    authenticator,
+    authentication_token_factory,
+    refresh_token_repository,
+    jwt_decoder,
+    password_reset_controller,
+    password_update_controller,
+  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
   register_routes(birds_routes)
   search_routes = create_search_routes(search_api)
   register_routes(search_routes)
+  authentication_routes = create_authentication_routes(
+    authentication_rest_api,
+    jwt_decoder,
+    account_repository,
+  )
+  register_routes(authentication_routes)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):
