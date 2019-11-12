@@ -1,4 +1,4 @@
-# Birding
+# Aveslog
 
 Dockerized, PostgreSQL and Python Flask-backed, React web application for
 birding. The main purpose behind this project is for exploring, learning and
