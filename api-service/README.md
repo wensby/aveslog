@@ -51,6 +51,207 @@ Status: 404 Not Found
 ```
 
 
+## Authentication
+
+### Account Registration
+
+Registering a new account is a 2 step process. First, you provide your email 
+address when creating a new registration resource.
+
+#### Initiating New Account Registration
+
+```
+POST /authentication/registration
+
+{
+  "email": "kenny.bostick@mail.com"
+}
+```
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "status": "success"
+}
+```
+
+Upon a success, this will trigger an email to be sent to this email address
+containing a unique registration token `:registration-token`. Once you've
+acquired this token, you can perform your final registration request using this
+token.
+
+#### Getting Registration
+
+```
+GET /authentication/registration/:registration-token
+```
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "status": "success",
+  "result": {
+    "registration": {
+      "email": "hulot@mail.com"
+    }
+  }
+}
+```
+
+#### Completing a Registration
+
+```
+POST /authentication/registration/:registration-token
+
+{
+  "username": "kennybostick",
+  "password": "birder-no-1"
+}
+```
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "status": "success",
+  "message": "Registration successful"
+}
+```
+
+### Create Refresh Token
+
+In order to obtain a short-lived access token required to access and modify certain
+resources, you first need a refresh token.
+
+```
+POST /authentication/refresh-token?username={username}&password={password}
+```
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "id": 4,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "expirationDate": "2020-02-10T06:21:45.414236"
+}
+```
+
+### Delete Refresh Token
+
+```
+DELETE /authentication/refresh-token/:id
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+#### Response
+
+```
+Status: 204 NO CONTENT
+```
+
+### Get Access Token
+
+```
+GET /authentication/access-token
+```
+
+**Required Headers**
+
+`refreshToken: {refreshTokenJwt}`
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "expiresIn": 1799
+}
+```
+
+### Password Reset
+
+Just like registering a new account, resetting a password is a 2-step process.
+First, you initiate your password reset by providing an email associated with
+the account for which the password should get reset.
+
+#### Initiate Password Reset
+
+```
+POST /authentication/password-reset
+
+{
+  "email": "kenny.bostick@mail.com"
+}
+```
+
+#### Response
+
+```
+Status: 200 OK
+
+{
+  "status": "success",
+  "message": "Password reset link sent to e-mail"
+}
+```
+
+Upon a success, this will trigger an email to be sent to this email address
+containing a unique password reset token `:password-reset-token`. Once you've
+acquired this token, you can perform your final password reset using this token.
+
+#### Completing Password Reset
+
+```
+POST /authentication/password-reset/:password-reset-token
+
+{
+  "password": "still-birder-no-1"
+}
+```
+
+#### Response
+
+```
+Status: 200 OK
+{
+  "status": "success",
+  "message": "Password reset successfully"
+}
+```
+
+### Update Password
+
+```
+POST /authentication/password
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+#### Response
+
+```
+Status: 204 NO CONTENT
+```
+
+
 ## Birds
 
 ### Get Bird
