@@ -15,7 +15,7 @@ from aveslog.v0.account import AccountRegistration
 from aveslog.v0.account import Credentials
 from aveslog.v0.mail import EmailAddress
 
-from test_util import mock_database_transaction
+from aveslog.test_util import mock_database_transaction
 
 
 class TestUsername(TestCase):

@@ -4,7 +4,7 @@ from http import HTTPStatus
 from datetime import timedelta
 
 from aveslog.v0.authentication import AuthenticationTokenFactory, JwtFactory
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 
 
 class TestGetActiveAccounts(AppTestCase):

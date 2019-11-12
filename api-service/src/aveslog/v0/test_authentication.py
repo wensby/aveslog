@@ -22,7 +22,7 @@ from aveslog.v0.birder import BirderRepository
 from aveslog.v0.mail import MailServerDispatcher
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
-from test_util import mock_return
+from aveslog.test_util import mock_return
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
 from aveslog.v0.models import Base

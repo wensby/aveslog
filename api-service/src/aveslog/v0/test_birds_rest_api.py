@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from aveslog import LinkFactory, BirdRepository
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 from aveslog.v0 import BirdsRestApi
 
 

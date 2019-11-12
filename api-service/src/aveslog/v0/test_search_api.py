@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 
 
 class TestSearchBirds(AppTestCase):

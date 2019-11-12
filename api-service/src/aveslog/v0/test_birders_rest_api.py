@@ -1,6 +1,6 @@
 from datetime import date, time
 
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 from http import HTTPStatus
 
 

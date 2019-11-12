@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import Response
 
-from test_util import AppTestCase
+from aveslog.test_util import AppTestCase
 
 
 class TestGetSightings(AppTestCase):
