@@ -23,7 +23,7 @@ export default () => {
     try {
       event.preventDefault();
       const response = await authentication.postRegistrationEmail(email);
-      if (response.status === 'success') {
+      if (response.status === 200) {
         setAlert({
           type: 'success',
           message: 'registration-email-submit-success-message',

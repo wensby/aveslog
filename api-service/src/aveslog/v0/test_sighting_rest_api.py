@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import Response
 
 from aveslog.test_util import AppTestCase
+from aveslog.v0.error import ErrorCode
 
 
 class TestGetSightings(AppTestCase):
@@ -108,8 +109,8 @@ class TestGetSightings(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token required',
+      'code': ErrorCode.AUTHORIZATION_REQUIRED,
+      'message': 'Authorization required',
     })
 
   def test_get_sightings_when_auth_token_invalid(self):
@@ -119,8 +120,8 @@ class TestGetSightings(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token invalid',
+      'code': ErrorCode.ACCESS_TOKEN_INVALID,
+      'message': 'Access token invalid',
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
@@ -209,8 +210,8 @@ class TestPostSighting(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token invalid',
+      'code': ErrorCode.ACCESS_TOKEN_INVALID,
+      'message': 'Access token invalid',
     })
 
   def post_sighting(

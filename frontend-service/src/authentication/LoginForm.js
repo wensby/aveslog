@@ -23,7 +23,7 @@ export default ({ onError }) => {
       event.preventDefault();
       setLoading(true);
       const response = await postRefreshToken();
-      if (response.status === 200) {
+      if (response.status === 201) {
         const refreshResponseJson = await response.json();
         setRefreshToken({
           id: refreshResponseJson.id,

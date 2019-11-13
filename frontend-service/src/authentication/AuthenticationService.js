@@ -31,7 +31,7 @@ export default class AuthenticationService {
   }
 
   async postPasswordResetEmail(email) {
-    const response = await fetch(
+    return await fetch(
       `${this.apiUrl}/authentication/password-reset`,
       {
         method: 'POST',
@@ -43,11 +43,10 @@ export default class AuthenticationService {
         }),
       }
     );
-    return await response.json();
   }
 
   async postPasswordResetPassword(token, password) {
-    const response = await fetch(
+    return await fetch(
       `${this.apiUrl}/authentication/password-reset/${token}`,
       {
         method: 'POST',
@@ -59,7 +58,6 @@ export default class AuthenticationService {
         })
       }
     );
-    return await response.json();
   }
 
   async postPasswordUpdate(accessToken, oldPassword, newPassword) {
@@ -78,7 +76,7 @@ export default class AuthenticationService {
 
   async postRegistrationEmail(email) {
     const url = `${this.apiUrl}/authentication/registration`;
-    const response = await fetch(url, {
+    return await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,16 +84,13 @@ export default class AuthenticationService {
       body: JSON.stringify({
         'email': email,
       })
-    })
-    return await response.json();
+    });
   }
 
   async fetchRegistration(token) {
     try {
       const url = `${this.apiUrl}/authentication/registration/${token}`;
-      const response = await fetch(url);
-      const json = await response.json();
-      return json['result']['registration'];
+      return await fetch(url);
     }
     catch (err) {
       return undefined;
@@ -105,7 +100,7 @@ export default class AuthenticationService {
   async postRegistration(token, [username, password]) {
     try {
       const url = `${this.apiUrl}/authentication/registration/${token}`;
-      const response = await fetch(url, {
+      return await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,8 +109,7 @@ export default class AuthenticationService {
           'username': username,
           'password': password,
         })
-      })
-      return await response.json();
+      });
     }
     catch (err) {
       return undefined;

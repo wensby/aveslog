@@ -18,9 +18,10 @@ export default () => {
 
   useEffect(() => {
     const fetchEmail = async () => {
-      const registration = await new AuthenticationService().fetchRegistration(token);
-      if (registration) {
-        setEmail(registration['email']);
+      const response = await new AuthenticationService().fetchRegistration(token);
+      if (response.status === 200) {
+        const json = await response.json();
+        setEmail(json['email']);
       }
     }
     fetchEmail();
@@ -41,15 +42,18 @@ export default () => {
   const handleFormSubmit = async credentials => {
     try {
       const response = await authentication.postRegistration(token, credentials);
-      if (response['status'] === 'success') {
+      if (response.status === 201) {
         setSuccess(true);
       }
-      else if (response['message'] === 'username already taken') {
-        setTakenUsernames(takenUsernames.concat([credentials[0]]))
-        setAlert({
-          category: 'danger',
-          message: 'Username already taken.',
-        });
+      else if (response.status === 409) {
+        const json = await response.json();
+        if (json['code'] === 3) {
+          setTakenUsernames(takenUsernames.concat([credentials[0]]))
+          setAlert({
+            category: 'danger',
+            message: 'Username already taken.',
+          });
+        }
       }
     }
     catch (err) {

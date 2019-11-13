@@ -7,6 +7,7 @@ from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.test_util import AppTestCase
+from aveslog.v0.error import ErrorCode
 
 
 class TestPostRefreshToken(AppTestCase):
@@ -18,7 +19,7 @@ class TestPostRefreshToken(AppTestCase):
   def test_post_refresh_token_when_ok(self) -> None:
     response = self.post_refresh_token('george', 'costanza')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertIn('id', response.json)
     self.assertIn('refreshToken', response.json)
     self.assertIn('expirationDate', response.json)
@@ -26,7 +27,7 @@ class TestPostRefreshToken(AppTestCase):
   def test_post_refresh_token_when_username_differently_cased(self) -> None:
     response = self.post_refresh_token('GeOrGe', 'costanza')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertIn('id', response.json)
     self.assertIn('refreshToken', response.json)
     self.assertIn('expirationDate', response.json)
@@ -36,13 +37,17 @@ class TestPostRefreshToken(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'Try again',
+      'code': ErrorCode.CREDENTIALS_INCORRECT,
+      'message': 'Credentials incorrect',
     })
 
   def test_post_refresh_token_when_incorrect_password(self) -> None:
     response = self.post_refresh_token('george', 'festivus')
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'code': ErrorCode.CREDENTIALS_INCORRECT,
+      'message': 'Credentials incorrect',
+    })
 
 
 class TestGetAccessToken(AppTestCase):
@@ -100,10 +105,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset_email('hulot@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'message': 'Password reset link sent to e-mail',
-    })
+    self.assertEqual(response.json, {})
 
   def test_post_password_reset_email_when_already_exist(self):
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
@@ -113,30 +115,24 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset_email('tbone@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'message': 'Password reset link sent to e-mail',
-    })
+    self.assertEqual(response.json, {})
 
   def test_post_password_reset_email_when_email_not_linked_with_account(self):
     self.db_insert_locale(1, 'en')
 
     response = self.post_password_reset_email('hulot@mail.com')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertEqual(response.json, {
-      'status': 'failure',
+      'code': ErrorCode.EMAIL_MISSING,
       'message': 'E-mail not associated with any account',
     })
 
   def test_post_password_reset_when_password_reset_not_first_created(self):
     response = self.post_password_reset('myToken', 'myNewPassword')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
-    self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'Password reset token not recognized'
-    })
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+    self.assertEqual(response.json, {})
 
   def test_post_password_reset_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
@@ -145,10 +141,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset('myToken', 'myNewPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'message': 'Password reset successfully',
-    })
+    self.assertEqual(response.json, {})
 
   def post_password_reset_email(self, email: str) -> Response:
     json = {'email': email}
@@ -167,18 +160,16 @@ class TestRegistration(AppTestCase):
     response = self.post_registration_email('hulot@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-    })
+    self.assertDictEqual(response.json, {})
 
   def test_post_registration_email_when_email_invalid(self):
     self.db_insert_locale(1, 'en')
 
     response = self.post_registration_email('hulot')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
-    self.assertEqual(response.json, {
-      'status': 'failure',
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.EMAIL_INVALID,
       'message': 'Email invalid',
     })
 
@@ -188,9 +179,9 @@ class TestRegistration(AppTestCase):
 
     response = self.post_registration_email('hulot@mail.com')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
-    self.assertEqual(response.json, {
-      'status': 'failure',
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.EMAIL_TAKEN,
       'message': 'Email taken',
     })
 
@@ -200,29 +191,34 @@ class TestRegistration(AppTestCase):
     response = self.get_registration('myToken')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'result': {
-        'registration': {
-          'email': 'hulot@mail.com',
-        },
-      },
+    self.assertDictEqual(response.json, {
+      'email': 'hulot@mail.com',
     })
 
   def test_get_registration_when_missing(self):
     response = self.get_registration('myToken')
 
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+    self.assertDictEqual(response.json, {})
 
   def test_post_registration_when_credentials_ok(self):
+    cursor = self.database_connection.cursor()
+    cursor.execute('ALTER SEQUENCE account_id_seq RESTART WITH 1')
+    cursor.execute('ALTER SEQUENCE birder_id_seq RESTART WITH 1')
+    self.database_connection.commit()
     self.db_insert_registration('hulot@mail.com', 'myToken')
 
     response = self.post_registration('myToken', 'myUsername', 'myPassword')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'message': 'Registration successful',
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    self.assertDictEqual(response.json, {
+      'id': 1,
+      'username': 'myUsername',
+      'email': 'hulot@mail.com',
+      'birder': {
+        'id': 1,
+        'name': 'myUsername',
+      },
     })
 
   def test_post_registration_when_username_already_taken(self):
@@ -232,9 +228,9 @@ class TestRegistration(AppTestCase):
     response = self.post_registration('token', 'hulot', 'password')
 
     self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
-    self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'username already taken',
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.USERNAME_TAKEN,
+      'message': 'Username taken',
     })
 
   def test_post_registration_when_other_cased_username_taken(self) -> None:
@@ -244,9 +240,9 @@ class TestRegistration(AppTestCase):
     response = self.post_registration('token', 'George', 'washington')
 
     self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
-    self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'username already taken',
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.USERNAME_TAKEN,
+      'message': 'Username taken',
     })
 
   def post_registration_email(self, email: str) -> Response:
@@ -278,7 +274,7 @@ class TestPasswordUpdate(AppTestCase):
     token = self.token_factory.create_access_token(1, timedelta(1))
 
     response = self.post_password_update(token.jwt, 'oldPassword',
-                                         'newPassword')
+      'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
@@ -287,18 +283,18 @@ class TestPasswordUpdate(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token required',
+      'code': ErrorCode.AUTHORIZATION_REQUIRED,
+      'message': 'Authorization required',
     })
 
   def test_post_password_update_when_token_invalid(self) -> None:
     response = self.post_password_update('invalid', 'oldPassword',
-                                         'newPassword')
+      'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token invalid',
+      'code': ErrorCode.ACCESS_TOKEN_INVALID,
+      'message': 'Access token invalid',
     })
 
   def test_post_password_update_when_token_expired(self) -> None:
@@ -306,12 +302,12 @@ class TestPasswordUpdate(AppTestCase):
     token = self.token_factory.create_access_token(1, expiration)
 
     response = self.post_password_update(token.jwt, 'oldPassword',
-                                         'newPassword')
+      'newPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'authentication token expired',
+      'code': ErrorCode.ACCESS_TOKEN_EXPIRED,
+      'message': 'Access token expired',
     })
 
   def test_post_password_update_when_old_password_incorrect(self) -> None:
@@ -319,10 +315,10 @@ class TestPasswordUpdate(AppTestCase):
 
     response = self.post_password_update(token.jwt, 'incorrect', 'newPassword')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'old password incorrect',
+      'code': ErrorCode.OLD_PASSWORD_INCORRECT,
+      'message': 'Old password incorrect',
     })
 
   def test_post_password_update_when_new_password_invalid(self) -> None:
@@ -330,10 +326,10 @@ class TestPasswordUpdate(AppTestCase):
 
     response = self.post_password_update(token.jwt, 'oldPassword', 'invalid')
 
-    self.assertEqual(response.status_code, HTTPStatus.INTERNAL_SERVER_ERROR)
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'new password invalid',
+      'code': ErrorCode.PASSWORD_INVALID,
+      'message': 'New password invalid',
     })
 
   def post_password_update(self,
@@ -373,7 +369,7 @@ class TestDeleteRefreshToken(AppTestCase):
     george_access_token = self.create_access_token(1)
 
     response = self.delete_refresh_token(kenny_refresh_token['id'],
-                                         george_access_token)
+      george_access_token)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 

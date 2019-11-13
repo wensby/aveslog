@@ -50,13 +50,46 @@ Status: 404 Not Found
 }
 ```
 
+## Errors
+
+Client errors are returned with HTTP Status Code in the 400s, while server
+errors are returned in the 500s. A typical error response looks like the
+following:
+
+```
+Status: 400 BAD REQUEST
+
+{
+  "code": 1,
+  "message": "Email invalid"
+}
+```
+
+### Error Codes
+
+| Error code | Description |
+|---|---|
+| 1 | Provided registration email didn't fit the required format. See the section on Registration. | 
+| 2 | Provided registration email is already associated with a registered account. |
+| 3 | Provided username already associated with a registered account. |
+| 4 | Provided credentials incorrect. This could mean either the username or password. |
+| 5 | Request requires authorization in form of a valid access token. |
+| 6 | Provided email is not associated with any account. |
+| 7 | Provided old password incorrect. |
+| 8 | Provided access token invalid. |
+| 9 | Provided access token expired. |
+| 10 | Provided new password invalid. |
+| 11 | Account associated with the access token provided no longer available. |
+
 
 ## Authentication
 
 ### Account Registration
 
 Registering a new account is a 2 step process. First, you provide your email 
-address when creating a new registration resource.
+address. Upon a success, this will trigger an email to be sent containing a
+unique registration token `:registration-token`. Once you've acquired this 
+token, you can use this token perform your final registration request.
 
 #### Initiating New Account Registration
 
@@ -68,43 +101,41 @@ POST /authentication/registration
 }
 ```
 
-#### Response
+The email address needs to follow the following format:
+
+```regexp
+^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+```
+
+**Response**
 
 ```
 Status: 200 OK
-
-{
-  "status": "success"
-}
 ```
 
-Upon a success, this will trigger an email to be sent to this email address
-containing a unique registration token `:registration-token`. Once you've
-acquired this token, you can perform your final registration request using this
-token.
-
 #### Getting Registration
+
+It could be useful to get the registration object, and email address, associated
+with a specific registration token, before actually completing the registration.
 
 ```
 GET /authentication/registration/:registration-token
 ```
 
-#### Response
+**Response**
 
 ```
 Status: 200 OK
 
 {
-  "status": "success",
-  "result": {
-    "registration": {
-      "email": "hulot@mail.com"
-    }
-  }
+  "email": "hulot@mail.com"
 }
 ```
 
 #### Completing a Registration
+
+Once you've acquired a registration token by email, you can use that to complete
+your registration.
 
 ```
 POST /authentication/registration/:registration-token
@@ -115,30 +146,36 @@ POST /authentication/registration/:registration-token
 }
 ```
 
-#### Response
+**Response**
+
+The response from completing a registration is the created account resource.
 
 ```
-Status: 200 OK
+Status: 201 CREATED
 
 {
-  "status": "success",
-  "message": "Registration successful"
+  "id": 4,
+  "username": "kennybostick",
+  "birder": {
+    "id": 8,
+    "name": "kennybostick"
+  }
 }
 ```
 
 ### Create Refresh Token
 
-In order to obtain a short-lived access token required to access and modify certain
-resources, you first need a refresh token.
+In order to obtain a short-lived access token required to access and modify
+certain resources, you first need a refresh token.
 
 ```
 POST /authentication/refresh-token?username={username}&password={password}
 ```
 
-#### Response
+**Response**
 
 ```
-Status: 200 OK
+Status: 201 CREATED
 
 {
   "id": 4,
@@ -157,7 +194,7 @@ DELETE /authentication/refresh-token/:id
 
 `accessToken: {accessTokenJwt}`
 
-#### Response
+**Response**
 
 ```
 Status: 204 NO CONTENT
@@ -173,7 +210,7 @@ GET /authentication/access-token
 
 `refreshToken: {refreshTokenJwt}`
 
-#### Response
+**Response**
 
 ```
 Status: 200 OK
@@ -200,15 +237,10 @@ POST /authentication/password-reset
 }
 ```
 
-#### Response
+**Response**
 
 ```
 Status: 200 OK
-
-{
-  "status": "success",
-  "message": "Password reset link sent to e-mail"
-}
 ```
 
 Upon a success, this will trigger an email to be sent to this email address
@@ -225,14 +257,10 @@ POST /authentication/password-reset/:password-reset-token
 }
 ```
 
-#### Response
+**Response**
 
 ```
 Status: 200 OK
-{
-  "status": "success",
-  "message": "Password reset successfully"
-}
 ```
 
 ### Update Password
@@ -245,7 +273,7 @@ POST /authentication/password
 
 `accessToken: {accessTokenJwt}`
 
-#### Response
+**Response**
 
 ```
 Status: 204 NO CONTENT

@@ -81,6 +81,8 @@ class Account(Base):
   email = Column(String, nullable=False)
   birder_id = Column(Integer, ForeignKey('birder.id'))
   locale_id = Column(Integer, nullable=True)
+
+  birder: Birder = relationship('Birder', uselist=False)
   refresh_tokens = relationship('RefreshToken', back_populates='account')
 
   def __eq__(self, other):

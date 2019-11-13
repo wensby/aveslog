@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from aveslog.v0.authentication import AuthenticationTokenFactory, JwtFactory
 from aveslog.test_util import AppTestCase
+from aveslog.v0.error import ErrorCode
 
 
 class TestGetActiveAccounts(AppTestCase):
@@ -42,25 +43,27 @@ class TestAccount(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
-      'status': 'failure',
-      'message': 'account missing',
+      'code': ErrorCode.ACCOUNT_MISSING,
+      'message': 'Authorized account gone',
     })
 
   def test_get_account_when_no_authentication_token(self):
     response = self.get_own_account(None)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'failure')
-    self.assertEqual(data['message'], 'authentication token required')
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.AUTHORIZATION_REQUIRED,
+      'message': 'Authorization required',
+    })
 
   def test_get_account_when_access_token_invalid(self):
     response = self.get_own_account('invalid')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'failure')
-    self.assertEqual(data['message'], 'authentication token invalid')
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.ACCESS_TOKEN_INVALID,
+      'message': 'Access token invalid',
+    })
 
   def test_get_account_when_access_token_expired(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
@@ -70,9 +73,10 @@ class TestAccount(AppTestCase):
     response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'failure')
-    self.assertEqual(data['message'], 'authentication token expired')
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.ACCESS_TOKEN_EXPIRED,
+      'message': 'Access token expired',
+    })
 
   def test_get_account_when_access_token_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')

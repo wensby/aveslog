@@ -26,7 +26,7 @@ export default function PasswordResetForm(props) {
       event.preventDefault();
       const service = new AuthenticationService();
       const response = await service.postPasswordResetPassword(token, password);
-      if (response.status === 'success') {
+      if (response.status === 200) {
         setAlert({
           type: 'success',
           message: 'password-reset-success-alert-message',

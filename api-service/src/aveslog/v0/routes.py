@@ -7,7 +7,9 @@ from flask import Response, request, make_response, jsonify
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
+from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account
+from aveslog.v0.rest_api import error_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.birds_rest_api import BirdsRestApi
 from aveslog.v0.birds_rest_api import create_flask_response
@@ -16,17 +18,35 @@ RouteFunction = Callable[..., Response]
 
 
 def authentication_token_missing_response() -> Response:
-  return make_response(jsonify({
-    'status': 'failure',
-    'message': 'authentication token required',
-  }), HTTPStatus.UNAUTHORIZED)
+  return create_flask_response(error_response(
+    ErrorCode.AUTHORIZATION_REQUIRED,
+    'Authorization required',
+    HTTPStatus.UNAUTHORIZED,
+  ))
 
 
-def create_unauthorized_response(message) -> Response:
-  return make_response(jsonify({
-    'status': 'failure',
-    'message': message,
-  }), HTTPStatus.UNAUTHORIZED)
+def authorized_account_missing_response() -> Response:
+  return create_flask_response(error_response(
+    ErrorCode.ACCOUNT_MISSING,
+    'Authorized account gone',
+    HTTPStatus.UNAUTHORIZED,
+  ))
+
+
+def access_token_invalid_response() -> Response:
+  return create_flask_response(error_response(
+    ErrorCode.ACCESS_TOKEN_INVALID,
+    'Access token invalid',
+    HTTPStatus.UNAUTHORIZED,
+  ))
+
+
+def access_token_expired_response() -> Response:
+  return create_flask_response(error_response(
+    ErrorCode.ACCESS_TOKEN_EXPIRED,
+    'Access token expired',
+    HTTPStatus.UNAUTHORIZED,
+  ))
 
 
 def require_authentication(
@@ -47,13 +67,13 @@ def require_authentication(
       decode_result = jwt_decoder.decode_jwt(access_token)
       if not decode_result.ok:
         if decode_result.error == 'token-invalid':
-          return create_unauthorized_response('authentication token invalid')
+          return access_token_invalid_response()
         elif decode_result.error == 'signature-expired':
-          return create_unauthorized_response('authentication token expired')
+          return access_token_expired_response()
       account_id = decode_result.payload['sub']
       account = account_repository.account_by_id(account_id)
       if not account:
-        return create_unauthorized_response('account missing')
+        return authorized_account_missing_response()
       return route(**kwargs, account=account)
 
     return route_wrapper
