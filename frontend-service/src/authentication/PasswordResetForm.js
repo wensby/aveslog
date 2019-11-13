@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
+import NewPasswordFormGroup from './NewPasswordFormGroup';
 
 export default function PasswordResetForm(props) {
   const { t } = useTranslation();
   const token = props.match.params.token;
   const [alert, setAlert] = useState(null);
   const [password, setPassword] = useState('');
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const renderAlert = () => {
     if (alert) {
@@ -22,26 +24,31 @@ export default function PasswordResetForm(props) {
   };
 
   const submitForm = async event => {
-    try {
-      event.preventDefault();
-      const service = new AuthenticationService();
-      const response = await service.postPasswordResetPassword(token, password);
-      if (response.status === 200) {
-        setAlert({
-          type: 'success',
-          message: 'password-reset-success-alert-message',
-        });
+    event.preventDefault();
+    if (password) {
+      try {
+        const service = new AuthenticationService();
+        const response = await service.postPasswordResetPassword(token, password);
+        if (response.status === 200) {
+          setAlert({
+            type: 'success',
+            message: 'password-reset-success-alert-message',
+          });
+        }
+        else {
+          setAlert({
+            type: 'danger',
+            message: 'password-reset-failure-alert-message',
+          });
+        }
+        setPassword('');
       }
-      else {
-        setAlert({
-          type: 'danger',
-          message: 'password-reset-failure-alert-message',
-        });
+      catch (err) {
+        
       }
-      setPassword('');
     }
-    catch (err) {
-      
+    else {
+      setShowFeedback(true);
     }
   };
 
@@ -53,30 +60,8 @@ export default function PasswordResetForm(props) {
           <p>{ t('password-reset-form-prompt-message') }</p>
           {renderAlert()}
           <form onSubmit={submitForm}>
-            <div className='form-group'>
-              <label htmlFor='passwordInput'>{ t('Password') }</label>
-              <input id='passwordInput'
-                className='form-control'
-                value={password}
-                onChange={event => setPassword(event.target.value)}
-                type='password'
-                name='password'
-                aria-describedby='passwordHelpBlock'
-                placeholder={ t('Password') }
-                required pattern='.{8,128}'/>
-              <small id='passwordHelpBlock'
-                className='form-text text-muted'>
-                { t('password-format-help-message') }</small>
-            </div>
-            <div className='form-group'>
-              <label htmlFor='confirmPasswordInput'>
-                { t('password-confirm-password-label') }</label>
-              <input id='confirmPasswordInput'
-                className='form-control'
-                type='password'
-                name='confirmPassword'
-                placeholder={ t('password-confirm-password-label') }/>
-            </div>
+            <NewPasswordFormGroup onChange={setPassword}
+              showFeedback={showFeedback} />
             <button className='button'
               type='submit'>{ t('button-submit-label') }</button>
           </form>
