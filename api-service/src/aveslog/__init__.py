@@ -10,7 +10,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from aveslog.v0.sqlalchemy_database import EngineFactory, SessionFactory
+from aveslog.v0.database import EngineFactory, SessionFactory
 from aveslog.v0.birders_rest_api import create_birder_rest_api_blueprint
 from aveslog.v0.sighting_rest_api import create_sighting_rest_api_blueprint
 from aveslog.v0.account import AccountRepository
