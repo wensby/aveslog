@@ -69,46 +69,14 @@ class AppTestCase(IntegrationTestCase):
     token = self.create_access_token(account_id)
     return self.client.get(uri, headers={'accessToken': token.jwt})
 
-  def db_insert_birder(self, birder_id, name):
-    cursor = self.database_connection.cursor()
-    cursor.execute('INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, name))
-    self.database_connection.commit()
-
   def db_insert_locale(self, locale_id, code):
     cursor = self.database_connection.cursor()
     cursor.execute('INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
     self.database_connection.commit()
 
-  def db_insert_account(self,
-        account_id: int,
-        username: str,
-        email: str,
-        birder_id: int,
-        locale_id: int,
-  ) -> None:
-    cursor = self.database_connection.cursor()
-    cursor.execute('INSERT INTO account '
-      '(id, username, email, birder_id, locale_id) '
-      'VALUES '
-      '(%s, %s, %s, %s, %s);',
-      (account_id, username, email, birder_id, locale_id))
-    self.database_connection.commit()
-
   def db_delete_refresh_token(self, refresh_token_id: int) -> None:
     cursor = self.database_connection.cursor()
     cursor.execute('DELETE FROM refresh_token WHERE id = %s;', (refresh_token_id,))
-    self.database_connection.commit()
-
-  def db_insert_password(self, account_id, password):
-    password_hasher = PasswordHasher(SaltFactory())
-    p = Password(password)
-    salt_hashed_password = password_hasher.create_salt_hashed_password(p)
-    salt = salt_hashed_password[0]
-    hashed_password = salt_hashed_password[1]
-    cursor = self.database_connection.cursor()
-    cursor.execute(
-      'INSERT INTO hashed_password (account_id, salt, salted_hash) '
-      'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
     self.database_connection.commit()
 
   def db_insert_registration(self, email, token):
@@ -163,10 +131,26 @@ class AppTestCase(IntegrationTestCase):
         account_id: int,
         username: str,
         password: str,
-        email: str) -> None:
-    self.db_insert_birder(birder_id, username)
-    self.db_insert_account(account_id, username, email, birder_id, None)
-    self.db_insert_password(account_id, password)
+        email: str,
+  ) -> None:
+    password_hasher = PasswordHasher(SaltFactory())
+    salt, hash = password_hasher.create_salt_hashed_password(password)
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO birder (id, name) VALUES (%s, %s);',
+      (birder_id, username)
+    )
+    cursor.execute(
+      'INSERT INTO account (id, username, email, birder_id, locale_id) '
+      'VALUES (%s, %s, %s, %s, %s);',
+      (account_id, username, email, birder_id, None)
+    )
+    cursor.execute(
+      'INSERT INTO hashed_password (account_id, salt, salted_hash) '
+      'VALUES (%s, %s, %s);',
+      (account_id, salt, hash)
+    )
+    self.database_connection.commit()
 
   def create_access_token(self, account_id: int) -> AccessToken:
     jwt_factory = JwtFactory(self._app.secret_key)
