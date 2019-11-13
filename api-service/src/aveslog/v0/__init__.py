@@ -1,10 +1,11 @@
 import datetime
 from http import HTTPStatus
 
-from flask import Blueprint, make_response, jsonify
+from flask import Blueprint
 from sqlalchemy.orm import Session
 
 from aveslog.v0.birder import BirderRepository
+from aveslog.v0.error import ErrorCode
 from aveslog.v0.mail import MailDispatcher
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import TokenFactory
@@ -21,9 +22,10 @@ from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
+from aveslog.v0.rest_api import error_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.birds_rest_api import BirdsRestApi
+from aveslog.v0.birds_rest_api import BirdsRestApi, create_flask_response
 from aveslog.v0.routes import create_birds_routes, create_authentication_routes
 from aveslog.v0.routes import create_search_routes
 from aveslog.v0.search import StringMatcher
@@ -52,9 +54,9 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
-
   token_factory = TokenFactory()
-  password_repository = PasswordRepository(token_factory, password_hasher, session)
+  password_repository = PasswordRepository(token_factory, password_hasher,
+    session)
   account_factory = AccountFactory(
     password_hasher,
     account_repository,
@@ -123,8 +125,10 @@ def create_api_v0_blueprint(
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):
-    return make_response(jsonify({
-      'error': f'rate limit exceeded {e.description}',
-    }), HTTPStatus.TOO_MANY_REQUESTS)
+    return create_flask_response(error_response(
+      ErrorCode.RATE_LIMIT_EXCEEDED,
+      f'Rate limit exceeded {e.description}',
+      HTTPStatus.TOO_MANY_REQUESTS,
+    ))
 
   return blueprint

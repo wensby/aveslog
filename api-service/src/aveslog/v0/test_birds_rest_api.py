@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 from aveslog import LinkFactory, BirdRepository
 from aveslog.test_util import AppTestCase
-from aveslog.v0 import BirdsRestApi
+from aveslog.v0 import BirdsRestApi, ErrorCode
 
 
 class TestBird(AppTestCase):
@@ -52,7 +52,8 @@ class TestBird(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.TOO_MANY_REQUESTS)
     self.assertDictEqual(response.json, {
-      'error': 'rate limit exceeded 60 per 1 minute'
+      'code': ErrorCode.RATE_LIMIT_EXCEEDED,
+      'message': 'Rate limit exceeded 60 per 1 minute'
     })
     self.assert_rate_limit_headers(response, 0)
 

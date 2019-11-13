@@ -37,19 +37,6 @@ X-Rate-Limit-Reset: 1
 | X-Rate-Limit-Reset     | The number of seconds left in the current period.       |
 
 
-### Errors
-
-When trying to get a resource that isn't there, the API will naturally respond
-with:
-
-```
-Status: 404 Not Found
-
-{
-  "message": "Not Found"
-}
-```
-
 ## Errors
 
 Client errors are returned with HTTP Status Code in the 400s, while server
@@ -62,6 +49,17 @@ Status: 400 BAD REQUEST
 {
   "code": 1,
   "message": "Email invalid"
+}
+```
+
+When trying to get a resource that isn't there, the API will naturally respond
+with:
+
+```
+Status: 404 Not Found
+
+{
+  "message": "Not Found"
 }
 ```
 
@@ -80,6 +78,7 @@ Status: 400 BAD REQUEST
 | 9 | Provided access token expired. |
 | 10 | Provided new password invalid. |
 | 11 | Account associated with the access token provided no longer available. |
+| 12 | Rate limit exceeded. Check response header X-Rate-Limit-Reset for how many seconds remains until the next window. |
 
 
 ## Authentication
