@@ -1,7 +1,6 @@
 from hashlib import pbkdf2_hmac
 from unittest import TestCase
 from unittest.mock import Mock
-from types import SimpleNamespace as Simple
 from binascii import hexlify
 
 from aveslog.v0.models import Account, PasswordResetToken
@@ -14,8 +13,6 @@ from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import AccountRegistration
 from aveslog.v0.account import Credentials
 from aveslog.v0.mail import EmailAddress
-
-from aveslog.test_util import mock_database_transaction
 
 
 class TestUsername(TestCase):
@@ -61,7 +58,7 @@ class TestAccount(TestCase):
   @classmethod
   def setUpClass(cls) -> None:
     cls.account = Account(id=4, username='hulot', email='hulot@mail.com',
-                          birder_id=8, locale_id=15)
+      birder_id=8, locale_id=15)
 
   def test_eq_false_when_another_type(self):
     string_account = 'Account(4, hulot, hulot@email.com, 8, 15)'
@@ -108,7 +105,6 @@ class TestAccountFactory(TestCase):
   credentials = Credentials(username, password)
 
   def setUp(self) -> None:
-    self.database = Mock()
     self.password_hasher = Mock()
     self.account_repository: AccountRepository = Mock(spec=AccountRepository)
     self.password_repository = Mock()
@@ -130,21 +126,8 @@ class TestAccountFactory(TestCase):
     self.assertEqual(result, added_account)
 
   def test_create_account_fails_when_username_already_taken(self):
-    self.database.transaction.return_value = mock_database_transaction()
-    self.database.transaction().execute.return_value = Simple(rows=[[1]])
-
+    self.account_repository.find_account.return_value = Account()
     result = self.factory.create_account(self.email, self.credentials)
-
-    self.assertIsNone(result)
-
-  def test_create_account_fails_when_inserting_account_fails(self):
-    self.database.transaction.return_value = mock_database_transaction()
-    self.database.transaction().execute.side_effect = [
-      Simple(rows=[]),
-      Simple(rows=[])]
-
-    result = self.factory.create_account(self.email, self.credentials)
-
     self.assertIsNone(result)
 
 
@@ -177,7 +160,7 @@ class TestPasswordResetToken(TestCase):
   def test_repr(self):
     token = PasswordResetToken(account_id=4, token='token')
     self.assertEqual(repr(token),
-                     "<PasswordResetToken(account_id='4', token='token')>")
+      "<PasswordResetToken(account_id='4', token='token')>")
 
   def test_eq_false_when_other_type(self):
     token = PasswordResetToken(account_id=4, token='token')

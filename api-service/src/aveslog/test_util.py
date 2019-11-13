@@ -6,9 +6,9 @@ from datetime import timedelta
 from unittest import TestCase
 from unittest.mock import Mock
 
+import psycopg2
 from flask import Response
 from flask.testing import FlaskClient
-from psycopg2.pool import SimpleConnectionPool
 from werkzeug.datastructures import Headers
 
 import aveslog
@@ -17,19 +17,10 @@ from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import AuthenticationTokenFactory
-from aveslog.v0.database import Transaction
-from aveslog.v0.database import Database
 
 
 def mock_return(value):
   return Mock(return_value=value)
-
-
-def mock_database_transaction():
-  transaction = Mock(spec=Transaction)
-  transaction.__enter__ = Mock(return_value=transaction)
-  transaction.__exit__ = Mock(return_value=None)
-  return transaction
 
 
 class TestClient(FlaskClient):
@@ -68,9 +59,7 @@ class AppTestCase(IntegrationTestCase):
     self._app = aveslog.create_app(test_config=test_config)
     self._app.test_client_class = TestClient
     database_connection_details = aveslog.create_database_connection_details()
-    self.pool = SimpleConnectionPool(1, 20, **database_connection_details)
-    self._app.db = Database(self._app.logger, self.pool)
-    self.database: Database = self._app.db
+    self.database_connection = psycopg2.connect(**database_connection_details)
     self.app_context = self._app.test_request_context()
     self.app_context.push()
     self.client = self._app.test_client()
@@ -81,13 +70,14 @@ class AppTestCase(IntegrationTestCase):
     return self.client.get(uri, headers={'accessToken': token.jwt})
 
   def db_insert_birder(self, birder_id, name):
-    self.database.query(
-      'INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, name))
+    cursor = self.database_connection.cursor()
+    cursor.execute('INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, name))
+    self.database_connection.commit()
 
   def db_insert_locale(self, locale_id, code):
-    with self.database.transaction() as transaction:
-      transaction.execute(
-        'INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
+    cursor = self.database_connection.cursor()
+    cursor.execute('INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
+    self.database_connection.commit()
 
   def db_insert_account(self,
         account_id: int,
@@ -96,17 +86,18 @@ class AppTestCase(IntegrationTestCase):
         birder_id: int,
         locale_id: int,
   ) -> None:
-    self.database.query(
-      'INSERT INTO account '
+    cursor = self.database_connection.cursor()
+    cursor.execute('INSERT INTO account '
       '(id, username, email, birder_id, locale_id) '
       'VALUES '
       '(%s, %s, %s, %s, %s);',
       (account_id, username, email, birder_id, locale_id))
+    self.database_connection.commit()
 
   def db_delete_refresh_token(self, refresh_token_id: int) -> None:
-    with self.database.transaction() as transaction:
-      transaction.execute(
-        'DELETE FROM refresh_token WHERE id = %s;', (refresh_token_id,))
+    cursor = self.database_connection.cursor()
+    cursor.execute('DELETE FROM refresh_token WHERE id = %s;', (refresh_token_id,))
+    self.database_connection.commit()
 
   def db_insert_password(self, account_id, password):
     password_hasher = PasswordHasher(SaltFactory())
@@ -114,48 +105,58 @@ class AppTestCase(IntegrationTestCase):
     salt_hashed_password = password_hasher.create_salt_hashed_password(p)
     salt = salt_hashed_password[0]
     hashed_password = salt_hashed_password[1]
-    self.database.query(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
       'INSERT INTO hashed_password (account_id, salt, salted_hash) '
       'VALUES (%s, %s, %s);', (account_id, salt, hashed_password))
+    self.database_connection.commit()
 
   def db_insert_registration(self, email, token):
-    self.database.query(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
       'INSERT INTO account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
+    self.database_connection.commit()
 
   def db_insert_bird(self, bird_id, binomial_name):
-    self.database.query(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
       'INSERT INTO bird (id, binomial_name) '
       'VALUES (%s, %s);', (bird_id, binomial_name))
+    self.database_connection.commit()
 
   def db_insert_picture(self, picture_id, filepath, credit):
-    with self.database.transaction() as transaction:
-      transaction.execute(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
         'INSERT INTO picture (id, filepath, credit) '
         'VALUES (%s, %s, %s);', (picture_id, filepath, credit)
       )
+    self.database_connection.commit()
 
   def db_insert_bird_thumbnail(self, bird_id, picture_id):
-    with self.database.transaction() as transaction:
-      transaction.execute(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
         'INSERT INTO bird_thumbnail (bird_id, picture_id) '
         'VALUES (%s, %s);', (bird_id, picture_id)
       )
+    self.database_connection.commit()
 
   def db_insert_password_reset_token(self, account_id, token):
-    with self.database.transaction() as transaction:
-      transaction.execute(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
         'INSERT INTO password_reset_token (account_id, token) '
         'VALUES (%s, %s);', (account_id, token))
+    self.database_connection.commit()
 
   def db_insert_sighting(self,
         sighting_id, birder_id, bird_id, sighting_date, sighting_time):
-    with self.database.transaction() as transaction:
-      transaction.execute(
+    cursor = self.database_connection.cursor()
+    cursor.execute(
         'INSERT INTO '
         'sighting (id, birder_id, bird_id, sighting_date, sighting_time) '
         'VALUES (%s, %s, %s, %s, %s);',
         (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
+    self.database_connection.commit()
 
   def db_setup_account(self,
         birder_id: int,
@@ -178,23 +179,25 @@ class AppTestCase(IntegrationTestCase):
     return self.client.post(f'{resource}?{query}')
 
   def tearDown(self) -> None:
-    with self.database.transaction() as transaction:
-      transaction.execute('DELETE FROM refresh_token;')
-      transaction.execute('DELETE FROM password_reset_token;')
-      transaction.execute('DELETE FROM hashed_password;')
-      transaction.execute('DELETE FROM account;')
-      transaction.execute('DELETE FROM sighting;')
-      transaction.execute('DELETE FROM bird_thumbnail;')
-      transaction.execute('DELETE FROM picture;')
-      transaction.execute('DELETE FROM bird;')
-      transaction.execute('DELETE FROM birder;')
-      transaction.execute('DELETE FROM account_registration;')
-      transaction.execute('DELETE FROM locale;')
+    cursor = self.database_connection.cursor()
+    cursor.execute('DELETE FROM refresh_token;')
+    cursor.execute('DELETE FROM password_reset_token;')
+    cursor.execute('DELETE FROM hashed_password;')
+    cursor.execute('DELETE FROM account;')
+    cursor.execute('DELETE FROM sighting;')
+    cursor.execute('DELETE FROM bird_thumbnail;')
+    cursor.execute('DELETE FROM picture;')
+    cursor.execute('DELETE FROM bird;')
+    cursor.execute('DELETE FROM birder;')
+    cursor.execute('DELETE FROM account_registration;')
+    cursor.execute('DELETE FROM locale;')
+    self.database_connection.commit()
+    self.database_connection.close()
     self.app_context.pop()
-    self.pool.closeall()
     logging.disable(logging.NOTSET)
 
   def db_get_sighting_rows(self):
-    with self.database.transaction() as transaction:
-      result = transaction.execute('SELECT * FROM sighting;')
-      return result.rows
+    cursor = self.database_connection.cursor()
+    cursor.execute('SELECT * FROM sighting;')
+    self.database_connection.commit()
+    return cursor.fetchall()
