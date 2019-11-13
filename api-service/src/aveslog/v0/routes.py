@@ -2,13 +2,14 @@ from functools import wraps
 from http import HTTPStatus
 from typing import Callable
 
-from flask import Response, request, make_response, jsonify
+from flask import Response, request
 
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account
+from aveslog.v0.registration_rest_api import RegistrationRestApi
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.birds_rest_api import BirdsRestApi
@@ -115,20 +116,36 @@ def create_search_routes(search_api: SearchApi):
   ]
 
 
+def create_registration_routes(
+      registration_rest_api: RegistrationRestApi,
+) -> list:
+  def post_registration_request() -> Response:
+    email = request.json['email']
+    response = registration_rest_api.create_registration_request(email)
+    return create_flask_response(response)
+
+  def get_registration_request(token: str) -> Response:
+    response = registration_rest_api.get_registration_request(token)
+    return create_flask_response(response)
+
+  return [
+    {
+      'rule': '/registration-requests',
+      'view_func': post_registration_request,
+      'options': {'methods': ['POST']},
+    },
+    {
+      'rule': '/registration-requests/<string:token>',
+      'view_func': get_registration_request,
+    },
+  ]
+
+
 def create_authentication_routes(
       authentication_rest_api: AuthenticationRestApi,
       jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
 ) -> list:
-  def post_registration_email() -> Response:
-    email = request.json['email']
-    response = authentication_rest_api.post_registration_email(email)
-    return create_flask_response(response)
-
-  def get_registration(token: str) -> Response:
-    response = authentication_rest_api.get_registration(token)
-    return create_flask_response(response)
-
   def post_registration(token: str) -> Response:
     username = request.json['username']
     password = request.json['password']
@@ -180,15 +197,6 @@ def create_authentication_routes(
     return create_flask_response(response)
 
   return [
-    {
-      'rule': '/authentication/registration',
-      'view_func': post_registration_email,
-      'options': {'methods': ['POST']},
-    },
-    {
-      'rule': '/authentication/registration/<string:token>',
-      'view_func': get_registration,
-    },
     {
       'rule': '/authentication/registration/<string:token>',
       'view_func': post_registration,

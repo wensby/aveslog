@@ -81,19 +81,18 @@ Status: 404 Not Found
 | 12 | Rate limit exceeded. Check response header X-Rate-Limit-Reset for how many seconds remains until the next window. |
 
 
-## Authentication
+## Registration Requests
 
-### Account Registration
+Registering a new account is a 2 step process. First, you create a registration
+request by provide your email address. Upon a success, this will trigger an 
+email to be sent containing a unique registration token 
+`:registration-request-token`. Once you've acquired this token, you can use this
+token perform your final registration request.
 
-Registering a new account is a 2 step process. First, you provide your email 
-address. Upon a success, this will trigger an email to be sent containing a
-unique registration token `:registration-token`. Once you've acquired this 
-token, you can use this token perform your final registration request.
-
-#### Initiating New Account Registration
+### Create Registration Request
 
 ```
-POST /authentication/registration
+POST /registration-requests
 
 {
   "email": "kenny.bostick@mail.com"
@@ -109,16 +108,17 @@ The email address needs to follow the following format:
 **Response**
 
 ```
-Status: 200 OK
+Status: 201 CREATED
 ```
 
-#### Getting Registration
+### Get Registration Request
 
-It could be useful to get the registration object, and email address, associated
-with a specific registration token, before actually completing the registration.
+It could be useful to get the registration request, and email address,
+associated with a specific registration token, before actually completing the
+registration.
 
 ```
-GET /authentication/registration/:registration-token
+GET /registration-requests/:registration-request-token
 ```
 
 **Response**
@@ -130,6 +130,15 @@ Status: 200 OK
   "email": "hulot@mail.com"
 }
 ```
+
+## Authentication
+
+### Account Registration
+
+Registering a new account is a 2 step process. First, you provide your email 
+address. Upon a success, this will trigger an email to be sent containing a
+unique registration token `:registration-token`. Once you've acquired this 
+token, you can use this token perform your final registration request.
 
 #### Completing a Registration
 

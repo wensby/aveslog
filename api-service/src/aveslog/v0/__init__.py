@@ -22,11 +22,13 @@ from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
+from aveslog.v0.registration_rest_api import RegistrationRestApi
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.bird import BirdRepository
 from aveslog.v0.birds_rest_api import BirdsRestApi, create_flask_response
-from aveslog.v0.routes import create_birds_routes, create_authentication_routes
+from aveslog.v0.routes import create_birds_routes, create_authentication_routes, \
+  create_registration_routes
 from aveslog.v0.routes import create_search_routes
 from aveslog.v0.search import StringMatcher
 from aveslog.v0.search import BirdSearcher
@@ -110,12 +112,20 @@ def create_api_v0_blueprint(
     password_reset_controller,
     password_update_controller,
   )
+  registration_rest_api = RegistrationRestApi(
+    account_registration_controller,
+    account_repository,
+    locale_repository,
+    locale_loader,
+  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
   register_routes(birds_routes)
   search_routes = create_search_routes(search_api)
   register_routes(search_routes)
+  registration_routes = create_registration_routes(registration_rest_api)
+  register_routes(registration_routes)
   authentication_routes = create_authentication_routes(
     authentication_rest_api,
     jwt_decoder,

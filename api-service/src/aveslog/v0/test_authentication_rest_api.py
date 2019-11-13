@@ -154,53 +154,6 @@ class TestPasswordReset(AppTestCase):
 
 class TestRegistration(AppTestCase):
 
-  def test_post_registration_email_when_ok(self):
-    self.db_insert_locale(1, 'en')
-
-    response = self.post_registration_email('hulot@mail.com')
-
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertDictEqual(response.json, {})
-
-  def test_post_registration_email_when_email_invalid(self):
-    self.db_insert_locale(1, 'en')
-
-    response = self.post_registration_email('hulot')
-
-    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-    self.assertDictEqual(response.json, {
-      'code': ErrorCode.EMAIL_INVALID,
-      'message': 'Email invalid',
-    })
-
-  def test_post_registration_email_when_email_taken(self):
-    self.db_insert_locale(1, 'en')
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-
-    response = self.post_registration_email('hulot@mail.com')
-
-    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-    self.assertDictEqual(response.json, {
-      'code': ErrorCode.EMAIL_TAKEN,
-      'message': 'Email taken',
-    })
-
-  def test_get_registration_when_ok(self):
-    self.db_insert_registration('hulot@mail.com', 'myToken')
-
-    response = self.get_registration('myToken')
-
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertDictEqual(response.json, {
-      'email': 'hulot@mail.com',
-    })
-
-  def test_get_registration_when_missing(self):
-    response = self.get_registration('myToken')
-
-    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-    self.assertDictEqual(response.json, {})
-
   def test_post_registration_when_credentials_ok(self):
     cursor = self.database_connection.cursor()
     cursor.execute('ALTER SEQUENCE account_id_seq RESTART WITH 1')
@@ -244,13 +197,6 @@ class TestRegistration(AppTestCase):
       'code': ErrorCode.USERNAME_TAKEN,
       'message': 'Username taken',
     })
-
-  def post_registration_email(self, email: str) -> Response:
-    resource = '/authentication/registration'
-    return self.client.post(resource, json={'email': email})
-
-  def get_registration(self, token: str) -> Response:
-    return self.client.get(f'/authentication/registration/{token}')
 
   def post_registration(self,
         token: str,

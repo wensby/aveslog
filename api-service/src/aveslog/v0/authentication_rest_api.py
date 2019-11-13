@@ -1,6 +1,5 @@
 from http import HTTPStatus
 from typing import Optional
-from typing import Union
 
 from datetime import datetime
 
@@ -63,22 +62,6 @@ class AuthenticationRestApi:
     self._jwt_decoder = jwt_decoder
     self._password_reset_controller = password_reset_controller
     self._password_update_controller = password_update_controller
-
-  def post_registration_email(self, email: str) -> RestApiResponse:
-    result = self._initiate_registration(email)
-    if result == 'email taken':
-      return error_response(ErrorCode.EMAIL_TAKEN, 'Email taken')
-    elif result == 'email invalid':
-      return error_response(ErrorCode.EMAIL_INVALID, 'Email invalid')
-    return RestApiResponse(HTTPStatus.OK, {})
-
-  def get_registration(self, registration_token: str) -> RestApiResponse:
-    registration = self._find_registration_token(registration_token)
-    if registration:
-      return RestApiResponse(HTTPStatus.OK, {
-        'email': registration.email,
-      })
-    return RestApiResponse(HTTPStatus.NOT_FOUND, {})
 
   def post_registration(self,
         token: str,
@@ -185,12 +168,6 @@ class AuthenticationRestApi:
     new_password = Password(raw_new_password)
     self._password_update_controller.update_password(account, new_password)
     return RestApiResponse(HTTPStatus.NO_CONTENT, {})
-
-  def _initiate_registration(self,
-        email: str
-  ) -> Union[AccountRegistration, str]:
-    locale = self._load_english_locale()
-    return self._registration_controller.initiate_registration(email, locale)
 
   def _find_registration_token(self,
         registration_token: str) -> Optional[AccountRegistration]:

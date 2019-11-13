@@ -75,7 +75,7 @@ export default class AuthenticationService {
   }
 
   async postRegistrationEmail(email) {
-    const url = `${this.apiUrl}/authentication/registration`;
+    const url = `${this.apiUrl}/registration-requests`;
     return await fetch(url, {
       method: 'POST',
       headers: {
@@ -89,7 +89,7 @@ export default class AuthenticationService {
 
   async fetchRegistration(token) {
     try {
-      const url = `${this.apiUrl}/authentication/registration/${token}`;
+      const url = `${this.apiUrl}/registration-requests/${token}`;
       return await fetch(url);
     }
     catch (err) {
