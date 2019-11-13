@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import Blueprint
 from sqlalchemy.orm import Session
 
+from aveslog.v0.account_rest_api import AccountsRestApi
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.mail import MailDispatcher
@@ -27,8 +28,10 @@ from aveslog.v0.rest_api import error_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.bird import BirdRepository
 from aveslog.v0.birds_rest_api import BirdsRestApi, create_flask_response
-from aveslog.v0.routes import create_birds_routes, create_authentication_routes, \
-  create_registration_routes
+from aveslog.v0.routes import create_birds_routes
+from aveslog.v0.routes import create_authentication_routes
+from aveslog.v0.routes import create_registration_routes
+from aveslog.v0.routes import create_account_routes
 from aveslog.v0.routes import create_search_routes
 from aveslog.v0.search import StringMatcher
 from aveslog.v0.search import BirdSearcher
@@ -118,6 +121,7 @@ def create_api_v0_blueprint(
     locale_repository,
     locale_loader,
   )
+  accounts_rest_api = AccountsRestApi(account_repository)
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)
@@ -132,6 +136,11 @@ def create_api_v0_blueprint(
     account_repository,
   )
   register_routes(authentication_routes)
+  account_routes = create_account_routes(
+    jwt_decoder,
+    account_repository,
+    accounts_rest_api)
+  register_routes(account_routes)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):

@@ -51,8 +51,12 @@ function UserProvider(props) {
 
   async function fetchAccount(accessToken) {
     if (accessToken) {
-      setAccount(await accountService.fetchAccount(accessToken));
-      setResolvingLocalStorage(false);
+      const response = await accountService.fetchAccount(accessToken);
+      if (response.status === 200) {
+        const json = await response.json();
+        setAccount(json);
+        setResolvingLocalStorage(false);
+      }
     }
   }
 

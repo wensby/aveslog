@@ -5,6 +5,7 @@ from typing import Callable
 from flask import Response, request
 
 from aveslog.v0.account import AccountRepository
+from aveslog.v0.account_rest_api import AccountsRestApi
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
@@ -137,6 +138,33 @@ def create_registration_routes(
     {
       'rule': '/registration-requests/<string:token>',
       'view_func': get_registration_request,
+    },
+  ]
+
+
+def create_account_routes(
+      jwt_decoder: JwtDecoder,
+      account_repository: AccountRepository,
+      accounts_rest_api: AccountsRestApi,
+) -> list:
+  @require_authentication(jwt_decoder, account_repository)
+  def get_accounts(account: Account) -> Response:
+    response = accounts_rest_api.get_accounts()
+    return create_flask_response(response)
+
+  @require_authentication(jwt_decoder, account_repository)
+  def get_me(account: Account) -> Response:
+    response = accounts_rest_api.get_me(account)
+    return create_flask_response(response)
+
+  return [
+    {
+      'rule': '/accounts',
+      'view_func': get_accounts,
+    },
+    {
+      'rule': '/account',
+      'view_func': get_me,
     },
   ]
 

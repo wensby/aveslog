@@ -17,7 +17,6 @@ from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import SaltFactory
-from aveslog.v0.account_rest_api import create_account_rest_api_blueprint
 from aveslog.v0.bird import BirdRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LocaleRepository, LocaleDeterminerFactory
@@ -70,8 +69,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     birder_repository,
     sighting_repository,
   )
-  account_rest_api = create_account_rest_api_blueprint(
-    jwt_decoder, account_repository)
   api_v0_blueprint = create_api_v0_blueprint(
     link_factory,
     bird_repository,
@@ -93,7 +90,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   )
   app.register_blueprint(api_v0_blueprint)
   app.register_blueprint(sighting_api)
-  app.register_blueprint(account_rest_api)
   app.register_blueprint(birder_rest_api)
 
   @app.before_request

@@ -315,6 +315,62 @@ Status: 200 OK
 }
 ```
 
+## Account
+
+### Get Authorized Account
+
+```
+GET /account
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "username": "kennybostick",
+  "birderId": 4
+}
+```
+
+### Get Accounts
+
+```
+GET /accounts
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "items": [
+    {
+      "username": "kennybostick",
+      "birderId": 4
+    },
+    {
+      "username": "bradharris",
+      "birderId": 8
+    },
+    {
+      "username": "stupreissler",
+      "birderId": 15
+    }
+  ]
+}
+```
+
 
 ## Search
 

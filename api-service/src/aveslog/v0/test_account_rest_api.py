@@ -1,5 +1,4 @@
 import datetime
-import json
 from http import HTTPStatus
 from datetime import timedelta
 
@@ -13,12 +12,11 @@ class TestGetActiveAccounts(AppTestCase):
   def test_get_active_accounts_ok_when_authenticated(self):
     self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
 
-    response = self.get_with_access_token('/account', account_id=1)
+    response = self.get_with_access_token('/accounts', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'status': 'success',
-      'result': [
+    self.assertDictEqual(response.json, {
+      'items': [
         {
           'username': 'hulot',
           'birderId': 1,
@@ -85,13 +83,13 @@ class TestAccount(AppTestCase):
     response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    data = json.loads(response.data.decode('utf-8'))
-    self.assertEqual(data['status'], 'success')
-    self.assertEqual(data['account']['username'], 'hulot')
-    self.assertEqual(data['account']['birderId'], 1)
+    self.assertDictEqual(response.json, {
+      'username': 'hulot',
+      'birderId': 1,
+    })
 
   def get_own_account(self, token):
     if not token:
-      return self.client.get('/account/me')
+      return self.client.get('/account')
     else:
-      return self.client.get('/account/me', headers={'accessToken': token})
+      return self.client.get('/account', headers={'accessToken': token})

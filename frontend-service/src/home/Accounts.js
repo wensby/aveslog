@@ -12,9 +12,13 @@ export default function Accounts() {
   useEffect(() => {
     const fetchAccounts = async () => {
       const accessToken = await getAccessToken();
-      const accounts = await new AccountService().fetchAccounts(accessToken);
-      setUsernames(accounts.map(a => a.username));
-      setLoading(false);
+      const response = await new AccountService().fetchAccounts(accessToken);
+      if (response.status === 200) {
+        const json = await response.json();
+        setUsernames(json.items.map(a => a.username));
+        setLoading(false);
+      }
+      
     }
     if (authenticated) {
       fetchAccounts();
