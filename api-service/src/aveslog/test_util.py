@@ -71,12 +71,14 @@ class AppTestCase(IntegrationTestCase):
 
   def db_insert_locale(self, locale_id, code):
     cursor = self.database_connection.cursor()
-    cursor.execute('INSERT INTO locale (id, code) VALUES (%s, %s);', (locale_id, code))
+    cursor.execute('INSERT INTO locale (id, code) VALUES (%s, %s);',
+      (locale_id, code))
     self.database_connection.commit()
 
   def db_delete_refresh_token(self, refresh_token_id: int) -> None:
     cursor = self.database_connection.cursor()
-    cursor.execute('DELETE FROM refresh_token WHERE id = %s;', (refresh_token_id,))
+    cursor.execute('DELETE FROM refresh_token WHERE id = %s;',
+      (refresh_token_id,))
     self.database_connection.commit()
 
   def db_insert_registration(self, email, token):
@@ -96,34 +98,34 @@ class AppTestCase(IntegrationTestCase):
   def db_insert_picture(self, picture_id, filepath, credit):
     cursor = self.database_connection.cursor()
     cursor.execute(
-        'INSERT INTO picture (id, filepath, credit) '
-        'VALUES (%s, %s, %s);', (picture_id, filepath, credit)
-      )
+      'INSERT INTO picture (id, filepath, credit) '
+      'VALUES (%s, %s, %s);', (picture_id, filepath, credit)
+    )
     self.database_connection.commit()
 
   def db_insert_bird_thumbnail(self, bird_id, picture_id):
     cursor = self.database_connection.cursor()
     cursor.execute(
-        'INSERT INTO bird_thumbnail (bird_id, picture_id) '
-        'VALUES (%s, %s);', (bird_id, picture_id)
-      )
+      'INSERT INTO bird_thumbnail (bird_id, picture_id) '
+      'VALUES (%s, %s);', (bird_id, picture_id)
+    )
     self.database_connection.commit()
 
   def db_insert_password_reset_token(self, account_id, token):
     cursor = self.database_connection.cursor()
     cursor.execute(
-        'INSERT INTO password_reset_token (account_id, token) '
-        'VALUES (%s, %s);', (account_id, token))
+      'INSERT INTO password_reset_token (account_id, token) '
+      'VALUES (%s, %s);', (account_id, token))
     self.database_connection.commit()
 
   def db_insert_sighting(self,
         sighting_id, birder_id, bird_id, sighting_date, sighting_time):
     cursor = self.database_connection.cursor()
     cursor.execute(
-        'INSERT INTO '
-        'sighting (id, birder_id, bird_id, sighting_date, sighting_time) '
-        'VALUES (%s, %s, %s, %s, %s);',
-        (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
+      'INSERT INTO '
+      'sighting (id, birder_id, bird_id, sighting_date, sighting_time) '
+      'VALUES (%s, %s, %s, %s, %s);',
+      (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
     self.database_connection.commit()
 
   def db_setup_account(self,
