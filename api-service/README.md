@@ -81,56 +81,6 @@ Status: 404 Not Found
 | 12 | Rate limit exceeded. Check response header X-Rate-Limit-Reset for how many seconds remains until the next window. |
 
 
-## Registration Requests
-
-Registering a new account is a 2 step process. First, you create a registration
-request by provide your email address. Upon a success, this will trigger an 
-email to be sent containing a unique registration token 
-`:registration-request-token`. Once you've acquired this token, you can use this
-token perform your final registration request.
-
-### Create Registration Request
-
-```
-POST /registration-requests
-
-{
-  "email": "kenny.bostick@mail.com"
-}
-```
-
-The email address needs to follow the following format:
-
-```regexp
-^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
-```
-
-**Response**
-
-```
-Status: 201 CREATED
-```
-
-### Get Registration Request
-
-It could be useful to get the registration request, and email address,
-associated with a specific registration token, before actually completing the
-registration.
-
-```
-GET /registration-requests/:registration-request-token
-```
-
-**Response**
-
-```
-Status: 200 OK
-
-{
-  "email": "hulot@mail.com"
-}
-```
-
 ## Authentication
 
 ### Create Refresh Token
@@ -366,6 +316,57 @@ Status: 200 OK
       "birderId": 15
     }
   ]
+}
+```
+
+
+## Registration Requests
+
+Registering a new account is a 2 step process. First, you create a registration
+request by provide your email address. Upon a success, this will trigger an 
+email to be sent containing a unique registration token 
+`:registration-request-token`. Once you've acquired this token, you can use this
+token perform your final registration request.
+
+### Create Registration Request
+
+```
+POST /registration-requests
+
+{
+  "email": "kenny.bostick@mail.com"
+}
+```
+
+The email address needs to follow the following format:
+
+```regexp
+^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+```
+
+**Response**
+
+```
+Status: 201 CREATED
+```
+
+### Get Registration Request
+
+It could be useful to get the registration request, and email address,
+associated with a specific registration token, before actually completing the
+registration.
+
+```
+GET /registration-requests/:registration-request-token
+```
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "email": "hulot@mail.com"
 }
 ```
 
