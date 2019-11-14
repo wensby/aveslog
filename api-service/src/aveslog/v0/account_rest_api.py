@@ -28,7 +28,10 @@ class AccountsRestApi:
     token = post_json.get('token')
     username = post_json.get('username')
     password = post_json.get('password')
-    response = self._try_perform_registration(token, username, password)
+    registration = self._account_repository.find_account_registration_by_token(
+      token)
+    response = self._registration_controller.perform_registration(
+      registration.email, registration.token, username, password)
     if response == 'success':
       account = self._account_repository.find_account(username)
       return RestApiResponse(HTTPStatus.CREATED, {
@@ -55,17 +58,3 @@ class AccountsRestApi:
     return RestApiResponse(HTTPStatus.OK, {
       'items': list(map(account_response_dict, accounts))
     })
-
-  def _try_perform_registration(self,
-        registration_token: str,
-        username: str,
-        password: str,
-  ) -> str:
-    registration = self._find_registration_token(registration_token)
-    return self._registration_controller.perform_registration(
-      registration.email, registration.token, username, password)
-
-  def _find_registration_token(self,
-        registration_token: str) -> Optional[AccountRegistration]:
-    return self._account_repository.find_account_registration_by_token(
-      registration_token)
