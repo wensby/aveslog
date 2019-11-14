@@ -24,10 +24,10 @@ from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.registration_rest_api import RegistrationRestApi
-from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import error_response, create_flask_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.birds_rest_api import BirdsRestApi, create_flask_response
+from aveslog.v0.birds_rest_api import BirdsRestApi
 from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_routes

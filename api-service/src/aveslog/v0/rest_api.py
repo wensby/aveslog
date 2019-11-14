@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from flask import Response, make_response, jsonify
+
 
 class RestApiResponse:
 
@@ -17,3 +19,7 @@ def error_response(
     'code': error_code,
     'message': message,
   })
+
+
+def create_flask_response(response: RestApiResponse) -> Response:
+  return make_response(jsonify(response.data), response.status)
