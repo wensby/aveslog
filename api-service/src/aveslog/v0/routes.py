@@ -147,6 +147,10 @@ def create_account_routes(
       account_repository: AccountRepository,
       accounts_rest_api: AccountsRestApi,
 ) -> list:
+  def create_account() -> Response:
+    response = accounts_rest_api.create_account(request.json)
+    return create_flask_response(response)
+
   @require_authentication(jwt_decoder, account_repository)
   def get_accounts(account: Account) -> Response:
     response = accounts_rest_api.get_accounts()
@@ -158,6 +162,11 @@ def create_account_routes(
     return create_flask_response(response)
 
   return [
+    {
+      'rule': '/accounts',
+      'view_func': create_account,
+      'options': {'methods': ['POST']},
+    },
     {
       'rule': '/accounts',
       'view_func': get_accounts,

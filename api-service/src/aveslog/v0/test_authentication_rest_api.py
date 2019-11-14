@@ -152,61 +152,6 @@ class TestPasswordReset(AppTestCase):
     return self.client.post(resource, json={'password': password})
 
 
-class TestRegistration(AppTestCase):
-
-  def test_post_registration_when_credentials_ok(self):
-    cursor = self.database_connection.cursor()
-    cursor.execute('ALTER SEQUENCE account_id_seq RESTART WITH 1')
-    cursor.execute('ALTER SEQUENCE birder_id_seq RESTART WITH 1')
-    self.database_connection.commit()
-    self.db_insert_registration('hulot@mail.com', 'myToken')
-
-    response = self.post_registration('myToken', 'myUsername', 'myPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    self.assertDictEqual(response.json, {
-      'id': 1,
-      'username': 'myUsername',
-      'email': 'hulot@mail.com',
-      'birder': {
-        'id': 1,
-        'name': 'myUsername',
-      },
-    })
-
-  def test_post_registration_when_username_already_taken(self):
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    self.db_insert_registration('new@mail.com', 'token')
-
-    response = self.post_registration('token', 'hulot', 'password')
-
-    self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
-    self.assertDictEqual(response.json, {
-      'code': ErrorCode.USERNAME_TAKEN,
-      'message': 'Username taken',
-    })
-
-  def test_post_registration_when_other_cased_username_taken(self) -> None:
-    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
-    self.db_insert_registration('first@mail.com', 'token')
-
-    response = self.post_registration('token', 'George', 'washington')
-
-    self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
-    self.assertDictEqual(response.json, {
-      'code': ErrorCode.USERNAME_TAKEN,
-      'message': 'Username taken',
-    })
-
-  def post_registration(self,
-        token: str,
-        username: str,
-        password: str) -> Response:
-    resource = f'/authentication/registration/{token}'
-    json = {'username': username, 'password': password}
-    return self.client.post(resource, json=json)
-
-
 class TestPasswordUpdate(AppTestCase):
 
   def setUp(self) -> None:

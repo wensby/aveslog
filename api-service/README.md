@@ -133,44 +133,6 @@ Status: 200 OK
 
 ## Authentication
 
-### Account Registration
-
-Registering a new account is a 2 step process. First, you provide your email 
-address. Upon a success, this will trigger an email to be sent containing a
-unique registration token `:registration-token`. Once you've acquired this 
-token, you can use this token perform your final registration request.
-
-#### Completing a Registration
-
-Once you've acquired a registration token by email, you can use that to complete
-your registration.
-
-```
-POST /authentication/registration/:registration-token
-
-{
-  "username": "kennybostick",
-  "password": "birder-no-1"
-}
-```
-
-**Response**
-
-The response from completing a registration is the created account resource.
-
-```
-Status: 201 CREATED
-
-{
-  "id": 4,
-  "username": "kennybostick",
-  "birder": {
-    "id": 8,
-    "name": "kennybostick"
-  }
-}
-```
-
 ### Create Refresh Token
 
 In order to obtain a short-lived access token required to access and modify
@@ -316,6 +278,42 @@ Status: 200 OK
 ```
 
 ## Account
+
+### Create Account
+
+In order to create an account, you first need to have obtained a registration
+request token. This token is emailed to you by creating a new registration
+request providing your email address.
+
+```
+POST /accounts
+
+{
+  "token": "{registration-token}"
+  "username": "kennybostick",
+  "password": "birder-no-1"
+}
+```
+
+**Response**
+
+The response from completing a registration is the created account resource.
+
+```
+Status: 201 CREATED
+
+{
+  "id": 4,
+  "username": "kennybostick",
+  "birder": {
+    "id": 8,
+    "name": "kennybostick"
+  }
+}
+```
+
+Upon a successful account creation, the registration request resource associated
+with the token used will be consumed and deleted.
 
 ### Get Authorized Account
 

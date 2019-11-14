@@ -12,7 +12,6 @@ from aveslog.v0.authentication import AuthenticationTokenFactory, Authenticator
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.authentication import PasswordResetController
-from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import Password
@@ -43,7 +42,6 @@ class AuthenticationRestApi:
   def __init__(self,
         locale_repository: LocaleRepository,
         locale_loader: LocaleLoader,
-        registration_controller: AccountRegistrationController,
         account_repository: AccountRepository,
         authenticator: Authenticator,
         token_factory: AuthenticationTokenFactory,
@@ -54,7 +52,6 @@ class AuthenticationRestApi:
   ):
     self._locale_repository = locale_repository
     self._locale_loader = locale_loader
-    self._registration_controller = registration_controller
     self._account_repository = account_repository
     self._authenticator = authenticator
     self._token_factory = token_factory
@@ -62,30 +59,6 @@ class AuthenticationRestApi:
     self._jwt_decoder = jwt_decoder
     self._password_reset_controller = password_reset_controller
     self._password_update_controller = password_update_controller
-
-  def post_registration(self,
-        token: str,
-        username: str,
-        password: str,
-  ) -> RestApiResponse:
-    response = self._try_perform_registration(token, username, password)
-    if response == 'success':
-      account = self._account_repository.find_account(username)
-      return RestApiResponse(HTTPStatus.CREATED, {
-        'id': account.id,
-        'username': account.username,
-        'email': account.email,
-        'birder': {
-          'id': account.birder.id,
-          'name': account.birder.name,
-        },
-      })
-    elif response == 'username taken':
-      return error_response(
-        ErrorCode.USERNAME_TAKEN,
-        'Username taken',
-        HTTPStatus.CONFLICT,
-      )
 
   def post_refresh_token(self, username: str, password: str) -> RestApiResponse:
     account = self._account_repository.find_account(username)
@@ -173,15 +146,6 @@ class AuthenticationRestApi:
         registration_token: str) -> Optional[AccountRegistration]:
     return self._account_repository.find_account_registration_by_token(
       registration_token)
-
-  def _try_perform_registration(self,
-        registration_token: str,
-        username: str,
-        password: str,
-  ) -> str:
-    registration = self._find_registration_token(registration_token)
-    return self._registration_controller.perform_registration(
-      registration.email, registration.token, username, password)
 
   def _create_persistent_refresh_token(self, account: Account) -> RefreshToken:
     token = self._token_factory.create_refresh_token(account.id)

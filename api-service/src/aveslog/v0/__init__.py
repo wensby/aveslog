@@ -106,7 +106,6 @@ def create_api_v0_blueprint(
   authentication_rest_api = AuthenticationRestApi(
     locale_repository,
     locale_loader,
-    account_registration_controller,
     account_repository,
     authenticator,
     authentication_token_factory,
@@ -121,7 +120,10 @@ def create_api_v0_blueprint(
     locale_repository,
     locale_loader,
   )
-  accounts_rest_api = AccountsRestApi(account_repository)
+  accounts_rest_api = AccountsRestApi(
+    account_repository,
+    account_registration_controller,
+  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(birds_rest_api)

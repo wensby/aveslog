@@ -99,13 +99,13 @@ export default class AuthenticationService {
 
   async postRegistration(token, [username, password]) {
     try {
-      const url = `${this.apiUrl}/authentication/registration/${token}`;
-      return await fetch(url, {
+      return await fetch(`${this.apiUrl}/accounts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          'token': token,
           'username': username,
           'password': password,
         })
