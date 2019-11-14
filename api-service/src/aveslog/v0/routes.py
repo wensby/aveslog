@@ -183,15 +183,6 @@ def create_authentication_routes(
       jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
 ) -> list:
-  def post_registration(token: str) -> Response:
-    username = request.json['username']
-    password = request.json['password']
-    response = authentication_rest_api.post_registration(
-      token,
-      username,
-      password,
-    )
-    return create_flask_response(response)
 
   def post_refresh_token() -> Response:
     username = request.args.get('username')
@@ -234,11 +225,6 @@ def create_authentication_routes(
     return create_flask_response(response)
 
   return [
-    {
-      'rule': '/authentication/registration/<string:token>',
-      'view_func': post_registration,
-      'options': {'methods': ['POST']},
-    },
     {
       'rule': '/authentication/refresh-token',
       'view_func': post_refresh_token,
