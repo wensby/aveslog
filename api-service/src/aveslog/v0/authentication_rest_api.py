@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Optional
 
 from datetime import datetime
 
@@ -15,7 +14,7 @@ from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import Password
-from aveslog.v0.models import Account, AccountRegistration, RefreshToken
+from aveslog.v0.models import Account, RefreshToken
 
 
 def credentials_incorrect_response() -> RestApiResponse:
@@ -105,9 +104,9 @@ class AuthenticationRestApi:
     account_id = decode_result.payload['sub']
     access_token = self._token_factory.create_access_token(account_id)
     return RestApiResponse(HTTPStatus.OK, {
-    'jwt': access_token.jwt,
-    'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
-  })
+      'jwt': access_token.jwt,
+      'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
+    })
 
   def post_password_reset_email(self, email) -> RestApiResponse:
     created = self._initiate_password_reset(email)
@@ -141,11 +140,6 @@ class AuthenticationRestApi:
     new_password = Password(raw_new_password)
     self._password_update_controller.update_password(account, new_password)
     return RestApiResponse(HTTPStatus.NO_CONTENT, {})
-
-  def _find_registration_token(self,
-        registration_token: str) -> Optional[AccountRegistration]:
-    return self._account_repository.find_account_registration_by_token(
-      registration_token)
 
   def _create_persistent_refresh_token(self, account: Account) -> RefreshToken:
     token = self._token_factory.create_refresh_token(account.id)
