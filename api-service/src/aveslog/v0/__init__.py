@@ -4,6 +4,7 @@ from http import HTTPStatus
 from flask import Blueprint
 from sqlalchemy.orm import Session
 
+from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.mail import MailDispatcher
@@ -23,7 +24,7 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.rest_api import error_response, create_flask_response
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.routes import create_birds_routes
+from aveslog.v0.routes import create_birds_routes, create_sightings_routes
 from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_routes
 from aveslog.v0.routes import create_account_routes
@@ -44,6 +45,7 @@ def create_api_v0_blueprint(
       jwt_decoder: JwtDecoder,
       secret_key: str,
       session: Session,
+      sighting_repository: SightingRepository,
 ) -> Blueprint:
   def register_routes(routes):
     for route in routes:
@@ -109,6 +111,13 @@ def create_api_v0_blueprint(
     locale_loader,
   )
   register_routes(registration_routes)
+  sighting_routes = create_sightings_routes(
+    jwt_decoder,
+    account_repository,
+    sighting_repository,
+    bird_repository,
+  )
+  register_routes(sighting_routes)
   authentication_routes = create_authentication_routes(
     jwt_decoder,
     account_repository,
