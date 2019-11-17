@@ -1,19 +1,19 @@
 import os
 from functools import wraps
 from http import HTTPStatus
-from typing import Callable
+from typing import Callable, Union, Optional
 
 from flask import Response, request
 
+from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.bird import BirdRepository
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account_rest_api import AccountsRestApi
-from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.models import Account, Bird, Picture
-from aveslog.v0.registration_rest_api import RegistrationRestApi
+from aveslog.v0.models import Account, Bird, Picture, AccountRegistration
 from aveslog.v0.rest_api import error_response, RestApiResponse
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0 import create_flask_response
@@ -151,16 +151,42 @@ def create_search_routes(search_api: SearchApi):
 
 
 def create_registration_routes(
-      registration_rest_api: RegistrationRestApi,
+      registration_controller: AccountRegistrationController,
+      account_repository: AccountRepository,
+      locale_repository: LocaleRepository,
+      locale_loader: LocaleLoader,
 ) -> list:
+  def find_registration_token(registration_token: str) -> Optional[
+    AccountRegistration]:
+    return account_repository.find_account_registration_by_token(
+      registration_token)
+
+  def load_english_locale() -> LoadedLocale:
+    locale = locale_repository.find_locale_by_code('en')
+    return locale_loader.load_locale(locale)
+
+  def initiate_registration(email: str) -> Union[AccountRegistration, str]:
+    locale = load_english_locale()
+    return registration_controller.initiate_registration(email, locale)
+
   def post_registration_request() -> Response:
     email = request.json['email']
-    response = registration_rest_api.create_registration_request(email)
-    return create_flask_response(response)
+    result = initiate_registration(email)
+    if result == 'email taken':
+      return create_flask_response(
+        error_response(ErrorCode.EMAIL_TAKEN, 'Email taken'))
+    elif result == 'email invalid':
+      return create_flask_response(
+        error_response(ErrorCode.EMAIL_INVALID, 'Email invalid'))
+    return create_flask_response(RestApiResponse(HTTPStatus.OK, {}))
 
   def get_registration_request(token: str) -> Response:
-    response = registration_rest_api.get_registration_request(token)
-    return create_flask_response(response)
+    registration = find_registration_token(token)
+    if registration:
+      return create_flask_response(RestApiResponse(HTTPStatus.OK, {
+        'email': registration.email,
+      }))
+    return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
 
   return [
     {
