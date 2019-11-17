@@ -27,7 +27,6 @@ from aveslog.v0.registration_rest_api import RegistrationRestApi
 from aveslog.v0.rest_api import error_response, create_flask_response
 from aveslog.v0.search_api import SearchApi
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.birds_rest_api import BirdsRestApi
 from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_routes
@@ -88,7 +87,6 @@ def create_api_v0_blueprint(
     password_update_controller,
     token_factory,
   )
-  birds_rest_api = BirdsRestApi(link_factory, bird_repository)
   string_matcher = StringMatcher()
   bird_searcher = BirdSearcher(
     bird_repository,
@@ -126,7 +124,7 @@ def create_api_v0_blueprint(
   )
 
   blueprint = Blueprint('v0', __name__)
-  birds_routes = create_birds_routes(birds_rest_api)
+  birds_routes = create_birds_routes(bird_repository, link_factory)
   register_routes(birds_routes)
   search_routes = create_search_routes(search_api)
   register_routes(search_routes)

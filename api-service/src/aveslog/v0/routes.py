@@ -1,19 +1,21 @@
+import os
 from functools import wraps
 from http import HTTPStatus
 from typing import Callable
 
 from flask import Response, request
 
+from aveslog.v0.link import LinkFactory
+from aveslog.v0.bird import BirdRepository
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account_rest_api import AccountsRestApi
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.models import Account
+from aveslog.v0.models import Account, Bird, Picture
 from aveslog.v0.registration_rest_api import RegistrationRestApi
-from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import error_response, RestApiResponse
 from aveslog.v0.search_api import SearchApi
-from aveslog.v0.birds_rest_api import BirdsRestApi
 from aveslog.v0 import create_flask_response
 
 RouteFunction = Callable[..., Response]
@@ -83,10 +85,41 @@ def require_authentication(
   return route_decorator
 
 
-def create_birds_routes(birds_rest_api: BirdsRestApi):
+def create_birds_routes(
+      bird_repository: BirdRepository,
+      link_factory: LinkFactory,
+):
+  def external_picture_url(picture: Picture) -> str:
+    static_picture_url = os.path.join('/static/', picture.filepath)
+    return link_factory.create_url_external_link(static_picture_url)
+
+  def get_bird_data(bird: Bird) -> dict:
+    bird_data = {
+      'id': bird.binomial_name.lower().replace(' ', '-'),
+      'binomialName': bird.binomial_name,
+    }
+    if bird.thumbnail:
+      bird_data['thumbnail'] = {
+        'url': external_picture_url(bird.thumbnail.picture),
+        'credit': bird.thumbnail.picture.credit,
+      }
+    if bird.thumbnail:
+      bird_data['cover'] = {
+        'url': external_picture_url(bird.thumbnail.picture),
+        'credit': bird.thumbnail.picture.credit,
+      }
+    return bird_data
+
   def get_bird(bird_identifier: str) -> Response:
-    response = birds_rest_api.get_bird(bird_identifier)
-    return create_flask_response(response)
+    if not isinstance(bird_identifier, str):
+      raise Exception(f'Unexpected bird identifier: {bird_identifier}')
+    reformatted = bird_identifier.replace('-', ' ')
+    bird = bird_repository.get_bird_by_binomial_name(reformatted)
+    if not bird:
+      return create_flask_response(
+        RestApiResponse(HTTPStatus.NOT_FOUND, {'message': 'Not Found'}))
+    bird_data = get_bird_data(bird)
+    return create_flask_response(RestApiResponse(HTTPStatus.OK, bird_data))
 
   routes = [
     {
@@ -183,7 +216,6 @@ def create_authentication_routes(
       jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
 ) -> list:
-
   def post_refresh_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')

@@ -1,10 +1,7 @@
 from http import HTTPStatus
-from unittest import TestCase
-from unittest.mock import Mock
 
-from aveslog import LinkFactory, BirdRepository
 from aveslog.test_util import AppTestCase
-from aveslog.v0 import BirdsRestApi, ErrorCode
+from aveslog.v0 import ErrorCode
 
 
 class TestBird(AppTestCase):
@@ -78,14 +75,3 @@ class TestBird(AppTestCase):
     self.assertLessEqual(reset, self.test_rate_limit_per_minute)
     self.assertEqual(limit, self.test_rate_limit_per_minute)
     self.assertEqual(remaining, expected_remaining)
-
-
-class TestBirdsRestApi(TestCase):
-
-  def test_get_bird_with_unexpected_bird_identifier_format(self):
-    link_factory = Mock(spec=LinkFactory)
-    bird_repository = Mock(spec=BirdRepository)
-    api = BirdsRestApi(link_factory, bird_repository)
-
-    with self.assertRaises(Exception):
-      api.get_bird(1)
