@@ -49,7 +49,7 @@ def create_api_v0_blueprint(
     for route in routes:
       rule = route['rule']
       endpoint = route.get('endpoint', None)
-      view_func = route['view_func']
+      view_func = route['func']
       options = route.get('options', {})
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)

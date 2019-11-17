@@ -128,7 +128,7 @@ def create_birds_routes(
   routes = [
     {
       'rule': '/birds/<string:bird_identifier>',
-      'view_func': get_bird,
+      'func': get_bird,
     },
   ]
 
@@ -173,7 +173,7 @@ def create_search_routes(bird_searcher: BirdSearcher,
   return [
     {
       'rule': '/search/birds',
-      'view_func': search_birds,
+      'func': search_birds,
     }
   ]
 
@@ -219,12 +219,12 @@ def create_registration_routes(
   return [
     {
       'rule': '/registration-requests',
-      'view_func': post_registration_request,
+      'func': post_registration_request,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/registration-requests/<string:token>',
-      'view_func': get_registration_request,
+      'func': get_registration_request,
     },
   ]
 
@@ -282,16 +282,16 @@ def create_account_routes(
   return [
     {
       'rule': '/accounts',
-      'view_func': create_account,
+      'func': create_account,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/accounts',
-      'view_func': get_accounts,
+      'func': get_accounts,
     },
     {
       'rule': '/account',
-      'view_func': get_me,
+      'func': get_me,
     },
   ]
 
@@ -440,31 +440,31 @@ def create_authentication_routes(
   return [
     {
       'rule': '/authentication/refresh-token',
-      'view_func': post_refresh_token,
+      'func': post_refresh_token,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/authentication/refresh-token/<int:refresh_token_id>',
-      'view_func': delete_refresh_token,
+      'func': delete_refresh_token,
       'options': {'methods': ['DELETE']},
     },
     {
       'rule': '/authentication/access-token',
-      'view_func': get_access_token,
+      'func': get_access_token,
     },
     {
       'rule': '/authentication/password-reset',
-      'view_func': post_password_reset_email,
+      'func': post_password_reset_email,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/authentication/password-reset/<string:token>',
-      'view_func': post_password_reset,
+      'func': post_password_reset,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/authentication/password',
-      'view_func': post_password,
+      'func': post_password,
       'options': {'methods': ['POST']},
     },
   ]
