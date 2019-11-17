@@ -5,6 +5,7 @@ from typing import Callable, Union, Optional
 
 from flask import Response, request
 
+from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.bird import BirdRepository
@@ -13,9 +14,10 @@ from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration
-from aveslog.v0.rest_api import error_response, RestApiResponse
-from aveslog.v0.search_api import SearchApi
-from aveslog.v0 import create_flask_response
+from aveslog.v0.rest_api import error_response, RestApiResponse, \
+  create_flask_response
+from aveslog.v0.search import BirdSearchMatch
+from aveslog.v0.search import BirdSearcher
 
 RouteFunction = Callable[..., Response]
 
@@ -130,12 +132,35 @@ def create_birds_routes(
   return routes
 
 
-def create_search_routes(search_api: SearchApi):
+def create_search_routes(bird_searcher: BirdSearcher, link_factory: LinkFactory):
+  def _external_picture_url(picture: Picture) -> str:
+    static_picture_url = os.path.join('/static/', picture.filepath)
+    return link_factory.create_url_external_link(static_picture_url)
+
+  def _result_item(match: BirdSearchMatch, embed: list) -> dict:
+    bird = match.bird
+    item = bird_summary_representation(bird)
+    item['score'] = match.score
+    if 'thumbnail' in embed and bird.thumbnail:
+      item['thumbnail'] = {
+        'url': _external_picture_url(bird.thumbnail.picture),
+        'credit': bird.thumbnail.picture.credit
+      }
+    return item
+
   def search_birds() -> Response:
     query = request.args.get('q')
     page_size = request.args.get('page_size', type=int)
     embed = parse_embed_list(request.args)
-    response = search_api.search_birds(query, embed, page_size)
+    page_size = page_size if page_size else 30
+    embed = embed if embed else []
+    search_matches = bird_searcher.search(query)
+    search_matches.sort(key=lambda m: m.score, reverse=True)
+    bird_matches = list(
+      map(lambda x: _result_item(x, embed), search_matches[:page_size]))
+    response = RestApiResponse(HTTPStatus.OK, {
+      'items': bird_matches,
+    })
     return create_flask_response(response)
 
   def parse_embed_list(args):
