@@ -24,7 +24,8 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.rest_api import error_response, create_flask_response
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.routes import create_birds_routes, create_sightings_routes
+from aveslog.v0.routes import create_birds_routes, create_sightings_routes, \
+  create_birders_routes
 from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_routes
 from aveslog.v0.routes import create_account_routes
@@ -135,6 +136,13 @@ def create_api_v0_blueprint(
     account_repository,
     account_registration_controller)
   register_routes(account_routes)
+  birders_routers = create_birders_routes(
+    jwt_decoder,
+    account_repository,
+    birder_repository,
+    sighting_repository,
+  )
+  register_routes(birders_routers)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):

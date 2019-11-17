@@ -6,6 +6,7 @@ from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify
 
+from aveslog.v0.birder import BirderRepository
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
@@ -19,7 +20,7 @@ from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController,
   PasswordResetController, PasswordUpdateController
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
-  RefreshToken, Sighting
+  RefreshToken, Sighting, Birder
 from aveslog.v0.rest_api import error_response, RestApiResponse, \
   create_flask_response
 from aveslog.v0.search import BirdSearchMatch
@@ -553,6 +554,44 @@ def create_sightings_routes(
     },
   ]
   pass
+
+
+def create_birders_routes(
+      jwt_decoder: JwtDecoder,
+      account_repository: AccountRepository,
+      birder_repository: BirderRepository,
+      sighting_repository: SightingRepository,
+) -> list:
+  @require_authentication(jwt_decoder, account_repository)
+  def get_birder(birder_id: int, account: Account):
+    birder = birder_repository.birder_by_id(birder_id)
+    if not birder:
+      return make_response('', HTTPStatus.NOT_FOUND)
+    return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
+
+  @require_authentication(jwt_decoder, account_repository)
+  def get_birder_sightings(birder_id: int, account: Account):
+    (sightings, total_rows) = sighting_repository.sightings(
+      birder_id=birder_id)
+    return sightings_response(sightings, False)
+
+  return [
+    {
+      'rule': '/birders/<int:birder_id>',
+      'func': get_birder,
+    },
+    {
+      'rule': '/birders/<int:birder_id>/sightings',
+      'func': get_birder_sightings,
+    },
+  ]
+
+
+def convert_birder(birder: Birder) -> dict:
+  return {
+    'id': birder.id,
+    'name': birder.name,
+  }
 
 
 def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:

@@ -11,7 +11,6 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from aveslog.v0.database import EngineFactory, SessionFactory
-from aveslog.v0.birders_rest_api import create_birder_rest_api_blueprint
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import JwtDecoder
@@ -62,12 +61,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   jwt_decoder = JwtDecoder(app.secret_key)
 
   # Create and register blueprints
-  birder_rest_api = create_birder_rest_api_blueprint(
-    jwt_decoder,
-    account_repository,
-    birder_repository,
-    sighting_repository,
-  )
   api_v0_blueprint = create_api_v0_blueprint(
     link_factory,
     bird_repository,
@@ -83,7 +76,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     sighting_repository,
   )
   app.register_blueprint(api_v0_blueprint)
-  app.register_blueprint(birder_rest_api)
 
   @app.before_request
   def before_request():
