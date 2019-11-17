@@ -18,7 +18,6 @@ from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import Authenticator
-from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
@@ -97,17 +96,6 @@ def create_api_v0_blueprint(
     datetime.datetime.utcnow,
   )
   authenticator = Authenticator(account_repository, password_hasher)
-  authentication_rest_api = AuthenticationRestApi(
-    locale_repository,
-    locale_loader,
-    account_repository,
-    authenticator,
-    authentication_token_factory,
-    refresh_token_repository,
-    jwt_decoder,
-    password_reset_controller,
-    password_update_controller,
-  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(bird_repository, link_factory)
@@ -122,9 +110,15 @@ def create_api_v0_blueprint(
   )
   register_routes(registration_routes)
   authentication_routes = create_authentication_routes(
-    authentication_rest_api,
     jwt_decoder,
     account_repository,
+    locale_repository,
+    locale_loader,
+    authenticator,
+    authentication_token_factory,
+    refresh_token_repository,
+    password_reset_controller,
+    password_update_controller,
   )
   register_routes(authentication_routes)
   account_routes = create_account_routes(
