@@ -36,17 +36,13 @@ from aveslog.v0.search import BirdSearcher
 
 def create_api_v0_blueprint(
       link_factory: LinkFactory,
-      bird_repository: BirdRepository,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
-      account_repository: AccountRepository,
       password_hasher: PasswordHasher,
       mail_dispatcher: MailDispatcher,
-      birder_repository: BirderRepository,
       jwt_decoder: JwtDecoder,
       secret_key: str,
       session: Session,
-      sighting_repository: SightingRepository,
 ) -> Blueprint:
   def register_routes(routes):
     for route in routes:
@@ -57,14 +53,17 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
+  bird_repository = BirdRepository(session)
   token_factory = TokenFactory()
   password_repository = PasswordRepository(token_factory, password_hasher,
     session)
+  account_repository = AccountRepository(password_hasher, session)
   account_factory = AccountFactory(
     password_hasher,
     account_repository,
     password_repository,
   )
+  birder_repository = BirderRepository(session)
   account_registration_controller = AccountRegistrationController(
     account_factory,
     account_repository,
@@ -99,6 +98,7 @@ def create_api_v0_blueprint(
     datetime.datetime.utcnow,
   )
   authenticator = Authenticator(account_repository, password_hasher)
+  sighting_repository = SightingRepository(session)
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(bird_repository, link_factory)

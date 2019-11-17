@@ -15,7 +15,6 @@ from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import SaltFactory
-from aveslog.v0.bird import BirdRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LocaleRepository, LocaleDeterminerFactory
 from aveslog.v0.localization import LoadedLocale
@@ -41,18 +40,14 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   session = session_factory.create_session()
   salt_factory = SaltFactory()
   hasher = PasswordHasher(salt_factory)
-  account_repository = AccountRepository(hasher, session)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
-  birder_repository = BirderRepository(session)
   localespath = os.path.join(app.root_path, 'locales')
   locales_misses_repository = {}
   locale_loader = LocaleLoader(localespath, locales_misses_repository)
   locale_repository = LocaleRepository(localespath, locale_loader, session)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
                                                       locale_repository)
-  bird_repository = BirdRepository(session)
-  sighting_repository = SightingRepository(session)
   link_factory = LinkFactory(
     os.environ['EXTERNAL_HOST'],
     app.config['FRONTEND_HOST'],
@@ -63,17 +58,13 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
     link_factory,
-    bird_repository,
     locale_repository,
     locale_loader,
-    account_repository,
     hasher,
     mail_dispatcher,
-    birder_repository,
     jwt_decoder,
     app.secret_key,
     session,
-    sighting_repository,
   )
   app.register_blueprint(api_v0_blueprint)
 
