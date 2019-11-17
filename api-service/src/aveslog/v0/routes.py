@@ -9,7 +9,6 @@ from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.bird import BirdRepository
 from aveslog.v0.account import AccountRepository
-from aveslog.v0.account_rest_api import AccountsRestApi
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController
 from aveslog.v0.authentication_rest_api import AuthenticationRestApi
 from aveslog.v0.error import ErrorCode
@@ -204,20 +203,51 @@ def create_registration_routes(
 def create_account_routes(
       jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
-      accounts_rest_api: AccountsRestApi,
+      registration_controller: AccountRegistrationController,
 ) -> list:
+  def account_response_dict(account: Account):
+    return {
+      'username': account.username,
+      'birderId': account.birder_id
+    }
+
   def create_account() -> Response:
-    response = accounts_rest_api.create_account(request.json)
-    return create_flask_response(response)
+    token = request.json.get('token')
+    username = request.json.get('username')
+    password = request.json.get('password')
+    registration = account_repository.find_account_registration_by_token(
+      token)
+    response = registration_controller.perform_registration(
+      registration.email, registration.token, username, password)
+    if response == 'success':
+      account = account_repository.find_account(username)
+      return create_flask_response(RestApiResponse(HTTPStatus.CREATED, {
+        'id': account.id,
+        'username': account.username,
+        'email': account.email,
+        'birder': {
+          'id': account.birder.id,
+          'name': account.birder.name,
+        },
+      }))
+    elif response == 'username taken':
+      return create_flask_response(error_response(
+        ErrorCode.USERNAME_TAKEN,
+        'Username taken',
+        HTTPStatus.CONFLICT,
+      ))
 
   @require_authentication(jwt_decoder, account_repository)
   def get_accounts(account: Account) -> Response:
-    response = accounts_rest_api.get_accounts()
+    accounts = account_repository.accounts()
+    response = RestApiResponse(HTTPStatus.OK, {
+      'items': list(map(account_response_dict, accounts))
+    })
     return create_flask_response(response)
 
   @require_authentication(jwt_decoder, account_repository)
   def get_me(account: Account) -> Response:
-    response = accounts_rest_api.get_me(account)
+    response = RestApiResponse(HTTPStatus.OK, account_response_dict(account))
     return create_flask_response(response)
 
   return [

@@ -4,7 +4,6 @@ from http import HTTPStatus
 from flask import Blueprint
 from sqlalchemy.orm import Session
 
-from aveslog.v0.account_rest_api import AccountsRestApi
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.mail import MailDispatcher
@@ -111,10 +110,6 @@ def create_api_v0_blueprint(
     password_reset_controller,
     password_update_controller,
   )
-  accounts_rest_api = AccountsRestApi(
-    account_repository,
-    account_registration_controller,
-  )
 
   blueprint = Blueprint('v0', __name__)
   birds_routes = create_birds_routes(bird_repository, link_factory)
@@ -137,7 +132,7 @@ def create_api_v0_blueprint(
   account_routes = create_account_routes(
     jwt_decoder,
     account_repository,
-    accounts_rest_api)
+    account_registration_controller)
   register_routes(account_routes)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
