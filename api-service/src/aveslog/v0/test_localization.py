@@ -128,19 +128,19 @@ class TestLocaleRepository(TestCase):
   def test_available_locale_codes_when_multiple(self) -> None:
     codes = {'en', 'sv', 'ko'}
     self.create_temporary_locale_directories(codes)
-    repository = LocaleRepository(self.temp_dir, self.loader, self.session)
+    repository = LocaleRepository(self.temp_dir, self.loader)
 
     result = repository.available_locale_codes()
 
     self.assertSetEqual(result, codes)
 
   def test_available_locale_codes_when_none(self) -> None:
-    repository = LocaleRepository(self.temp_dir, self.loader, self.session)
+    repository = LocaleRepository(self.temp_dir, self.loader)
     result = repository.available_locale_codes()
     self.assertSetEqual(result, set())
 
   def test_available_locale_codes_when_locales_directory_missing(self) -> None:
-    repository = LocaleRepository('missing_dir', self.loader, self.session)
+    repository = LocaleRepository('missing_dir', self.loader)
     result = repository.available_locale_codes()
     self.assertSetEqual(result, set())
 

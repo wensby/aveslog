@@ -3,8 +3,8 @@ from base64 import b64encode
 from datetime import timedelta, datetime
 from typing import Union, Optional, Callable, Any, List
 
+from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
-from sqlalchemy.orm import Session
 
 from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
@@ -47,37 +47,34 @@ class AccessToken:
 
 class RefreshTokenRepository:
 
-  def __init__(self, sqlalchemy_session: Session):
-    self.session = sqlalchemy_session
-
   def put_refresh_token(self, token: RefreshToken) -> RefreshToken:
     if not token.id:
       return self.__insert_refresh_token(token)
     return self.__update_refresh_token(token)
 
   def refresh_token_by_jwt(self, jwt: str) -> Optional[RefreshToken]:
-    return self.session.query(RefreshToken).filter_by(token=jwt).first()
+    return g.database_session.query(RefreshToken).filter_by(token=jwt).first()
 
   def remove_refresh_tokens(self, account: Account) -> List[RefreshToken]:
-    refresh_tokens = self.session.query(RefreshToken).filter_by(
+    refresh_tokens = g.database_session.query(RefreshToken).filter_by(
       account_id=account.id).all()
     for refresh_token in refresh_tokens:
-      self.session.delete(refresh_token)
-    self.session.commit()
+      g.database_session.delete(refresh_token)
+    g.database_session.commit()
     return refresh_tokens
 
   def refresh_token(self, refresh_token_id: int) -> Optional[RefreshToken]:
-    return self.session.query(RefreshToken).get(refresh_token_id)
+    return g.database_session.query(RefreshToken).get(refresh_token_id)
 
   def remove_refresh_token(self,
         refresh_token: RefreshToken) -> Optional[RefreshToken]:
-    self.session.delete(refresh_token)
-    self.session.commit()
+    g.database_session.delete(refresh_token)
+    g.database_session.commit()
     return refresh_token
 
   def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    self.session.add(token)
-    self.session.commit()
+    g.database_session.add(token)
+    g.database_session.commit()
     return token
 
   def __update_refresh_token(self, token: RefreshToken) -> RefreshToken:
@@ -85,7 +82,7 @@ class RefreshTokenRepository:
     current.token = token.token
     current.account_id = token.account_id
     current.expiration_date = token.expiration_date
-    self.session.commit()
+    g.database_session.commit()
     return current
 
 

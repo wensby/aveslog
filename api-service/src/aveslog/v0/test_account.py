@@ -5,12 +5,10 @@ from binascii import hexlify
 
 from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.account import PasswordHasher
-from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import Username
 from aveslog.v0.account import Password
 from aveslog.v0.account import AccountFactory
-from aveslog.v0.account import AccountRegistration
 from aveslog.v0.account import Credentials
 from aveslog.v0.mail import EmailAddress
 
@@ -70,32 +68,6 @@ class TestAccount(TestCase):
       representation,
       "<Account(username='hulot', email='hulot@mail.com', "
       "birder_id='8', locale_id='15')>")
-
-
-class TestAccountRepository(TestCase):
-
-  def setUp(self):
-    self.password_hasher = Mock(spec=PasswordHasher)
-    self.token_factory = Mock(spec=TokenFactory)
-    self.session = Mock()
-    self.repository = AccountRepository(self.password_hasher, self.session)
-
-  def test_find_account_by_id_queries_database_correctly(self) -> None:
-    self.repository.account_by_id(4)
-    self.session.query.assert_called_with(Account)
-
-  def test_create_account_registration_queries_database_correctly(self):
-    email = EmailAddress('e@mail.com')
-    token = self.token_factory.create_token()
-    account_registration = AccountRegistration(email=email.raw, token=token)
-
-    self.repository.add_account_registration(account_registration)
-
-    self.session.add.assert_called_with(account_registration)
-
-  def test_find_account_registration_by_token_queries_database_correctly(self):
-    self.repository.find_account_registration_by_token('myToken')
-    self.session.query.assert_called_with(AccountRegistration)
 
 
 class TestAccountFactory(TestCase):

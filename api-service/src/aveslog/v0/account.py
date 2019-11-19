@@ -3,7 +3,8 @@ import binascii
 import os
 import re
 from typing import Optional, Union, Any, List, TypeVar
-from sqlalchemy.orm import Session
+
+from flask import g
 from aveslog.v0.models import Birder, Account, AccountRegistration, \
   HashedPassword, PasswordResetToken
 
@@ -92,70 +93,66 @@ class TokenFactory:
 
 class AccountRepository:
 
-  def __init__(self,
-        password_hasher: PasswordHasher,
-        sqlalchemy_session: Session,
-  ):
+  def __init__(self, password_hasher: PasswordHasher):
     self.hasher = password_hasher
-    self.session = sqlalchemy_session
 
   def add(self, account: Account) -> Account:
-    self.session.add(account)
-    self.session.commit()
+    g.database_session.add(account)
+    g.database_session.commit()
     return account
 
   def account_by_id(self, account_id: int) -> Optional[Account]:
-    return self.session.query(Account).get(account_id)
+    return g.database_session.query(Account).get(account_id)
 
   def remove_account_registration_by_id(self, account_id: int) -> None:
-    account_registration = self.session.query(AccountRegistration). \
+    account_registration = g.database_session.query(AccountRegistration). \
       filter_by(id=account_id).first()
-    self.session.delete(account_registration)
-    self.session.commit()
+    g.database_session.delete(account_registration)
+    g.database_session.commit()
 
   def add_account_registration(self,
         account_registration: AccountRegistration,
   ) -> Optional[AccountRegistration]:
-    self.session.add(account_registration)
-    self.session.commit()
+    g.database_session.add(account_registration)
+    g.database_session.commit()
     return account_registration
 
   def find_account_registration(self,
         email: EmailAddress,
         token: str,
   ) -> Optional[AccountRegistration]:
-    return self.session.query(AccountRegistration). \
+    return g.database_session.query(AccountRegistration). \
       filter(AccountRegistration.email.like(email.raw)). \
       filter(AccountRegistration.token.like(token)).first()
 
   def find_account_registration_by_token(self,
         token: str,
   ) -> Optional[AccountRegistration]:
-    return self.session.query(AccountRegistration). \
+    return g.database_session.query(AccountRegistration). \
       filter(AccountRegistration.token.like(token)).first()
 
   def find_account(self,
         username: Union[Username, str]) -> Optional[Account]:
     if isinstance(username, Username):
       username = username.raw
-    return self.session.query(Account). \
+    return g.database_session.query(Account). \
       filter(Account.username.ilike(username)).first()
 
   def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
-    return self.session.query(Account). \
+    return g.database_session.query(Account). \
       filter(Account.email.like(email.raw)).first()
 
   def find_hashed_password(self, account: Account) -> Optional[HashedPassword]:
-    return self.session.query(HashedPassword).filter_by(
+    return g.database_session.query(HashedPassword).filter_by(
       account_id=account.id).first()
 
   def set_account_birder(self, account: Account, birder: Birder) -> None:
-    account = self.session.query(Account).filter_by(id=account.id).first()
+    account = g.database_session.query(Account).filter_by(id=account.id).first()
     account.birder_id = birder.id
-    self.session.commit()
+    g.database_session.commit()
 
   def accounts(self) -> List[Account]:
-    return self.session.query(Account).all()
+    return g.database_session.query(Account).all()
 
 
 class PasswordRepository:
@@ -163,45 +160,43 @@ class PasswordRepository:
   def __init__(self,
         token_factory,
         password_hasher,
-        sqlalchemy_session: Session,
   ):
     self.token_factory = token_factory
     self.hasher = password_hasher
-    self.session = sqlalchemy_session
 
   def add_password_reset_token(self, password_reset_token: PasswordResetToken):
-    current_reset_token = self.session.query(PasswordResetToken). \
+    current_reset_token = g.database_session.query(PasswordResetToken). \
       filter_by(account_id=password_reset_token.account_id).first()
     if current_reset_token:
       current_reset_token.token = password_reset_token.token
     else:
-      self.session.add(password_reset_token)
-    self.session.commit()
+      g.database_session.add(password_reset_token)
+    g.database_session.commit()
 
   def find_password_reset_token_by_token(self, token):
-    return self.session.query(PasswordResetToken). \
+    return g.database_session.query(PasswordResetToken). \
       filter(PasswordResetToken.token.like(token)).first()
 
   def update_password(self, account_id, password):
     salt_hashed_password = self.hasher.create_salt_hashed_password(password)
     salt = salt_hashed_password[0]
     hash = salt_hashed_password[1]
-    hashed_password = self.session.query(HashedPassword). \
+    hashed_password = g.database_session.query(HashedPassword). \
       filter(HashedPassword.account_id == account_id).first()
     hashed_password.salt = salt
     hashed_password.salted_hash = hash
-    self.session.commit()
+    g.database_session.commit()
 
   def remove_password_reset_token(self, token):
-    password_reset_token = self.session.query(PasswordResetToken). \
+    password_reset_token = g.database_session.query(PasswordResetToken). \
       filter(PasswordResetToken.token.like(token)).first()
     if password_reset_token:
-      self.session.delete(password_reset_token)
-      self.session.commit()
+      g.database_session.delete(password_reset_token)
+      g.database_session.commit()
 
   def add(self, hashed_password: HashedPassword):
-    self.session.add(hashed_password)
-    self.session.commit()
+    g.database_session.add(hashed_password)
+    g.database_session.commit()
 
 
 class AccountFactory:

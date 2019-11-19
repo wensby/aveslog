@@ -113,8 +113,8 @@ class TestAccountRegistrationController(TestCase):
     result = self.controller.initiate_registration(valid_email, locale)
 
     self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email),
-                                                     'Birding Registration',
-                                                     'translated message: myLink')
+      'Birding Registration',
+      'translated message: myLink')
 
   def test_initiate_registration_returns_registration_when_success(self):
     locale = Mock()
@@ -130,15 +130,15 @@ class TestAccountRegistrationController(TestCase):
   def test_perform_registration_associated_registration_missing(self):
     self.account_repository.find_account_registration = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
-                                                  valid_username,
-                                                  valid_password)
+      valid_username,
+      valid_password)
     self.assertEqual(result, 'associated registration missing')
 
   def test_perform_registration_username_taken(self):
     self.account_repository.find_account = mock_return('uh-oh!')
     result = self.controller.perform_registration(valid_email, 'myToken',
-                                                  valid_username,
-                                                  valid_password)
+      valid_username,
+      valid_password)
     self.account_repository.find_account.assert_called_with(
       Username(valid_username))
     self.assertEqual(result, 'username taken')
@@ -146,17 +146,17 @@ class TestAccountRegistrationController(TestCase):
   def test_perform_registration_creates_account(self):
     self.account_repository.find_account.return_value = None
     self.controller.perform_registration(valid_email, 'myToken', valid_username,
-                                         valid_password)
+      valid_password)
     self.account_factory.create_account.assert_called_with(
       EmailAddress(valid_email), Credentials(Username(valid_username),
-                                             Password(valid_password)))
+        Password(valid_password)))
 
   def test_perform_registration_removes_registration_on_success(self):
     registration = self.account_repository.find_account_registration()
     self.account_repository.find_account = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
-                                                  valid_username,
-                                                  valid_password)
+      valid_username,
+      valid_password)
     self.account_repository.remove_account_registration_by_id.assert_called_with(
       registration.id)
     self.assertEqual(result, 'success')
@@ -166,11 +166,11 @@ class TestAccountRegistrationController(TestCase):
     birder = self.birder_repository.add_birder()
     self.account_repository.find_account = mock_return(None)
     result = self.controller.perform_registration(valid_email, 'myToken',
-                                                  valid_username,
-                                                  valid_password)
+      valid_username,
+      valid_password)
     self.birder_repository.add_birder.assert_called_with(account.username)
     self.account_repository.set_account_birder.assert_called_with(account,
-                                                                  birder)
+      birder)
     self.assertEqual(result, 'success')
 
 
@@ -226,8 +226,8 @@ class TestPasswordResetController(TestCase):
     self.controller.initiate_password_reset(valid_email, locale)
 
     self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email),
-                                                     'Birding Password Reset',
-                                                     'translated: myLink')
+      'Birding Password Reset',
+      'translated: myLink')
 
   def test_initiate_password_reset_creates_correct_frontend_link(self):
     locale = Mock()
@@ -321,14 +321,14 @@ class TestRefreshToken(TestCase):
 
   def test_eq_when_identical(self):
     a = RefreshToken(id=1, token='jwt', account_id=1,
-                     expiration_date=datetime(2019, 10, 8, 12, 28, 0))
+      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
     b = RefreshToken(id=1, token='jwt', account_id=1,
-                     expiration_date=datetime(2019, 10, 8, 12, 28, 0))
+      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
     self.assertEqual(a, b)
 
   def test_eq_when_other_type(self):
     token = RefreshToken(id=1, token='jwt', account_id=1,
-                         expiration_date=datetime(2019, 10, 8, 20, 46))
+      expiration_date=datetime(2019, 10, 8, 20, 46))
     self.assertNotEqual(token, 'RefreshToken(1, jwt, 1, 2019-10-08 20:46)')
 
 
@@ -351,43 +351,3 @@ class TestPasswordUpdateController(TestCase):
     self.password_repository.update_password.assert_called_with(1, password)
     self.refresh_token_repository.remove_refresh_tokens.assert_called_with(
       account)
-
-
-class TestRefreshTokenRepository(TestCase):
-
-  def setUp(self):
-    engine = create_engine('sqlite:///:memory:')
-    Base.metadata.create_all(engine)
-    self.session: Session = sessionmaker(bind=engine)()
-
-  def test_updates_already_existing_refresh_tokens(self):
-    tomorrow = datetime.now() + timedelta(1)
-    account = Account(username='george', email='tbone@mail.com')
-    refresh_token = RefreshToken(token='myJwt', expiration_date=tomorrow)
-    account.refresh_tokens = [refresh_token]
-    self.session.add(account)
-    self.session.commit()
-    repository = RefreshTokenRepository(self.session)
-
-    refresh_token.token = 'myNewJwt'
-    repository.put_refresh_token(refresh_token)
-
-    database_refresh_token = self.session.query(RefreshToken). \
-      filter_by(id=refresh_token.id).first()
-    self.assertEqual(database_refresh_token.token, 'myNewJwt')
-
-  def test_remove_refresh_tokens_when_associated_tokens_present(self):
-    account = Account(username='george', email='tbone@mail.com')
-    refresh_token = RefreshToken(token='myJwt', expiration_date=datetime.now())
-    account.refresh_tokens = [refresh_token]
-    self.session.add(account)
-    self.session.commit()
-    repository = RefreshTokenRepository(self.session)
-
-    repository.remove_refresh_tokens(account)
-
-    database_refresh_tokens = self.session.query(RefreshToken).all()
-    self.assertListEqual(database_refresh_tokens, [])
-
-  def tearDown(self):
-    self.session.close()

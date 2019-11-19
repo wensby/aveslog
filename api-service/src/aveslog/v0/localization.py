@@ -2,8 +2,7 @@ from __future__ import annotations
 import json
 import os
 from typing import Optional, List, Union, Set
-from flask import Request
-from sqlalchemy.orm import Session
+from flask import Request, g
 
 from .models import Locale
 from .models import Bird
@@ -89,14 +88,9 @@ class LocaleLoader:
 
 class LocaleRepository:
 
-  def __init__(self,
-        locales_directory_path: str,
-        locale_loader: LocaleLoader,
-        sqlalchemy_session: Session,
-  ):
+  def __init__(self, locales_directory_path: str, locale_loader: LocaleLoader):
     self.locales_directory_path = locales_directory_path
     self.locale_loader = locale_loader
-    self.session = sqlalchemy_session
 
   def available_locale_codes(self) -> Set[str]:
     is_length_2 = lambda x: len(x) == 2
@@ -117,11 +111,11 @@ class LocaleRepository:
     return list(map(lambda l: l.code, self.locales))
 
   def find_locale_by_code(self, code: str) -> Optional[Locale]:
-    return self.session.query(Locale).filter_by(code=code).first()
+    return g.database_session.query(Locale).filter_by(code=code).first()
 
   @property
   def locales(self) -> List[Locale]:
-    return self.session.query(Locale).all()
+    return g.database_session.query(Locale).all()
 
 
 class LocaleDeterminerFactory:
