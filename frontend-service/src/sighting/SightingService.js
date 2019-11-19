@@ -5,7 +5,7 @@ export default class SightingService {
   }
 
   async getSightingFeedSightings(accessToken) {
-    return await fetch(`${this.apiUrl}/sighting?limit=10`, {
+    return await fetch(`${this.apiUrl}/sightings?limit=10`, {
       'headers': {
         'accessToken': accessToken.jwt,
       },
@@ -13,7 +13,7 @@ export default class SightingService {
   }
 
   async fetchSightings(username, accessToken) {
-    return await fetch(`${this.apiUrl}/profile/${username}/sighting`, {
+    return await fetch(`${this.apiUrl}/profile/${username}/sightings`, {
       'headers': {
         'accessToken': accessToken.jwt,
       },
@@ -39,7 +39,7 @@ export default class SightingService {
   }
 
   async fetchSighting(accessToken, sightingId) {
-    const url = `${this.apiUrl}/sighting/${sightingId}`;
+    const url = `${this.apiUrl}/sightings/${sightingId}`;
     return await fetch(url, {
       'headers': {
         'accessToken': accessToken.jwt,
@@ -57,7 +57,7 @@ export default class SightingService {
       body['time'] = time;
     }
     const response = await fetch(
-      `${this.apiUrl}/sighting`, {
+      `${this.apiUrl}/sightings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export default class SightingService {
   }
 
   async deleteSighting(accessToken, sightingId) {
-    const response = await fetch(`${this.apiUrl}/sighting/${sightingId}`, {
+    const response = await fetch(`${this.apiUrl}/sightings/${sightingId}`, {
       method: 'DELETE',
       headers: {
         'accessToken': accessToken.jwt,

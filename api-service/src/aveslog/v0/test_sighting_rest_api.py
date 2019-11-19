@@ -19,7 +19,7 @@ class TestGetSightings(AppTestCase):
     self.db_insert_sighting(3, 2, 1, date(2019, 8, 28), time(11, 52))
 
   def test_get_sightings(self):
-    response = self.get_with_access_token('/sighting', account_id=1)
+    response = self.get_with_access_token('/sightings', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -50,7 +50,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_valid_limit(self):
-    response = self.get_with_access_token('/sighting?limit=1', account_id=1)
+    response = self.get_with_access_token('/sightings?limit=1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -67,7 +67,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_invalid_limit(self):
-    response = self.get_with_access_token('/sighting?limit=0', account_id=1)
+    response = self.get_with_access_token('/sightings?limit=0', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertEqual(response.json, {
@@ -75,7 +75,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_own_sightings_with_valid_auth_token(self):
-    response = self.get_with_access_token('/profile/hulot/sighting',
+    response = self.get_with_access_token('/profile/hulot/sightings',
                                           account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -100,12 +100,12 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_when_username_missing(self):
-    response = self.get_with_access_token('/profile/godzilla/sighting',
+    response = self.get_with_access_token('/profile/godzilla/sightings',
                                           account_id=1)
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
   def test_get_sightings_when_unauthorized(self):
-    response = self.client.get('/profile/hulot/sighting')
+    response = self.client.get('/profile/hulot/sightings')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -116,7 +116,7 @@ class TestGetSightings(AppTestCase):
   def test_get_sightings_when_auth_token_invalid(self):
     headers = {'accessToken': 'i-am-not-a-valid-jwt-token'}
 
-    response = self.client.get('/profile/hulot/sighting', headers=headers)
+    response = self.client.get('/profile/hulot/sightings', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -125,7 +125,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
-    response = self.get_with_access_token('/profile/dude/sighting',
+    response = self.get_with_access_token('/profile/dude/sightings',
                                           account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -150,7 +150,7 @@ class TestGetSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(1, 1, 1, date(2019, 8, 28), time(11, 52))
 
-    response = self.get_with_access_token('/sighting/1', account_id=1)
+    response = self.get_with_access_token('/sightings/1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -167,7 +167,7 @@ class TestGetSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_sighting(2, 2, 1, date(2019, 8, 28), time(12, 10))
 
-    response = self.get_with_access_token('/sighting/2', account_id=1)
+    response = self.get_with_access_token('/sightings/2', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
@@ -185,7 +185,7 @@ class TestPostSighting(AppTestCase):
     response = self.post_sighting(1, token.jwt, 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
+    self.assertRegex(response.headers['Location'], '^\/sightings\/[0-9]+$')
 
   def test_post_sighting_when_birder_id_not_match_authentication(self) -> None:
     token = self.create_access_token(1)
@@ -203,7 +203,7 @@ class TestPostSighting(AppTestCase):
     response = self.post_sighting(1, token.jwt, 'pica pica')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    self.assertRegex(response.headers['Location'], '^\/sighting\/[0-9]+$')
+    self.assertRegex(response.headers['Location'], '^\/sightings\/[0-9]+$')
 
   def test_post_sighting_when_invalid_authentication_token(self) -> None:
     response = self.post_sighting(1, 'invalid token', 'pica pica', '17:42')
@@ -233,7 +233,7 @@ class TestPostSighting(AppTestCase):
     if time:
       data['time'] = time
     return self.client.post(
-      '/sighting',
+      '/sightings',
       headers={
         'accessToken': token,
       },
@@ -287,6 +287,6 @@ class TestDeleteSighting(AppTestCase):
   def delete_sighting(self,
         authentication_token: str,
         sighting_id: int) -> Response:
-    resource = f'/sighting/{sighting_id}'
+    resource = f'/sightings/{sighting_id}'
     headers = {'accessToken': authentication_token}
     return self.client.delete(resource, headers=headers)

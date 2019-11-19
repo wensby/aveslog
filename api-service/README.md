@@ -227,6 +227,142 @@ Status: 200 OK
 }
 ```
 
+## Sightings
+
+### List account's sightings
+
+```
+GET /profile/:username/sightings
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+{
+  "items": [
+    {
+      "id": 4,
+      "birderId": 8,
+      "birdId": "pica-pica",
+      "date": "2019-11-19",
+      "time": "20:17:00"
+    }
+  ],
+  "hasMore": false
+}
+```
+
+### List all sightings
+
+```
+GET /sightings
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "items": [
+    {
+      "id": 4,
+      "birderId": 8,
+      "birdId": "pica-pica",
+      "date": "2019-11-19",
+      "time": "20:17:00"
+    },
+    {
+      "id": 15,
+      "birderId": 16,
+      "birdId": "passer-domesticus",
+      "date": "2019-11-19"
+    }
+  ],
+  "hasMore": false
+}
+```
+
+### Get sighting
+
+```
+GET /sightings/:id
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "id": 4,
+  "birderId": 8,
+  "birdId": "pica-pica",
+  "date": "2019-11-19",
+  "time": "20:17:00"
+}
+```
+
+### Delete sighting
+
+```
+DELETE /sightings/:id
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 204 NO CONTENT
+```
+
+### Create sighting
+
+```
+POST /sightings
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Post Data Example**
+
+```
+{
+  "birder": {
+    "id": 4
+  },
+  "bird": {
+    "binomialName": "Pica pica"
+  },
+  "date": "2019-11-19",
+  "time": "20:35:00"
+}
+```
+
+**Response**
+
+```
+Status: 201 CREATED
+Location: /sightings/4
+```
+
 ## Account
 
 ### Create Account

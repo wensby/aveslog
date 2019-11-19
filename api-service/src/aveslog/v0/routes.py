@@ -531,24 +531,24 @@ def create_sightings_routes(
 
   return [
     {
-      'rule': '/profile/<string:username>/sighting',
+      'rule': '/profile/<string:username>/sightings',
       'func': get_profile_sightings,
     },
     {
-      'rule': '/sighting',
+      'rule': '/sightings',
       'func': get_sightings,
     },
     {
-      'rule': '/sighting/<int:sighting_id>',
+      'rule': '/sightings/<int:sighting_id>',
       'func': get_sighting,
     },
     {
-      'rule': '/sighting/<int:sighting_id>',
+      'rule': '/sightings/<int:sighting_id>',
       'func': delete_sighting,
       'options': {'methods': ['DELETE']},
     },
     {
-      'rule': '/sighting',
+      'rule': '/sightings',
       'func': post_sighting,
       'options': {'methods': ['POST']},
     },
@@ -646,7 +646,7 @@ def post_sighting_success_response(sighting_id: int) -> Response:
   response = make_response(jsonify({
     'status': 'success',
   }), HTTPStatus.CREATED)
-  response.headers['Location'] = f'/sighting/{sighting_id}'
+  response.headers['Location'] = f'/sightings/{sighting_id}'
   response.autocorrect_location_header = False
   return response
 
