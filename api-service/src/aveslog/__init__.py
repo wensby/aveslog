@@ -9,19 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from aveslog.v0.database import EngineFactory, SessionFactory
-from aveslog.v0.account import AccountRepository
-from aveslog.v0.account import PasswordHasher
-from aveslog.v0.authentication import JwtDecoder
-from aveslog.v0.authentication import SaltFactory
-from aveslog.v0.link import LinkFactory
-from aveslog.v0.localization import LocaleRepository, LocaleDeterminerFactory
-from aveslog.v0.localization import LoadedLocale
-from aveslog.v0.localization import LocaleLoader
-from aveslog.v0.models import Locale
 from aveslog.v0.mail import MailDispatcherFactory
-from aveslog.v0.birder import BirderRepository
-from aveslog.v0.sighting import SightingRepository
 from aveslog.v0 import create_api_v0_blueprint
 
 

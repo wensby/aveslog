@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import Blueprint, request, after_this_request, g
 
-from aveslog.v0.localization import Locale
-from aveslog.v0.database import EngineFactory, SessionFactory
+from aveslog.v0.database import EngineFactory
+from aveslog.v0.database import SessionFactory
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.error import ErrorCode
@@ -14,20 +14,27 @@ from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import PasswordRepository
-from aveslog.v0.authentication import AccountRegistrationController, JwtFactory, \
-  PasswordResetController, PasswordUpdateController, SaltFactory
+from aveslog.v0.authentication import AccountRegistrationController
+from aveslog.v0.authentication import JwtFactory
+from aveslog.v0.authentication import PasswordResetController
+from aveslog.v0.authentication import PasswordUpdateController
+from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import Authenticator
-from aveslog.v0.localization import LocaleLoader, LocaleDeterminerFactory, \
-  LoadedLocale
+from aveslog.v0.localization import Locale
+from aveslog.v0.localization import LocaleLoader
+from aveslog.v0.localization import LocaleDeterminerFactory
+from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.rest_api import error_response, create_flask_response
+from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import create_flask_response
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.routes import create_birds_routes, create_sightings_routes, \
-  create_birders_routes
+from aveslog.v0.routes import create_birds_routes
+from aveslog.v0.routes import create_sightings_routes
+from aveslog.v0.routes import create_birders_routes
 from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_routes
 from aveslog.v0.routes import create_account_routes
@@ -53,7 +60,6 @@ def create_api_v0_blueprint(
       options = route.get('options', {})
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
-
 
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)

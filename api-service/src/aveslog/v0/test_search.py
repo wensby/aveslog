@@ -2,7 +2,7 @@ from types import SimpleNamespace as Simple
 from unittest import TestCase
 from unittest.mock import Mock
 
-from aveslog import Locale
+from aveslog.v0.localization import Locale
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.models import Bird
 from aveslog.v0.search import BirdSearchMatch
