@@ -4,7 +4,6 @@ from distutils.util import strtobool
 from typing import Optional
 
 from flask import Flask
-from flask import request
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -22,7 +21,6 @@ from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.models import Locale
 from aveslog.v0.mail import MailDispatcherFactory
 from aveslog.v0.birder import BirderRepository
-from aveslog.v0.settings_blueprint import update_locale_context
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0 import create_api_v0_blueprint
 
@@ -34,49 +32,23 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   # Create blueprint dependencies
   user_locale_cookie_key = 'user_locale'
   database_connection_details = create_database_connection_details()
-  engine_factory = EngineFactory()
-  engine = engine_factory.create_engine(**database_connection_details)
-  session_factory = SessionFactory(engine)
-  session = session_factory.create_session()
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   localespath = os.path.join(app.root_path, 'locales')
-  locales_misses_repository = {}
-  locale_loader = LocaleLoader(localespath, locales_misses_repository)
-  locale_repository = LocaleRepository(localespath, locale_loader, session)
-  locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
-                                                      locale_repository)
-
   api_external_host = os.environ['EXTERNAL_HOST']
   frontend_host = app.config['FRONTEND_HOST']
 
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
-    locale_repository,
-    locale_loader,
     mail_dispatcher,
     app.secret_key,
-    session,
     api_external_host,
     frontend_host,
+    localespath,
+    user_locale_cookie_key,
+    database_connection_details,
   )
   app.register_blueprint(api_v0_blueprint)
-
-  @app.before_request
-  def before_request():
-    detect_user_locale()
-
-  def detect_user_locale():
-    locale_determiner = locale_determiner_factory.create_locale_determiner()
-    locale_code = locale_determiner.determine_locale_from_request(request)
-    if locale_code:
-      locale = locale_repository.find_locale_by_code(locale_code)
-      loaded_locale = locale_loader.load_locale(locale)
-      update_locale_context(user_locale_cookie_key, loaded_locale)
-    else:
-      update_locale_context(
-        user_locale_cookie_key,
-        LoadedLocale(Locale(id=None, code=None), None, None, None))
 
   app.logger.info('Flask app constructed')
   return app
