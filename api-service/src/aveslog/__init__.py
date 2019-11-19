@@ -38,8 +38,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
   session = session_factory.create_session()
-  salt_factory = SaltFactory()
-  hasher = PasswordHasher(salt_factory)
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   localespath = os.path.join(app.root_path, 'locales')
@@ -48,23 +46,19 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   locale_repository = LocaleRepository(localespath, locale_loader, session)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
                                                       locale_repository)
-  link_factory = LinkFactory(
-    os.environ['EXTERNAL_HOST'],
-    app.config['FRONTEND_HOST'],
-  )
 
-  jwt_decoder = JwtDecoder(app.secret_key)
+  api_external_host = os.environ['EXTERNAL_HOST']
+  frontend_host = app.config['FRONTEND_HOST']
 
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
-    link_factory,
     locale_repository,
     locale_loader,
-    hasher,
     mail_dispatcher,
-    jwt_decoder,
     app.secret_key,
     session,
+    api_external_host,
+    frontend_host,
   )
   app.register_blueprint(api_v0_blueprint)
 

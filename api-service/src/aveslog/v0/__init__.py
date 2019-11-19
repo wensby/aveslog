@@ -14,7 +14,7 @@ from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.authentication import AccountRegistrationController, JwtFactory, \
-  PasswordResetController, PasswordUpdateController
+  PasswordResetController, PasswordUpdateController, SaltFactory
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.authentication import AuthenticationTokenFactory
@@ -35,14 +35,13 @@ from aveslog.v0.search import BirdSearcher
 
 
 def create_api_v0_blueprint(
-      link_factory: LinkFactory,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
-      password_hasher: PasswordHasher,
       mail_dispatcher: MailDispatcher,
-      jwt_decoder: JwtDecoder,
       secret_key: str,
       session: Session,
+      api_external_host: str,
+      frontend_host: str,
 ) -> Blueprint:
   def register_routes(routes):
     for route in routes:
@@ -53,6 +52,11 @@ def create_api_v0_blueprint(
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
 
+
+  salt_factory = SaltFactory()
+  password_hasher = PasswordHasher(salt_factory)
+  jwt_decoder = JwtDecoder(secret_key)
+  link_factory = LinkFactory(api_external_host, frontend_host)
   bird_repository = BirdRepository(session)
   token_factory = TokenFactory()
   password_repository = PasswordRepository(token_factory, password_hasher,
