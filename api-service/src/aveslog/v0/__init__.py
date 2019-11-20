@@ -6,7 +6,6 @@ from flask import Blueprint, request, after_this_request, g, Response
 from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
 from aveslog.v0.sighting import SightingRepository
-from aveslog.v0.birder import BirderRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.mail import MailDispatcher
 from aveslog.v0.account import AccountRepository
@@ -90,13 +89,11 @@ def create_api_v0_blueprint(
     account_repository,
     password_repository,
   )
-  birder_repository = BirderRepository()
   account_registration_controller = AccountRegistrationController(
     account_factory,
     account_repository,
     mail_dispatcher,
     link_factory,
-    birder_repository,
     token_factory,
   )
   refresh_token_repository = RefreshTokenRepository()
@@ -156,12 +153,11 @@ def create_api_v0_blueprint(
   register_routes(authentication_routes)
   account_routes = create_account_routes(
     account_repository,
-    account_registration_controller)
-  register_routes(account_routes)
-  birders_routers = create_birders_routes(
-    birder_repository,
-    sighting_repository,
+    account_registration_controller,
+    account_factory,
   )
+  register_routes(account_routes)
+  birders_routers = create_birders_routes(sighting_repository)
   register_routes(birders_routers)
 
   @blueprint.after_request

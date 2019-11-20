@@ -6,14 +6,15 @@ from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, current_app, g
 
-from aveslog.v0.birder import BirderRepository
+from aveslog.v0.mail import EmailAddress
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.account import AccountRepository, Password, PasswordHasher
+from aveslog.v0.account import AccountRepository, Password, PasswordHasher, \
+  Username, Credentials, AccountFactory
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, RefreshTokenRepository, \
   PasswordResetController, PasswordUpdateController, SaltFactory
@@ -245,6 +246,7 @@ def create_registration_routes(
 def create_account_routes(
       account_repository: AccountRepository,
       registration_controller: AccountRegistrationController,
+      account_factory: AccountFactory,
 ) -> list:
   def account_response_dict(account: Account):
     return {
@@ -258,25 +260,38 @@ def create_account_routes(
     password = request.json.get('password')
     registration = account_repository.find_account_registration_by_token(
       token)
-    response = registration_controller.perform_registration(
-      registration.email, registration.token, username, password)
-    if response == 'success':
-      account = account_repository.find_account(username)
-      return create_flask_response(RestApiResponse(HTTPStatus.CREATED, {
-        'id': account.id,
-        'username': account.username,
-        'email': account.email,
-        'birder': {
-          'id': account.birder.id,
-          'name': account.birder.name,
-        },
-      }))
-    elif response == 'username taken':
+    if not registration:
+      return create_flask_response(error_response(
+        ErrorCode.USERNAME_TAKEN,
+        'associated registration missing',
+        HTTPStatus.NOT_FOUND,
+      ))
+    email = EmailAddress(registration.email)
+    username = Username(username)
+    if account_repository.find_account(username):
       return create_flask_response(error_response(
         ErrorCode.USERNAME_TAKEN,
         'Username taken',
         HTTPStatus.CONFLICT,
       ))
+    password = Password(password)
+    credentials = Credentials(username, password)
+    account = account_factory.create_account(email, credentials)
+    account_repository.remove_account_registration_by_id(registration.id)
+    g.database_session.rollback()
+    birder = Birder(name=account.username)
+    g.database_session.add(birder)
+    g.database_session.commit()
+    account_repository.set_account_birder(account, birder)
+    return create_flask_response(RestApiResponse(HTTPStatus.CREATED, {
+      'id': account.id,
+      'username': account.username,
+      'email': account.email,
+      'birder': {
+        'id': account.birder.id,
+        'name': account.birder.name,
+      },
+    }))
 
   @require_authentication
   def get_accounts() -> Response:
@@ -569,13 +584,10 @@ def create_sightings_routes(
   pass
 
 
-def create_birders_routes(
-      birder_repository: BirderRepository,
-      sighting_repository: SightingRepository,
-) -> list:
+def create_birders_routes(sighting_repository: SightingRepository) -> list:
   @require_authentication
   def get_birder(birder_id: int):
-    birder = birder_repository.birder_by_id(birder_id)
+    birder = g.database_session.query(Birder).get(birder_id)
     if not birder:
       return make_response('', HTTPStatus.NOT_FOUND)
     return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)

@@ -6,11 +6,10 @@ from typing import Union, Optional, Callable, Any, List
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
-from aveslog.v0.models import Account
+from aveslog.v0.models import Account, Birder
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
-from aveslog.v0.birder import BirderRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.mail import EmailAddress
@@ -114,14 +113,12 @@ class AccountRegistrationController:
         account_repository: AccountRepository,
         mail_dispatcher: MailDispatcher,
         link_factory: LinkFactory,
-        birder_repository: BirderRepository,
         token_factory: TokenFactory,
   ):
     self.account_factory = account_factory
     self.account_repository = account_repository
     self.mail_dispatcher = mail_dispatcher
     self.link_factory = link_factory
-    self.birder_repository = birder_repository
     self.token_factory = token_factory
 
   def initiate_registration(
@@ -166,34 +163,6 @@ class AccountRegistrationController:
       'Hi there, thanks for showing interest in aveslog. '
       'Here is your link to the registration form: ')
     return locale.text(message) + link
-
-  def perform_registration(self,
-        raw_email: str,
-        registration_token: str,
-        raw_username: str,
-        raw_password: str,
-  ) -> str:
-    email = EmailAddress(raw_email)
-    registration = self.account_repository.find_account_registration(
-      email, registration_token)
-    if not registration:
-      return 'associated registration missing'
-    username = Username(raw_username)
-    if self.account_repository.find_account(username):
-      return 'username taken'
-    password = Password(raw_password)
-    credentials = Credentials(username, password)
-    account = self.account_factory.create_account(email, credentials)
-    self.__remove_registration(registration.id)
-    self.__initialize_account_birder(account)
-    return 'success'
-
-  def __remove_registration(self, registration_id: int) -> None:
-    self.account_repository.remove_account_registration_by_id(registration_id)
-
-  def __initialize_account_birder(self, account: Account) -> None:
-    birder = self.birder_repository.add_birder(account.username)
-    self.account_repository.set_account_birder(account, birder)
 
 
 class PasswordUpdateController:

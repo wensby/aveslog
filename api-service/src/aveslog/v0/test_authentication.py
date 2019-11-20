@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 from types import SimpleNamespace as Simple
@@ -15,17 +15,12 @@ from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
 from aveslog.v0.account import PasswordRepository
-from aveslog.v0.account import Credentials
-from aveslog.v0.account import AccountRepository, Username, Password, \
+from aveslog.v0.account import AccountRepository, Password, \
   AccountFactory
-from aveslog.v0.birder import BirderRepository
 from aveslog.v0.mail import MailServerDispatcher
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
 from aveslog.test_util import mock_return
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy import create_engine
-from aveslog.v0.models import Base
 
 valid_email = 'valid@email.com'
 valid_username = 'myUsername'
@@ -71,15 +66,13 @@ class TestAccountRegistrationController(TestCase):
     self.account_repository = Mock(spec=AccountRepository)
     self.mail_dispatcher = Mock(spec=MailServerDispatcher)
     self.link_factory = Mock(spec=LinkFactory)
-    self.birder_repository = Mock(spec=BirderRepository)
     self.token_factory = Mock(spec=TokenFactory)
     self.controller = AccountRegistrationController(
       self.account_factory,
       self.account_repository,
       self.mail_dispatcher,
       self.link_factory,
-      self.birder_repository,
-      self.token_factory
+      self.token_factory,
     )
 
   def test_initiate_registration_when_invalid_email(self) -> None:
@@ -126,52 +119,6 @@ class TestAccountRegistrationController(TestCase):
     result = self.controller.initiate_registration(valid_email, locale)
 
     self.assertIs(result, registration)
-
-  def test_perform_registration_associated_registration_missing(self):
-    self.account_repository.find_account_registration = mock_return(None)
-    result = self.controller.perform_registration(valid_email, 'myToken',
-      valid_username,
-      valid_password)
-    self.assertEqual(result, 'associated registration missing')
-
-  def test_perform_registration_username_taken(self):
-    self.account_repository.find_account = mock_return('uh-oh!')
-    result = self.controller.perform_registration(valid_email, 'myToken',
-      valid_username,
-      valid_password)
-    self.account_repository.find_account.assert_called_with(
-      Username(valid_username))
-    self.assertEqual(result, 'username taken')
-
-  def test_perform_registration_creates_account(self):
-    self.account_repository.find_account.return_value = None
-    self.controller.perform_registration(valid_email, 'myToken', valid_username,
-      valid_password)
-    self.account_factory.create_account.assert_called_with(
-      EmailAddress(valid_email), Credentials(Username(valid_username),
-        Password(valid_password)))
-
-  def test_perform_registration_removes_registration_on_success(self):
-    registration = self.account_repository.find_account_registration()
-    self.account_repository.find_account = mock_return(None)
-    result = self.controller.perform_registration(valid_email, 'myToken',
-      valid_username,
-      valid_password)
-    self.account_repository.remove_account_registration_by_id.assert_called_with(
-      registration.id)
-    self.assertEqual(result, 'success')
-
-  def test_perform_registration_initializes_account_birder_on_success(self):
-    account = self.account_factory.create_account()
-    birder = self.birder_repository.add_birder()
-    self.account_repository.find_account = mock_return(None)
-    result = self.controller.perform_registration(valid_email, 'myToken',
-      valid_username,
-      valid_password)
-    self.birder_repository.add_birder.assert_called_with(account.username)
-    self.account_repository.set_account_birder.assert_called_with(account,
-      birder)
-    self.assertEqual(result, 'success')
 
 
 class TestPasswordResetController(TestCase):
