@@ -252,6 +252,25 @@ def create_account_routes(
     token = request.json.get('token')
     username = request.json.get('username')
     password = request.json.get('password')
+    field_validation_errors = []
+    if not Username.is_valid(username):
+      field_validation_errors.append({
+        'code': ErrorCode.INVALID_USERNAME_FORMAT,
+        'field': 'username',
+        'message': 'Username need to adhere to format: ^[A-Za-z0-9_.-]{5,32}$',
+      })
+    if not Password.is_valid(password):
+      field_validation_errors.append({
+        'code': ErrorCode.INVALID_PASSWORD_FORMAT,
+        'field': 'password',
+        'message': 'Password need to adhere to format: ^.{8,128}$'
+      })
+    if field_validation_errors:
+      return create_flask_response(error_response(
+        ErrorCode.VALIDATION_FAILED,
+        'Validation failed',
+        additional_errors=field_validation_errors,
+      ))
     registration = g.database_session.query(AccountRegistration). \
       filter(AccountRegistration.token.like(token)).first()
     if not registration:

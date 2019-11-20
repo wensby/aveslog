@@ -80,6 +80,9 @@ Status: 404 Not Found
 | 11 | Account associated with the access token provided no longer available. |
 | 12 | Rate limit exceeded. Check response header X-Rate-Limit-Reset for how many seconds remains until the next window. |
 | 13 | Registration request token used when creating a new account is invalid or not associated with an existing registration request. |
+| 14 | One or more of the provided parameters to the request failed a validation. See provided errors for more detailed information. |
+| 15 | Username does not follow required format. |
+| 16 | Password does not follow required format. |
 
 
 ## Authentication

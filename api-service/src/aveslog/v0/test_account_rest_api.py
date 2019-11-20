@@ -131,6 +131,26 @@ class TestCreateAccount(AppTestCase):
       'message': 'Registration request token invalid',
     })
 
+  def test_post_account_when_credentials_format_invalid(self):
+    response = self.post_account('myToken', 'tiny', 'short')
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.VALIDATION_FAILED,
+      'message': 'Validation failed',
+      'errors': [
+        {
+          'code': ErrorCode.INVALID_USERNAME_FORMAT,
+          'field': 'username',
+          'message': 'Username need to adhere to format: ^[A-Za-z0-9_.-]{5,32}$'
+        },
+        {
+          'code': ErrorCode.INVALID_PASSWORD_FORMAT,
+          'field': 'password',
+          'message': 'Password need to adhere to format: ^.{8,128}$'
+        },
+      ]
+    })
+
   def test_post_account_when_username_already_taken(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_registration('new@mail.com', 'token')
