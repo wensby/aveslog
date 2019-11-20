@@ -118,8 +118,6 @@ def create_birds_routes(
     return bird_data
 
   def get_bird(bird_identifier: str) -> Response:
-    if not isinstance(bird_identifier, str):
-      raise Exception(f'Unexpected bird identifier: {bird_identifier}')
     reformatted = bird_identifier.replace('-', ' ')
     bird = g.database_session.query(Bird).filter(
       Bird.binomial_name.ilike(reformatted)).first()
