@@ -118,6 +118,9 @@ class TestCreateAccount(AppTestCase):
         'name': 'myUsername',
       },
     })
+    refresh_token_response = self.client.post(
+      '/authentication/refresh-token?username=myUsername&password=myPassword')
+    self.assertEqual(refresh_token_response.status_code, HTTPStatus.CREATED)
 
   def test_post_account_when_registration_request_missing(self):
     response = self.post_account('myToken', 'myUsername', 'myPassword')

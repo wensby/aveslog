@@ -74,6 +74,13 @@ class Birder(Base):
     return f"<Birder(name='{self.name}')>"
 
 
+class HashedPassword(Base):
+  __tablename__ = 'hashed_password'
+  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
+  salt = Column(String, nullable=False)
+  salted_hash = Column(String, nullable=False)
+
+
 class Account(Base):
   __tablename__ = 'account'
   id = Column(Integer, primary_key=True)
@@ -84,6 +91,8 @@ class Account(Base):
 
   birder: Birder = relationship('Birder', uselist=False)
   refresh_tokens = relationship('RefreshToken', back_populates='account')
+  hashed_password: HashedPassword = relationship('HashedPassword',
+    uselist=False)
 
   def __eq__(self, other):
     if isinstance(other, Account):
@@ -106,13 +115,6 @@ class AccountRegistration(Base):
   id = Column(Integer, primary_key=True)
   email = Column(String, nullable=False)
   token = Column(String, nullable=False)
-
-
-class HashedPassword(Base):
-  __tablename__ = 'hashed_password'
-  account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
-  salt = Column(String, nullable=False)
-  salted_hash = Column(String, nullable=False)
 
 
 class PasswordResetToken(Base):

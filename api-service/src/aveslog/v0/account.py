@@ -188,34 +188,25 @@ class PasswordRepository:
       g.database_session.delete(password_reset_token)
       g.database_session.commit()
 
-  def add(self, hashed_password: HashedPassword):
-    g.database_session.add(hashed_password)
-    g.database_session.commit()
-
 
 class AccountFactory:
 
   def __init__(self,
         password_hasher: PasswordHasher,
-        account_repository: AccountRepository,
         password_repository: PasswordRepository,
   ):
     self.password_hasher = password_hasher
-    self.account_repository = account_repository
     self.password_repository = password_repository
 
   def create_account(self,
         email: EmailAddress,
         credentials: Credentials) -> Optional[Account]:
-    if self.account_repository.find_account(credentials.username.raw):
-      return
     account = Account(username=credentials.username.raw, email=email.raw)
-    account = self.account_repository.add(account)
     salt_hashed_password = self.password_hasher.create_salt_hashed_password(
       credentials.password)
     salt = salt_hashed_password[0]
     hash = salt_hashed_password[1]
     hashed_password = HashedPassword(
       account_id=account.id, salt=salt, salted_hash=hash)
-    self.password_repository.add(hashed_password)
+    account.hashed_password = hashed_password
     return account

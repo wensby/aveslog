@@ -78,29 +78,22 @@ class TestAccountFactory(TestCase):
 
   def setUp(self) -> None:
     self.password_hasher = Mock()
-    self.account_repository: AccountRepository = Mock(spec=AccountRepository)
     self.password_repository = Mock()
     self.factory = AccountFactory(
       self.password_hasher,
-      self.account_repository, self.password_repository)
+      self.password_repository,
+    )
 
   def test_create_account_returns_account_when_success(self):
-    added_account = Account(
-      id=4, username='alice', email='alice@email.com',
-      birder_id=None, locale_id=None)
     self.password_hasher.create_salt_hashed_password.return_value = (
       'mySalt', 'mySaltedHash')
-    self.account_repository.find_account.return_value = None
-    self.account_repository.add.return_value = added_account
 
-    result = self.factory.create_account(self.email, self.credentials)
+    account = self.factory.create_account(self.email, self.credentials)
 
-    self.assertEqual(result, added_account)
-
-  def test_create_account_fails_when_username_already_taken(self):
-    self.account_repository.find_account.return_value = Account()
-    result = self.factory.create_account(self.email, self.credentials)
-    self.assertIsNone(result)
+    self.assertEqual(account.email, self.email.raw)
+    self.assertEqual(account.username, self.credentials.username.raw)
+    self.assertEqual(account.hashed_password.salt, 'mySalt')
+    self.assertEqual(account.hashed_password.salted_hash, 'mySaltedHash')
 
 
 class TestPasswordHasher(TestCase):

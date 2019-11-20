@@ -273,6 +273,7 @@ def create_account_routes(
     password = Password(password)
     credentials = Credentials(username, password)
     account = account_factory.create_account(email, credentials)
+    account = account_repository.add(account)
     account_repository.remove_account_registration_by_id(registration.id)
     g.database_session.rollback()
     birder = Birder(name=account.username)

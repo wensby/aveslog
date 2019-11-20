@@ -86,7 +86,6 @@ def create_api_v0_blueprint(
   account_repository = AccountRepository(password_hasher)
   account_factory = AccountFactory(
     password_hasher,
-    account_repository,
     password_repository,
   )
   account_registration_controller = AccountRegistrationController(
