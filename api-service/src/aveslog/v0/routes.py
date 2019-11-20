@@ -192,14 +192,13 @@ def create_search_routes(
 
 def create_registration_routes(
       registration_controller: AccountRegistrationController,
-      account_repository: AccountRepository,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
 ) -> list:
   def find_registration_token(registration_token: str) -> Optional[
     AccountRegistration]:
-    return account_repository.find_account_registration_by_token(
-      registration_token)
+    return g.database_session.query(AccountRegistration). \
+      filter(AccountRegistration.token.like(registration_token)).first()
 
   def load_english_locale() -> LoadedLocale:
     locale = locale_repository.find_locale_by_code('en')
@@ -255,8 +254,8 @@ def create_account_routes(
     token = request.json.get('token')
     username = request.json.get('username')
     password = request.json.get('password')
-    registration = account_repository.find_account_registration_by_token(
-      token)
+    registration = g.database_session.query(AccountRegistration). \
+      filter(AccountRegistration.token.like(token)).first()
     if not registration:
       return create_flask_response(error_response(
         ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,

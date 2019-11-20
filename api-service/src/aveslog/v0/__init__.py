@@ -129,7 +129,6 @@ def create_api_v0_blueprint(
   register_routes(search_routes)
   registration_routes = create_registration_routes(
     account_registration_controller,
-    account_repository,
     locale_repository,
     locale_loader,
   )

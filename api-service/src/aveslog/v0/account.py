@@ -125,12 +125,6 @@ class AccountRepository:
       filter(AccountRegistration.email.like(email.raw)). \
       filter(AccountRegistration.token.like(token)).first()
 
-  def find_account_registration_by_token(self,
-        token: str,
-  ) -> Optional[AccountRegistration]:
-    return g.database_session.query(AccountRegistration). \
-      filter(AccountRegistration.token.like(token)).first()
-
   def find_account(self,
         username: Union[Username, str]) -> Optional[Account]:
     if isinstance(username, Username):
