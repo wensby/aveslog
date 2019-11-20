@@ -133,7 +133,6 @@ def create_api_v0_blueprint(
   )
   register_routes(registration_routes)
   sighting_routes = create_sightings_routes(
-    account_repository,
     sighting_repository,
   )
   register_routes(sighting_routes)
@@ -151,7 +150,7 @@ def create_api_v0_blueprint(
   register_routes(authentication_routes)
   account_routes = create_account_routes(account_repository, account_factory)
   register_routes(account_routes)
-  birders_routers = create_birders_routes(sighting_repository)
+  birders_routers = create_birders_routes()
   register_routes(birders_routers)
 
   @blueprint.after_request

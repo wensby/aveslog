@@ -12,14 +12,6 @@ export default class SightingService {
     });
   }
 
-  async fetchSightings(username, accessToken) {
-    return await fetch(`${this.apiUrl}/profile/${username}/sightings`, {
-      'headers': {
-        'accessToken': accessToken.jwt,
-      },
-    });
-  }
-
   async fetchBirderSightings(birderId, accessToken) {
     return await fetch(`${this.apiUrl}/birders/${birderId}/sightings`, {
       'headers': {

@@ -230,10 +230,10 @@ Status: 200 OK
 
 ## Sightings
 
-### List account's sightings
+### List birder's sightings
 
 ```
-GET /profile/:username/sightings
+GET /birders/:id/sightings
 ```
 
 **Required Headers**

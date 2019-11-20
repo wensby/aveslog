@@ -508,17 +508,11 @@ def create_authentication_routes(
   ]
 
 
-def create_sightings_routes(
-      account_repository: AccountRepository,
-      sighting_repository: SightingRepository,
-) -> list:
+def create_sightings_routes(sighting_repository: SightingRepository) -> list:
   @require_authentication
-  def get_profile_sightings(username: str) -> Response:
-    account = account_repository.find_account(username)
-    if not account:
-      return make_response('', HTTPStatus.NOT_FOUND)
+  def get_birder_sightings(birder_id: int):
     (sightings, total_rows) = sighting_repository.sightings(
-      birder_id=account.birder_id)
+      birder_id=birder_id)
     return sightings_response(sightings, False)
 
   @require_authentication
@@ -567,8 +561,8 @@ def create_sightings_routes(
 
   return [
     {
-      'rule': '/profile/<string:username>/sightings',
-      'func': get_profile_sightings,
+      'rule': '/birders/<int:birder_id>/sightings',
+      'func': get_birder_sightings,
     },
     {
       'rule': '/sightings',
@@ -592,7 +586,7 @@ def create_sightings_routes(
   pass
 
 
-def create_birders_routes(sighting_repository: SightingRepository) -> list:
+def create_birders_routes() -> list:
   @require_authentication
   def get_birder(birder_id: int):
     birder = g.database_session.query(Birder).get(birder_id)
@@ -600,20 +594,10 @@ def create_birders_routes(sighting_repository: SightingRepository) -> list:
       return make_response('', HTTPStatus.NOT_FOUND)
     return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
 
-  @require_authentication
-  def get_birder_sightings(birder_id: int):
-    (sightings, total_rows) = sighting_repository.sightings(
-      birder_id=birder_id)
-    return sightings_response(sightings, False)
-
   return [
     {
       'rule': '/birders/<int:birder_id>',
       'func': get_birder,
-    },
-    {
-      'rule': '/birders/<int:birder_id>/sightings',
-      'func': get_birder_sightings,
     },
   ]
 

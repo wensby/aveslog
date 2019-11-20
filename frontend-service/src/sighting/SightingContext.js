@@ -19,8 +19,7 @@ const SightingProvider = props => {
 
   const refreshSightings = async () => {
     const accessToken = await getAccessToken();
-    const username = account.username;
-    const response = await sightingService.fetchSightings(username, accessToken);
+    const response = await sightingService.fetchBirderSightings(account.birderId, accessToken);
     if (response.status === 200) {
       const json = await response.json();
       const fetchedSightings = json.items;

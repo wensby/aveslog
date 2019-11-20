@@ -1,5 +1,13 @@
 export default class AccountService {
 
+  async fetchAccount(accessToken, username) {
+    return await fetch(`${window._env_.API_URL}/accounts/${username}`, {
+      'headers': {
+        'accessToken': accessToken.jwt
+      }
+    });
+  }
+
   async fetchAccounts(accessToken) {
     const url = `${window._env_.API_URL}/accounts`;
     return await fetch(url, {
