@@ -151,10 +151,7 @@ class AccountRepository:
 
 class PasswordRepository:
 
-  def __init__(self,
-        token_factory,
-        password_hasher,
-  ):
+  def __init__(self, token_factory, password_hasher):
     self.token_factory = token_factory
     self.hasher = password_hasher
 
