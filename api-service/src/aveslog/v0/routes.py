@@ -13,7 +13,6 @@ from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.bird import BirdRepository
 from aveslog.v0.account import AccountRepository, Password, PasswordHasher
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, RefreshTokenRepository, \
@@ -23,7 +22,7 @@ from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
 from aveslog.v0.rest_api import error_response, RestApiResponse, \
   create_flask_response
-from aveslog.v0.search import BirdSearchMatch
+from aveslog.v0.search import BirdSearchMatch, StringMatcher
 from aveslog.v0.search import BirdSearcher
 
 RouteFunction = Callable[..., Response]
@@ -94,7 +93,6 @@ def require_authentication(route) -> RouteFunction:
 
 
 def create_birds_routes(
-      bird_repository: BirdRepository,
       link_factory: LinkFactory,
 ):
   def external_picture_url(picture: Picture) -> str:
@@ -122,7 +120,8 @@ def create_birds_routes(
     if not isinstance(bird_identifier, str):
       raise Exception(f'Unexpected bird identifier: {bird_identifier}')
     reformatted = bird_identifier.replace('-', ' ')
-    bird = bird_repository.get_bird_by_binomial_name(reformatted)
+    bird = g.database_session.query(Bird).filter(
+      Bird.binomial_name.ilike(reformatted)).first()
     if not bird:
       return create_flask_response(
         RestApiResponse(HTTPStatus.NOT_FOUND, {'message': 'Not Found'}))
@@ -139,8 +138,12 @@ def create_birds_routes(
   return routes
 
 
-def create_search_routes(bird_searcher: BirdSearcher,
-      link_factory: LinkFactory):
+def create_search_routes(
+      link_factory: LinkFactory,
+      locale_repository: LocaleRepository,
+      string_matcher: StringMatcher,
+      locale_loader: LocaleLoader,
+):
   def _external_picture_url(picture: Picture) -> str:
     static_picture_url = os.path.join('/static/', picture.filepath)
     return link_factory.create_url_external_link(static_picture_url)
@@ -162,6 +165,12 @@ def create_search_routes(bird_searcher: BirdSearcher,
     embed = parse_embed_list(request.args)
     page_size = page_size if page_size else 30
     embed = embed if embed else []
+    bird_searcher = BirdSearcher(
+      g.database_session,
+      locale_repository,
+      string_matcher,
+      locale_loader,
+    )
     search_matches = bird_searcher.search(query)
     search_matches.sort(key=lambda m: m.score, reverse=True)
     bird_matches = list(
@@ -479,7 +488,6 @@ def create_authentication_routes(
 def create_sightings_routes(
       account_repository: AccountRepository,
       sighting_repository: SightingRepository,
-      bird_repository: BirdRepository,
 ) -> list:
   @require_authentication
   def get_profile_sightings(username: str) -> Response:
@@ -526,7 +534,8 @@ def create_sightings_routes(
     if account.birder_id != birder_id:
       return post_sighting_unauthorized_response()
     binomial_name = request.json['bird']['binomialName']
-    bird = bird_repository.get_bird_by_binomial_name(binomial_name)
+    bird = g.database_session.query(Bird).filter(
+      Bird.binomial_name.ilike(binomial_name)).first()
     if not bird:
       return make_response('', HTTPStatus.BAD_REQUEST)
     sighting = create_sighting(request.json, bird)

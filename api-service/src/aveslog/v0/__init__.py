@@ -31,7 +31,6 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import create_flask_response
-from aveslog.v0.bird import BirdRepository
 from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_sightings_routes
 from aveslog.v0.routes import create_birders_routes
@@ -83,7 +82,6 @@ def create_api_v0_blueprint(
   password_hasher = PasswordHasher(salt_factory)
   jwt_decoder = JwtDecoder(secret_key)
   link_factory = LinkFactory(api_external_host, frontend_host)
-  bird_repository = BirdRepository()
   token_factory = TokenFactory()
   password_repository = PasswordRepository(token_factory, password_hasher)
   account_repository = AccountRepository(password_hasher)
@@ -115,12 +113,6 @@ def create_api_v0_blueprint(
     token_factory,
   )
   string_matcher = StringMatcher()
-  bird_searcher = BirdSearcher(
-    bird_repository,
-    locale_repository,
-    string_matcher,
-    locale_loader,
-  )
   jwt_factory = JwtFactory(secret_key)
   authentication_token_factory = AuthenticationTokenFactory(
     jwt_factory,
@@ -129,9 +121,14 @@ def create_api_v0_blueprint(
   authenticator = Authenticator(account_repository, password_hasher)
   sighting_repository = SightingRepository()
 
-  birds_routes = create_birds_routes(bird_repository, link_factory)
+  birds_routes = create_birds_routes(link_factory)
   register_routes(birds_routes)
-  search_routes = create_search_routes(bird_searcher, link_factory)
+  search_routes = create_search_routes(
+    link_factory,
+    locale_repository,
+    string_matcher,
+    locale_loader,
+  )
   register_routes(search_routes)
   registration_routes = create_registration_routes(
     account_registration_controller,
@@ -143,7 +140,6 @@ def create_api_v0_blueprint(
   sighting_routes = create_sightings_routes(
     account_repository,
     sighting_repository,
-    bird_repository,
   )
   register_routes(sighting_routes)
   authentication_routes = create_authentication_routes(

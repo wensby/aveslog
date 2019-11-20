@@ -1,8 +1,10 @@
 from difflib import SequenceMatcher
 from typing import Dict, List, Optional
 
+from flask import g
+from sqlalchemy.orm import Session
+
 from .models import Bird
-from .bird import BirdRepository
 from .localization import LocaleRepository, LocaleLoader
 
 
@@ -22,18 +24,18 @@ class StringMatcher:
 class BirdSearcher:
 
   def __init__(self,
-        bird_repository: BirdRepository,
+        session: Session,
         locale_repository: LocaleRepository,
         string_matcher: StringMatcher,
         locale_loader: LocaleLoader,
   ):
-    self.bird_repository = bird_repository
+    self.session = session
     self.locale_repository = locale_repository
     self.string_matcher = string_matcher
     self.locale_loader = locale_loader
 
   def search(self, name: Optional[str] = None) -> List[BirdSearchMatch]:
-    birds = self.bird_repository.birds
+    birds = self.session.query(Bird).all()
     result_builder = ResultBuilder(birds)
     if name:
       binomial_name_matches = self.search_by_binomial_name(birds, name)
