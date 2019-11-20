@@ -243,7 +243,6 @@ def create_registration_routes(
 
 def create_account_routes(
       account_repository: AccountRepository,
-      registration_controller: AccountRegistrationController,
       account_factory: AccountFactory,
 ) -> list:
   def account_response_dict(account: Account):
