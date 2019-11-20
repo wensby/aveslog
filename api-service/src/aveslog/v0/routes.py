@@ -4,7 +4,7 @@ from functools import wraps
 from http import HTTPStatus
 from typing import Callable, Union, Optional, List
 
-from flask import Response, request, make_response, jsonify, current_app
+from flask import Response, request, make_response, jsonify, current_app, g
 
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.time import parse_date
@@ -64,8 +64,8 @@ def access_token_expired_response() -> Response:
 def require_authentication(route) -> RouteFunction:
   """Wraps a route to require a valid authentication token
 
-  The wrapped route will be provided with the authenticated account through a
-  parameter named 'account'.
+  The wrapped route will then be able to access the authenticated account
+  through g.authenticated_account.
   """
 
   @wraps(route)
@@ -87,7 +87,8 @@ def require_authentication(route) -> RouteFunction:
     account = account_repository.account_by_id(account_id)
     if not account:
       return authorized_account_missing_response()
-    return route(**kwargs, account=account)
+    g.authenticated_account = account
+    return route(**kwargs)
 
   return route_wrapper
 
@@ -269,7 +270,7 @@ def create_account_routes(
       ))
 
   @require_authentication
-  def get_accounts(account: Account) -> Response:
+  def get_accounts() -> Response:
     accounts = account_repository.accounts()
     response = RestApiResponse(HTTPStatus.OK, {
       'items': list(map(account_response_dict, accounts))
@@ -277,7 +278,8 @@ def create_account_routes(
     return create_flask_response(response)
 
   @require_authentication
-  def get_me(account: Account) -> Response:
+  def get_me() -> Response:
+    account = g.authenticated_account
     response = RestApiResponse(HTTPStatus.OK, account_response_dict(account))
     return create_flask_response(response)
 
@@ -345,7 +347,8 @@ def create_authentication_routes(
     }))
 
   @require_authentication
-  def delete_refresh_token(account: Account, refresh_token_id: int) -> Response:
+  def delete_refresh_token(refresh_token_id: int) -> Response:
+    account = g.authenticated_account
     refresh_token = refresh_token_repository.refresh_token(
       refresh_token_id)
     if not refresh_token:
@@ -421,7 +424,8 @@ def create_authentication_routes(
     return authenticator.is_account_password_correct(account, password)
 
   @require_authentication
-  def post_password(account: Account) -> Response:
+  def post_password() -> Response:
+    account = g.authenticated_account
     old_password = request.json['oldPassword']
     raw_new_password = request.json['newPassword']
     old_password_correct = is_password_correct(account, old_password)
@@ -478,7 +482,7 @@ def create_sightings_routes(
       bird_repository: BirdRepository,
 ) -> list:
   @require_authentication
-  def get_profile_sightings(username: str, account: Account) -> Response:
+  def get_profile_sightings(username: str) -> Response:
     account = account_repository.find_account(username)
     if not account:
       return make_response('', HTTPStatus.NOT_FOUND)
@@ -487,7 +491,7 @@ def create_sightings_routes(
     return sightings_response(sightings, False)
 
   @require_authentication
-  def get_sightings(account: Account):
+  def get_sightings():
     limit = request.args.get('limit', type=int)
     if limit is not None and limit <= 0:
       return sightings_failure_response('limit-invalid')
@@ -496,7 +500,8 @@ def create_sightings_routes(
     return sightings_response(sightings, has_more)
 
   @require_authentication
-  def get_sighting(sighting_id: int, account: Account) -> Response:
+  def get_sighting(sighting_id: int) -> Response:
+    account = g.authenticated_account
     sighting = sighting_repository.find_sighting(sighting_id)
     if sighting and sighting.birder_id == account.birder_id:
       return make_response(jsonify(convert_sighting(sighting)), HTTPStatus.OK)
@@ -504,7 +509,8 @@ def create_sightings_routes(
       return get_sighting_failure_response()
 
   @require_authentication
-  def delete_sighting(sighting_id: int, account: Account) -> Response:
+  def delete_sighting(sighting_id: int) -> Response:
+    account = g.authenticated_account
     sighting = sighting_repository.find_sighting(sighting_id)
     if not sighting:
       return sighting_deleted_response()
@@ -514,7 +520,8 @@ def create_sightings_routes(
     return sighting_deleted_response()
 
   @require_authentication
-  def post_sighting(account: Account) -> Response:
+  def post_sighting() -> Response:
+    account = g.authenticated_account
     birder_id = request.json['birder']['id']
     if account.birder_id != birder_id:
       return post_sighting_unauthorized_response()
@@ -558,14 +565,14 @@ def create_birders_routes(
       sighting_repository: SightingRepository,
 ) -> list:
   @require_authentication
-  def get_birder(birder_id: int, account: Account):
+  def get_birder(birder_id: int):
     birder = birder_repository.birder_by_id(birder_id)
     if not birder:
       return make_response('', HTTPStatus.NOT_FOUND)
     return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
 
   @require_authentication
-  def get_birder_sightings(birder_id: int, account: Account):
+  def get_birder_sightings(birder_id: int):
     (sightings, total_rows) = sighting_repository.sightings(
       birder_id=birder_id)
     return sightings_response(sightings, False)
