@@ -56,6 +56,9 @@ def create_api_v0_blueprint(
 
   @blueprint.before_request
   def before_request():
+    # Setup database session. This is fine even for requests that ultimately
+    # didn't require database communication, since the session doesn't actually
+    # establish a connection with the database until you start using it.
     g.database_session = session_factory.create_session()
     detect_user_locale()
 
