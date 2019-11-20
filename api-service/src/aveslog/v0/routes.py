@@ -33,7 +33,7 @@ def authentication_token_missing_response() -> Response:
   return create_flask_response(error_response(
     ErrorCode.AUTHORIZATION_REQUIRED,
     'Authorization required',
-    HTTPStatus.UNAUTHORIZED,
+    status_code=HTTPStatus.UNAUTHORIZED,
   ))
 
 
@@ -41,7 +41,7 @@ def authorized_account_missing_response() -> Response:
   return create_flask_response(error_response(
     ErrorCode.ACCOUNT_MISSING,
     'Authorized account gone',
-    HTTPStatus.UNAUTHORIZED,
+    status_code=HTTPStatus.UNAUTHORIZED,
   ))
 
 
@@ -49,7 +49,7 @@ def access_token_invalid_response() -> Response:
   return create_flask_response(error_response(
     ErrorCode.ACCESS_TOKEN_INVALID,
     'Access token invalid',
-    HTTPStatus.UNAUTHORIZED,
+    status_code=HTTPStatus.UNAUTHORIZED,
   ))
 
 
@@ -57,7 +57,7 @@ def access_token_expired_response() -> Response:
   return create_flask_response(error_response(
     ErrorCode.ACCESS_TOKEN_EXPIRED,
     'Access token expired',
-    HTTPStatus.UNAUTHORIZED,
+    status_code=HTTPStatus.UNAUTHORIZED,
   ))
 
 
@@ -258,7 +258,7 @@ def create_account_routes(
       return create_flask_response(error_response(
         ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
         'Registration request token invalid',
-        HTTPStatus.BAD_REQUEST,
+        status_code=HTTPStatus.BAD_REQUEST,
       ))
     email = EmailAddress(registration.email)
     username = Username(username)
@@ -266,7 +266,7 @@ def create_account_routes(
       return create_flask_response(error_response(
         ErrorCode.USERNAME_TAKEN,
         'Username taken',
-        HTTPStatus.CONFLICT,
+        status_code=HTTPStatus.CONFLICT,
       ))
     password = Password(password)
     credentials = Credentials(username, password)
@@ -347,7 +347,7 @@ def create_authentication_routes(
     return error_response(
       ErrorCode.CREDENTIALS_INCORRECT,
       'Credentials incorrect',
-      HTTPStatus.UNAUTHORIZED,
+      status_code=HTTPStatus.UNAUTHORIZED,
     )
 
   def create_unauthorized_response(message) -> RestApiResponse:
@@ -389,7 +389,7 @@ def create_authentication_routes(
       return create_flask_response(error_response(
         ErrorCode.AUTHORIZATION_REQUIRED,
         'Authorization required',
-        HTTPStatus.UNAUTHORIZED,
+        status_code=HTTPStatus.UNAUTHORIZED,
       ))
     refresh_token_repository.remove_refresh_token(refresh_token)
     response = refresh_token_deleted_response()
@@ -465,7 +465,7 @@ def create_authentication_routes(
       return create_flask_response(error_response(
         ErrorCode.OLD_PASSWORD_INCORRECT,
         'Old password incorrect',
-        HTTPStatus.UNAUTHORIZED,
+        status_code=HTTPStatus.UNAUTHORIZED,
       ))
     if not Password.is_valid(raw_new_password):
       return create_flask_response(

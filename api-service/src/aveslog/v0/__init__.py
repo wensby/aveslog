@@ -177,7 +177,7 @@ def create_api_v0_blueprint(
     return create_flask_response(error_response(
       ErrorCode.RATE_LIMIT_EXCEEDED,
       f'Rate limit exceeded {e.description}',
-      HTTPStatus.TOO_MANY_REQUESTS,
+      status_code=HTTPStatus.TOO_MANY_REQUESTS,
     ))
 
   return blueprint

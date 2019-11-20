@@ -13,12 +13,16 @@ class RestApiResponse:
 def error_response(
       error_code: int,
       message: str,
+      additional_errors: list = None,
       status_code: int = HTTPStatus.BAD_REQUEST,
 ) -> RestApiResponse:
-  return RestApiResponse(status_code, {
+  data = {
     'code': error_code,
     'message': message,
-  })
+  }
+  if additional_errors:
+    data['errors'] = additional_errors
+  return RestApiResponse(status_code, data)
 
 
 def create_flask_response(response: RestApiResponse) -> Response:
