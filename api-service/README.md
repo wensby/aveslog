@@ -366,6 +366,27 @@ Location: /sightings/4
 
 ## Account
 
+### Get single account
+
+```
+GET /accounts/:username
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "username": "kennybostick",
+  "birderId": 4
+}
+```
+
 ### Create Account
 
 In order to create an account, you first need to have obtained a registration

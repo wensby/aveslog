@@ -297,12 +297,25 @@ def create_account_routes(
     return create_flask_response(response)
 
   @require_authentication
+  def get_account(username: str) -> Response:
+    account = account_repository.find_account(username)
+    if not account:
+      return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
+    return create_flask_response(
+      RestApiResponse(HTTPStatus.OK, account_response_dict(account))
+    )
+
+  @require_authentication
   def get_me() -> Response:
     account = g.authenticated_account
     response = RestApiResponse(HTTPStatus.OK, account_response_dict(account))
     return create_flask_response(response)
 
   return [
+    {
+      'rule': '/accounts/<string:username>',
+      'func': get_account,
+    },
     {
       'rule': '/accounts',
       'func': create_account,
