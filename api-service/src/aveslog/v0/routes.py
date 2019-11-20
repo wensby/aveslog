@@ -280,13 +280,14 @@ def create_account_routes(
         status_code=HTTPStatus.BAD_REQUEST,
       ))
     email = EmailAddress(registration.email)
-    username = Username(username)
-    if account_repository.find_account(username):
+    if g.database_session.query(Account). \
+          filter(Account.username.ilike(username)).first():
       return create_flask_response(error_response(
         ErrorCode.USERNAME_TAKEN,
         'Username taken',
         status_code=HTTPStatus.CONFLICT,
       ))
+    username = Username(username)
     password = Password(password)
     credentials = Credentials(username, password)
     account = account_factory.create_account(email, credentials)
@@ -317,7 +318,8 @@ def create_account_routes(
 
   @require_authentication
   def get_account(username: str) -> Response:
-    account = account_repository.find_account(username)
+    account = g.database_session.query(Account). \
+      filter(Account.username.ilike(username)).first()
     if not account:
       return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
     return create_flask_response(
@@ -385,7 +387,8 @@ def create_authentication_routes(
   def post_refresh_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')
-    account = account_repository.find_account(username)
+    account = g.database_session.query(Account). \
+      filter(Account.username.ilike(username)).first()
     if not account:
       return create_flask_response(credentials_incorrect_response())
     if not authenticator.is_account_password_correct(account, password):
