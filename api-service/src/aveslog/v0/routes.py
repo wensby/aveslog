@@ -259,9 +259,9 @@ def create_account_routes(
       token)
     if not registration:
       return create_flask_response(error_response(
-        ErrorCode.USERNAME_TAKEN,
-        'associated registration missing',
-        HTTPStatus.NOT_FOUND,
+        ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
+        'Registration request token invalid',
+        HTTPStatus.BAD_REQUEST,
       ))
     email = EmailAddress(registration.email)
     username = Username(username)

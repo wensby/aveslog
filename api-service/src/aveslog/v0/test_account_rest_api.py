@@ -119,6 +119,15 @@ class TestCreateAccount(AppTestCase):
       },
     })
 
+  def test_post_account_when_registration_request_missing(self):
+    response = self.post_account('myToken', 'myUsername', 'myPassword')
+
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
+      'message': 'Registration request token invalid',
+    })
+
   def test_post_account_when_username_already_taken(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_registration('new@mail.com', 'token')

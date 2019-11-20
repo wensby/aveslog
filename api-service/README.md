@@ -79,6 +79,7 @@ Status: 404 Not Found
 | 10 | Provided new password invalid. |
 | 11 | Account associated with the access token provided no longer available. |
 | 12 | Rate limit exceeded. Check response header X-Rate-Limit-Reset for how many seconds remains until the next window. |
+| 13 | Registration request token used when creating a new account is invalid or not associated with an existing registration request. |
 
 
 ## Authentication
