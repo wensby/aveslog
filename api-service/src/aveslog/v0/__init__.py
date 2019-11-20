@@ -138,7 +138,6 @@ def create_api_v0_blueprint(
   register_routes(sighting_routes)
   authentication_routes = create_authentication_routes(
     jwt_decoder,
-    account_repository,
     locale_repository,
     locale_loader,
     authenticator,

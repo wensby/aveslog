@@ -354,7 +354,6 @@ def create_account_routes(
 
 def create_authentication_routes(
       jwt_decoder: JwtDecoder,
-      account_repository: AccountRepository,
       locale_repository: LocaleRepository,
       locale_loader: LocaleLoader,
       authenticator: Authenticator,
