@@ -74,38 +74,13 @@ class TestGetSightings(AppTestCase):
       'error': 'limit-invalid',
     })
 
-  def test_get_own_sightings_with_valid_auth_token(self):
-    response = self.get_with_access_token('/profile/hulot/sightings',
-                                          account_id=1)
-
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {
-      'items': [
-        {
-          'id': 1,
-          'birderId': 1,
-          'birdId': 'pica-pica',
-          'date': '2019-08-28',
-          'time': '11:52:00'
-        },
-        {
-          'id': 2,
-          'birderId': 1,
-          'birdId': 'pica-pica',
-          'date': '2019-08-28',
-          'time': '11:52:00'
-        }
-      ],
-      'hasMore': False,
-    })
-
   def test_get_sightings_when_username_missing(self):
     response = self.get_with_access_token('/profile/godzilla/sightings',
                                           account_id=1)
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
   def test_get_sightings_when_unauthorized(self):
-    response = self.client.get('/profile/hulot/sightings')
+    response = self.client.get('/birders/1/sightings')
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -116,7 +91,7 @@ class TestGetSightings(AppTestCase):
   def test_get_sightings_when_auth_token_invalid(self):
     headers = {'accessToken': 'i-am-not-a-valid-jwt-token'}
 
-    response = self.client.get('/profile/hulot/sightings', headers=headers)
+    response = self.client.get('/birders/1/sightings', headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -125,7 +100,7 @@ class TestGetSightings(AppTestCase):
     })
 
   def test_get_sightings_with_auth_token_for_other_account(self):
-    response = self.get_with_access_token('/profile/dude/sightings',
+    response = self.get_with_access_token('/birders/2/sightings',
                                           account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
