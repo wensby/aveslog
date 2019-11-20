@@ -27,10 +27,11 @@ class TestPostRefreshToken(AppTestCase):
   def test_post_refresh_token_when_username_differently_cased(self) -> None:
     response = self.post_refresh_token('GeOrGe', 'costanza')
 
-    self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    self.assertIn('id', response.json)
-    self.assertIn('refreshToken', response.json)
-    self.assertIn('expirationDate', response.json)
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertEqual(response.json, {
+      'code': ErrorCode.CREDENTIALS_INCORRECT,
+      'message': 'Credentials incorrect',
+    })
 
   def test_post_refresh_token_when_incorrect_username(self) -> None:
     response = self.post_refresh_token('tbone', 'costanza')

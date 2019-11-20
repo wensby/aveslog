@@ -12,7 +12,7 @@ from aveslog.v0.mail import EmailAddress
 
 
 class Username:
-  regex = re.compile('^[A-Za-z0-9_.-]{5,32}$')
+  regex = re.compile('^[a-z0-9_.-]{5,32}$')
 
   @classmethod
   def is_valid(cls, raw_username):

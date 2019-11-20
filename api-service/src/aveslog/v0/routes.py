@@ -257,7 +257,7 @@ def create_account_routes(
       field_validation_errors.append({
         'code': ErrorCode.INVALID_USERNAME_FORMAT,
         'field': 'username',
-        'message': 'Username need to adhere to format: ^[A-Za-z0-9_.-]{5,32}$',
+        'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$',
       })
     if not Password.is_valid(password):
       field_validation_errors.append({
@@ -280,8 +280,7 @@ def create_account_routes(
         status_code=HTTPStatus.BAD_REQUEST,
       ))
     email = EmailAddress(registration.email)
-    if g.database_session.query(Account). \
-          filter(Account.username.ilike(username)).first():
+    if g.database_session.query(Account).filter_by(username=username).first():
       return create_flask_response(error_response(
         ErrorCode.USERNAME_TAKEN,
         'Username taken',
@@ -318,8 +317,8 @@ def create_account_routes(
 
   @require_authentication
   def get_account(username: str) -> Response:
-    account = g.database_session.query(Account). \
-      filter(Account.username.ilike(username)).first()
+    session = g.database_session
+    account = session.query(Account).filter_by(username=username).first()
     if not account:
       return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
     return create_flask_response(
@@ -387,8 +386,8 @@ def create_authentication_routes(
   def post_refresh_token() -> Response:
     username = request.args.get('username')
     password = request.args.get('password')
-    account = g.database_session.query(Account). \
-      filter(Account.username.ilike(username)).first()
+    session = g.database_session
+    account = session.query(Account).filter_by(username=username).first()
     if not account:
       return create_flask_response(credentials_incorrect_response())
     if not authenticator.is_account_password_correct(account, password):

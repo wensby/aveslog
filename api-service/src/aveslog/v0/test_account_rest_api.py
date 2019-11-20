@@ -106,24 +106,24 @@ class TestCreateAccount(AppTestCase):
     self.database_connection.commit()
     self.db_insert_registration('hulot@mail.com', 'myToken')
 
-    response = self.post_account('myToken', 'myUsername', 'myPassword')
+    response = self.post_account('myToken', 'my_username', 'myPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertDictEqual(response.json, {
       'id': 1,
-      'username': 'myUsername',
+      'username': 'my_username',
       'email': 'hulot@mail.com',
       'birder': {
         'id': 1,
-        'name': 'myUsername',
+        'name': 'my_username',
       },
     })
     refresh_token_response = self.client.post(
-      '/authentication/refresh-token?username=myUsername&password=myPassword')
+      '/authentication/refresh-token?username=my_username&password=myPassword')
     self.assertEqual(refresh_token_response.status_code, HTTPStatus.CREATED)
 
   def test_post_account_when_registration_request_missing(self):
-    response = self.post_account('myToken', 'myUsername', 'myPassword')
+    response = self.post_account('myToken', 'my_username', 'myPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertDictEqual(response.json, {
@@ -141,7 +141,7 @@ class TestCreateAccount(AppTestCase):
         {
           'code': ErrorCode.INVALID_USERNAME_FORMAT,
           'field': 'username',
-          'message': 'Username need to adhere to format: ^[A-Za-z0-9_.-]{5,32}$'
+          'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$'
         },
         {
           'code': ErrorCode.INVALID_PASSWORD_FORMAT,
@@ -156,18 +156,6 @@ class TestCreateAccount(AppTestCase):
     self.db_insert_registration('new@mail.com', 'token')
 
     response = self.post_account('token', 'hulot', 'password')
-
-    self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
-    self.assertDictEqual(response.json, {
-      'code': ErrorCode.USERNAME_TAKEN,
-      'message': 'Username taken',
-    })
-
-  def test_post_account_when_other_cased_username_taken(self) -> None:
-    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
-    self.db_insert_registration('first@mail.com', 'token')
-
-    response = self.post_account('token', 'George', 'washington')
 
     self.assertEqual(response.status_code, HTTPStatus.CONFLICT)
     self.assertDictEqual(response.json, {

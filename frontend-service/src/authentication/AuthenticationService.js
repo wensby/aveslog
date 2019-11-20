@@ -6,7 +6,7 @@ export default class AuthenticationService {
 
   async postRefreshToken(username, password) {
     const url = `${this.apiUrl}/authentication/refresh-token`;
-    const parameters = `?username=${username}&password=${password}`;
+    const parameters = `?username=${username.toLowerCase()}&password=${password}`;
     return await fetch(url + parameters, {
       method: 'POST',
     });
