@@ -141,7 +141,6 @@ def create_api_v0_blueprint(
   )
   register_routes(registration_routes)
   sighting_routes = create_sightings_routes(
-    jwt_decoder,
     account_repository,
     sighting_repository,
     bird_repository,
@@ -160,13 +159,10 @@ def create_api_v0_blueprint(
   )
   register_routes(authentication_routes)
   account_routes = create_account_routes(
-    jwt_decoder,
     account_repository,
     account_registration_controller)
   register_routes(account_routes)
   birders_routers = create_birders_routes(
-    jwt_decoder,
-    account_repository,
     birder_repository,
     sighting_repository,
   )

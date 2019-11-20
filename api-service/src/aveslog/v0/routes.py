@@ -4,7 +4,7 @@ from functools import wraps
 from http import HTTPStatus
 from typing import Callable, Union, Optional, List
 
-from flask import Response, request, make_response, jsonify
+from flask import Response, request, make_response, jsonify, current_app
 
 from aveslog.v0.birder import BirderRepository
 from aveslog.v0.time import parse_date
@@ -14,10 +14,10 @@ from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.bird import BirdRepository
-from aveslog.v0.account import AccountRepository, Password
+from aveslog.v0.account import AccountRepository, Password, PasswordHasher
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, RefreshTokenRepository, \
-  PasswordResetController, PasswordUpdateController
+  PasswordResetController, PasswordUpdateController, SaltFactory
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
@@ -61,36 +61,35 @@ def access_token_expired_response() -> Response:
   ))
 
 
-def require_authentication(
-      jwt_decoder: JwtDecoder,
-      account_repository: AccountRepository) -> RouteFunction:
+def require_authentication(route) -> RouteFunction:
   """Wraps a route to require a valid authentication token
 
   The wrapped route will be provided with the authenticated account through a
   parameter named 'account'.
   """
 
-  def route_decorator(route: RouteFunction) -> RouteFunction:
-    @wraps(route)
-    def route_wrapper(**kwargs):
-      access_token = request.headers.get('accessToken')
-      if not access_token:
-        return authentication_token_missing_response()
-      decode_result = jwt_decoder.decode_jwt(access_token)
-      if not decode_result.ok:
-        if decode_result.error == 'token-invalid':
-          return access_token_invalid_response()
-        elif decode_result.error == 'signature-expired':
-          return access_token_expired_response()
-      account_id = decode_result.payload['sub']
-      account = account_repository.account_by_id(account_id)
-      if not account:
-        return authorized_account_missing_response()
-      return route(**kwargs, account=account)
+  @wraps(route)
+  def route_wrapper(**kwargs):
+    access_token = request.headers.get('accessToken')
+    if not access_token:
+      return authentication_token_missing_response()
+    jwt_decoder = JwtDecoder(current_app.secret_key)
+    decode_result = jwt_decoder.decode_jwt(access_token)
+    if not decode_result.ok:
+      if decode_result.error == 'token-invalid':
+        return access_token_invalid_response()
+      elif decode_result.error == 'signature-expired':
+        return access_token_expired_response()
+    account_id = decode_result.payload['sub']
+    salt_factory = SaltFactory()
+    password_hasher = PasswordHasher(salt_factory)
+    account_repository = AccountRepository(password_hasher)
+    account = account_repository.account_by_id(account_id)
+    if not account:
+      return authorized_account_missing_response()
+    return route(**kwargs, account=account)
 
-    return route_wrapper
-
-  return route_decorator
+  return route_wrapper
 
 
 def create_birds_routes(
@@ -234,7 +233,6 @@ def create_registration_routes(
 
 
 def create_account_routes(
-      jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
       registration_controller: AccountRegistrationController,
 ) -> list:
@@ -270,7 +268,7 @@ def create_account_routes(
         HTTPStatus.CONFLICT,
       ))
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_accounts(account: Account) -> Response:
     accounts = account_repository.accounts()
     response = RestApiResponse(HTTPStatus.OK, {
@@ -278,7 +276,7 @@ def create_account_routes(
     })
     return create_flask_response(response)
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_me(account: Account) -> Response:
     response = RestApiResponse(HTTPStatus.OK, account_response_dict(account))
     return create_flask_response(response)
@@ -346,7 +344,7 @@ def create_authentication_routes(
       'expirationDate': refresh_token.expiration_date.isoformat(),
     }))
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def delete_refresh_token(account: Account, refresh_token_id: int) -> Response:
     refresh_token = refresh_token_repository.refresh_token(
       refresh_token_id)
@@ -422,7 +420,7 @@ def create_authentication_routes(
   def is_password_correct(account: Account, password: str) -> bool:
     return authenticator.is_account_password_correct(account, password)
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def post_password(account: Account) -> Response:
     old_password = request.json['oldPassword']
     raw_new_password = request.json['newPassword']
@@ -475,12 +473,11 @@ def create_authentication_routes(
 
 
 def create_sightings_routes(
-      jwt_decoder: JwtDecoder,
       account_repository: AccountRepository,
       sighting_repository: SightingRepository,
       bird_repository: BirdRepository,
 ) -> list:
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_profile_sightings(username: str, account: Account) -> Response:
     account = account_repository.find_account(username)
     if not account:
@@ -489,7 +486,7 @@ def create_sightings_routes(
       birder_id=account.birder_id)
     return sightings_response(sightings, False)
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_sightings(account: Account):
     limit = request.args.get('limit', type=int)
     if limit is not None and limit <= 0:
@@ -498,7 +495,7 @@ def create_sightings_routes(
     has_more = total_rows > limit if limit is not None else False
     return sightings_response(sightings, has_more)
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
     if sighting and sighting.birder_id == account.birder_id:
@@ -506,7 +503,7 @@ def create_sightings_routes(
     else:
       return get_sighting_failure_response()
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def delete_sighting(sighting_id: int, account: Account) -> Response:
     sighting = sighting_repository.find_sighting(sighting_id)
     if not sighting:
@@ -516,7 +513,7 @@ def create_sightings_routes(
     sighting_repository.delete_sighting(sighting_id)
     return sighting_deleted_response()
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def post_sighting(account: Account) -> Response:
     birder_id = request.json['birder']['id']
     if account.birder_id != birder_id:
@@ -557,19 +554,17 @@ def create_sightings_routes(
 
 
 def create_birders_routes(
-      jwt_decoder: JwtDecoder,
-      account_repository: AccountRepository,
       birder_repository: BirderRepository,
       sighting_repository: SightingRepository,
 ) -> list:
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_birder(birder_id: int, account: Account):
     birder = birder_repository.birder_by_id(birder_id)
     if not birder:
       return make_response('', HTTPStatus.NOT_FOUND)
     return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
 
-  @require_authentication(jwt_decoder, account_repository)
+  @require_authentication
   def get_birder_sightings(birder_id: int, account: Account):
     (sightings, total_rows) = sighting_repository.sightings(
       birder_id=birder_id)
