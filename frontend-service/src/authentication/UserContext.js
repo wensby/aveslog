@@ -51,7 +51,7 @@ function UserProvider(props) {
 
   async function fetchAccount(accessToken) {
     if (accessToken) {
-      const response = await accountService.fetchAccount(accessToken);
+      const response = await accountService.fetchAuthenticatedAccount(accessToken);
       if (response.status === 200) {
         const json = await response.json();
         setAccount(json);

@@ -9,7 +9,7 @@ export default class AccountService {
     });
   }
 
-  async fetchAccount(accessToken) {
+  async fetchAuthenticatedAccount(accessToken) {
     const url = `${window._env_.API_URL}/account`;
     return await fetch(url, {
       'headers': {
