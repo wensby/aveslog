@@ -1,7 +1,7 @@
 *.DS_Store
 *.pyc
-deploy/deploy.sh
-deploy/rsync-exclude-list.txt
+remote/deploy.sh
+remote/rsync-exclude-list.txt
 api-service/testDockerfile
 api-service/test-requirements.txt
 api-service/run_tests.sh

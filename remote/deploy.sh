@@ -32,13 +32,13 @@ remote_directory='~/birding'
 ssh $remote_host "mkdir -p $remote_directory"
 
 # Copy over required directories to build and start the application
-rsync -rav -e ssh --exclude-from ./deploy/rsync-exclude-list.txt \
+rsync -rav -e ssh --exclude-from ./remote/rsync-exclude-list.txt \
   ./.env ./docker-compose.yml ./docker-compose.prod.yml \
   $remote_host:$remote_directory
 
-rsync -rav -e ssh --delete --exclude-from ./deploy/rsync-exclude-list.txt \
-  ./deploy ./api-service ./database ./backup ./frontend-service \
+rsync -rav -e ssh --delete --exclude-from ./remote/rsync-exclude-list.txt \
+  ./remote ./api-service ./database ./backup ./frontend-service \
   $remote_host:$remote_directory
 
 # Change to correct directory and run deploy production script on remote
-ssh $remote_host "cd $remote_directory && ./deploy/production-startup.sh $SERVICE"
+ssh $remote_host "cd $remote_directory && ./remote/production-startup.sh $SERVICE"
