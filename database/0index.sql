@@ -9,6 +9,7 @@
 \i /schema/public/table/picture.sql
 \i /schema/public/table/refresh_token.sql
 \i /schema/public/table/sighting.sql
+\i /schema/public/table/bird_name.sql
 
 \i /schema/public/foreign-key-constraint/account.sql
 \i /schema/public/foreign-key-constraint/bird_thumbnail.sql
@@ -16,3 +17,4 @@
 \i /schema/public/foreign-key-constraint/password_reset_token.sql
 \i /schema/public/foreign-key-constraint/refresh_token.sql
 \i /schema/public/foreign-key-constraint/sighting.sql
+\i /schema/public/foreign-key-constraint/bird_name.sql

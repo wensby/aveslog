@@ -65,6 +65,17 @@ class Locale(Base):
     return hash(self.id) ^ hash(self.code)
 
 
+class BirdName(Base):
+  __tablename__ = 'bird_name'
+  id = Column(Integer, primary_key=True)
+  bird_id = Column(Integer, ForeignKey('bird.id'), nullable=False)
+  locale_id = Column(Integer, ForeignKey('locale.id'), nullable=False)
+  name = Column(String, nullable=False)
+
+  def __repr__(self) -> str:
+    return f"<BirdName(name='{self.name}')>"
+
+
 class Birder(Base):
   __tablename__ = 'birder'
   id = Column(Integer, primary_key=True)
