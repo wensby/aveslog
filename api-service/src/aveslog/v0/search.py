@@ -49,13 +49,15 @@ class BirdSearcher:
 
   def search_by_language_names(self, name: str) -> Dict[Bird, List[float]]:
     matches = dict()
-    bird_names: List[BirdName] = self.session.query(BirdName).all()
+    bird_names: List[BirdName] = self.session.query(BirdName) \
+      .filter(BirdName.name.ilike(f'%{name}%')) \
+      .all()
     for bird_name in bird_names:
-      if name.lower() in bird_name.name.lower():
-        match = self.string_matcher.match(name.lower(), bird_name.name.lower())
-        bird = bird_name.bird
-        matches[bird] = matches[bird] + [match] if bird in matches else [match]
+      bird = bird_name.bird
+      match = self.string_matcher.match(name.lower(), bird_name.name.lower())
+      matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches
+
 
 class ResultBuilder:
 
