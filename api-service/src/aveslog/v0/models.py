@@ -73,7 +73,7 @@ class BirdName(Base):
   locale_id = Column(Integer, ForeignKey('locale.id'), nullable=False)
   name = Column(String, nullable=False)
   bird = relationship('Bird', uselist=False)
-  locale = relationship('Locale', uselist=False)
+  locale = relationship('Locale', uselist=False, lazy='joined')
 
   def __repr__(self) -> str:
     return f"<BirdName(name='{self.name}')>"

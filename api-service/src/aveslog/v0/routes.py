@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, current_app, g
+from sqlalchemy.orm import lazyload
 
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.time import parse_date
@@ -130,8 +131,10 @@ def create_birds_routes(link_factory: LinkFactory):
 
   def get_bird(bird_identifier: str) -> Response:
     reformatted = bird_identifier.replace('-', ' ')
-    bird = g.database_session.query(Bird).filter(
-      Bird.binomial_name.ilike(reformatted)).first()
+    bird = g.database_session.query(Bird) \
+      .options(lazyload('names')) \
+      .filter(Bird.binomial_name.ilike(reformatted)) \
+      .first()
     if not bird:
       return create_flask_response(
         RestApiResponse(HTTPStatus.NOT_FOUND, {'message': 'Not Found'}))
