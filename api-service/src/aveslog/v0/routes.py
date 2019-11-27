@@ -103,6 +103,9 @@ def create_birds_routes(link_factory: LinkFactory):
       'id': bird.binomial_name.lower().replace(' ', '-'),
       'binomialName': bird.binomial_name,
     }
+    if bird.names:
+      bird_data['names'] = collect_bird_names(bird.names)
+
     if bird.thumbnail:
       bird_data['thumbnail'] = {
         'url': external_picture_url(bird.thumbnail.picture),
@@ -114,6 +117,16 @@ def create_birds_routes(link_factory: LinkFactory):
         'credit': bird.thumbnail.picture.credit,
       }
     return bird_data
+
+  def collect_bird_names(bird_names):
+    names_by_locale_code = {}
+    for bird_name in bird_names:
+      code = bird_name.locale.code
+      name = bird_name.name
+      if code not in names_by_locale_code:
+        names_by_locale_code[code] = []
+      names_by_locale_code[code].append(name)
+    return names_by_locale_code
 
   def get_bird(bird_identifier: str) -> Response:
     reformatted = bird_identifier.replace('-', ' ')
