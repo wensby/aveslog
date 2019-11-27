@@ -206,7 +206,7 @@ Status: 204 NO CONTENT
 
 ## Birds
 
-### Get Bird
+### Get single bird
 
 ```
 GET /birds/:bird
@@ -220,6 +220,17 @@ Status: 200 OK
 {
   "id": "pica-pica",
   "binomialName": "Pica pica",
+  "name": {
+    "sv": [
+      "Skata"
+    ],
+    "en": [
+      "Eurasian magpie"
+    ],
+    "ko": [
+      "까치"
+    ]
+  }
   "thumbnail": {
     "url": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg",
     "credit": "Anna Larsson",
