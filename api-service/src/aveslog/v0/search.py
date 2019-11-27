@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 from flask import g
 from sqlalchemy.orm import Session
 
-from .models import Bird
+from .models import Bird, BirdName
 from .localization import LocaleRepository, LocaleLoader
 
 
@@ -23,16 +23,9 @@ class StringMatcher:
 
 class BirdSearcher:
 
-  def __init__(self,
-        session: Session,
-        locale_repository: LocaleRepository,
-        string_matcher: StringMatcher,
-        locale_loader: LocaleLoader,
-  ):
+  def __init__(self, session: Session, string_matcher: StringMatcher):
     self.session = session
-    self.locale_repository = locale_repository
     self.string_matcher = string_matcher
-    self.locale_loader = locale_loader
 
   def search(self, name: Optional[str] = None) -> List[BirdSearchMatch]:
     birds = self.session.query(Bird).all()
@@ -40,7 +33,7 @@ class BirdSearcher:
     if name:
       binomial_name_matches = self.search_by_binomial_name(birds, name)
       result_builder.add_matches(binomial_name_matches)
-      language_name_matches = self.search_by_language_names(birds, name)
+      language_name_matches = self.search_by_language_names(name)
       result_builder.add_matches(language_name_matches)
     return result_builder.create_bird_matches()
 
@@ -54,26 +47,15 @@ class BirdSearcher:
         matches[bird] = [self.string_matcher.match(name, bird.binomial_name)]
     return matches
 
-  def search_by_language_names(self,
-        birds: List[Bird],
-        name: str,
-  ) -> Dict[Bird, List[float]]:
+  def search_by_language_names(self, name: str) -> Dict[Bird, List[float]]:
     matches = dict()
-    for dictionary in self.__get_bird_dictionaries():
-      for bird in birds:
-        binomial_name = bird.binomial_name
-        if binomial_name in dictionary and name.lower() in dictionary[
-          binomial_name].lower():
-          match = self.string_matcher.match(name, dictionary[binomial_name])
-          matches[bird] = matches[bird] + [match] if bird in matches else [
-            match]
+    bird_names: List[BirdName] = self.session.query(BirdName).all()
+    for bird_name in bird_names:
+      if name.lower() in bird_name.name.lower():
+        match = self.string_matcher.match(name.lower(), bird_name.name.lower())
+        bird = bird_name.bird
+        matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches
-
-  def __get_bird_dictionaries(self):
-    locales = self.locale_repository.locales
-    loaded_locales = map(self.locale_loader.load_locale, locales)
-    return [l.bird_dictionary for l in loaded_locales if l.bird_dictionary]
-
 
 class ResultBuilder:
 

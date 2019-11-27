@@ -137,9 +137,7 @@ def create_birds_routes(link_factory: LinkFactory):
 
 def create_search_routes(
       link_factory: LinkFactory,
-      locale_repository: LocaleRepository,
       string_matcher: StringMatcher,
-      locale_loader: LocaleLoader,
 ):
   def _external_picture_url(picture: Picture) -> str:
     static_picture_url = os.path.join('/static/', picture.filepath)
@@ -164,9 +162,7 @@ def create_search_routes(
     embed = embed if embed else []
     bird_searcher = BirdSearcher(
       g.database_session,
-      locale_repository,
       string_matcher,
-      locale_loader,
     )
     search_matches = bird_searcher.search(query)
     search_matches.sort(key=lambda m: m.score, reverse=True)

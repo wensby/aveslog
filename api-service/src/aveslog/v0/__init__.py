@@ -116,12 +116,7 @@ def create_api_v0_blueprint(
 
   birds_routes = create_birds_routes(link_factory)
   register_routes(birds_routes)
-  search_routes = create_search_routes(
-    link_factory,
-    locale_repository,
-    string_matcher,
-    locale_loader,
-  )
+  search_routes = create_search_routes(link_factory, string_matcher)
   register_routes(search_routes)
   registration_routes = create_registration_routes(
     account_registration_controller,

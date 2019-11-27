@@ -34,6 +34,7 @@ class Bird(Base):
   __tablename__ = 'bird'
   id = Column(Integer, primary_key=True)
   binomial_name = Column(String, nullable=False)
+  names = relationship('BirdName')
   thumbnail: BirdThumbnail = relationship('BirdThumbnail', uselist=False)
 
   def __eq__(self, other: Any):
@@ -71,6 +72,7 @@ class BirdName(Base):
   bird_id = Column(Integer, ForeignKey('bird.id'), nullable=False)
   locale_id = Column(Integer, ForeignKey('locale.id'), nullable=False)
   name = Column(String, nullable=False)
+  bird = relationship('Bird', uselist=False)
 
   def __repr__(self) -> str:
     return f"<BirdName(name='{self.name}')>"
