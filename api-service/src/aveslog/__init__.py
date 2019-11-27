@@ -44,6 +44,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
 def configure_app(app: Flask, test_config: dict) -> None:
   app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+  app.config['JSON_AS_ASCII'] = False
   app.config['RATELIMIT_HEADER_LIMIT'] = 'X-Rate-Limit-Limit'
   app.config['RATELIMIT_HEADER_REMAINING'] = 'X-Rate-Limit-Remaining'
   app.config['RATELIMIT_HEADER_RESET'] = 'X-Rate-Limit-Reset'
