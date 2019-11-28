@@ -117,14 +117,6 @@ class AccountRepository:
     g.database_session.commit()
     return account_registration
 
-  def find_account_registration(self,
-        email: EmailAddress,
-        token: str,
-  ) -> Optional[AccountRegistration]:
-    return g.database_session.query(AccountRegistration). \
-      filter(AccountRegistration.email.like(email.raw)). \
-      filter(AccountRegistration.token.like(token)).first()
-
   def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
     return g.database_session.query(Account). \
       filter(Account.email.like(email.raw)).first()
