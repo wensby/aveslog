@@ -67,11 +67,7 @@ class TestBird(AppTestCase):
 
   def test_get_bird_when_not_found(self):
     response = self.client.get('/birds/content-not-found')
-
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-    self.assertDictEqual(response.json, {
-      'message': 'Not Found'
-    })
 
   def assert_rate_limit_headers(self, response, expected_remaining):
     headers = response.headers

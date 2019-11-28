@@ -130,17 +130,17 @@ def create_birds_routes(link_factory: LinkFactory):
     return names_by_locale_code
 
   def get_bird(bird_identifier: str) -> Response:
-    reformatted = bird_identifier.replace('-', ' ')
+    binomial_name = (bird_identifier.replace('-', ' ').capitalize())
     bird = g.database_session.query(Bird) \
       .options(joinedload(Bird.names)) \
-      .options(joinedload(Bird.thumbnail).options(joinedload(BirdThumbnail.picture))) \
-      .filter(Bird.binomial_name.ilike(reformatted)) \
+      .options(joinedload(Bird.thumbnail)
+      .options(joinedload(BirdThumbnail.picture))) \
+      .filter_by(binomial_name=binomial_name) \
       .first()
     if not bird:
-      return create_flask_response(
-        RestApiResponse(HTTPStatus.NOT_FOUND, {'message': 'Not Found'}))
+      return make_response('', HTTPStatus.NOT_FOUND)
     bird_data = get_bird_data(bird)
-    return create_flask_response(RestApiResponse(HTTPStatus.OK, bird_data))
+    return make_response(jsonify(bird_data), HTTPStatus.OK)
 
   routes = [
     {
