@@ -170,3 +170,17 @@ class TestCreateAccount(AppTestCase):
     resource = f'/accounts'
     json = {'token': token, 'username': username, 'password': password}
     return self.client.post(resource, json=json)
+
+
+class TestGetSingleAccount(AppTestCase):
+
+  def test_get_single_account(self):
+    self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
+
+    response = self.get_with_access_token('/accounts/hulot', account_id=1)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'username': 'hulot',
+      'birderId': 1,
+    })
