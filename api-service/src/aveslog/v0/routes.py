@@ -17,7 +17,7 @@ from aveslog.v0.link import LinkFactory
 from aveslog.v0.account import AccountRepository, Password, PasswordHasher, \
   Username, Credentials, AccountFactory
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
-  Authenticator, AuthenticationTokenFactory, RefreshTokenRepository, \
+  Authenticator, AuthenticationTokenFactory, \
   PasswordResetController, PasswordUpdateController, SaltFactory
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
@@ -371,7 +371,6 @@ def create_authentication_routes(
       locale_loader: LocaleLoader,
       authenticator: Authenticator,
       token_factory: AuthenticationTokenFactory,
-      refresh_token_repository: RefreshTokenRepository,
       password_reset_controller: PasswordResetController,
       password_update_controller: PasswordUpdateController,
 ) -> list:
@@ -392,8 +391,11 @@ def create_authentication_routes(
     return RestApiResponse(HTTPStatus.NO_CONTENT, {})
 
   def create_persistent_refresh_token(account: Account) -> RefreshToken:
+    session = g.database_session
     token = token_factory.create_refresh_token(account.id)
-    return refresh_token_repository.put_refresh_token(token)
+    session.add(token)
+    session.commit()
+    return token
 
   def post_refresh_token() -> Response:
     username = request.args.get('username')
@@ -414,8 +416,8 @@ def create_authentication_routes(
   @require_authentication
   def delete_refresh_token(refresh_token_id: int) -> Response:
     account = g.authenticated_account
-    refresh_token = refresh_token_repository.refresh_token(
-      refresh_token_id)
+    session = g.database_session
+    refresh_token = session.query(RefreshToken).get(refresh_token_id)
     if not refresh_token:
       return create_flask_response(refresh_token_deleted_response())
     if refresh_token.account_id != account.id:
@@ -424,7 +426,8 @@ def create_authentication_routes(
         'Authorization required',
         status_code=HTTPStatus.UNAUTHORIZED,
       ))
-    refresh_token_repository.remove_refresh_token(refresh_token)
+    session.delete(refresh_token)
+    session.commit()
     response = refresh_token_deleted_response()
     return create_flask_response(response)
 
@@ -441,8 +444,10 @@ def create_authentication_routes(
       elif decode_result.error == 'signature-expired':
         return create_flask_response(
           create_unauthorized_response('refresh token expired'))
-    if not refresh_token_repository.refresh_token_by_jwt(
-          refresh_token_jwt):
+    token = g.database_session.query(RefreshToken) \
+      .filter_by(token=refresh_token_jwt) \
+      .first()
+    if not token:
       return create_flask_response(
         create_unauthorized_response('refresh token revoked'))
     account_id = decode_result.payload['sub']

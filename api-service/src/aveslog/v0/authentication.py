@@ -1,12 +1,12 @@
 import os
 from base64 import b64encode
 from datetime import timedelta, datetime
-from typing import Union, Optional, Callable, Any, List
+from typing import Union, Optional, Callable, Any
 
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
-from aveslog.v0.models import Account, Birder
+from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
@@ -14,10 +14,8 @@ from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.mail import MailDispatcher
-from aveslog.v0.account import Username
 from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import TokenFactory
-from aveslog.v0.account import Credentials
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import AccountRepository
@@ -42,47 +40,6 @@ class AccessToken:
   def __repr__(self) -> str:
     return (f'{self.__class__.__name__}({self.jwt}, {self.account_id}, '
             f'{self.expiration_date})')
-
-
-class RefreshTokenRepository:
-
-  def put_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    if not token.id:
-      return self.__insert_refresh_token(token)
-    return self.__update_refresh_token(token)
-
-  def refresh_token_by_jwt(self, jwt: str) -> Optional[RefreshToken]:
-    return g.database_session.query(RefreshToken).filter_by(token=jwt).first()
-
-  def remove_refresh_tokens(self, account: Account) -> List[RefreshToken]:
-    refresh_tokens = g.database_session.query(RefreshToken).filter_by(
-      account_id=account.id).all()
-    for refresh_token in refresh_tokens:
-      g.database_session.delete(refresh_token)
-    g.database_session.commit()
-    return refresh_tokens
-
-  def refresh_token(self, refresh_token_id: int) -> Optional[RefreshToken]:
-    return g.database_session.query(RefreshToken).get(refresh_token_id)
-
-  def remove_refresh_token(self,
-        refresh_token: RefreshToken) -> Optional[RefreshToken]:
-    g.database_session.delete(refresh_token)
-    g.database_session.commit()
-    return refresh_token
-
-  def __insert_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    g.database_session.add(token)
-    g.database_session.commit()
-    return token
-
-  def __update_refresh_token(self, token: RefreshToken) -> RefreshToken:
-    current = self.refresh_token(token.id)
-    current.token = token.token
-    current.account_id = token.account_id
-    current.expiration_date = token.expiration_date
-    g.database_session.commit()
-    return current
 
 
 class Authenticator:
@@ -167,15 +124,15 @@ class AccountRegistrationController:
 
 class PasswordUpdateController:
 
-  def __init__(self,
-        password_repository: PasswordRepository,
-        refresh_token_repository: RefreshTokenRepository):
+  def __init__(self, password_repository: PasswordRepository):
     self.password_repository = password_repository
-    self.refresh_token_repository = refresh_token_repository
 
   def update_password(self, account: Account, password: Password) -> None:
+    session = g.database_session
     self.password_repository.update_password(account.id, password)
-    self.refresh_token_repository.remove_refresh_tokens(account)
+    for refresh_token in account.refresh_tokens:
+      session.delete(refresh_token)
+    session.commit()
 
 
 class PasswordResetController:

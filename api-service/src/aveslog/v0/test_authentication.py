@@ -11,7 +11,6 @@ from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
-from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
 from aveslog.v0.account import PasswordRepository
@@ -130,8 +129,6 @@ class TestPasswordResetController(TestCase):
     self.mail_dispatcher = Mock()
     self.password_update_controller: PasswordUpdateController = Mock(
       spec=PasswordUpdateController)
-    self.refresh_token_repository: RefreshTokenRepository = Mock(
-      spec=RefreshTokenRepository)
     self.token_factory = Mock()
     self.controller = PasswordResetController(
       self.account_repository,
@@ -277,24 +274,3 @@ class TestRefreshToken(TestCase):
     token = RefreshToken(id=1, token='jwt', account_id=1,
       expiration_date=datetime(2019, 10, 8, 20, 46))
     self.assertNotEqual(token, 'RefreshToken(1, jwt, 1, 2019-10-08 20:46)')
-
-
-class TestPasswordUpdateController(TestCase):
-
-  def setUp(self) -> None:
-    self.password_repository: PasswordRepository = Mock(
-      spec=PasswordRepository)
-    self.refresh_token_repository: RefreshTokenRepository = Mock(
-      spec=RefreshTokenRepository)
-
-  def test_invokes_correct_methods(self):
-    account = Account(id=1)
-    password = Password('costanza')
-    controller = PasswordUpdateController(
-      self.password_repository, self.refresh_token_repository)
-
-    controller.update_password(account, password)
-
-    self.password_repository.update_password.assert_called_with(1, password)
-    self.refresh_token_repository.remove_refresh_tokens.assert_called_with(
-      account)

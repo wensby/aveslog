@@ -19,7 +19,6 @@ from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import JwtDecoder
-from aveslog.v0.authentication import RefreshTokenRepository
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.localization import Locale
@@ -92,11 +91,7 @@ def create_api_v0_blueprint(
     link_factory,
     token_factory,
   )
-  refresh_token_repository = RefreshTokenRepository()
-  password_update_controller = PasswordUpdateController(
-    password_repository,
-    refresh_token_repository,
-  )
+  password_update_controller = PasswordUpdateController(password_repository)
   password_reset_controller = PasswordResetController(
     account_repository,
     password_repository,
@@ -134,7 +129,6 @@ def create_api_v0_blueprint(
     locale_loader,
     authenticator,
     authentication_token_factory,
-    refresh_token_repository,
     password_reset_controller,
     password_update_controller,
   )
