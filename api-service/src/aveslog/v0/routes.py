@@ -5,7 +5,7 @@ from http import HTTPStatus
 from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, current_app, g
-from sqlalchemy.orm import lazyload
+from sqlalchemy.orm import joinedload
 
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.time import parse_date
@@ -21,7 +21,7 @@ from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController,
   PasswordResetController, PasswordUpdateController, SaltFactory
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
-  RefreshToken, Sighting, Birder
+  RefreshToken, Sighting, Birder, BirdThumbnail
 from aveslog.v0.rest_api import error_response, RestApiResponse, \
   create_flask_response
 from aveslog.v0.search import BirdSearchMatch, StringMatcher
@@ -132,7 +132,8 @@ def create_birds_routes(link_factory: LinkFactory):
   def get_bird(bird_identifier: str) -> Response:
     reformatted = bird_identifier.replace('-', ' ')
     bird = g.database_session.query(Bird) \
-      .options(lazyload('names')) \
+      .options(joinedload(Bird.names)) \
+      .options(joinedload(Bird.thumbnail).options(joinedload(BirdThumbnail.picture))) \
       .filter(Bird.binomial_name.ilike(reformatted)) \
       .first()
     if not bird:
