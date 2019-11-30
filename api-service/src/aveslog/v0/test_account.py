@@ -5,7 +5,6 @@ from binascii import hexlify
 
 from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.account import PasswordHasher
-from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import Username
 from aveslog.v0.account import Password
 from aveslog.v0.account import AccountFactory

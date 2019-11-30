@@ -13,7 +13,6 @@ from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
-from aveslog.v0.account import PasswordRepository
 from aveslog.v0.account import AccountRepository, Password, \
   AccountFactory
 from aveslog.v0.mail import MailServerDispatcher

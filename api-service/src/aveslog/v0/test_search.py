@@ -1,11 +1,9 @@
 from unittest import TestCase
-from unittest.mock import Mock
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
 from aveslog.v0.localization import Locale
-from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.models import Bird, Base, BirdName
 from aveslog.v0.search import BirdSearchMatch
 from aveslog.v0.search import BirdSearcher

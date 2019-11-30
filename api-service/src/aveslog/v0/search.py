@@ -1,11 +1,9 @@
 from difflib import SequenceMatcher
 from typing import Dict, List, Optional
 
-from flask import g
 from sqlalchemy.orm import Session
 
 from .models import Bird, BirdName
-from .localization import LocaleRepository, LocaleLoader
 
 
 class BirdSearchMatch:

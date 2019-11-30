@@ -1,7 +1,7 @@
 from typing import Optional, List, Tuple
 
 from flask import g
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 from aveslog.v0.models import Sighting
 
 
