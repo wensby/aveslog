@@ -14,11 +14,11 @@ from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.account import AccountRepository, Password, PasswordHasher, \
+from aveslog.v0.account import AccountRepository, Password, \
   Username, Credentials, AccountFactory
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, \
-  PasswordResetController, PasswordUpdateController, SaltFactory
+  PasswordResetController, PasswordUpdateController
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
@@ -81,10 +81,7 @@ def require_authentication(route) -> RouteFunction:
       elif decode_result.error == 'signature-expired':
         return access_token_expired_response()
     account_id = decode_result.payload['sub']
-    salt_factory = SaltFactory()
-    password_hasher = PasswordHasher(salt_factory)
-    account_repository = AccountRepository(password_hasher)
-    account = account_repository.account_by_id(account_id)
+    account = g.database_session.query(Account).get(account_id)
     if not account:
       return authorized_account_missing_response()
     g.authenticated_account = account
