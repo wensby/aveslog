@@ -5,13 +5,13 @@ from http import HTTPStatus
 from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, current_app, g
-from sqlalchemy.orm import joinedload
 
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birds_rest_api import bird_summary_representation
+from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.account import AccountRepository, Password, PasswordHasher, \
@@ -21,7 +21,7 @@ from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController,
   PasswordResetController, PasswordUpdateController, SaltFactory
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
-  RefreshToken, Sighting, Birder, BirdThumbnail
+  RefreshToken, Sighting, Birder
 from aveslog.v0.rest_api import error_response, RestApiResponse, \
   create_flask_response
 from aveslog.v0.search import BirdSearchMatch, StringMatcher
@@ -94,58 +94,11 @@ def require_authentication(route) -> RouteFunction:
   return route_wrapper
 
 
-def create_birds_routes(link_factory: LinkFactory):
-  def external_picture_url(picture: Picture) -> str:
-    static_picture_url = os.path.join('/static/', picture.filepath)
-    return link_factory.create_url_external_link(static_picture_url)
-
-  def get_bird_data(bird: Bird) -> dict:
-    bird_data = {
-      'id': bird.binomial_name.lower().replace(' ', '-'),
-      'binomialName': bird.binomial_name,
-    }
-    if bird.names:
-      bird_data['names'] = collect_bird_names(bird.names)
-
-    if bird.thumbnail:
-      bird_data['thumbnail'] = {
-        'url': external_picture_url(bird.thumbnail.picture),
-        'credit': bird.thumbnail.picture.credit,
-      }
-    if bird.thumbnail:
-      bird_data['cover'] = {
-        'url': external_picture_url(bird.thumbnail.picture),
-        'credit': bird.thumbnail.picture.credit,
-      }
-    return bird_data
-
-  def collect_bird_names(bird_names):
-    names_by_locale_code = {}
-    for bird_name in bird_names:
-      code = bird_name.locale.code
-      name = bird_name.name
-      if code not in names_by_locale_code:
-        names_by_locale_code[code] = []
-      names_by_locale_code[code].append(name)
-    return names_by_locale_code
-
-  def get_bird(bird_identifier: str) -> Response:
-    binomial_name = (bird_identifier.replace('-', ' ').capitalize())
-    bird = g.database_session.query(Bird) \
-      .options(joinedload(Bird.names)) \
-      .options(joinedload(Bird.thumbnail)
-      .options(joinedload(BirdThumbnail.picture))) \
-      .filter_by(binomial_name=binomial_name) \
-      .first()
-    if not bird:
-      return make_response('', HTTPStatus.NOT_FOUND)
-    bird_data = get_bird_data(bird)
-    return make_response(jsonify(bird_data), HTTPStatus.OK)
-
+def create_birds_routes():
   routes = [
     {
       'rule': '/birds/<string:bird_identifier>',
-      'func': get_bird,
+      'func': get_single_bird,
     },
   ]
 

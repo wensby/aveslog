@@ -109,7 +109,7 @@ def create_api_v0_blueprint(
   authenticator = Authenticator(account_repository, password_hasher)
   sighting_repository = SightingRepository()
 
-  birds_routes = create_birds_routes(link_factory)
+  birds_routes = create_birds_routes()
   register_routes(birds_routes)
   search_routes = create_search_routes(link_factory, string_matcher)
   register_routes(search_routes)
