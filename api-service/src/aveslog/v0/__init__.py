@@ -28,7 +28,6 @@ from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.rest_api import error_response
-from aveslog.v0.rest_api import create_flask_response
 from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_sightings_routes
 from aveslog.v0.routes import create_birders_routes
@@ -159,11 +158,11 @@ def create_api_v0_blueprint(
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):
-    return create_flask_response(error_response(
+    return error_response(
       ErrorCode.RATE_LIMIT_EXCEEDED,
       f'Rate limit exceeded {e.description}',
       status_code=HTTPStatus.TOO_MANY_REQUESTS,
-    ))
+    )
 
   return blueprint
 

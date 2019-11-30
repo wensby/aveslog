@@ -22,8 +22,7 @@ from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController,
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
-from aveslog.v0.rest_api import error_response, RestApiResponse, \
-  create_flask_response
+from aveslog.v0.rest_api import error_response
 from aveslog.v0.search import BirdSearchMatch, StringMatcher
 from aveslog.v0.search import BirdSearcher
 
@@ -31,35 +30,35 @@ RouteFunction = Callable[..., Response]
 
 
 def authentication_token_missing_response() -> Response:
-  return create_flask_response(error_response(
+  return error_response(
     ErrorCode.AUTHORIZATION_REQUIRED,
     'Authorization required',
     status_code=HTTPStatus.UNAUTHORIZED,
-  ))
+  )
 
 
 def authorized_account_missing_response() -> Response:
-  return create_flask_response(error_response(
+  return error_response(
     ErrorCode.ACCOUNT_MISSING,
     'Authorized account gone',
     status_code=HTTPStatus.UNAUTHORIZED,
-  ))
+  )
 
 
 def access_token_invalid_response() -> Response:
-  return create_flask_response(error_response(
+  return error_response(
     ErrorCode.ACCESS_TOKEN_INVALID,
     'Access token invalid',
     status_code=HTTPStatus.UNAUTHORIZED,
-  ))
+  )
 
 
 def access_token_expired_response() -> Response:
-  return create_flask_response(error_response(
+  return error_response(
     ErrorCode.ACCESS_TOKEN_EXPIRED,
     'Access token expired',
     status_code=HTTPStatus.UNAUTHORIZED,
-  ))
+  )
 
 
 def require_authentication(route) -> RouteFunction:
@@ -138,10 +137,9 @@ def create_search_routes(
     search_matches.sort(key=lambda m: m.score, reverse=True)
     bird_matches = list(
       map(lambda x: _result_item(x, embed), search_matches[:page_size]))
-    response = RestApiResponse(HTTPStatus.OK, {
+    return make_response(jsonify({
       'items': bird_matches,
-    })
-    return create_flask_response(response)
+    }), HTTPStatus.OK)
 
   def parse_embed_list(args):
     return args.get('embed', type=str).split(',') if 'embed' in args else []
@@ -176,20 +174,18 @@ def create_registration_routes(
     email = request.json['email']
     result = initiate_registration(email)
     if result == 'email taken':
-      return create_flask_response(
-        error_response(ErrorCode.EMAIL_TAKEN, 'Email taken'))
+      return error_response(ErrorCode.EMAIL_TAKEN, 'Email taken')
     elif result == 'email invalid':
-      return create_flask_response(
-        error_response(ErrorCode.EMAIL_INVALID, 'Email invalid'))
-    return create_flask_response(RestApiResponse(HTTPStatus.OK, {}))
+      return error_response(ErrorCode.EMAIL_INVALID, 'Email invalid')
+    return make_response('', HTTPStatus.OK)
 
   def get_registration_request(token: str) -> Response:
     registration = find_registration_token(token)
     if registration:
-      return create_flask_response(RestApiResponse(HTTPStatus.OK, {
+      return make_response(jsonify({
         'email': registration.email,
-      }))
-    return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
+      }), HTTPStatus.OK)
+    return make_response('', HTTPStatus.NOT_FOUND)
 
   return [
     {
@@ -232,26 +228,26 @@ def create_account_routes(
         'message': 'Password need to adhere to format: ^.{8,128}$'
       })
     if field_validation_errors:
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.VALIDATION_FAILED,
         'Validation failed',
         additional_errors=field_validation_errors,
-      ))
+      )
     registration = g.database_session.query(AccountRegistration). \
       filter(AccountRegistration.token.like(token)).first()
     if not registration:
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
         'Registration request token invalid',
         status_code=HTTPStatus.BAD_REQUEST,
-      ))
+      )
     email = EmailAddress(registration.email)
     if g.database_session.query(Account).filter_by(username=username).first():
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.USERNAME_TAKEN,
         'Username taken',
         status_code=HTTPStatus.CONFLICT,
-      ))
+      )
     username = Username(username)
     password = Password(password)
     credentials = Credentials(username, password)
@@ -263,7 +259,7 @@ def create_account_routes(
     g.database_session.add(birder)
     g.database_session.commit()
     account_repository.set_account_birder(account, birder)
-    return create_flask_response(RestApiResponse(HTTPStatus.CREATED, {
+    return make_response(jsonify({
       'id': account.id,
       'username': account.username,
       'email': account.email,
@@ -271,31 +267,27 @@ def create_account_routes(
         'id': account.birder.id,
         'name': account.birder.name,
       },
-    }))
+    }), HTTPStatus.CREATED)
 
   @require_authentication
   def get_accounts() -> Response:
     accounts = account_repository.accounts()
-    response = RestApiResponse(HTTPStatus.OK, {
+    return make_response(jsonify({
       'items': list(map(account_response_dict, accounts))
-    })
-    return create_flask_response(response)
+    }), HTTPStatus.OK)
 
   @require_authentication
   def get_account(username: str) -> Response:
     session = g.database_session
     account = session.query(Account).filter_by(username=username).first()
     if not account:
-      return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
-    return create_flask_response(
-      RestApiResponse(HTTPStatus.OK, account_response_dict(account))
-    )
+      return make_response('', HTTPStatus.NOT_FOUND)
+    return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
 
   @require_authentication
   def get_me() -> Response:
     account = g.authenticated_account
-    response = RestApiResponse(HTTPStatus.OK, account_response_dict(account))
-    return create_flask_response(response)
+    return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
 
   return [
     {
@@ -327,21 +319,21 @@ def create_authentication_routes(
       password_reset_controller: PasswordResetController,
       password_update_controller: PasswordUpdateController,
 ) -> list:
-  def credentials_incorrect_response() -> RestApiResponse:
+  def credentials_incorrect_response() -> Response:
     return error_response(
       ErrorCode.CREDENTIALS_INCORRECT,
       'Credentials incorrect',
       status_code=HTTPStatus.UNAUTHORIZED,
     )
 
-  def create_unauthorized_response(message) -> RestApiResponse:
-    return RestApiResponse(HTTPStatus.UNAUTHORIZED, {
+  def create_unauthorized_response(message) -> Response:
+    return make_response(jsonify({
       'status': 'failure',
       'message': message,
-    })
+    }), HTTPStatus.UNAUTHORIZED)
 
-  def refresh_token_deleted_response() -> RestApiResponse:
-    return RestApiResponse(HTTPStatus.NO_CONTENT, {})
+  def refresh_token_deleted_response() -> Response:
+    return make_response('', HTTPStatus.NO_CONTENT)
 
   def create_persistent_refresh_token(account: Account) -> RefreshToken:
     session = g.database_session
@@ -356,15 +348,15 @@ def create_authentication_routes(
     session = g.database_session
     account = session.query(Account).filter_by(username=username).first()
     if not account:
-      return create_flask_response(credentials_incorrect_response())
+      return credentials_incorrect_response()
     if not authenticator.is_account_password_correct(account, password):
-      return create_flask_response(credentials_incorrect_response())
+      return credentials_incorrect_response()
     refresh_token = create_persistent_refresh_token(account)
-    return create_flask_response(RestApiResponse(HTTPStatus.CREATED, {
+    return make_response(jsonify({
       'id': refresh_token.id,
       'refreshToken': refresh_token.token,
       'expirationDate': refresh_token.expiration_date.isoformat(),
-    }))
+    }), HTTPStatus.CREATED)
 
   @require_authentication
   def delete_refresh_token(refresh_token_id: int) -> Response:
@@ -372,44 +364,38 @@ def create_authentication_routes(
     session = g.database_session
     refresh_token = session.query(RefreshToken).get(refresh_token_id)
     if not refresh_token:
-      return create_flask_response(refresh_token_deleted_response())
+      return refresh_token_deleted_response()
     if refresh_token.account_id != account.id:
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.AUTHORIZATION_REQUIRED,
         'Authorization required',
         status_code=HTTPStatus.UNAUTHORIZED,
-      ))
+      )
     session.delete(refresh_token)
     session.commit()
-    response = refresh_token_deleted_response()
-    return create_flask_response(response)
+    return refresh_token_deleted_response()
 
   def get_access_token() -> Response:
     refresh_token_jwt = request.headers.get('refreshToken')
     if not refresh_token_jwt:
-      return create_flask_response(
-        create_unauthorized_response('refresh token required'))
+      return create_unauthorized_response('refresh token required')
     decode_result = jwt_decoder.decode_jwt(refresh_token_jwt)
     if not decode_result.ok:
       if decode_result.error == 'token-invalid':
-        return create_flask_response(
-          create_unauthorized_response('refresh token invalid'))
+        return create_unauthorized_response('refresh token invalid')
       elif decode_result.error == 'signature-expired':
-        return create_flask_response(
-          create_unauthorized_response('refresh token expired'))
+        return create_unauthorized_response('refresh token expired')
     token = g.database_session.query(RefreshToken) \
       .filter_by(token=refresh_token_jwt) \
       .first()
     if not token:
-      return create_flask_response(
-        create_unauthorized_response('refresh token revoked'))
+      return create_unauthorized_response('refresh token revoked')
     account_id = decode_result.payload['sub']
     access_token = token_factory.create_access_token(account_id)
-    response = RestApiResponse(HTTPStatus.OK, {
+    return make_response(jsonify({
       'jwt': access_token.jwt,
       'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
-    })
-    return create_flask_response(response)
+    }), HTTPStatus.OK)
 
   def initiate_password_reset(email: str) -> bool:
     locale = load_english_locale()
@@ -423,12 +409,11 @@ def create_authentication_routes(
     email = request.json['email']
     created = initiate_password_reset(email)
     if not created:
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.EMAIL_MISSING,
         'E-mail not associated with any account',
-      ))
-    response = RestApiResponse(HTTPStatus.OK, {})
-    return create_flask_response(response)
+      )
+    return make_response('', HTTPStatus.OK)
 
   def try_perform_password_reset(password: str,
         password_reset_token: str) -> str:
@@ -439,9 +424,8 @@ def create_authentication_routes(
     password = request.json['password']
     success = try_perform_password_reset(password, token)
     if not success:
-      return create_flask_response(RestApiResponse(HTTPStatus.NOT_FOUND, {}))
-    response = RestApiResponse(HTTPStatus.OK, {})
-    return create_flask_response(response)
+      return make_response('', HTTPStatus.NOT_FOUND)
+    return make_response('', HTTPStatus.OK)
 
   def is_password_correct(account: Account, password: str) -> bool:
     return authenticator.is_account_password_correct(account, password)
@@ -453,18 +437,16 @@ def create_authentication_routes(
     raw_new_password = request.json['newPassword']
     old_password_correct = is_password_correct(account, old_password)
     if not old_password_correct:
-      return create_flask_response(error_response(
+      return error_response(
         ErrorCode.OLD_PASSWORD_INCORRECT,
         'Old password incorrect',
         status_code=HTTPStatus.UNAUTHORIZED,
-      ))
+      )
     if not Password.is_valid(raw_new_password):
-      return create_flask_response(
-        error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid'))
+      return error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid')
     new_password = Password(raw_new_password)
     password_update_controller.update_password(account, new_password)
-    response = RestApiResponse(HTTPStatus.NO_CONTENT, {})
-    return create_flask_response(response)
+    return make_response('', HTTPStatus.NO_CONTENT)
 
   return [
     {

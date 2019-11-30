@@ -106,7 +106,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset_email('hulot@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def test_post_password_reset_email_when_already_exist(self):
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
@@ -116,7 +116,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset_email('tbone@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def test_post_password_reset_email_when_email_not_linked_with_account(self):
     self.db_insert_locale(1, 'en')
@@ -133,7 +133,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset('myToken', 'myNewPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-    self.assertEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def test_post_password_reset_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
@@ -142,7 +142,7 @@ class TestPasswordReset(AppTestCase):
     response = self.post_password_reset('myToken', 'myNewPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def post_password_reset_email(self, email: str) -> Response:
     json = {'email': email}

@@ -3,27 +3,16 @@ from http import HTTPStatus
 from flask import Response, make_response, jsonify
 
 
-class RestApiResponse:
-
-  def __init__(self, status: int, data: dict):
-    self.status = status
-    self.data = data
-
-
 def error_response(
       error_code: int,
       message: str,
       additional_errors: list = None,
       status_code: int = HTTPStatus.BAD_REQUEST,
-) -> RestApiResponse:
+) -> Response:
   data = {
     'code': error_code,
     'message': message,
   }
   if additional_errors:
     data['errors'] = additional_errors
-  return RestApiResponse(status_code, data)
-
-
-def create_flask_response(response: RestApiResponse) -> Response:
-  return make_response(jsonify(response.data), response.status)
+  return make_response(jsonify(data), status_code)

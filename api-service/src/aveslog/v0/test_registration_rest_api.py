@@ -14,7 +14,7 @@ class TestCreateRegistrationRequest(AppTestCase):
     response = self.post_registration_request('hulot@mail.com')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertDictEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def test_post_registration_request_when_email_invalid(self):
     self.db_insert_locale(1, 'en')
@@ -60,7 +60,7 @@ class TestGetRegistrationRequest(AppTestCase):
     response = self.get_registration_request('myToken')
 
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
-    self.assertDictEqual(response.json, {})
+    self.assertIsNone(response.json)
 
   def get_registration_request(self, token: str) -> Response:
     return self.client.get(f'/registration-requests/{token}')
