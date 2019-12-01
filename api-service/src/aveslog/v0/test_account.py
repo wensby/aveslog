@@ -4,9 +4,8 @@ from unittest.mock import Mock
 from binascii import hexlify
 
 from aveslog.v0.models import Account, PasswordResetToken
-from aveslog.v0.account import PasswordHasher
-from aveslog.v0.account import Username
-from aveslog.v0.account import Password
+from aveslog.v0.account import PasswordHasher, is_valid_username, \
+  is_valid_password
 from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import Credentials
 from aveslog.v0.mail import EmailAddress
@@ -14,35 +13,26 @@ from aveslog.v0.mail import EmailAddress
 
 class TestUsername(TestCase):
 
-  def test_construction_throws_exception_when_invalid_format(self):
-    self.assertRaises(Exception, Username, '')
-    self.assertRaises(Exception, Username, '1234')
-    self.assertRaises(Exception, Username, 'abcde@')
-    self.assertRaises(Exception, Username, (''.join(['a'] * 33)))
-
-  def test_eq_false_when_another_type(self):
-    self.assertNotEqual(Username('hulot'), 'hulot')
-
-  def test_repr(self):
-    self.assertEqual(repr(Username('hulot')), 'Username(hulot)')
+  def test_invalid_usernames(self):
+    self.assertFalse(is_valid_username(''))
+    self.assertFalse(is_valid_username('1234'))
+    self.assertFalse(is_valid_username('abcde@'))
+    self.assertFalse(is_valid_username(''.join(['a'] * 33)))
 
 
 class TestPassword(TestCase):
 
-  def test_construction_throws_exception_when_invalid_format(self):
-    self.assertRaises(Exception, Password, '')
-    self.assertRaises(Exception, Password, '1234567')
-    self.assertRaises(Exception, Password, ('').join(['a'] * 129))
-
-  def test_eq_false_when_another_type(self):
-    self.assertNotEqual(Password('12345678'), '12345678')
+  def test_invalid_passwords(self):
+    self.assertFalse(is_valid_password(''))
+    self.assertFalse(is_valid_password('1234567'))
+    self.assertFalse(is_valid_password(''.join(['a'] * 129)))
 
 
 class TestCredentials(TestCase):
 
   def test_eq_with_other_type(self) -> None:
-    username = Username('kenny')
-    password = Password('bostick!')
+    username = 'kenny'
+    password = 'bostick!'
     credentials = Credentials(username, password)
 
     self.assertNotEqual(credentials, {
@@ -70,10 +60,8 @@ class TestAccount(TestCase):
 
 
 class TestAccountFactory(TestCase):
-  username = Username('alice')
   email = EmailAddress('alice@email.com')
-  password = Password('password')
-  credentials = Credentials(username, password)
+  credentials = Credentials('alice', 'password')
 
   def setUp(self) -> None:
     self.password_hasher = Mock()
@@ -90,7 +78,7 @@ class TestAccountFactory(TestCase):
     account = self.factory.create_account(self.email, self.credentials)
 
     self.assertEqual(account.email, self.email.raw)
-    self.assertEqual(account.username, self.credentials.username.raw)
+    self.assertEqual(account.username, self.credentials.username)
     self.assertEqual(account.hashed_password.salt, 'mySalt')
     self.assertEqual(account.hashed_password.salted_hash, 'mySaltedHash')
 
@@ -106,8 +94,7 @@ class TestPasswordHasher(TestCase):
     password = 'myPassword'
     self.salt_factory.create_salt.return_value = salt
 
-    result = self.password_hasher.create_salt_hashed_password(
-      Password(password))
+    result = self.password_hasher.create_salt_hashed_password(password)
 
     expected_hashed_password = hexlify(
       pbkdf2_hmac('sha256', password.encode(), salt.encode(), 100000)).decode()
@@ -116,7 +103,7 @@ class TestPasswordHasher(TestCase):
   def test_hash_password(self):
     hasher = PasswordHasher(Mock())
     hash = '0394a2ede332c9a13eb82e9b24631604c31df978b4e2f0fbd2c549944f9d79a5'
-    self.assertTrue(hasher.hash_password(Password('password'), 'salt') == hash)
+    self.assertTrue(hasher.hash_password('password', 'salt') == hash)
 
 
 class TestPasswordResetToken(TestCase):

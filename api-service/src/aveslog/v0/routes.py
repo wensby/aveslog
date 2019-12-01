@@ -14,8 +14,9 @@ from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.account import AccountRepository, Password, \
-  Username, Credentials, AccountFactory
+from aveslog.v0.account import AccountRepository, \
+  Credentials, AccountFactory, is_valid_password
+from aveslog.v0.account import is_valid_username
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, \
   PasswordResetController, PasswordUpdateController
@@ -212,13 +213,13 @@ def create_account_routes(
     username = request.json.get('username')
     password = request.json.get('password')
     field_validation_errors = []
-    if not Username.is_valid(username):
+    if not is_valid_username(username):
       field_validation_errors.append({
         'code': ErrorCode.INVALID_USERNAME_FORMAT,
         'field': 'username',
         'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$',
       })
-    if not Password.is_valid(password):
+    if not is_valid_password(password):
       field_validation_errors.append({
         'code': ErrorCode.INVALID_PASSWORD_FORMAT,
         'field': 'password',
@@ -245,8 +246,6 @@ def create_account_routes(
         'Username taken',
         status_code=HTTPStatus.CONFLICT,
       )
-    username = Username(username)
-    password = Password(password)
     credentials = Credentials(username, password)
     account = account_factory.create_account(email, credentials)
     account = account_repository.add(account)
@@ -431,7 +430,7 @@ def create_authentication_routes(
   def post_password() -> Response:
     account = g.authenticated_account
     old_password = request.json['oldPassword']
-    raw_new_password = request.json['newPassword']
+    new_password = request.json['newPassword']
     old_password_correct = is_password_correct(account, old_password)
     if not old_password_correct:
       return error_response(
@@ -439,9 +438,8 @@ def create_authentication_routes(
         'Old password incorrect',
         status_code=HTTPStatus.UNAUTHORIZED,
       )
-    if not Password.is_valid(raw_new_password):
+    if not is_valid_password(new_password):
       return error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid')
-    new_password = Password(raw_new_password)
     password_update_controller.update_password(account, new_password)
     return make_response('', HTTPStatus.NO_CONTENT)
 

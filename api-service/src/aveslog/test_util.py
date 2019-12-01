@@ -12,7 +12,7 @@ from flask.testing import FlaskClient
 from werkzeug.datastructures import Headers
 
 import aveslog
-from aveslog.v0.account import PasswordHasher, Password
+from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory

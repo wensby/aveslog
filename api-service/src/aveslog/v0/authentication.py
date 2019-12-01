@@ -19,7 +19,6 @@ from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import AccountRepository
-from aveslog.v0.account import Password
 
 
 class AccessToken:
@@ -52,7 +51,7 @@ class Authenticator:
 
   def is_account_password_correct(self,
         account: Account,
-        password: Union[Password, str]) -> bool:
+        password: str) -> bool:
     hashed_password = self.account_repository.find_hashed_password(account)
     if not hashed_password:
       return False
@@ -127,7 +126,7 @@ class PasswordUpdateController:
   def __init__(self, password_repository: PasswordRepository):
     self.password_repository = password_repository
 
-  def update_password(self, account: Account, password: Password) -> None:
+  def update_password(self, account: Account, password: str) -> None:
     session = g.database_session
     self.password_repository.update_password(account.id, password)
     for refresh_token in account.refresh_tokens:
@@ -184,7 +183,7 @@ class PasswordResetController:
     if not reset_token:
       return None
     account = self.account_repository.account_by_id(reset_token.account_id)
-    self.password_update_controller.update_password(account, Password(password))
+    self.password_update_controller.update_password(account, password)
     self.password_repository.remove_password_reset_token(token)
     return 'success'
 

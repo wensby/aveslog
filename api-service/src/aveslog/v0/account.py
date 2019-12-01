@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Union, Any, List, TypeVar
+from typing import Optional, Any, List, TypeVar
 
 from flask import g
 from aveslog.v0.models import Birder, Account, AccountRegistration, \
@@ -11,50 +11,19 @@ from aveslog.v0.models import Birder, Account, AccountRegistration, \
 from aveslog.v0.mail import EmailAddress
 
 
-class Username:
-  regex = re.compile('^[a-z0-9_.-]{5,32}$')
-
-  @classmethod
-  def is_valid(cls, raw_username):
-    return cls.regex.match(raw_username)
-
-  def __init__(self, raw_username):
-    if not self.is_valid(raw_username):
-      raise Exception(f'Username format invalid: {raw_username}')
-    self.raw = raw_username
-
-  def __eq__(self, other):
-    if isinstance(other, Username):
-      return self.__dict__ == other.__dict__
-    return False
-
-  def __repr__(self) -> str:
-    return f'{self.__class__.__name__}({self.raw})'
+def is_valid_username(username: str) -> bool:
+  return re.compile('^[a-z0-9_.-]{5,32}$').match(username) is not None
 
 
-class Password:
-  regex = re.compile('^.{8,128}$')
-
-  @classmethod
-  def is_valid(cls, raw_password):
-    return cls.regex.match(raw_password)
-
-  def __init__(self, raw_password):
-    if not self.is_valid(raw_password):
-      raise Exception(f'Password format invalid: {raw_password}')
-    self.raw = raw_password
-
-  def __eq__(self, other):
-    if isinstance(other, Password):
-      return self.__dict__ == other.__dict__
-    return False
+def is_valid_password(password: str) -> bool:
+  return re.compile('^.{8,128}$').match(password) is not None
 
 
 class Credentials:
 
-  def __init__(self, username: Username, password: Password) -> None:
-    self.username: Username = username
-    self.password: Password = password
+  def __init__(self, username: str, password: str) -> None:
+    self.username = username
+    self.password = password
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, Credentials):
@@ -72,9 +41,7 @@ class PasswordHasher:
     hash = self.hash_password(password, salt)
     return (salt, hash)
 
-  def hash_password(self, password: Union[Password, str], salt: str) -> str:
-    if isinstance(password, Password):
-      password = password.raw
+  def hash_password(self, password: str, salt: str) -> str:
     encoded_password = password.encode()
     encoded_salt = salt.encode()
     binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
@@ -183,7 +150,7 @@ class AccountFactory:
   def create_account(self,
         email: EmailAddress,
         credentials: Credentials) -> Optional[Account]:
-    account = Account(username=credentials.username.raw, email=email.raw)
+    account = Account(username=credentials.username, email=email.raw)
     salt_hashed_password = self.password_hasher.create_salt_hashed_password(
       credentials.password)
     salt = salt_hashed_password[0]

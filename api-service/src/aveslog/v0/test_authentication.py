@@ -13,8 +13,7 @@ from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
-from aveslog.v0.account import AccountRepository, Password, \
-  AccountFactory
+from aveslog.v0.account import AccountRepository, AccountFactory
 from aveslog.v0.mail import MailServerDispatcher
 from aveslog.v0.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
@@ -197,7 +196,7 @@ class TestPasswordResetController(TestCase):
       token)
     self.assertEqual(result, 'success')
     self.password_update_controller.update_password.assert_called_with(
-      account, Password(valid_password))
+      account, valid_password)
 
   def test_perform_password_reset_removes_password_reset_token_on_success(self):
     result = self.controller.perform_password_reset('myToken', valid_password)
