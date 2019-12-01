@@ -396,8 +396,12 @@ GET /accounts/:username
 Status: 200 OK
 
 {
+  "id": 4,
   "username": "kennybostick",
-  "birderId": 4
+  "birder": {
+    "id": 8,
+    "name": "kennybostick"
+  }
 }
 ```
 
@@ -437,7 +441,7 @@ Status: 201 CREATED
 Upon a successful account creation, the registration request resource associated
 with the token used will be consumed and deleted.
 
-### Get Authorized Account
+### Get Authenticated Account
 
 ```
 GET /account
@@ -453,8 +457,12 @@ GET /account
 Status: 200 OK
 
 {
+  "id": 4,
   "username": "kennybostick",
-  "birderId": 4
+  "birder": {
+    "id": 8,
+    "name": "kennybostick"
+  }
 }
 ```
 

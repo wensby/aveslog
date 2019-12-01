@@ -23,7 +23,7 @@ export default ({ username }) => {
   useEffect(() => {
     const fetchSightings = async () => {
       const accessToken = await getAccessToken();
-      const response = await new SightingService().fetchBirderSightings(account.birderId, accessToken);
+      const response = await new SightingService().fetchBirderSightings(account.birder.id, accessToken);
       if (response.status === 200) {
         const json = await response.json();
         setSightings(json.items);

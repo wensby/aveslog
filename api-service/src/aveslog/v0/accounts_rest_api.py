@@ -108,7 +108,7 @@ def get_account(username: str):
   account = session.query(Account).filter_by(username=username).first()
   if not account:
     return make_response('', HTTPStatus.NOT_FOUND)
-  json = jsonify(account_summary_representation(account))
+  json = jsonify(account_representation(account))
   return make_response(json, HTTPStatus.OK)
 
 
@@ -122,7 +122,7 @@ def get_accounts() -> Response:
 @require_authentication
 def get_me() -> Response:
   account = g.authenticated_account
-  json = jsonify(account_summary_representation(account))
+  json = jsonify(account_representation(account))
   return make_response(json, HTTPStatus.OK)
 
 

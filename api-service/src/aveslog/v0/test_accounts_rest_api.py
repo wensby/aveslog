@@ -86,8 +86,13 @@ class TestAccount(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertDictEqual(response.json, {
+      'id': 1,
       'username': 'hulot',
-      'birderId': 1,
+      'email': 'hulot@mail.com',
+      'birder': {
+        'id': 1,
+        'name': 'hulot',
+      },
     })
 
   def get_own_account(self, token):
@@ -181,6 +186,11 @@ class TestGetSingleAccount(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertDictEqual(response.json, {
+      'id': 1,
       'username': 'hulot',
-      'birderId': 1,
+      'email': 'hulot@mail.com',
+      'birder': {
+        'id': 1,
+        'name': 'hulot',
+      },
     })
