@@ -97,9 +97,6 @@ class AccountRepository:
     account.birder_id = birder.id
     g.database_session.commit()
 
-  def accounts(self) -> List[Account]:
-    return g.database_session.query(Account).all()
-
 
 class PasswordRepository:
 

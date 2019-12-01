@@ -124,7 +124,7 @@ def create_api_v0_blueprint(
     password_update_controller,
   )
   register_routes(authentication_routes)
-  account_routes = create_account_routes(account_repository, account_factory)
+  account_routes = create_account_routes()
   register_routes(account_routes)
   birders_routers = create_birders_routes()
   register_routes(birders_routers)

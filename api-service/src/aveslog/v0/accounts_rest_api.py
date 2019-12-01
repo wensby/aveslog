@@ -6,9 +6,10 @@ from flask import request
 from flask import make_response
 from flask import jsonify
 
-from aveslog.v0 import ErrorCode
+from aveslog.v0 import ErrorCode, SaltFactory
 from aveslog.v0 import error_response
-from aveslog.v0.account import is_valid_username
+from aveslog.v0.account import is_valid_username, AccountFactory, \
+  PasswordHasher, AccountRepository
 from aveslog.v0.account import is_valid_password
 from aveslog.v0.account import Credentials
 from aveslog.v0.mail import EmailAddress
@@ -17,7 +18,7 @@ from aveslog.v0.models import Account
 from aveslog.v0.models import Birder
 
 
-def create_account(account_factory=None, account_repository=None) -> Response:
+def create_account() -> Response:
   token = request.json.get('token')
   username = request.json.get('username')
   password = request.json.get('password')
@@ -56,7 +57,10 @@ def create_account(account_factory=None, account_repository=None) -> Response:
       status_code=HTTPStatus.CONFLICT,
     )
   credentials = Credentials(username, password)
+  password_hasher = PasswordHasher(SaltFactory())
+  account_factory = AccountFactory(password_hasher)
   account = account_factory.create_account(email, credentials)
+  account_repository = AccountRepository(password_hasher)
   account = account_repository.add(account)
   account_repository.remove_account_registration_by_id(registration.id)
   g.database_session.rollback()

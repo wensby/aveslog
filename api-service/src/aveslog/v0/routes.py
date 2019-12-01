@@ -14,8 +14,7 @@ from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.account import AccountRepository, \
-  AccountFactory, is_valid_password
+from aveslog.v0.account import is_valid_password
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, \
   PasswordResetController, PasswordUpdateController
@@ -197,22 +196,16 @@ def create_registration_routes(
   ]
 
 
-def create_account_routes(
-      account_repository: AccountRepository,
-      account_factory: AccountFactory,
-) -> list:
+def create_account_routes() -> list:
   def account_response_dict(account: Account):
     return {
       'username': account.username,
       'birderId': account.birder_id
     }
 
-  def create_account() -> Response:
-    return accounts_rest_api.create_account(account_factory, account_repository)
-
   @require_authentication
   def get_accounts() -> Response:
-    accounts = account_repository.accounts()
+    accounts = g.database_session.query(Account).all()
     return make_response(jsonify({
       'items': list(map(account_response_dict, accounts))
     }), HTTPStatus.OK)
@@ -237,7 +230,7 @@ def create_account_routes(
     },
     {
       'rule': '/accounts',
-      'func': create_account,
+      'func': accounts_rest_api.create_account,
       'options': {'methods': ['POST']},
     },
     {
