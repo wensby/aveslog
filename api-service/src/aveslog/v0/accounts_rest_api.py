@@ -38,8 +38,8 @@ def create_account() -> Response:
   session.add(account)
   session.delete(registration)
   session.commit()
-  representation = account_representation(account)
-  return make_response(jsonify(representation), HTTPStatus.CREATED)
+  json = jsonify(account_representation(account))
+  return make_response(json, HTTPStatus.CREATED)
 
 
 def account_representation(account):
@@ -108,24 +108,25 @@ def get_account(username: str):
   account = session.query(Account).filter_by(username=username).first()
   if not account:
     return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
+  json = jsonify(account_summary_representation(account))
+  return make_response(json, HTTPStatus.OK)
 
 
 @require_authentication
 def get_accounts() -> Response:
   accounts = g.database_session.query(Account).all()
-  return make_response(jsonify({
-    'items': list(map(account_response_dict, accounts))
-  }), HTTPStatus.OK)
+  json = jsonify({'items': list(map(account_summary_representation, accounts))})
+  return make_response(json, HTTPStatus.OK)
 
 
 @require_authentication
 def get_me() -> Response:
   account = g.authenticated_account
-  return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
+  json = jsonify(account_summary_representation(account))
+  return make_response(json, HTTPStatus.OK)
 
 
-def account_response_dict(account: Account):
+def account_summary_representation(account: Account):
   return {
     'username': account.username,
     'birderId': account.birder_id
