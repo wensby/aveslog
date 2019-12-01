@@ -2,13 +2,13 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Any, List, TypeVar
+from typing import Optional, Any, TypeVar
 
 from flask import g
 from aveslog.v0.models import Birder, Account, AccountRegistration, \
   HashedPassword, PasswordResetToken
 
-from aveslog.v0.mail import EmailAddress
+from aveslog.mail import EmailAddress
 
 
 def is_valid_username(username: str) -> bool:

@@ -12,8 +12,8 @@ from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
-from aveslog.v0.mail import EmailAddress
-from aveslog.v0.mail import MailDispatcher
+from aveslog.mail import EmailAddress
+from aveslog.mail import MailDispatcher
 from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import PasswordRepository

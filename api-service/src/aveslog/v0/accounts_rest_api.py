@@ -6,13 +6,17 @@ from flask import request
 from flask import make_response
 from flask import jsonify
 
-from aveslog.v0 import ErrorCode, SaltFactory
-from aveslog.v0 import error_response
-from aveslog.v0.account import is_valid_username, AccountFactory, \
-  PasswordHasher, AccountRepository
+from aveslog.v0.error import ErrorCode
+from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import require_authentication
+from aveslog.v0.account import is_valid_username
+from aveslog.v0.account import AccountFactory
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import is_valid_password
 from aveslog.v0.account import Credentials
-from aveslog.v0.mail import EmailAddress
+from aveslog.mail import EmailAddress
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import Account
 from aveslog.v0.models import Birder
@@ -77,3 +81,33 @@ def create_account() -> Response:
       'name': account.birder.name,
     },
   }), HTTPStatus.CREATED)
+
+
+@require_authentication
+def get_account(username: str):
+  session = g.database_session
+  account = session.query(Account).filter_by(username=username).first()
+  if not account:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
+
+
+@require_authentication
+def get_accounts() -> Response:
+  accounts = g.database_session.query(Account).all()
+  return make_response(jsonify({
+    'items': list(map(account_response_dict, accounts))
+  }), HTTPStatus.OK)
+
+
+@require_authentication
+def get_me() -> Response:
+  account = g.authenticated_account
+  return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
+
+
+def account_response_dict(account: Account):
+  return {
+    'username': account.username,
+    'birderId': account.birder_id
+  }

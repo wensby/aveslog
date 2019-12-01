@@ -14,8 +14,8 @@ from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
 from aveslog.v0.account import AccountRepository, AccountFactory
-from aveslog.v0.mail import MailServerDispatcher
-from aveslog.v0.mail import EmailAddress
+from aveslog.mail import MailServerDispatcher
+from aveslog.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
 from aveslog.test_util import mock_return
 

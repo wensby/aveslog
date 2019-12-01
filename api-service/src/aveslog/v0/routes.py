@@ -1,10 +1,9 @@
 import os
 from datetime import datetime
-from functools import wraps
 from http import HTTPStatus
-from typing import Callable, Union, Optional, List
+from typing import Union, Optional, List
 
-from flask import Response, request, make_response, jsonify, current_app, g
+from flask import Response, request, make_response, jsonify, g
 
 from aveslog.v0 import accounts_rest_api
 from aveslog.v0.time import parse_date
@@ -22,71 +21,9 @@ from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
 from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.search import BirdSearchMatch, StringMatcher
 from aveslog.v0.search import BirdSearcher
-
-RouteFunction = Callable[..., Response]
-
-
-def authentication_token_missing_response() -> Response:
-  return error_response(
-    ErrorCode.AUTHORIZATION_REQUIRED,
-    'Authorization required',
-    status_code=HTTPStatus.UNAUTHORIZED,
-  )
-
-
-def authorized_account_missing_response() -> Response:
-  return error_response(
-    ErrorCode.ACCOUNT_MISSING,
-    'Authorized account gone',
-    status_code=HTTPStatus.UNAUTHORIZED,
-  )
-
-
-def access_token_invalid_response() -> Response:
-  return error_response(
-    ErrorCode.ACCESS_TOKEN_INVALID,
-    'Access token invalid',
-    status_code=HTTPStatus.UNAUTHORIZED,
-  )
-
-
-def access_token_expired_response() -> Response:
-  return error_response(
-    ErrorCode.ACCESS_TOKEN_EXPIRED,
-    'Access token expired',
-    status_code=HTTPStatus.UNAUTHORIZED,
-  )
-
-
-def require_authentication(route) -> RouteFunction:
-  """Wraps a route to require a valid authentication token
-
-  The wrapped route will then be able to access the authenticated account
-  through g.authenticated_account.
-  """
-
-  @wraps(route)
-  def route_wrapper(**kwargs):
-    access_token = request.headers.get('accessToken')
-    if not access_token:
-      return authentication_token_missing_response()
-    jwt_decoder = JwtDecoder(current_app.secret_key)
-    decode_result = jwt_decoder.decode_jwt(access_token)
-    if not decode_result.ok:
-      if decode_result.error == 'token-invalid':
-        return access_token_invalid_response()
-      elif decode_result.error == 'signature-expired':
-        return access_token_expired_response()
-    account_id = decode_result.payload['sub']
-    account = g.database_session.query(Account).get(account_id)
-    if not account:
-      return authorized_account_missing_response()
-    g.authenticated_account = account
-    return route(**kwargs)
-
-  return route_wrapper
 
 
 def create_birds_routes():
@@ -197,36 +134,10 @@ def create_registration_routes(
 
 
 def create_account_routes() -> list:
-  def account_response_dict(account: Account):
-    return {
-      'username': account.username,
-      'birderId': account.birder_id
-    }
-
-  @require_authentication
-  def get_accounts() -> Response:
-    accounts = g.database_session.query(Account).all()
-    return make_response(jsonify({
-      'items': list(map(account_response_dict, accounts))
-    }), HTTPStatus.OK)
-
-  @require_authentication
-  def get_account(username: str) -> Response:
-    session = g.database_session
-    account = session.query(Account).filter_by(username=username).first()
-    if not account:
-      return make_response('', HTTPStatus.NOT_FOUND)
-    return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
-
-  @require_authentication
-  def get_me() -> Response:
-    account = g.authenticated_account
-    return make_response(jsonify(account_response_dict(account)), HTTPStatus.OK)
-
   return [
     {
       'rule': '/accounts/<string:username>',
-      'func': get_account,
+      'func': accounts_rest_api.get_account,
     },
     {
       'rule': '/accounts',
@@ -235,11 +146,11 @@ def create_account_routes() -> list:
     },
     {
       'rule': '/accounts',
-      'func': get_accounts,
+      'func': accounts_rest_api.get_accounts,
     },
     {
       'rule': '/account',
-      'func': get_me,
+      'func': accounts_rest_api.get_me,
     },
   ]
 

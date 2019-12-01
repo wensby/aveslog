@@ -7,7 +7,7 @@ from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.mail import MailDispatcher
+from aveslog.mail import MailDispatcher
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import AccountFactory

@@ -8,7 +8,7 @@ from aveslog.v0.account import PasswordHasher, is_valid_username, \
   is_valid_password
 from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import Credentials
-from aveslog.v0.mail import EmailAddress
+from aveslog.mail import EmailAddress
 
 
 class TestUsername(TestCase):

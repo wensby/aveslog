@@ -2,8 +2,8 @@ import os
 from unittest import TestCase
 
 import aveslog
-from aveslog.v0.mail import EmailAddress, MailServerDispatcher
-from aveslog.v0.mail import MailDispatcher
+from aveslog.mail import EmailAddress, MailServerDispatcher
+from aveslog.mail import MailDispatcher
 from aveslog.test_util import IntegrationTestCase
 
 

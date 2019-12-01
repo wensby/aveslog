@@ -9,7 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from aveslog.v0.mail import MailDispatcherFactory
+from aveslog.mail import MailDispatcherFactory
 from aveslog.v0 import create_api_v0_blueprint
 
 
