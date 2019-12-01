@@ -65,11 +65,7 @@ class TestAccountFactory(TestCase):
 
   def setUp(self) -> None:
     self.password_hasher = Mock()
-    self.password_repository = Mock()
-    self.factory = AccountFactory(
-      self.password_hasher,
-      self.password_repository,
-    )
+    self.factory = AccountFactory(self.password_hasher)
 
   def test_create_account_returns_account_when_success(self):
     self.password_hasher.create_salt_hashed_password.return_value = (

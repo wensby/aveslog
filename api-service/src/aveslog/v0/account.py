@@ -140,12 +140,8 @@ class PasswordRepository:
 
 class AccountFactory:
 
-  def __init__(self,
-        password_hasher: PasswordHasher,
-        password_repository: PasswordRepository,
-  ):
+  def __init__(self, password_hasher: PasswordHasher):
     self.password_hasher = password_hasher
-    self.password_repository = password_repository
 
   def create_account(self,
         email: EmailAddress,
