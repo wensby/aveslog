@@ -23,7 +23,7 @@ export default () => {
       <div className='language'>
         <LanguageLink languageCode='en' label='English' />
         <LanguageLink languageCode='sv' label='Svenska' />
-        <LanguageLink languageCode='kr' label='한국어' />
+        <LanguageLink languageCode='ko' label='한국어' />
       </div>
     </footer>
   );
