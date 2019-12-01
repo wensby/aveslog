@@ -19,7 +19,6 @@ i18n
     }
   }, (err, t) => {
     i18next.t('myKey'); // key in translation namespace (defined default)
-    i18next.t('bird:myKey') // key in bird namespace
   });
 
   export default i18n;

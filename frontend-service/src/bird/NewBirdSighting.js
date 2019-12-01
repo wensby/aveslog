@@ -116,8 +116,8 @@ export default ({ match }) => {
 }
 
 const BirdSection = ({ bird }) => {
-  const { t } = useTranslation();
-  const name = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
+  const { i18n } = useTranslation();
+  const name = bird.names[i18n.languages[0]] || bird.binomialName;
 
   return (
     <div className='form-group row'>

@@ -5,7 +5,7 @@ import { UserContext } from '../authentication/UserContext';
 import { useBird } from './BirdHooks';
 
 export default function BirdDetails(props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { authenticated } = useContext(UserContext);
   const bird = useBird(props.match.params.binomialName);
 
@@ -14,7 +14,7 @@ export default function BirdDetails(props) {
       <div className='w-100 d-flex justify-content-center'>
         <div className='shadow bg-white text-center pt-1 mb-0 px-2 rounded-top'>
           <h1 className='text-dark bird-page-name pb-2 mb-0'>
-            { t(`bird:${bird.binomialName}`) }</h1>
+            { bird.names[i18n.languages[0]] }</h1>
           <p className='font-italic font-weight-light text-muted mb-0 pb-2'>
             { bird.binomialName }</p>
         </div>

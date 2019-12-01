@@ -17,7 +17,7 @@ const DeleteButton = ({ onClick }) => {
 
 export default function SightingDetails({sighting}) {
   const bird = useBird(sighting.birdId);
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
   const { getAccessToken } = useContext(UserContext);
   const { history } = useReactRouter();
 
@@ -33,7 +33,7 @@ export default function SightingDetails({sighting}) {
     }
   };
 
-  const name = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
+  const name = bird.names[i18n.languages[0]] || bird.binomialName;
   const time = `${sighting.date} ${sighting.time ? sighting.time : ''}`;
 
   return (

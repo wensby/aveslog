@@ -2,9 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default ({ bird }) => {
-  const { t } = useTranslation();
-  const localeName = t(`bird:${bird.binomialName}`, { fallbackLng: [] });
-  if (localeName === bird.binomialName) {
+  const { i18n } = useTranslation();
+  
+  const language = i18n.languages[0];
+  const localeName = bird.names[language];
+  if (!localeName) {
     return <h5 key='1' className="card-title">{bird.binomialName}</h5>;
   }
   return (
