@@ -431,6 +431,7 @@ Status: 201 CREATED
 {
   "id": 4,
   "username": "kennybostick",
+  "email": "kenny.bostick@mail.com",
   "birder": {
     "id": 8,
     "name": "kennybostick"
@@ -459,6 +460,7 @@ Status: 200 OK
 {
   "id": 4,
   "username": "kennybostick",
+  "email": "kenny.bostick@mail.com",
   "birder": {
     "id": 8,
     "name": "kennybostick"

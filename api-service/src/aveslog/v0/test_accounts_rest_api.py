@@ -188,7 +188,6 @@ class TestGetSingleAccount(AppTestCase):
     self.assertDictEqual(response.json, {
       'id': 1,
       'username': 'hulot',
-      'email': 'hulot@mail.com',
       'birder': {
         'id': 1,
         'name': 'hulot',

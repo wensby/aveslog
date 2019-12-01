@@ -38,15 +38,22 @@ def create_account() -> Response:
   session.add(account)
   session.delete(registration)
   session.commit()
-  json = jsonify(account_representation(account))
+  json = jsonify(authenticated_account_representation(account))
   return make_response(json, HTTPStatus.CREATED)
+
+
+def authenticated_account_representation(account):
+  representation = account_representation(account)
+  representation.update({
+    'email': account.email,
+  })
+  return representation
 
 
 def account_representation(account):
   return {
     'id': account.id,
     'username': account.username,
-    'email': account.email,
     'birder': {
       'id': account.birder.id,
       'name': account.birder.name,
@@ -122,7 +129,7 @@ def get_accounts() -> Response:
 @require_authentication
 def get_me() -> Response:
   account = g.authenticated_account
-  json = jsonify(account_representation(account))
+  json = jsonify(authenticated_account_representation(account))
   return make_response(json, HTTPStatus.OK)
 
 
