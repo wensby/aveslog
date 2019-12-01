@@ -11,13 +11,10 @@ from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.account import is_valid_username
-from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import PasswordHasher
-from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import is_valid_password
-from aveslog.v0.account import Credentials
 from aveslog.mail import EmailAddress
-from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import AccountRegistration, HashedPassword
 from aveslog.v0.models import Account
 from aveslog.v0.models import Birder
 
@@ -26,53 +23,30 @@ def create_account() -> Response:
   token = request.json.get('token')
   username = request.json.get('username')
   password = request.json.get('password')
-  field_validation_errors = []
-  if not is_valid_username(username):
-    field_validation_errors.append({
-      'code': ErrorCode.INVALID_USERNAME_FORMAT,
-      'field': 'username',
-      'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$',
-    })
-  if not is_valid_password(password):
-    field_validation_errors.append({
-      'code': ErrorCode.INVALID_PASSWORD_FORMAT,
-      'field': 'password',
-      'message': 'Password need to adhere to format: ^.{8,128}$'
-    })
+  field_validation_errors = validate_fields(password, username)
   if field_validation_errors:
-    return error_response(
-      ErrorCode.VALIDATION_FAILED,
-      'Validation failed',
-      additional_errors=field_validation_errors,
-    )
+    return validation_failed_error_response(field_validation_errors)
   registration = g.database_session.query(AccountRegistration). \
     filter(AccountRegistration.token.like(token)).first()
   if not registration:
-    return error_response(
-      ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
-      'Registration request token invalid',
-      status_code=HTTPStatus.BAD_REQUEST,
-    )
+    return registration_request_token_invalid_response()
   email = EmailAddress(registration.email)
   if g.database_session.query(Account).filter_by(username=username).first():
-    return error_response(
-      ErrorCode.USERNAME_TAKEN,
-      'Username taken',
-      status_code=HTTPStatus.CONFLICT,
-    )
-  credentials = Credentials(username, password)
-  password_hasher = PasswordHasher(SaltFactory())
-  account_factory = AccountFactory(password_hasher)
-  account = account_factory.create_account(email, credentials)
-  account_repository = AccountRepository(password_hasher)
-  account = account_repository.add(account)
-  account_repository.remove_account_registration_by_id(registration.id)
-  g.database_session.rollback()
-  birder = Birder(name=account.username)
-  g.database_session.add(birder)
+    return username_taken_response()
+  account = Account(username=username, email=email.raw)
+  account.hashed_password = create_hashed_password(password)
+  account.birder = Birder(name=account.username)
+  g.database_session.add(account)
+  g.database_session.delete(registration)
   g.database_session.commit()
-  account_repository.set_account_birder(account, birder)
-  return make_response(jsonify({
+  return make_response(
+    jsonify(account_representation(account)),
+    HTTPStatus.CREATED
+  )
+
+
+def account_representation(account):
+  return {
     'id': account.id,
     'username': account.username,
     'email': account.email,
@@ -80,7 +54,55 @@ def create_account() -> Response:
       'id': account.birder.id,
       'name': account.birder.name,
     },
-  }), HTTPStatus.CREATED)
+  }
+
+
+def create_hashed_password(password: str) -> HashedPassword:
+  salt_factory = SaltFactory()
+  password_hasher = PasswordHasher(salt_factory)
+  salt, hash = password_hasher.create_salt_hashed_password(password)
+  return HashedPassword(salt=salt, salted_hash=hash)
+
+
+def username_taken_response():
+  return error_response(
+    ErrorCode.USERNAME_TAKEN,
+    'Username taken',
+    status_code=HTTPStatus.CONFLICT,
+  )
+
+
+def registration_request_token_invalid_response():
+  return error_response(
+    ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
+    'Registration request token invalid',
+    status_code=HTTPStatus.BAD_REQUEST,
+  )
+
+
+def validate_fields(password, username):
+  errors = []
+  if not is_valid_username(username):
+    errors.append({
+      'code': ErrorCode.INVALID_USERNAME_FORMAT,
+      'field': 'username',
+      'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$',
+    })
+  if not is_valid_password(password):
+    errors.append({
+      'code': ErrorCode.INVALID_PASSWORD_FORMAT,
+      'field': 'password',
+      'message': 'Password need to adhere to format: ^.{8,128}$'
+    })
+  return errors
+
+
+def validation_failed_error_response(field_validation_errors):
+  return error_response(
+    ErrorCode.VALIDATION_FAILED,
+    'Validation failed',
+    additional_errors=field_validation_errors,
+  )
 
 
 @require_authentication

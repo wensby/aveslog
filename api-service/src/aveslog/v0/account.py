@@ -139,16 +139,3 @@ class AccountFactory:
 
   def __init__(self, password_hasher: PasswordHasher):
     self.password_hasher = password_hasher
-
-  def create_account(self,
-        email: EmailAddress,
-        credentials: Credentials) -> Optional[Account]:
-    account = Account(username=credentials.username, email=email.raw)
-    salt_hashed_password = self.password_hasher.create_salt_hashed_password(
-      credentials.password)
-    salt = salt_hashed_password[0]
-    hash = salt_hashed_password[1]
-    hashed_password = HashedPassword(
-      account_id=account.id, salt=salt, salted_hash=hash)
-    account.hashed_password = hashed_password
-    return account

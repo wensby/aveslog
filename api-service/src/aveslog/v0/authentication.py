@@ -14,7 +14,6 @@ from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.mail import EmailAddress
 from aveslog.mail import MailDispatcher
-from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.account import PasswordHasher
@@ -65,13 +64,11 @@ class Authenticator:
 class AccountRegistrationController:
 
   def __init__(self,
-        account_factory: AccountFactory,
         account_repository: AccountRepository,
         mail_dispatcher: MailDispatcher,
         link_factory: LinkFactory,
         token_factory: TokenFactory,
   ):
-    self.account_factory = account_factory
     self.account_repository = account_repository
     self.mail_dispatcher = mail_dispatcher
     self.link_factory = link_factory

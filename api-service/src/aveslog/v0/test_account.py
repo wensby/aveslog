@@ -6,9 +6,7 @@ from binascii import hexlify
 from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.account import PasswordHasher, is_valid_username, \
   is_valid_password
-from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import Credentials
-from aveslog.mail import EmailAddress
 
 
 class TestUsername(TestCase):
@@ -57,26 +55,6 @@ class TestAccount(TestCase):
       representation,
       "<Account(username='hulot', email='hulot@mail.com', "
       "birder_id='8', locale_id='15')>")
-
-
-class TestAccountFactory(TestCase):
-  email = EmailAddress('alice@email.com')
-  credentials = Credentials('alice', 'password')
-
-  def setUp(self) -> None:
-    self.password_hasher = Mock()
-    self.factory = AccountFactory(self.password_hasher)
-
-  def test_create_account_returns_account_when_success(self):
-    self.password_hasher.create_salt_hashed_password.return_value = (
-      'mySalt', 'mySaltedHash')
-
-    account = self.factory.create_account(self.email, self.credentials)
-
-    self.assertEqual(account.email, self.email.raw)
-    self.assertEqual(account.username, self.credentials.username)
-    self.assertEqual(account.hashed_password.salt, 'mySalt')
-    self.assertEqual(account.hashed_password.salted_hash, 'mySaltedHash')
 
 
 class TestPasswordHasher(TestCase):

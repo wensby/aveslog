@@ -10,7 +10,6 @@ from aveslog.v0.error import ErrorCode
 from aveslog.mail import MailDispatcher
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import TokenFactory
-from aveslog.v0.account import AccountFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.authentication import AccountRegistrationController
@@ -74,9 +73,7 @@ def create_api_v0_blueprint(
   token_factory = TokenFactory()
   password_repository = PasswordRepository(token_factory, password_hasher)
   account_repository = AccountRepository(password_hasher)
-  account_factory = AccountFactory(password_hasher)
   account_registration_controller = AccountRegistrationController(
-    account_factory,
     account_repository,
     mail_dispatcher,
     link_factory,

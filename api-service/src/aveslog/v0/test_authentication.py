@@ -13,7 +13,7 @@ from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
-from aveslog.v0.account import AccountRepository, AccountFactory
+from aveslog.v0.account import AccountRepository
 from aveslog.mail import MailServerDispatcher
 from aveslog.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
@@ -59,13 +59,11 @@ class TestAuthenticator(TestCase):
 class TestAccountRegistrationController(TestCase):
 
   def setUp(self):
-    self.account_factory = Mock(spec=AccountFactory)
     self.account_repository = Mock(spec=AccountRepository)
     self.mail_dispatcher = Mock(spec=MailServerDispatcher)
     self.link_factory = Mock(spec=LinkFactory)
     self.token_factory = Mock(spec=TokenFactory)
     self.controller = AccountRegistrationController(
-      self.account_factory,
       self.account_repository,
       self.mail_dispatcher,
       self.link_factory,
