@@ -6,7 +6,7 @@ from typing import Callable, Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, current_app, g
 
-from aveslog.v0.mail import EmailAddress
+from aveslog.v0 import accounts_rest_api
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
@@ -15,8 +15,7 @@ from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.account import AccountRepository, \
-  Credentials, AccountFactory, is_valid_password
-from aveslog.v0.account import is_valid_username
+  AccountFactory, is_valid_password
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
   Authenticator, AuthenticationTokenFactory, \
   PasswordResetController, PasswordUpdateController
@@ -209,61 +208,7 @@ def create_account_routes(
     }
 
   def create_account() -> Response:
-    token = request.json.get('token')
-    username = request.json.get('username')
-    password = request.json.get('password')
-    field_validation_errors = []
-    if not is_valid_username(username):
-      field_validation_errors.append({
-        'code': ErrorCode.INVALID_USERNAME_FORMAT,
-        'field': 'username',
-        'message': 'Username need to adhere to format: ^[a-z0-9_.-]{5,32}$',
-      })
-    if not is_valid_password(password):
-      field_validation_errors.append({
-        'code': ErrorCode.INVALID_PASSWORD_FORMAT,
-        'field': 'password',
-        'message': 'Password need to adhere to format: ^.{8,128}$'
-      })
-    if field_validation_errors:
-      return error_response(
-        ErrorCode.VALIDATION_FAILED,
-        'Validation failed',
-        additional_errors=field_validation_errors,
-      )
-    registration = g.database_session.query(AccountRegistration). \
-      filter(AccountRegistration.token.like(token)).first()
-    if not registration:
-      return error_response(
-        ErrorCode.INVALID_ACCOUNT_REGISTRATION_TOKEN,
-        'Registration request token invalid',
-        status_code=HTTPStatus.BAD_REQUEST,
-      )
-    email = EmailAddress(registration.email)
-    if g.database_session.query(Account).filter_by(username=username).first():
-      return error_response(
-        ErrorCode.USERNAME_TAKEN,
-        'Username taken',
-        status_code=HTTPStatus.CONFLICT,
-      )
-    credentials = Credentials(username, password)
-    account = account_factory.create_account(email, credentials)
-    account = account_repository.add(account)
-    account_repository.remove_account_registration_by_id(registration.id)
-    g.database_session.rollback()
-    birder = Birder(name=account.username)
-    g.database_session.add(birder)
-    g.database_session.commit()
-    account_repository.set_account_birder(account, birder)
-    return make_response(jsonify({
-      'id': account.id,
-      'username': account.username,
-      'email': account.email,
-      'birder': {
-        'id': account.birder.id,
-        'name': account.birder.name,
-      },
-    }), HTTPStatus.CREATED)
+    return accounts_rest_api.create_account(account_factory, account_repository)
 
   @require_authentication
   def get_accounts() -> Response:
