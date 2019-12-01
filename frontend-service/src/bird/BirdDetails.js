@@ -1,31 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
-import BirdService from './BirdService';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import NewBirdSightingLink from './NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
+import { useBird } from './BirdHooks';
 
 export default function BirdDetails(props) {
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const service = new BirdService();
-      const data = await service.getBird(props.match.params.binomialName);
-      setData(data);
-    }
-    fetchData();
-  }, [props.match.params.binomialName]);
+  const bird = useBird(props.match.params.binomialName);
 
   const renderCoverNameCard = () => {
     return (
       <div className='w-100 d-flex justify-content-center'>
         <div className='shadow bg-white text-center pt-1 mb-0 px-2 rounded-top'>
           <h1 className='text-dark bird-page-name pb-2 mb-0'>
-            { t(`bird:${data.binomialName}`) }</h1>
+            { t(`bird:${bird.binomialName}`) }</h1>
           <p className='font-italic font-weight-light text-muted mb-0 pb-2'>
-            { data.binomialName }</p>
+            { bird.binomialName }</p>
         </div>
       </div>
     );
@@ -33,8 +24,8 @@ export default function BirdDetails(props) {
 
   const renderCover = () => {
     let style = {};
-    if (data.cover) {
-      style = { backgroundImage: `url(${data.cover.url})` };
+    if (bird.cover) {
+      style = { backgroundImage: `url(${bird.cover.url})` };
     }
     else {
       style = {};
@@ -49,10 +40,10 @@ export default function BirdDetails(props) {
   }
 
   const renderPhotoCredits = () => {
-    if (data.thumbnail) {
+    if (bird.thumbnail) {
       return (
         <div>
-          <p><small>{`Thumbnail Photo by: ${ data.thumbnail.credit }`}</small></p>
+          <p><small>{`Thumbnail Photo by: ${ bird.thumbnail.credit }`}</small></p>
         </div>
       );
     }
@@ -60,11 +51,11 @@ export default function BirdDetails(props) {
 
   const renderAddSighting = () => {
     if (authenticated) {
-      return <NewBirdSightingLink bird={data}>{t('add-sighting-link')}</NewBirdSightingLink>;
+      return <NewBirdSightingLink bird={bird}>{t('add-sighting-link')}</NewBirdSightingLink>;
     }
   }
 
-  if (data) {
+  if (bird) {
     return (
       <div>
         {renderCover()}
