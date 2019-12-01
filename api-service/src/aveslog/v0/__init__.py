@@ -50,14 +50,6 @@ def create_api_v0_blueprint(
 ) -> Blueprint:
   blueprint = Blueprint('v0', __name__)
 
-  @blueprint.before_request
-  def before_request():
-    # Setup database session. This is fine even for requests that ultimately
-    # didn't require database communication, since the session doesn't actually
-    # establish a connection with the database until you start using it.
-    g.database_session = session_factory.create_session()
-    detect_user_locale()
-
   def register_routes(routes):
     for route in routes:
       rule = route['rule']
@@ -136,6 +128,14 @@ def create_api_v0_blueprint(
   register_routes(account_routes)
   birders_routers = create_birders_routes()
   register_routes(birders_routers)
+
+  @blueprint.before_request
+  def before_request():
+    # Setup database session. This is fine even for requests that ultimately
+    # didn't require database communication, since the session doesn't actually
+    # establish a connection with the database until you start using it.
+    g.database_session = session_factory.create_session()
+    detect_user_locale()
 
   @blueprint.after_request
   def after_request(response: Response):
