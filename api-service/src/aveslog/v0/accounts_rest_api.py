@@ -13,7 +13,6 @@ from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.account import is_valid_username
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import is_valid_password
-from aveslog.mail import EmailAddress
 from aveslog.v0.models import AccountRegistration, HashedPassword
 from aveslog.v0.models import Account
 from aveslog.v0.models import Birder
@@ -26,23 +25,21 @@ def create_account() -> Response:
   field_validation_errors = validate_fields(password, username)
   if field_validation_errors:
     return validation_failed_error_response(field_validation_errors)
-  registration = g.database_session.query(AccountRegistration). \
-    filter(AccountRegistration.token.like(token)).first()
+  session = g.database_session
+  registration = session.query(AccountRegistration) \
+    .filter_by(token=token).first()
   if not registration:
     return registration_request_token_invalid_response()
-  email = EmailAddress(registration.email)
-  if g.database_session.query(Account).filter_by(username=username).first():
+  if session.query(Account).filter_by(username=username).first():
     return username_taken_response()
-  account = Account(username=username, email=email.raw)
+  account = Account(username=username, email=registration.email)
   account.hashed_password = create_hashed_password(password)
   account.birder = Birder(name=account.username)
-  g.database_session.add(account)
-  g.database_session.delete(registration)
-  g.database_session.commit()
-  return make_response(
-    jsonify(account_representation(account)),
-    HTTPStatus.CREATED
-  )
+  session.add(account)
+  session.delete(registration)
+  session.commit()
+  representation = account_representation(account)
+  return make_response(jsonify(representation), HTTPStatus.CREATED)
 
 
 def account_representation(account):
