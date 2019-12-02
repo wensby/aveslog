@@ -105,9 +105,3 @@ class PasswordRepository:
     if password_reset_token:
       g.database_session.delete(password_reset_token)
       g.database_session.commit()
-
-
-class AccountFactory:
-
-  def __init__(self, password_hasher: PasswordHasher):
-    self.password_hasher = password_hasher
