@@ -6,7 +6,7 @@ from typing import Union, Optional, Callable, Any
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
-from aveslog.v0.models import Account
+from aveslog.v0.models import Account, HashedPassword
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
@@ -120,12 +120,14 @@ class AccountRegistrationController:
 
 class PasswordUpdateController:
 
-  def __init__(self, password_repository: PasswordRepository):
-    self.password_repository = password_repository
+  def __init__(self, password_hasher: PasswordHasher):
+    self._password_hasher = password_hasher
 
   def update_password(self, account: Account, password: str) -> None:
     session = g.database_session
-    self.password_repository.update_password(account.id, password)
+    salt, hash = self._password_hasher.create_salt_hashed_password(password)
+    account.hashed_password.salt = salt
+    account.hashed_password.salted_hash = hash
     for refresh_token in account.refresh_tokens:
       session.delete(refresh_token)
     session.commit()

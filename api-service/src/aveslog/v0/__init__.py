@@ -79,7 +79,7 @@ def create_api_v0_blueprint(
     link_factory,
     token_factory,
   )
-  password_update_controller = PasswordUpdateController(password_repository)
+  password_update_controller = PasswordUpdateController(password_hasher)
   password_reset_controller = PasswordResetController(
     account_repository,
     password_repository,

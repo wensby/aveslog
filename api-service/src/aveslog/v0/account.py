@@ -91,16 +91,6 @@ class PasswordRepository:
     return g.database_session.query(PasswordResetToken). \
       filter(PasswordResetToken.token.like(token)).first()
 
-  def update_password(self, account_id, password):
-    salt_hashed_password = self.hasher.create_salt_hashed_password(password)
-    salt = salt_hashed_password[0]
-    hash = salt_hashed_password[1]
-    hashed_password = g.database_session.query(HashedPassword). \
-      filter(HashedPassword.account_id == account_id).first()
-    hashed_password.salt = salt
-    hashed_password.salted_hash = hash
-    g.database_session.commit()
-
   def remove_password_reset_token(self, token):
     password_reset_token = g.database_session.query(PasswordResetToken). \
       filter(PasswordResetToken.token.like(token)).first()
