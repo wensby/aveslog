@@ -108,17 +108,6 @@ class Account(Base):
   hashed_password: HashedPassword = relationship('HashedPassword',
     uselist=False)
 
-  def __eq__(self, other):
-    if isinstance(other, Account):
-      return (
-            self.id == other.id and
-            self.username == other.username and
-            self.email == other.email and
-            self.birder_id == other.birder_id and
-            self.locale_id == other.locale_id
-      )
-    return False
-
   def __repr__(self):
     return (f"<Account(username='{self.username}', email='{self.email}', "
             f"birder_id='{self.birder_id}', locale_id='{self.locale_id}')>")

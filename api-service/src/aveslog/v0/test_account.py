@@ -27,19 +27,11 @@ class TestPassword(TestCase):
 
 class TestAccount(TestCase):
 
-  @classmethod
-  def setUpClass(cls) -> None:
-    cls.account = Account(id=4, username='hulot', email='hulot@mail.com',
-      birder_id=8, locale_id=15)
-
-  def test_eq_false_when_another_type(self):
-    string_account = 'Account(4, hulot, hulot@email.com, 8, 15)'
-    self.assertNotEqual(self.account, string_account)
-
   def test_repr(self):
-    representation = repr(self.account)
+    account = Account(
+      id=4, username='hulot', email='hulot@mail.com', birder_id=8, locale_id=15)
     self.assertEqual(
-      representation,
+      repr(account),
       "<Account(username='hulot', email='hulot@mail.com', "
       "birder_id='8', locale_id='15')>")
 
