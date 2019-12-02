@@ -6,7 +6,6 @@ from binascii import hexlify
 from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.account import PasswordHasher, is_valid_username, \
   is_valid_password
-from aveslog.v0.account import Credentials
 
 
 class TestUsername(TestCase):
@@ -24,18 +23,6 @@ class TestPassword(TestCase):
     self.assertFalse(is_valid_password(''))
     self.assertFalse(is_valid_password('1234567'))
     self.assertFalse(is_valid_password(''.join(['a'] * 129)))
-
-
-class TestCredentials(TestCase):
-
-  def test_eq_with_other_type(self) -> None:
-    username = 'kenny'
-    password = 'bostick!'
-    credentials = Credentials(username, password)
-
-    self.assertNotEqual(credentials, {
-      'username': username, 'password': password
-    })
 
 
 class TestAccount(TestCase):

@@ -19,18 +19,6 @@ def is_valid_password(password: str) -> bool:
   return re.compile('^.{8,128}$').match(password) is not None
 
 
-class Credentials:
-
-  def __init__(self, username: str, password: str) -> None:
-    self.username = username
-    self.password = password
-
-  def __eq__(self, other: Any) -> bool:
-    if isinstance(other, Credentials):
-      return self.__dict__ == other.__dict__
-    return False
-
-
 class PasswordHasher:
 
   def __init__(self, salt_factory):
