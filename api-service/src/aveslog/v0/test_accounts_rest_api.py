@@ -193,3 +193,11 @@ class TestGetSingleAccount(AppTestCase):
         'name': 'hulot',
       },
     })
+
+  def test_get_single_account_when_not_present(self):
+    self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
+
+    response = self.get_with_access_token('/accounts/george', account_id=1)
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+    self.assertIsNone(response.json)
