@@ -2,11 +2,13 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, Any, TypeVar
+from typing import Optional, TypeVar
 
 from flask import g
-from aveslog.v0.models import Birder, Account, AccountRegistration, \
-  HashedPassword, PasswordResetToken
+from aveslog.v0.models import Account
+from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import HashedPassword
+from aveslog.v0.models import PasswordResetToken
 
 from aveslog.mail import EmailAddress
 
