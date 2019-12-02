@@ -51,19 +51,8 @@ class AccountRepository:
   def __init__(self, password_hasher: PasswordHasher):
     self.hasher = password_hasher
 
-  def add(self, account: Account) -> Account:
-    g.database_session.add(account)
-    g.database_session.commit()
-    return account
-
   def account_by_id(self, account_id: int) -> Optional[Account]:
     return g.database_session.query(Account).get(account_id)
-
-  def remove_account_registration_by_id(self, account_id: int) -> None:
-    account_registration = g.database_session.query(AccountRegistration). \
-      filter_by(id=account_id).first()
-    g.database_session.delete(account_registration)
-    g.database_session.commit()
 
   def add_account_registration(self,
         account_registration: AccountRegistration,
@@ -79,11 +68,6 @@ class AccountRepository:
   def find_hashed_password(self, account: Account) -> Optional[HashedPassword]:
     return g.database_session.query(HashedPassword).filter_by(
       account_id=account.id).first()
-
-  def set_account_birder(self, account: Account, birder: Birder) -> None:
-    account = g.database_session.query(Account).filter_by(id=account.id).first()
-    account.birder_id = birder.id
-    g.database_session.commit()
 
 
 class PasswordRepository:
