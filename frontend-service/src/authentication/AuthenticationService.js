@@ -61,7 +61,7 @@ export default class AuthenticationService {
   }
 
   async postPasswordUpdate(accessToken, oldPassword, newPassword) {
-    return await fetch(`${this.apiUrl}/authentication/password`, {
+    return await fetch(`${this.apiUrl}/account/password`, {
       method: 'POST',
       headers: {
         'accessToken': accessToken,

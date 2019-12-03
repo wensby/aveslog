@@ -118,7 +118,6 @@ def create_api_v0_blueprint(
     authenticator,
     authentication_token_factory,
     password_reset_controller,
-    password_update_controller,
   )
   register_routes(authentication_routes)
   account_routes = create_account_routes()

@@ -13,10 +13,8 @@ from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.account import is_valid_password
 from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
-  Authenticator, AuthenticationTokenFactory, \
-  PasswordResetController, PasswordUpdateController
+  Authenticator, AuthenticationTokenFactory, PasswordResetController
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
   RefreshToken, Sighting, Birder
@@ -152,6 +150,11 @@ def create_account_routes() -> list:
       'rule': '/account',
       'func': accounts_rest_api.get_me,
     },
+    {
+      'rule': '/account/password',
+      'func': accounts_rest_api.post_password,
+      'options': {'methods': ['POST']},
+    },
   ]
 
 
@@ -162,7 +165,6 @@ def create_authentication_routes(
       authenticator: Authenticator,
       token_factory: AuthenticationTokenFactory,
       password_reset_controller: PasswordResetController,
-      password_update_controller: PasswordUpdateController,
 ) -> list:
   def credentials_incorrect_response() -> Response:
     return error_response(
@@ -272,26 +274,6 @@ def create_authentication_routes(
       return make_response('', HTTPStatus.NOT_FOUND)
     return make_response('', HTTPStatus.OK)
 
-  def is_password_correct(account: Account, password: str) -> bool:
-    return authenticator.is_account_password_correct(account, password)
-
-  @require_authentication
-  def post_password() -> Response:
-    account = g.authenticated_account
-    old_password = request.json['oldPassword']
-    new_password = request.json['newPassword']
-    old_password_correct = is_password_correct(account, old_password)
-    if not old_password_correct:
-      return error_response(
-        ErrorCode.OLD_PASSWORD_INCORRECT,
-        'Old password incorrect',
-        status_code=HTTPStatus.UNAUTHORIZED,
-      )
-    if not is_valid_password(new_password):
-      return error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid')
-    password_update_controller.update_password(account, new_password)
-    return make_response('', HTTPStatus.NO_CONTENT)
-
   return [
     {
       'rule': '/authentication/refresh-token',
@@ -315,11 +297,6 @@ def create_authentication_routes(
     {
       'rule': '/authentication/password-reset/<string:token>',
       'func': post_password_reset,
-      'options': {'methods': ['POST']},
-    },
-    {
-      'rule': '/authentication/password',
-      'func': post_password,
       'options': {'methods': ['POST']},
     },
   ]

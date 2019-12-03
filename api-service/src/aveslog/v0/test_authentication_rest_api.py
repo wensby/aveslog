@@ -1,7 +1,5 @@
 import datetime
 from http import HTTPStatus
-from typing import Optional
-from datetime import timedelta
 from flask import Response
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import AccessToken
@@ -151,87 +149,6 @@ class TestPasswordReset(AppTestCase):
   def post_password_reset(self, token: str, password: str) -> Response:
     resource = f'/authentication/password-reset/{token}'
     return self.client.post(resource, json={'password': password})
-
-
-class TestPasswordUpdate(AppTestCase):
-
-  def setUp(self) -> None:
-    super().setUp()
-    self.db_setup_account(1, 1, 'hulot', 'oldPassword', 'hulot@mail.com')
-    time_supplier = datetime.datetime.utcnow
-    jwt_factory = JwtFactory(self._app.secret_key)
-    self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
-
-  def test_post_password_update_when_ok(self) -> None:
-    token = self.token_factory.create_access_token(1, timedelta(1))
-
-    response = self.post_password_update(token.jwt, 'oldPassword',
-      'newPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
-
-  def test_post_password_update_when_token_missing(self) -> None:
-    response = self.post_password_update(None, 'oldPassword', 'newPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    self.assertEqual(response.json, {
-      'code': ErrorCode.AUTHORIZATION_REQUIRED,
-      'message': 'Authorization required',
-    })
-
-  def test_post_password_update_when_token_invalid(self) -> None:
-    response = self.post_password_update('invalid', 'oldPassword',
-      'newPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    self.assertEqual(response.json, {
-      'code': ErrorCode.ACCESS_TOKEN_INVALID,
-      'message': 'Access token invalid',
-    })
-
-  def test_post_password_update_when_token_expired(self) -> None:
-    expiration = timedelta(seconds=-1)
-    token = self.token_factory.create_access_token(1, expiration)
-
-    response = self.post_password_update(token.jwt, 'oldPassword',
-      'newPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    self.assertEqual(response.json, {
-      'code': ErrorCode.ACCESS_TOKEN_EXPIRED,
-      'message': 'Access token expired',
-    })
-
-  def test_post_password_update_when_old_password_incorrect(self) -> None:
-    token = self.token_factory.create_access_token(1, timedelta(1))
-
-    response = self.post_password_update(token.jwt, 'incorrect', 'newPassword')
-
-    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    self.assertEqual(response.json, {
-      'code': ErrorCode.OLD_PASSWORD_INCORRECT,
-      'message': 'Old password incorrect',
-    })
-
-  def test_post_password_update_when_new_password_invalid(self) -> None:
-    token = self.token_factory.create_access_token(1, timedelta(1))
-
-    response = self.post_password_update(token.jwt, 'oldPassword', 'invalid')
-
-    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-    self.assertEqual(response.json, {
-      'code': ErrorCode.PASSWORD_INVALID,
-      'message': 'New password invalid',
-    })
-
-  def post_password_update(self,
-        token: Optional[str],
-        old_password: str,
-        new_password: str) -> Response:
-    resource = '/authentication/password'
-    headers = {'accessToken': token} if token else {}
-    json = {'oldPassword': old_password, 'newPassword': new_password}
-    return self.client.post(resource, headers=headers, json=json)
 
 
 class TestDeleteRefreshToken(AppTestCase):

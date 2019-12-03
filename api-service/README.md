@@ -187,22 +187,6 @@ POST /authentication/password-reset/:password-reset-token
 Status: 200 OK
 ```
 
-### Update Password
-
-```
-POST /authentication/password
-```
-
-**Required Headers**
-
-`accessToken: {accessTokenJwt}`
-
-**Response**
-
-```
-Status: 204 NO CONTENT
-```
-
 
 ## Birds
 
@@ -466,6 +450,30 @@ Status: 200 OK
     "name": "kennybostick"
   }
 }
+```
+
+### Update account password
+
+Updating the authenticated account's password will also result in all refresh
+tokens associated with this account being revoked.
+
+```
+POST /account/password
+
+{
+  "oldPassword": "birder-no-1",
+  "newPassword": "still-birder-no-1"
+}
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Response**
+
+```
+Status: 204 NO CONTENT
 ```
 
 ### Get Accounts

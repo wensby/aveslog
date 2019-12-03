@@ -7,10 +7,11 @@ from flask import make_response
 from flask import jsonify
 
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.authentication import SaltFactory, PasswordUpdateController, \
+  Authenticator
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
-from aveslog.v0.account import is_valid_username
+from aveslog.v0.account import is_valid_username, AccountRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import is_valid_password
 from aveslog.v0.models import AccountRegistration, HashedPassword
@@ -131,6 +132,29 @@ def get_me() -> Response:
   account = g.authenticated_account
   json = jsonify(authenticated_account_representation(account))
   return make_response(json, HTTPStatus.OK)
+
+
+@require_authentication
+def post_password() -> Response:
+  account = g.authenticated_account
+  old_password = request.json['oldPassword']
+  new_password = request.json['newPassword']
+  password_hasher = PasswordHasher(SaltFactory())
+  authenticator = Authenticator(
+    AccountRepository(password_hasher), password_hasher)
+  old_password_correct = authenticator.is_account_password_correct(account,
+    old_password)
+  if not old_password_correct:
+    return error_response(
+      ErrorCode.OLD_PASSWORD_INCORRECT,
+      'Old password incorrect',
+      status_code=HTTPStatus.UNAUTHORIZED,
+    )
+  if not is_valid_password(new_password):
+    return error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid')
+  password_update_controller = PasswordUpdateController(password_hasher)
+  password_update_controller.update_password(account, new_password)
+  return make_response('', HTTPStatus.NO_CONTENT)
 
 
 def account_summary_representation(account: Account):
