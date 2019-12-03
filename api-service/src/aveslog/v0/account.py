@@ -29,7 +29,7 @@ class PasswordHasher:
   def create_salt_hashed_password(self, password):
     salt = self.salt_factory.create_salt()
     hash = self.hash_password(password, salt)
-    return (salt, hash)
+    return salt, hash
 
   def hash_password(self, password: str, salt: str) -> str:
     encoded_password = password.encode()
