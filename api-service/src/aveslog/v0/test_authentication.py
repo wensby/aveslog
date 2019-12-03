@@ -43,16 +43,11 @@ class TestAccessToken(TestCase):
 class TestAuthenticator(TestCase):
 
   def setUp(self) -> None:
-    self.account_repository = Mock(spec=AccountRepository)
     self.password_hasher = Mock(spec=PasswordHasher)
 
   def test_is_password_incorrect_when_hashed_password_missing(self) -> None:
-    account = Account()
-    authenticator = Authenticator(self.account_repository, self.password_hasher)
-    self.account_repository.find_hashed_password.return_value = None
-
-    result = authenticator.is_account_password_correct(account, 'idontexist')
-
+    authenticator = Authenticator(self.password_hasher)
+    result = authenticator.is_account_password_correct(Account(), 'idontexist')
     self.assertFalse(result)
 
 

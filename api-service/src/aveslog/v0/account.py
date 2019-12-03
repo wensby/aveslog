@@ -67,10 +67,6 @@ class AccountRepository:
     return g.database_session.query(Account). \
       filter(Account.email.like(email.raw)).first()
 
-  def find_hashed_password(self, account: Account) -> Optional[HashedPassword]:
-    return g.database_session.query(HashedPassword).filter_by(
-      account_id=account.id).first()
-
 
 class PasswordRepository:
 

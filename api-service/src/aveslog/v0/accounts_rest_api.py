@@ -140,8 +140,7 @@ def post_password() -> Response:
   old_password = request.json['oldPassword']
   new_password = request.json['newPassword']
   password_hasher = PasswordHasher(SaltFactory())
-  authenticator = Authenticator(
-    AccountRepository(password_hasher), password_hasher)
+  authenticator = Authenticator(password_hasher)
   old_password_correct = authenticator.is_account_password_correct(account,
     old_password)
   if not old_password_correct:

@@ -6,7 +6,7 @@ from typing import Union, Optional, Callable, Any
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
-from aveslog.v0.models import Account, HashedPassword
+from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
@@ -42,16 +42,13 @@ class AccessToken:
 
 class Authenticator:
 
-  def __init__(self,
-        account_repository: AccountRepository,
-        password_hasher: PasswordHasher) -> None:
-    self.account_repository = account_repository
+  def __init__(self, password_hasher: PasswordHasher) -> None:
     self.hasher = password_hasher
 
   def is_account_password_correct(self,
         account: Account,
         password: str) -> bool:
-    hashed_password = self.account_repository.find_hashed_password(account)
+    hashed_password = account.hashed_password
     if not hashed_password:
       return False
     salt = hashed_password.salt

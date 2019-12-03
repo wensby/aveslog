@@ -94,7 +94,7 @@ def create_api_v0_blueprint(
     jwt_factory,
     datetime.datetime.utcnow,
   )
-  authenticator = Authenticator(account_repository, password_hasher)
+  authenticator = Authenticator(password_hasher)
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
