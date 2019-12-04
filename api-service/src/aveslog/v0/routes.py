@@ -211,7 +211,7 @@ def create_sightings_routes(sighting_repository: SightingRepository) -> list:
   @require_authentication
   def get_sighting(sighting_id: int) -> Response:
     account = g.authenticated_account
-    sighting = sighting_repository.find_sighting(sighting_id)
+    sighting = g.database_session.query(Sighting).get(sighting_id)
     if sighting and sighting.birder_id == account.birder_id:
       return make_response(jsonify(convert_sighting(sighting)), HTTPStatus.OK)
     else:
@@ -220,12 +220,13 @@ def create_sightings_routes(sighting_repository: SightingRepository) -> list:
   @require_authentication
   def delete_sighting(sighting_id: int) -> Response:
     account = g.authenticated_account
-    sighting = sighting_repository.find_sighting(sighting_id)
+    sighting = g.database_session.query(Sighting).get(sighting_id)
     if not sighting:
       return sighting_deleted_response()
     if sighting.birder_id != account.birder_id:
       return sighting_delete_unauthorized_response()
-    sighting_repository.delete_sighting(sighting_id)
+    g.database_session.delete(sighting)
+    g.database_session.commit()
     return sighting_deleted_response()
 
   @require_authentication
@@ -240,7 +241,8 @@ def create_sightings_routes(sighting_repository: SightingRepository) -> list:
     if not bird:
       return make_response('', HTTPStatus.BAD_REQUEST)
     sighting = create_sighting(request.json, bird)
-    sighting = sighting_repository.add_sighting(sighting)
+    g.database_session.add(sighting)
+    g.database_session.commit()
     return post_sighting_success_response(sighting.id)
 
   return [

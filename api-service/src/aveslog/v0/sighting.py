@@ -7,19 +7,6 @@ from aveslog.v0.models import Sighting
 
 class SightingRepository:
 
-  def find_sighting(self, sighting_id: int) -> Optional[Sighting]:
-    return g.database_session.query(Sighting).get(sighting_id)
-
-  def delete_sighting(self, sighting_id: int) -> bool:
-    count = g.database_session.query(Sighting).filter_by(id=sighting_id).delete()
-    g.database_session.commit()
-    return count == 1
-
-  def add_sighting(self, sighting: Sighting) -> Optional[Sighting]:
-    g.database_session.add(sighting)
-    g.database_session.commit()
-    return sighting
-
   def sightings(self,
         birder_id: Optional[int] = None,
         limit: Optional[int] = None
