@@ -3,7 +3,6 @@ from base64 import b64encode
 from datetime import timedelta, datetime
 from typing import Union, Callable, Any
 
-from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.orm import Session
 

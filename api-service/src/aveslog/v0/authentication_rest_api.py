@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import Response, make_response, jsonify, request, current_app, g
 
-from aveslog.v0 import LinkFactory
+from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader
