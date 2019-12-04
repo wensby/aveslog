@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Optional, Union
 
 from flask import current_app, g, request, Response, make_response, jsonify
 
@@ -17,35 +16,21 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.models import AccountRegistration
 
 
-def find_registration_token(registration_token: str) -> Optional[
-  AccountRegistration]:
-  return g.database_session.query(AccountRegistration). \
-    filter(AccountRegistration.token.like(registration_token)).first()
-
-
-def load_english_locale() -> LoadedLocale:
-  locales_directory_path = current_app.config['LOCALES_PATH']
-  loader = LocaleLoader(locales_directory_path, {})
-  locale_repository = LocaleRepository(locales_directory_path, loader)
-  locale = locale_repository.find_locale_by_code('en')
-  return loader.load_locale(locale)
-
-
-def initiate_registration(email: str) -> Union[AccountRegistration, str]:
+def post_registration_request() -> Response:
+  email = request.json['email']
   locale = load_english_locale()
   link_factory = LinkFactory(
     current_app.config['EXTERNAL_HOST'],
     current_app.config['FRONTEND_HOST'],
   )
+  account_repository = AccountRepository(PasswordHasher(SaltFactory()))
+  token_factory = TokenFactory()
   registration_controller = AccountRegistrationController(
-    AccountRepository(PasswordHasher(SaltFactory())), g.mail_dispatcher,
-    link_factory, TokenFactory())
-  return registration_controller.initiate_registration(email, locale)
-
-
-def post_registration_request() -> Response:
-  email = request.json['email']
-  result = initiate_registration(email)
+    account_repository,
+    g.mail_dispatcher,
+    link_factory,
+    token_factory)
+  result = registration_controller.initiate_registration(email, locale)
   if result == 'email taken':
     return error_response(ErrorCode.EMAIL_TAKEN, 'Email taken')
   elif result == 'email invalid':
@@ -54,9 +39,18 @@ def post_registration_request() -> Response:
 
 
 def get_registration_request(token: str) -> Response:
-  registration = find_registration_token(token)
+  registration = g.database_session.query(AccountRegistration) \
+    .filter_by(token=token).first()
   if registration:
     return make_response(jsonify({
       'email': registration.email,
     }), HTTPStatus.OK)
   return make_response('', HTTPStatus.NOT_FOUND)
+
+
+def load_english_locale() -> LoadedLocale:
+  locales_directory_path = current_app.config['LOCALES_PATH']
+  loader = LocaleLoader(locales_directory_path, {})
+  locale_repository = LocaleRepository(locales_directory_path, loader)
+  locale = locale_repository.find_locale_by_code('en')
+  return loader.load_locale(locale)
