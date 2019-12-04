@@ -4,7 +4,9 @@ from http import HTTPStatus
 from flask import Response, make_response, jsonify, g
 from sqlalchemy.orm import joinedload
 
-from .models import Bird, Picture, BirdThumbnail
+from .models import Bird
+from .models import Picture
+from .models import BirdThumbnail
 
 
 def get_single_bird(bird_identifier: str) -> Response:

@@ -11,16 +11,27 @@ from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
-from aveslog.v0.localization import LoadedLocale, LocaleRepository, LocaleLoader
+from aveslog.v0.localization import LoadedLocale
+from aveslog.v0.localization import LocaleRepository
+from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.authentication import JwtDecoder, AccountRegistrationController, \
-  Authenticator, AuthenticationTokenFactory, PasswordResetController
+from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import AccountRegistrationController
+from aveslog.v0.authentication import Authenticator
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.models import Account, Bird, Picture, AccountRegistration, \
-  RefreshToken, Sighting, Birder
+from aveslog.v0.models import Account
+from aveslog.v0.models import Bird
+from aveslog.v0.models import Picture
+from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import RefreshToken
+from aveslog.v0.models import Sighting
+from aveslog.v0.models import Birder
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
-from aveslog.v0.search import BirdSearchMatch, StringMatcher
+from aveslog.v0.search import BirdSearchMatch
+from aveslog.v0.search import StringMatcher
 from aveslog.v0.search import BirdSearcher
 
 

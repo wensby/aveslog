@@ -4,8 +4,8 @@ import os
 from typing import Optional, List, Union, Set
 from flask import Request, g
 
-from .models import Locale
-from .models import Bird
+from aveslog.v0.models import Locale
+from aveslog.v0.models import Bird
 
 
 def replace_text_variables(text: str, variables: List[str] = None) -> str:

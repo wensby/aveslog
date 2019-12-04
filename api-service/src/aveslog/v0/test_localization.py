@@ -7,7 +7,8 @@ from unittest.mock import Mock
 
 from sqlalchemy.orm import Session
 
-from aveslog.v0.localization import LocaleDeterminer, LoadedLocale
+from aveslog.v0.localization import LocaleDeterminer
+from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import Locale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader

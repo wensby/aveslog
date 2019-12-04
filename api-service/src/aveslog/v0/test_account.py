@@ -3,9 +3,11 @@ from unittest import TestCase
 from unittest.mock import Mock
 from binascii import hexlify
 
-from aveslog.v0.models import Account, PasswordResetToken
-from aveslog.v0.account import PasswordHasher, is_valid_username, \
-  is_valid_password
+from aveslog.v0.models import Account
+from aveslog.v0.models import PasswordResetToken
+from aveslog.v0.account import PasswordHasher
+from aveslog.v0.account import is_valid_username
+from aveslog.v0.account import is_valid_password
 
 
 class TestUsername(TestCase):

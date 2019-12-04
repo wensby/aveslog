@@ -7,11 +7,12 @@ from flask import make_response
 from flask import jsonify
 
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.authentication import SaltFactory, PasswordUpdateController, \
-  Authenticator
+from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.authentication import PasswordUpdateController
+from aveslog.v0.authentication import Authenticator
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
-from aveslog.v0.account import is_valid_username, AccountRepository
+from aveslog.v0.account import is_valid_username
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import is_valid_password
 from aveslog.v0.models import AccountRegistration, HashedPassword

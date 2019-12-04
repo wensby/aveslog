@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from aveslog.v0.models import BirdThumbnail, Bird
+from aveslog.v0.models import BirdThumbnail
+from aveslog.v0.models import Bird
 
 
 class TestBird(TestCase):

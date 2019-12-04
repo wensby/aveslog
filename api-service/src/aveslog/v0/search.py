@@ -3,7 +3,8 @@ from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
 
-from .models import Bird, BirdName
+from .models import Bird
+from .models import BirdName
 
 
 class BirdSearchMatch:

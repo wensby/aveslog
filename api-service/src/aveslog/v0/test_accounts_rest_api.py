@@ -4,7 +4,8 @@ from datetime import timedelta
 
 from flask import Response
 
-from aveslog.v0.authentication import AuthenticationTokenFactory, JwtFactory
+from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.authentication import JwtFactory
 from aveslog.test_util import AppTestCase
 from aveslog.v0.error import ErrorCode
 
