@@ -73,12 +73,11 @@ def create_api_v0_blueprint(
     link_factory,
     token_factory,
   )
-  string_matcher = StringMatcher()
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
   register_routes(birds_routes)
-  search_routes = create_search_routes(link_factory, string_matcher)
+  search_routes = create_search_routes()
   register_routes(search_routes)
   registration_routes = create_registration_routes(
     account_registration_controller,

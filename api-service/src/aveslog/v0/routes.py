@@ -1,32 +1,26 @@
-import os
 from http import HTTPStatus
 from typing import Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, g
 
 from aveslog.v0 import accounts_rest_api
+from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
-from aveslog.v0.birds_rest_api import bird_summary_representation
 from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader
-from aveslog.v0.link import LinkFactory
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Bird
-from aveslog.v0.models import Picture
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import Sighting
 from aveslog.v0.models import Birder
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
-from aveslog.v0.search import BirdSearchMatch
-from aveslog.v0.search import StringMatcher
-from aveslog.v0.search import BirdSearcher
 
 
 def create_birds_routes():
@@ -40,50 +34,11 @@ def create_birds_routes():
   return routes
 
 
-def create_search_routes(
-      link_factory: LinkFactory,
-      string_matcher: StringMatcher,
-):
-  def _external_picture_url(picture: Picture) -> str:
-    static_picture_url = os.path.join('/static/', picture.filepath)
-    return link_factory.create_url_external_link(static_picture_url)
-
-  def _result_item(match: BirdSearchMatch, embed: list) -> dict:
-    bird = match.bird
-    item = bird_summary_representation(bird)
-    item['score'] = match.score
-    if 'thumbnail' in embed and bird.thumbnail:
-      item['thumbnail'] = {
-        'url': _external_picture_url(bird.thumbnail.picture),
-        'credit': bird.thumbnail.picture.credit
-      }
-    return item
-
-  def search_birds() -> Response:
-    query = request.args.get('q')
-    page_size = request.args.get('page_size', type=int)
-    embed = parse_embed_list(request.args)
-    page_size = page_size if page_size else 30
-    embed = embed if embed else []
-    bird_searcher = BirdSearcher(
-      g.database_session,
-      string_matcher,
-    )
-    search_matches = bird_searcher.search(query)
-    search_matches.sort(key=lambda m: m.score, reverse=True)
-    bird_matches = list(
-      map(lambda x: _result_item(x, embed), search_matches[:page_size]))
-    return make_response(jsonify({
-      'items': bird_matches,
-    }), HTTPStatus.OK)
-
-  def parse_embed_list(args):
-    return args.get('embed', type=str).split(',') if 'embed' in args else []
-
+def create_search_routes() -> list:
   return [
     {
       'rule': '/search/birds',
-      'func': search_birds,
+      'func': search_api.search_birds,
     }
   ]
 
