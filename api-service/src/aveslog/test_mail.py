@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 
 import aveslog
-from aveslog.mail import EmailAddress
+from aveslog.mail import is_valid_email_address
 from aveslog.mail import MailServerDispatcher
 from aveslog.mail import MailDispatcher
 from aveslog.test_util import IntegrationTestCase
@@ -17,14 +17,7 @@ class TestMailDispatcher(TestCase):
 class TestEmailAddress(TestCase):
 
   def test_construction_when_invalid_format(self):
-    self.assertRaises(Exception, EmailAddress, *('invalidformat',))
-
-  def test_eq_false_when_different_type(self):
-    self.assertNotEqual(EmailAddress('my@email.com'), 'my@email.com')
-
-  def test_repr(self):
-    self.assertEqual(
-      repr(EmailAddress('my@mail.com')), 'EmailAddress<my@mail.com>')
+    self.assertFalse(is_valid_email_address('invalidformat'))
 
 
 class TestMailDispatcherFactory(IntegrationTestCase):

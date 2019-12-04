@@ -9,8 +9,6 @@ from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import PasswordResetToken
 
-from aveslog.mail import EmailAddress
-
 
 def is_valid_username(username: str) -> bool:
   return re.compile('^[a-z0-9_.-]{5,32}$').match(username) is not None

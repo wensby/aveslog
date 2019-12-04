@@ -11,7 +11,7 @@ from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import RefreshToken
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
-from aveslog.mail import EmailAddress
+from aveslog.mail import is_valid_email_address
 from aveslog.mail import MailDispatcher
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import PasswordHasher
@@ -73,7 +73,7 @@ class AccountRegistrationController:
         self,
         email: str,
         locale: LoadedLocale) -> Union[AccountRegistration, str]:
-    if not EmailAddress.is_valid(email):
+    if not is_valid_email_address(email):
       return 'email invalid'
     if self.account_repository.find_account_by_email(email):
       return 'email taken'
