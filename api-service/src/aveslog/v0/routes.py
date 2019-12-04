@@ -1,14 +1,11 @@
 import os
-from datetime import datetime
 from http import HTTPStatus
 from typing import Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, g
 
-from aveslog.mail import EmailAddress, MailDispatcher
-from aveslog.v0 import accounts_rest_api, TokenFactory
-from aveslog.v0 import AccountRepository
-from aveslog.v0 import PasswordHasher
+from aveslog.v0 import accounts_rest_api
+from aveslog.v0 import authentication_rest_api
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
@@ -18,18 +15,11 @@ from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.link import LinkFactory
-from aveslog.v0.authentication import JwtDecoder
-from aveslog.v0.authentication import SaltFactory
-from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import AccountRegistrationController
-from aveslog.v0.authentication import Authenticator
-from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.models import Bird
 from aveslog.v0.models import Picture
 from aveslog.v0.models import AccountRegistration
-from aveslog.v0.models import RefreshToken
 from aveslog.v0.models import Sighting
 from aveslog.v0.models import Birder
 from aveslog.v0.rest_api import error_response
@@ -173,172 +163,30 @@ def create_account_routes() -> list:
   ]
 
 
-def create_authentication_routes(
-      jwt_decoder: JwtDecoder,
-      locale_repository: LocaleRepository,
-      locale_loader: LocaleLoader,
-      authenticator: Authenticator,
-      token_factory: AuthenticationTokenFactory,
-      link_factory: LinkFactory,
-      mail_dispatcher: MailDispatcher,
-) -> list:
-  def credentials_incorrect_response() -> Response:
-    return error_response(
-      ErrorCode.CREDENTIALS_INCORRECT,
-      'Credentials incorrect',
-      status_code=HTTPStatus.UNAUTHORIZED,
-    )
-
-  def create_unauthorized_response(message) -> Response:
-    return make_response(jsonify({
-      'status': 'failure',
-      'message': message,
-    }), HTTPStatus.UNAUTHORIZED)
-
-  def refresh_token_deleted_response() -> Response:
-    return make_response('', HTTPStatus.NO_CONTENT)
-
-  def create_persistent_refresh_token(account: Account) -> RefreshToken:
-    session = g.database_session
-    token = token_factory.create_refresh_token(account.id)
-    session.add(token)
-    session.commit()
-    return token
-
-  def post_refresh_token() -> Response:
-    username = request.args.get('username')
-    password = request.args.get('password')
-    session = g.database_session
-    account = session.query(Account).filter_by(username=username).first()
-    if not account:
-      return credentials_incorrect_response()
-    if not authenticator.is_account_password_correct(account, password):
-      return credentials_incorrect_response()
-    refresh_token = create_persistent_refresh_token(account)
-    return make_response(jsonify({
-      'id': refresh_token.id,
-      'refreshToken': refresh_token.token,
-      'expirationDate': refresh_token.expiration_date.isoformat(),
-    }), HTTPStatus.CREATED)
-
-  @require_authentication
-  def delete_refresh_token(refresh_token_id: int) -> Response:
-    account = g.authenticated_account
-    session = g.database_session
-    refresh_token = session.query(RefreshToken).get(refresh_token_id)
-    if not refresh_token:
-      return refresh_token_deleted_response()
-    if refresh_token.account_id != account.id:
-      return error_response(
-        ErrorCode.AUTHORIZATION_REQUIRED,
-        'Authorization required',
-        status_code=HTTPStatus.UNAUTHORIZED,
-      )
-    session.delete(refresh_token)
-    session.commit()
-    return refresh_token_deleted_response()
-
-  def get_access_token() -> Response:
-    refresh_token_jwt = request.headers.get('refreshToken')
-    if not refresh_token_jwt:
-      return create_unauthorized_response('refresh token required')
-    decode_result = jwt_decoder.decode_jwt(refresh_token_jwt)
-    if not decode_result.ok:
-      if decode_result.error == 'token-invalid':
-        return create_unauthorized_response('refresh token invalid')
-      elif decode_result.error == 'signature-expired':
-        return create_unauthorized_response('refresh token expired')
-    token = g.database_session.query(RefreshToken) \
-      .filter_by(token=refresh_token_jwt) \
-      .first()
-    if not token:
-      return create_unauthorized_response('refresh token revoked')
-    account_id = decode_result.payload['sub']
-    access_token = token_factory.create_access_token(account_id)
-    return make_response(jsonify({
-      'jwt': access_token.jwt,
-      'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
-    }), HTTPStatus.OK)
-
-  def load_english_locale() -> LoadedLocale:
-    locale = locale_repository.find_locale_by_code('en')
-    return locale_loader.load_locale(locale)
-
-  def post_password_reset_email() -> Response:
-    email = request.json['email']
-    locale = load_english_locale()
-    email = EmailAddress(email)
-    account_repository = AccountRepository(PasswordHasher(SaltFactory()))
-    account = account_repository.find_account_by_email(email)
-    if not account:
-      return error_response(
-        ErrorCode.EMAIL_MISSING,
-        'E-mail not associated with any account',
-      )
-    token = TokenFactory().create_token()
-    reset_token = PasswordResetToken(account_id=account.id, token=token)
-    g.database_session.add(reset_token)
-    link = _create_password_reset_link(token)
-    message = _create_mail_message(link, locale)
-    mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
-    return make_response('', HTTPStatus.OK)
-
-  def _create_password_reset_link(token: str) -> str:
-    link = f'/authentication/password-reset/{token}'
-    return link_factory.create_frontend_link(link)
-
-  def _create_mail_message(link: str, locale: LoadedLocale) -> str:
-    message = (
-      'You have requested a password reset of your Birding account. '
-      'Please follow this link to get to your password reset form: ')
-    return locale.text(message) + link
-
-  def try_perform_password_reset(password: str, token: str) -> Optional[str]:
-    reset_token = g.database_session.query(PasswordResetToken). \
-      filter(PasswordResetToken.token.like(token)).first()
-    if not reset_token:
-      return None
-    account = g.database_session.query(Account).get(reset_token.account_id)
-    password_update_controller = PasswordUpdateController(
-      PasswordHasher(SaltFactory()))
-    password_update_controller.update_password(account, password)
-    password_reset_token = g.database_session.query(PasswordResetToken). \
-      filter(PasswordResetToken.token.like(token)).first()
-    if password_reset_token:
-      g.database_session.delete(password_reset_token)
-      g.database_session.commit()
-    return 'success'
-
-  def post_password_reset(token: str) -> Response:
-    password = request.json['password']
-    success = try_perform_password_reset(password, token)
-    if not success:
-      return make_response('', HTTPStatus.NOT_FOUND)
-    return make_response('', HTTPStatus.OK)
-
+def create_authentication_routes() -> list:
   return [
     {
       'rule': '/authentication/refresh-token',
-      'func': post_refresh_token,
+      'func': authentication_rest_api.post_refresh_token,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/authentication/refresh-token/<int:refresh_token_id>',
-      'func': delete_refresh_token,
+      'func': authentication_rest_api.delete_refresh_token,
       'options': {'methods': ['DELETE']},
     },
     {
       'rule': '/authentication/access-token',
-      'func': get_access_token,
+      'func': authentication_rest_api.get_access_token,
     },
     {
       'rule': '/authentication/password-reset',
-      'func': post_password_reset_email,
+      'func': authentication_rest_api.post_password_reset_email,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/authentication/password-reset/<string:token>',
-      'func': post_password_reset,
+      'func': authentication_rest_api.post_password_reset,
       'options': {'methods': ['POST']},
     },
   ]

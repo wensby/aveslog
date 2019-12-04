@@ -1,4 +1,3 @@
-import datetime
 from http import HTTPStatus
 
 from flask import Blueprint, request, after_this_request, g, Response
@@ -67,7 +66,6 @@ def create_api_v0_blueprint(
     locale_repository)
   salt_factory = SaltFactory()
   password_hasher = PasswordHasher(salt_factory)
-  jwt_decoder = JwtDecoder(secret_key)
   link_factory = LinkFactory(api_external_host, frontend_host)
   token_factory = TokenFactory()
   account_repository = AccountRepository(password_hasher)
@@ -79,11 +77,6 @@ def create_api_v0_blueprint(
   )
   string_matcher = StringMatcher()
   jwt_factory = JwtFactory(secret_key)
-  authentication_token_factory = AuthenticationTokenFactory(
-    jwt_factory,
-    datetime.datetime.utcnow,
-  )
-  authenticator = Authenticator(password_hasher)
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
@@ -100,15 +93,7 @@ def create_api_v0_blueprint(
     sighting_repository,
   )
   register_routes(sighting_routes)
-  authentication_routes = create_authentication_routes(
-    jwt_decoder,
-    locale_repository,
-    locale_loader,
-    authenticator,
-    authentication_token_factory,
-    link_factory,
-    mail_dispatcher,
-  )
+  authentication_routes = create_authentication_routes()
   register_routes(authentication_routes)
   account_routes = create_account_routes()
   register_routes(account_routes)
@@ -117,6 +102,7 @@ def create_api_v0_blueprint(
 
   @blueprint.before_request
   def before_request():
+    g.mail_dispatcher = mail_dispatcher
     # Setup database session. This is fine even for requests that ultimately
     # didn't require database communication, since the session doesn't actually
     # establish a connection with the database until you start using it.
