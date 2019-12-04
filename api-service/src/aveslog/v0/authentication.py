@@ -1,21 +1,19 @@
 import os
 from base64 import b64encode
 from datetime import timedelta, datetime
-from typing import Union, Optional, Callable, Any
+from typing import Union, Callable, Any
 
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 
 from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
-from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import RefreshToken
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.mail import EmailAddress
 from aveslog.mail import MailDispatcher
 from aveslog.v0.account import TokenFactory
-from aveslog.v0.account import PasswordRepository
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import AccountRepository
 
@@ -128,60 +126,6 @@ class PasswordUpdateController:
     for refresh_token in account.refresh_tokens:
       session.delete(refresh_token)
     session.commit()
-
-
-class PasswordResetController:
-
-  def __init__(self,
-        account_repository: AccountRepository,
-        password_repository: PasswordRepository,
-        link_factory: LinkFactory,
-        mail_dispatcher: MailDispatcher,
-        password_update_controller: PasswordUpdateController,
-        token_factory: TokenFactory,
-  ) -> None:
-    self.account_repository = account_repository
-    self.password_repository = password_repository
-    self.link_factory = link_factory
-    self.mail_dispatcher = mail_dispatcher
-    self.password_update_controller = password_update_controller
-    self.token_factory = token_factory
-
-  def initiate_password_reset(
-        self,
-        raw_email: str,
-        locale: LoadedLocale) -> bool:
-    email = EmailAddress(raw_email)
-    account = self.account_repository.find_account_by_email(email)
-    if not account:
-      return False
-    token = self.token_factory.create_token()
-    reset_token = PasswordResetToken(account_id=account.id, token=token)
-    self.password_repository.add_password_reset_token(reset_token)
-    link = self.__create_password_reset_link(token)
-    message = self.__create_mail_message(link, locale)
-    self.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
-    return True
-
-  def __create_password_reset_link(self, token: str) -> str:
-    link = f'/authentication/password-reset/{token}'
-    return self.link_factory.create_frontend_link(link)
-
-  def __create_mail_message(self, link: str, locale: LoadedLocale) -> str:
-    message = (
-      'You have requested a password reset of your Birding account. '
-      'Please follow this link to get to your password reset form: ')
-    return locale.text(message) + link
-
-  def perform_password_reset(self, token: str, password: str) -> Optional[str]:
-    reset_token = self.password_repository.find_password_reset_token_by_token(
-      token)
-    if not reset_token:
-      return None
-    account = self.account_repository.account_by_id(reset_token.account_id)
-    self.password_update_controller.update_password(account, password)
-    self.password_repository.remove_password_reset_token(token)
-    return 'success'
 
 
 class SaltFactory:

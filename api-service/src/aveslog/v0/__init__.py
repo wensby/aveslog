@@ -14,7 +14,6 @@ from aveslog.v0.account import PasswordHasher
 from aveslog.v0.account import PasswordRepository
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import JwtFactory
-from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import JwtDecoder
@@ -71,21 +70,11 @@ def create_api_v0_blueprint(
   jwt_decoder = JwtDecoder(secret_key)
   link_factory = LinkFactory(api_external_host, frontend_host)
   token_factory = TokenFactory()
-  password_repository = PasswordRepository(token_factory, password_hasher)
   account_repository = AccountRepository(password_hasher)
   account_registration_controller = AccountRegistrationController(
     account_repository,
     mail_dispatcher,
     link_factory,
-    token_factory,
-  )
-  password_update_controller = PasswordUpdateController(password_hasher)
-  password_reset_controller = PasswordResetController(
-    account_repository,
-    password_repository,
-    link_factory,
-    mail_dispatcher,
-    password_update_controller,
     token_factory,
   )
   string_matcher = StringMatcher()
@@ -117,7 +106,8 @@ def create_api_v0_blueprint(
     locale_loader,
     authenticator,
     authentication_token_factory,
-    password_reset_controller,
+    link_factory,
+    mail_dispatcher,
   )
   register_routes(authentication_routes)
   account_routes = create_account_routes()

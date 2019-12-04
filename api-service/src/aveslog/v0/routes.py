@@ -5,7 +5,10 @@ from typing import Union, Optional, List
 
 from flask import Response, request, make_response, jsonify, g
 
-from aveslog.v0 import accounts_rest_api
+from aveslog.mail import EmailAddress, MailDispatcher
+from aveslog.v0 import accounts_rest_api, TokenFactory
+from aveslog.v0 import AccountRepository
+from aveslog.v0 import PasswordHasher
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
@@ -16,12 +19,13 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.authentication import JwtDecoder
+from aveslog.v0.authentication import SaltFactory
+from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import AuthenticationTokenFactory
-from aveslog.v0.authentication import PasswordResetController
 from aveslog.v0.error import ErrorCode
-from aveslog.v0.models import Account
+from aveslog.v0.models import Account, PasswordResetToken
 from aveslog.v0.models import Bird
 from aveslog.v0.models import Picture
 from aveslog.v0.models import AccountRegistration
@@ -175,7 +179,8 @@ def create_authentication_routes(
       locale_loader: LocaleLoader,
       authenticator: Authenticator,
       token_factory: AuthenticationTokenFactory,
-      password_reset_controller: PasswordResetController,
+      link_factory: LinkFactory,
+      mail_dispatcher: MailDispatcher,
 ) -> list:
   def credentials_incorrect_response() -> Response:
     return error_response(
@@ -255,28 +260,54 @@ def create_authentication_routes(
       'expiresIn': (access_token.expiration_date - datetime.now()).seconds,
     }), HTTPStatus.OK)
 
-  def initiate_password_reset(email: str) -> bool:
-    locale = load_english_locale()
-    return password_reset_controller.initiate_password_reset(email, locale)
-
   def load_english_locale() -> LoadedLocale:
     locale = locale_repository.find_locale_by_code('en')
     return locale_loader.load_locale(locale)
 
   def post_password_reset_email() -> Response:
     email = request.json['email']
-    created = initiate_password_reset(email)
-    if not created:
+    locale = load_english_locale()
+    email = EmailAddress(email)
+    account_repository = AccountRepository(PasswordHasher(SaltFactory()))
+    account = account_repository.find_account_by_email(email)
+    if not account:
       return error_response(
         ErrorCode.EMAIL_MISSING,
         'E-mail not associated with any account',
       )
+    token = TokenFactory().create_token()
+    reset_token = PasswordResetToken(account_id=account.id, token=token)
+    g.database_session.add(reset_token)
+    link = _create_password_reset_link(token)
+    message = _create_mail_message(link, locale)
+    mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
     return make_response('', HTTPStatus.OK)
 
-  def try_perform_password_reset(password: str,
-        password_reset_token: str) -> str:
-    return password_reset_controller.perform_password_reset(
-      password_reset_token, password)
+  def _create_password_reset_link(token: str) -> str:
+    link = f'/authentication/password-reset/{token}'
+    return link_factory.create_frontend_link(link)
+
+  def _create_mail_message(link: str, locale: LoadedLocale) -> str:
+    message = (
+      'You have requested a password reset of your Birding account. '
+      'Please follow this link to get to your password reset form: ')
+    return locale.text(message) + link
+
+  def try_perform_password_reset(password: str, token: str) -> Optional[str]:
+    reset_token = g.database_session.query(PasswordResetToken). \
+      filter(PasswordResetToken.token.like(token)).first()
+    if not reset_token:
+      return None
+    account = g.database_session.query(Account).get(reset_token.account_id)
+    password_update_controller = PasswordUpdateController(
+      PasswordHasher(SaltFactory()))
+    password_update_controller.update_password(account, password)
+    password_reset_token = g.database_session.query(PasswordResetToken). \
+      filter(PasswordResetToken.token.like(token)).first()
+    if password_reset_token:
+      g.database_session.delete(password_reset_token)
+      g.database_session.commit()
+    return 'success'
 
   def post_password_reset(token: str) -> Response:
     password = request.json['password']
