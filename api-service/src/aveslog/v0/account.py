@@ -48,9 +48,6 @@ class AccountRepository:
   def __init__(self, password_hasher: PasswordHasher):
     self.hasher = password_hasher
 
-  def account_by_id(self, account_id: int) -> Optional[Account]:
-    return g.database_session.query(Account).get(account_id)
-
   def add_account_registration(self,
         account_registration: AccountRegistration,
   ) -> Optional[AccountRegistration]:
@@ -61,30 +58,3 @@ class AccountRepository:
   def find_account_by_email(self, email: EmailAddress) -> Optional[Account]:
     return g.database_session.query(Account). \
       filter(Account.email.like(email.raw)).first()
-
-
-class PasswordRepository:
-
-  def __init__(self, token_factory, password_hasher):
-    self.token_factory = token_factory
-    self.hasher = password_hasher
-
-  def add_password_reset_token(self, password_reset_token: PasswordResetToken):
-    current_reset_token = g.database_session.query(PasswordResetToken). \
-      filter_by(account_id=password_reset_token.account_id).first()
-    if current_reset_token:
-      current_reset_token.token = password_reset_token.token
-    else:
-      g.database_session.add(password_reset_token)
-    g.database_session.commit()
-
-  def find_password_reset_token_by_token(self, token):
-    return g.database_session.query(PasswordResetToken). \
-      filter(PasswordResetToken.token.like(token)).first()
-
-  def remove_password_reset_token(self, token):
-    password_reset_token = g.database_session.query(PasswordResetToken). \
-      filter(PasswordResetToken.token.like(token)).first()
-    if password_reset_token:
-      g.database_session.delete(password_reset_token)
-      g.database_session.commit()
