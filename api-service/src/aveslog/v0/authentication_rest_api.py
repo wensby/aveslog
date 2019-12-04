@@ -99,15 +99,18 @@ def post_password_reset_email() -> Response:
       ErrorCode.EMAIL_MISSING,
       'E-mail not associated with any account',
     )
-  token = TokenFactory().create_token()
-  reset_token = PasswordResetToken(account_id=account.id, token=token)
-  session.add(reset_token)
+  new_token = TokenFactory().create_token()
+  previous_reset_token = account.password_reset_token
+  if previous_reset_token:
+    previous_reset_token.token = new_token
+  else:
+    session.add(PasswordResetToken(account_id=account.id, token=new_token))
   link_factory = LinkFactory(
     current_app.config['EXTERNAL_HOST'],
     current_app.config['FRONTEND_HOST'],
   )
   link = link_factory.create_frontend_link(
-    f'/authentication/password-reset/{token}')
+    f'/authentication/password-reset/{new_token}')
   message = (
     'You have requested a password reset of your Birding account. '
     'Please follow this link to get to your password reset form: ')
@@ -127,7 +130,7 @@ def post_password_reset(token: str) -> Response:
   account = reset_token.account
   password_hasher = PasswordHasher(SaltFactory())
   password_update_controller = PasswordUpdateController(password_hasher)
-  password_update_controller.update_password(account, password)
+  password_update_controller.update_password(account, password, session)
   session.delete(reset_token)
   session.commit()
   return make_response('', HTTPStatus.OK)

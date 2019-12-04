@@ -5,6 +5,7 @@ from typing import Union, Callable, Any
 
 from flask import g
 from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
+from sqlalchemy.orm import Session
 
 from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
@@ -117,14 +118,14 @@ class PasswordUpdateController:
   def __init__(self, password_hasher: PasswordHasher):
     self._password_hasher = password_hasher
 
-  def update_password(self, account: Account, password: str) -> None:
-    session = g.database_session
+  def update_password(self, account: Account, password: str, session: Session):
     salt, hash = self._password_hasher.create_salt_hashed_password(password)
-    account.hashed_password.salt = salt
-    account.hashed_password.salted_hash = hash
+    hashed_password = account.hashed_password
+    hashed_password.salt = salt
+    hashed_password.salted_hash = hash
     for refresh_token in account.refresh_tokens:
       session.delete(refresh_token)
-    session.commit()
+    session.flush()
 
 
 class SaltFactory:

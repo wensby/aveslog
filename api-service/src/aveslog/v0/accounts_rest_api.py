@@ -153,7 +153,8 @@ def post_password() -> Response:
   if not is_valid_password(new_password):
     return error_response(ErrorCode.PASSWORD_INVALID, 'New password invalid')
   password_update_controller = PasswordUpdateController(password_hasher)
-  password_update_controller.update_password(account, new_password)
+  session = g.database_session
+  password_update_controller.update_password(account, new_password, session)
   return make_response('', HTTPStatus.NO_CONTENT)
 
 

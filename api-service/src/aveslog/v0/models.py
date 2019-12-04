@@ -107,6 +107,7 @@ class Account(Base):
   refresh_tokens = relationship('RefreshToken', back_populates='account')
   hashed_password: HashedPassword = relationship('HashedPassword',
     uselist=False)
+  password_reset_token = relationship('PasswordResetToken', uselist=False)
 
   def __repr__(self):
     return (f"<Account(username='{self.username}', email='{self.email}', "
