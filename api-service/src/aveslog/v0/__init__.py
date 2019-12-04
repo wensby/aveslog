@@ -7,22 +7,11 @@ from aveslog.v0.database import SessionFactory
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.mail import MailDispatcher
-from aveslog.v0.account import AccountRepository
-from aveslog.v0.account import TokenFactory
-from aveslog.v0.account import PasswordHasher
-from aveslog.v0.authentication import AccountRegistrationController
-from aveslog.v0.authentication import JwtFactory
-from aveslog.v0.authentication import PasswordUpdateController
-from aveslog.v0.authentication import SaltFactory
-from aveslog.v0.authentication import JwtDecoder
-from aveslog.v0.authentication import AuthenticationTokenFactory
-from aveslog.v0.authentication import Authenticator
 from aveslog.v0.localization import Locale
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleDeterminerFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
-from aveslog.v0.link import LinkFactory
 from aveslog.v0.rest_api import error_response
 from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_sightings_routes
@@ -31,8 +20,6 @@ from aveslog.v0.routes import create_authentication_routes
 from aveslog.v0.routes import create_registration_requests_routes
 from aveslog.v0.routes import create_account_routes
 from aveslog.v0.routes import create_search_routes
-from aveslog.v0.search import StringMatcher
-from aveslog.v0.search import BirdSearcher
 
 
 def create_api_v0_blueprint(
@@ -60,8 +47,6 @@ def create_api_v0_blueprint(
   locale_repository = LocaleRepository(localespath, locale_loader)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
     locale_repository)
-  salt_factory = SaltFactory()
-  password_hasher = PasswordHasher(salt_factory)
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
