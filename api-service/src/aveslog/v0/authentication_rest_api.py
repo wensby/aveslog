@@ -1,6 +1,5 @@
 from datetime import datetime
 from http import HTTPStatus
-from typing import Optional
 
 from flask import Response, make_response, jsonify, request, current_app, g
 
@@ -111,9 +110,16 @@ def post_password_reset_email() -> Response:
 
 def post_password_reset(token: str) -> Response:
   password = request.json['password']
-  success = try_perform_password_reset(password, token)
-  if not success:
+  session = g.database_session
+  reset_token = session.query(PasswordResetToken).filter_by(token=token).first()
+  if not reset_token:
     return make_response('', HTTPStatus.NOT_FOUND)
+  account = reset_token.account
+  password_hasher = PasswordHasher(SaltFactory())
+  password_update_controller = PasswordUpdateController(password_hasher)
+  password_update_controller.update_password(account, password)
+  session.delete(reset_token)
+  session.commit()
   return make_response('', HTTPStatus.OK)
 
 
@@ -155,20 +161,3 @@ def _create_mail_message(link: str, locale: LoadedLocale) -> str:
     'You have requested a password reset of your Birding account. '
     'Please follow this link to get to your password reset form: ')
   return locale.text(message) + link
-
-
-def try_perform_password_reset(password: str, token: str) -> Optional[str]:
-  reset_token = g.database_session.query(PasswordResetToken). \
-    filter(PasswordResetToken.token.like(token)).first()
-  if not reset_token:
-    return None
-  account = g.database_session.query(Account).get(reset_token.account_id)
-  password_update_controller = PasswordUpdateController(
-    PasswordHasher(SaltFactory()))
-  password_update_controller.update_password(account, password)
-  password_reset_token = g.database_session.query(PasswordResetToken). \
-    filter(PasswordResetToken.token.like(token)).first()
-  if password_reset_token:
-    g.database_session.delete(password_reset_token)
-    g.database_session.commit()
-  return 'success'

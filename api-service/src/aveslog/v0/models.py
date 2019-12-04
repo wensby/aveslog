@@ -125,6 +125,8 @@ class PasswordResetToken(Base):
   account_id = Column(Integer, ForeignKey('account.id'), primary_key=True)
   token = Column(String)
 
+  account = relationship('Account', uselist=False)
+
   def __repr__(self):
     return (
       f"<PasswordResetToken(account_id='{self.account_id}', "
