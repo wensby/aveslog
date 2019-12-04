@@ -9,7 +9,7 @@ from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
-from aveslog.v0.models import Account, RefreshToken
+from aveslog.v0.models import Account
 from aveslog.v0.account import AccountRepository
 from aveslog.mail import MailServerDispatcher
 from aveslog.v0.link import LinkFactory
@@ -154,23 +154,3 @@ class TestJwtDecoder(TestCase):
 
     self.assertFalse(result.ok)
     self.assertEqual(result.error, 'token-invalid')
-
-
-class TestRefreshToken(TestCase):
-
-  def test_init(self):
-    RefreshToken(
-      id=1, token='jwt', account_id=1,
-      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
-
-  def test_eq_when_identical(self):
-    a = RefreshToken(id=1, token='jwt', account_id=1,
-      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
-    b = RefreshToken(id=1, token='jwt', account_id=1,
-      expiration_date=datetime(2019, 10, 8, 12, 28, 0))
-    self.assertEqual(a, b)
-
-  def test_eq_when_other_type(self):
-    token = RefreshToken(id=1, token='jwt', account_id=1,
-      expiration_date=datetime(2019, 10, 8, 20, 46))
-    self.assertNotEqual(token, 'RefreshToken(1, jwt, 1, 2019-10-08 20:46)')
