@@ -26,25 +26,6 @@ from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
 
 
-def credentials_incorrect_response() -> Response:
-  return error_response(
-    ErrorCode.CREDENTIALS_INCORRECT,
-    'Credentials incorrect',
-    status_code=HTTPStatus.UNAUTHORIZED,
-  )
-
-
-def create_unauthorized_response(message) -> Response:
-  return make_response(jsonify({
-    'status': 'failure',
-    'message': message,
-  }), HTTPStatus.UNAUTHORIZED)
-
-
-def refresh_token_deleted_response() -> Response:
-  return make_response('', HTTPStatus.NO_CONTENT)
-
-
 def post_refresh_token() -> Response:
   username = request.args.get('username')
   password = request.args.get('password')
@@ -112,14 +93,6 @@ def get_access_token() -> Response:
   }), HTTPStatus.OK)
 
 
-def load_english_locale() -> LoadedLocale:
-  locales_directory_path = current_app.config['LOCALES_PATH']
-  loader = LocaleLoader(locales_directory_path, {})
-  repository = LocaleRepository(locales_directory_path, loader)
-  locale = repository.find_locale_by_code('en')
-  return loader.load_locale(locale)
-
-
 def post_password_reset_email() -> Response:
   email = request.json['email']
   locale = load_english_locale()
@@ -138,6 +111,41 @@ def post_password_reset_email() -> Response:
   message = _create_mail_message(link, locale)
   g.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
   return make_response('', HTTPStatus.OK)
+
+
+def post_password_reset(token: str) -> Response:
+  password = request.json['password']
+  success = try_perform_password_reset(password, token)
+  if not success:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  return make_response('', HTTPStatus.OK)
+
+
+def credentials_incorrect_response() -> Response:
+  return error_response(
+    ErrorCode.CREDENTIALS_INCORRECT,
+    'Credentials incorrect',
+    status_code=HTTPStatus.UNAUTHORIZED,
+  )
+
+
+def create_unauthorized_response(message) -> Response:
+  return make_response(jsonify({
+    'status': 'failure',
+    'message': message,
+  }), HTTPStatus.UNAUTHORIZED)
+
+
+def refresh_token_deleted_response() -> Response:
+  return make_response('', HTTPStatus.NO_CONTENT)
+
+
+def load_english_locale() -> LoadedLocale:
+  locales_directory_path = current_app.config['LOCALES_PATH']
+  loader = LocaleLoader(locales_directory_path, {})
+  repository = LocaleRepository(locales_directory_path, loader)
+  locale = repository.find_locale_by_code('en')
+  return loader.load_locale(locale)
 
 
 def _create_password_reset_link(token: str) -> str:
@@ -168,11 +176,3 @@ def try_perform_password_reset(password: str, token: str) -> Optional[str]:
     g.database_session.delete(password_reset_token)
     g.database_session.commit()
   return 'success'
-
-
-def post_password_reset(token: str) -> Response:
-  password = request.json['password']
-  success = try_perform_password_reset(password, token)
-  if not success:
-    return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response('', HTTPStatus.OK)
