@@ -31,7 +31,6 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
     mail_dispatcher,
-    app.secret_key,
     api_external_host,
     frontend_host,
     localespath,

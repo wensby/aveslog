@@ -37,7 +37,6 @@ from aveslog.v0.search import BirdSearcher
 
 def create_api_v0_blueprint(
       mail_dispatcher: MailDispatcher,
-      secret_key: str,
       api_external_host: str,
       frontend_host: str,
       localespath: str,
@@ -75,7 +74,6 @@ def create_api_v0_blueprint(
     token_factory,
   )
   string_matcher = StringMatcher()
-  jwt_factory = JwtFactory(secret_key)
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
