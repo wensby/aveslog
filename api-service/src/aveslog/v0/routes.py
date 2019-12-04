@@ -4,12 +4,12 @@ from typing import Union, Optional, List
 from flask import Response, request, make_response, jsonify, g
 
 from aveslog.v0 import accounts_rest_api
+from aveslog.v0 import birds_rest_api
 from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
-from aveslog.v0.birds_rest_api import get_single_bird
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.localization import LocaleLoader
@@ -27,7 +27,7 @@ def create_birds_routes():
   routes = [
     {
       'rule': '/birds/<string:bird_identifier>',
-      'func': get_single_bird,
+      'func': birds_rest_api.get_single_bird,
     },
   ]
 
