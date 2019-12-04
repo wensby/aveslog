@@ -92,8 +92,8 @@ def get_access_token() -> Response:
 
 def post_password_reset_email() -> Response:
   email = request.json['email']
-  locale = load_english_locale()
-  account = g.database_session.query(Account).filter_by(email=email).first()
+  session = g.database_session
+  account = session.query(Account).filter_by(email=email).first()
   if not account:
     return error_response(
       ErrorCode.EMAIL_MISSING,
@@ -101,10 +101,20 @@ def post_password_reset_email() -> Response:
     )
   token = TokenFactory().create_token()
   reset_token = PasswordResetToken(account_id=account.id, token=token)
-  g.database_session.add(reset_token)
-  link = _create_password_reset_link(token)
-  message = _create_mail_message(link, locale)
-  g.mail_dispatcher.dispatch(email, 'Birding Password Reset', message)
+  session.add(reset_token)
+  link_factory = LinkFactory(
+    current_app.config['EXTERNAL_HOST'],
+    current_app.config['FRONTEND_HOST'],
+  )
+  link = link_factory.create_frontend_link(
+    f'/authentication/password-reset/{token}')
+  message = (
+    'You have requested a password reset of your Birding account. '
+    'Please follow this link to get to your password reset form: ')
+  locale = load_english_locale()
+  mail_message = locale.text(message) + link
+  g.mail_dispatcher.dispatch(email, 'Birding Password Reset', mail_message)
+  session.commit()
   return make_response('', HTTPStatus.OK)
 
 
@@ -148,16 +158,3 @@ def load_english_locale() -> LoadedLocale:
   repository = LocaleRepository(locales_directory_path, loader)
   locale = repository.find_locale_by_code('en')
   return loader.load_locale(locale)
-
-
-def _create_password_reset_link(token: str) -> str:
-  link = f'/authentication/password-reset/{token}'
-  return LinkFactory(current_app.config['EXTERNAL_HOST'],
-    current_app.config['FRONTEND_HOST']).create_frontend_link(link)
-
-
-def _create_mail_message(link: str, locale: LoadedLocale) -> str:
-  message = (
-    'You have requested a password reset of your Birding account. '
-    'Please follow this link to get to your password reset form: ')
-  return locale.text(message) + link
