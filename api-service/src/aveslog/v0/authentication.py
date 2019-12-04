@@ -71,29 +71,28 @@ class AccountRegistrationController:
 
   def initiate_registration(
         self,
-        raw_email: str,
+        email: str,
         locale: LoadedLocale) -> Union[AccountRegistration, str]:
-    if not EmailAddress.is_valid(raw_email):
+    if not EmailAddress.is_valid(email):
       return 'email invalid'
-    email = EmailAddress(raw_email)
     if self.account_repository.find_account_by_email(email):
       return 'email taken'
     token = self.token_factory.create_token()
-    registration = AccountRegistration(email=email.raw, token=token)
+    registration = AccountRegistration(email=email, token=token)
     registration = self.account_repository.add_account_registration(
       registration)
     self.__send_registration_email(email, registration, locale)
     return registration
 
   def __send_registration_email(self,
-        email_address: EmailAddress,
+        email_address: str,
         registration: AccountRegistration,
         locale: LoadedLocale) -> None:
     link = self.__create_registration_link(registration.token)
     self.__dispatch_registration_mail(email_address, link, locale)
 
   def __dispatch_registration_mail(self,
-        email_address: EmailAddress,
+        email_address: str,
         registration_link: str,
         locale: LoadedLocale) -> None:
     subject = 'Birding Registration'

@@ -55,7 +55,7 @@ class MailDebugDispatcher(MailDispatcher):
     self.app = app
 
   def dispatch(self, recipient, subject, body):
-    self.app.logger.info('dispatching mail to %s: %s - %s', recipient.raw, subject, body)
+    self.app.logger.info('dispatching mail to %s: %s - %s', recipient, subject, body)
 
 class MailServerDispatcher(MailDispatcher):
 
@@ -70,5 +70,5 @@ class MailServerDispatcher(MailDispatcher):
     self.mail = Mail(app)
 
   def dispatch(self, recipient, subject, body):
-    message = Message(subject, recipients=[recipient.raw], body=body, sender=self.sender)
+    message = Message(subject, recipients=[recipient], body=body, sender=self.sender)
     self.mail.send(message)

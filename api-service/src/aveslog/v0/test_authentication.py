@@ -12,7 +12,6 @@ from aveslog.v0.account import TokenFactory
 from aveslog.v0.models import Account, RefreshToken
 from aveslog.v0.account import AccountRepository
 from aveslog.mail import MailServerDispatcher
-from aveslog.mail import EmailAddress
 from aveslog.v0.link import LinkFactory
 
 valid_email = 'valid@email.com'
@@ -91,7 +90,7 @@ class TestAccountRegistrationController(TestCase):
 
     result = self.controller.initiate_registration(valid_email, locale)
 
-    self.mail_dispatcher.dispatch.assert_called_with(EmailAddress(valid_email),
+    self.mail_dispatcher.dispatch.assert_called_with(valid_email,
       'Birding Registration',
       'translated message: myLink')
 

@@ -4,8 +4,6 @@ from typing import Optional
 
 from flask import Response, make_response, jsonify, request, current_app, g
 
-from aveslog.mail import EmailAddress
-from aveslog.v0 import AccountRepository
 from aveslog.v0 import LinkFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
@@ -96,9 +94,7 @@ def get_access_token() -> Response:
 def post_password_reset_email() -> Response:
   email = request.json['email']
   locale = load_english_locale()
-  email = EmailAddress(email)
-  account_repository = AccountRepository(PasswordHasher(SaltFactory()))
-  account = account_repository.find_account_by_email(email)
+  account = g.database_session.query(Account).filter_by(email=email).first()
   if not account:
     return error_response(
       ErrorCode.EMAIL_MISSING,

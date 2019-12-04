@@ -79,7 +79,7 @@ class TestMailServerDispatcher(IntegrationTestCase):
     self.app_context.push()
 
   def test_dispatch(self):
-    email_address = EmailAddress('my@email.com')
+    email_address = 'my@email.com'
     self.dispatcher.dispatch(email_address, 'mySubject', 'myBody')
 
   def tearDown(self) -> None:

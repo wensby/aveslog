@@ -10,7 +10,6 @@ from aveslog.mail import MailDispatcher
 from aveslog.v0.account import AccountRepository
 from aveslog.v0.account import TokenFactory
 from aveslog.v0.account import PasswordHasher
-from aveslog.v0.account import PasswordRepository
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import PasswordUpdateController
