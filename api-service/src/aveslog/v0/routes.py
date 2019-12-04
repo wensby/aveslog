@@ -4,7 +4,7 @@ from typing import List
 from flask import Response, request, make_response, jsonify, g
 
 from aveslog.v0 import accounts_rest_api
-from aveslog.v0 import registration_rest_api
+from aveslog.v0 import registration_requests_rest_api
 from aveslog.v0 import birds_rest_api
 from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
@@ -37,16 +37,16 @@ def create_search_routes() -> list:
   ]
 
 
-def create_registration_routes() -> list:
+def create_registration_requests_routes() -> list:
   return [
     {
       'rule': '/registration-requests',
-      'func': registration_rest_api.post_registration_request,
+      'func': registration_requests_rest_api.post_registration_request,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/registration-requests/<string:token>',
-      'func': registration_rest_api.get_registration_request,
+      'func': registration_requests_rest_api.get_registration_request,
     },
   ]
 

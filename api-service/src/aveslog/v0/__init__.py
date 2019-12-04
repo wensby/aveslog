@@ -28,7 +28,7 @@ from aveslog.v0.routes import create_birds_routes
 from aveslog.v0.routes import create_sightings_routes
 from aveslog.v0.routes import create_birders_routes
 from aveslog.v0.routes import create_authentication_routes
-from aveslog.v0.routes import create_registration_routes
+from aveslog.v0.routes import create_registration_requests_routes
 from aveslog.v0.routes import create_account_routes
 from aveslog.v0.routes import create_search_routes
 from aveslog.v0.search import StringMatcher
@@ -68,7 +68,7 @@ def create_api_v0_blueprint(
   register_routes(birds_routes)
   search_routes = create_search_routes()
   register_routes(search_routes)
-  registration_routes = create_registration_routes()
+  registration_routes = create_registration_requests_routes()
   register_routes(registration_routes)
   sighting_routes = create_sightings_routes(
     sighting_repository,
