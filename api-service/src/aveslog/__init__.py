@@ -24,15 +24,12 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
   localespath = os.path.join(app.root_path, 'locales')
   api_external_host = os.environ['EXTERNAL_HOST']
-  frontend_host = app.config['FRONTEND_HOST']
   app.config['LOCALES_PATH'] = localespath
   app.config['EXTERNAL_HOST'] = api_external_host
 
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
     mail_dispatcher,
-    api_external_host,
-    frontend_host,
     localespath,
     user_locale_cookie_key,
     database_connection_details,

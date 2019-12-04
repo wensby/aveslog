@@ -1,25 +1,19 @@
 from http import HTTPStatus
-from typing import Union, Optional, List
+from typing import List
 
 from flask import Response, request, make_response, jsonify, g
 
 from aveslog.v0 import accounts_rest_api
+from aveslog.v0 import registration_rest_api
 from aveslog.v0 import birds_rest_api
 from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
 from aveslog.v0.sighting import SightingRepository
-from aveslog.v0.localization import LoadedLocale
-from aveslog.v0.localization import LocaleRepository
-from aveslog.v0.localization import LocaleLoader
-from aveslog.v0.authentication import AccountRegistrationController
-from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Bird
-from aveslog.v0.models import AccountRegistration
 from aveslog.v0.models import Sighting
 from aveslog.v0.models import Birder
-from aveslog.v0.rest_api import error_response
 from aveslog.v0.rest_api import require_authentication
 
 
@@ -43,50 +37,16 @@ def create_search_routes() -> list:
   ]
 
 
-def create_registration_routes(
-      registration_controller: AccountRegistrationController,
-      locale_repository: LocaleRepository,
-      locale_loader: LocaleLoader,
-) -> list:
-  def find_registration_token(registration_token: str) -> Optional[
-    AccountRegistration]:
-    return g.database_session.query(AccountRegistration). \
-      filter(AccountRegistration.token.like(registration_token)).first()
-
-  def load_english_locale() -> LoadedLocale:
-    locale = locale_repository.find_locale_by_code('en')
-    return locale_loader.load_locale(locale)
-
-  def initiate_registration(email: str) -> Union[AccountRegistration, str]:
-    locale = load_english_locale()
-    return registration_controller.initiate_registration(email, locale)
-
-  def post_registration_request() -> Response:
-    email = request.json['email']
-    result = initiate_registration(email)
-    if result == 'email taken':
-      return error_response(ErrorCode.EMAIL_TAKEN, 'Email taken')
-    elif result == 'email invalid':
-      return error_response(ErrorCode.EMAIL_INVALID, 'Email invalid')
-    return make_response('', HTTPStatus.OK)
-
-  def get_registration_request(token: str) -> Response:
-    registration = find_registration_token(token)
-    if registration:
-      return make_response(jsonify({
-        'email': registration.email,
-      }), HTTPStatus.OK)
-    return make_response('', HTTPStatus.NOT_FOUND)
-
+def create_registration_routes() -> list:
   return [
     {
       'rule': '/registration-requests',
-      'func': post_registration_request,
+      'func': registration_rest_api.post_registration_request,
       'options': {'methods': ['POST']},
     },
     {
       'rule': '/registration-requests/<string:token>',
-      'func': get_registration_request,
+      'func': registration_rest_api.get_registration_request,
     },
   ]
 

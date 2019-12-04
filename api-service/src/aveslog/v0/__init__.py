@@ -37,8 +37,6 @@ from aveslog.v0.search import BirdSearcher
 
 def create_api_v0_blueprint(
       mail_dispatcher: MailDispatcher,
-      api_external_host: str,
-      frontend_host: str,
       localespath: str,
       user_locale_cookie_key: str,
       database_connection_details,
@@ -64,26 +62,13 @@ def create_api_v0_blueprint(
     locale_repository)
   salt_factory = SaltFactory()
   password_hasher = PasswordHasher(salt_factory)
-  link_factory = LinkFactory(api_external_host, frontend_host)
-  token_factory = TokenFactory()
-  account_repository = AccountRepository(password_hasher)
-  account_registration_controller = AccountRegistrationController(
-    account_repository,
-    mail_dispatcher,
-    link_factory,
-    token_factory,
-  )
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
   register_routes(birds_routes)
   search_routes = create_search_routes()
   register_routes(search_routes)
-  registration_routes = create_registration_routes(
-    account_registration_controller,
-    locale_repository,
-    locale_loader,
-  )
+  registration_routes = create_registration_routes()
   register_routes(registration_routes)
   sighting_routes = create_sightings_routes(
     sighting_repository,
