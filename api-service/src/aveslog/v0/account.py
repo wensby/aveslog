@@ -2,7 +2,7 @@ from hashlib import pbkdf2_hmac
 import binascii
 import os
 import re
-from typing import Optional, TypeVar
+from typing import Optional
 
 from flask import g
 from aveslog.v0.models import Account
@@ -35,10 +35,6 @@ class PasswordHasher:
     encoded_salt = salt.encode()
     binary_hash = pbkdf2_hmac('sha256', encoded_password, encoded_salt, 100000)
     return binascii.hexlify(binary_hash).decode()
-
-
-AccountRegistrationType = TypeVar(
-  'AccountRegistrationType', bound='AccountRegistration')
 
 
 class TokenFactory:
