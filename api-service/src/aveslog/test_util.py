@@ -9,6 +9,8 @@ from unittest.mock import Mock
 import psycopg2
 from flask import Response
 from flask.testing import FlaskClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from werkzeug.datastructures import Headers
 
 import aveslog
@@ -17,6 +19,7 @@ from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.v0.models import Base
 
 
 def mock_return(value):
@@ -197,3 +200,8 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('SELECT * FROM sighting;')
     self.database_connection.commit()
     return cursor.fetchall()
+
+def create_in_memory_sqlite_database_session(base):
+  engine = create_engine('sqlite://')
+  base.metadata.create_all(engine)
+  return sessionmaker(bind=engine)()

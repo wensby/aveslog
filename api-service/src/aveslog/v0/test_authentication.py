@@ -1,7 +1,10 @@
 from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
+
+from aveslog.test_util import create_in_memory_sqlite_database_session
 from aveslog.v0.authentication import AccountRegistrationController
+from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import AuthenticationTokenFactory
@@ -9,7 +12,7 @@ from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.authentication import PasswordHasher
 from aveslog.v0.account import TokenFactory
-from aveslog.v0.models import Account
+from aveslog.v0.models import Account, RefreshToken, HashedPassword, Base
 from aveslog.v0.account import AccountRepository
 from aveslog.mail import MailServerDispatcher
 from aveslog.v0.link import LinkFactory
@@ -154,3 +157,32 @@ class TestJwtDecoder(TestCase):
 
     self.assertFalse(result.ok)
     self.assertEqual(result.error, 'token-invalid')
+
+
+class TestPasswordUpdateController(TestCase):
+
+  def setUp(self) -> None:
+    self.db_session = create_in_memory_sqlite_database_session(Base)
+    self.password_hasher = Mock(spec=PasswordHasher)
+    self.controller = PasswordUpdateController(self.password_hasher)
+
+  def test_update_password_when_ok(self):
+    account = Account(username='kennybostick', email='kenny.bostick@mail.com')
+    password = HashedPassword(salt='salt1', salted_hash='salted_hash1')
+    utcnow = datetime.utcnow()
+    refresh_token = RefreshToken(token='token', expiration_date=utcnow)
+    account.refresh_tokens.append(refresh_token)
+    account.hashed_password = password
+    self.db_session.add(account)
+    self.db_session.flush()
+    self.password_hasher.create_salt_hashed_password.return_value = (
+      'salt2', 'salted_hash2')
+
+    self.controller.update_password(account, 'birder-no-1', self.db_session)
+
+    self.password_hasher.create_salt_hashed_password.assert_called_with(
+      'birder-no-1')
+    self.db_session.refresh(account)
+    self.assertFalse(account.refresh_tokens)
+    self.assertEqual(account.hashed_password.salt, 'salt2')
+    self.assertEqual(account.hashed_password.salted_hash, 'salted_hash2')
