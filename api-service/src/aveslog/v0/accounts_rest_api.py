@@ -155,6 +155,7 @@ def post_password() -> Response:
   password_update_controller = PasswordUpdateController(password_hasher)
   session = g.database_session
   password_update_controller.update_password(account, new_password, session)
+  session.commit()
   return make_response('', HTTPStatus.NO_CONTENT)
 
 
