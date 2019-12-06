@@ -288,7 +288,13 @@ input:focus {
   @media only screen and (min-width : 768px) {
     grid: auto / 3fr 7fr;
     grid-template-areas:
-      '_ main';
+      '. main';
+  }
+
+  @media only screen and (min-width : 1224px) {
+    grid: auto / 1fr 750px 1fr;
+    grid-template-areas:
+      '. main .';
   }
 }
 
@@ -311,17 +317,5 @@ input:focus {
 main {
   grid-area: main;
   padding: 0 10px;
-  padding-top: 15px;
-}
-
-
-
-@media only screen and (min-width : 1224px) {
-  .main-grid {
-    grid: auto / 1fr 750px 1fr;
-  }
-}
-
-main {
   padding-top: 15px;
 }
