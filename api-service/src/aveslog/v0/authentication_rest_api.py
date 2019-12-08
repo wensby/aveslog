@@ -157,7 +157,7 @@ def refresh_token_deleted_response() -> Response:
 
 def load_english_locale() -> LoadedLocale:
   locales_directory_path = current_app.config['LOCALES_PATH']
-  loader = LocaleLoader(locales_directory_path, {})
+  loader = LocaleLoader(locales_directory_path)
   repository = LocaleRepository(locales_directory_path, loader)
   locale = repository.find_locale_by_code('en')
   return loader.load_locale(locale)

@@ -42,8 +42,7 @@ def create_api_v0_blueprint(
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
-  locales_misses_repository = {}
-  locale_loader = LocaleLoader(localespath, locales_misses_repository)
+  locale_loader = LocaleLoader(localespath)
   locale_repository = LocaleRepository(localespath, locale_loader)
   locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
     locale_repository)
@@ -92,7 +91,7 @@ def create_api_v0_blueprint(
     else:
       update_locale_context(
         user_locale_cookie_key,
-        LoadedLocale(Locale(id=None, code=None), None, None, None))
+        LoadedLocale(Locale(id=None, code=None), None, None))
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):

@@ -30,56 +30,35 @@ class TestLoadedLocale(TestCase):
   locale = Locale(id=1, code='en')
 
   def test_text_returns_argument_when_not_in_dictionary(self):
-    loaded_locale = LoadedLocale(self.locale, dict(), None, None)
+    loaded_locale = LoadedLocale(self.locale, dict(), None)
     text = "I'm not in there"
     result = loaded_locale.text(text)
     self.assertTrue(result == text)
 
   def test_text_returns_translation_when_present_in_dictionary(self):
     loaded_locale = LoadedLocale(
-      self.locale, {"I'm in there": 'Jag är där inne'}, None, None)
+      self.locale, {"I'm in there": 'Jag är där inne'}, None)
     result = loaded_locale.text("I'm in there")
     self.assertTrue(result == 'Jag är där inne')
 
   def test_text_replaces_variables_if_perfect_match_with_placeholders(self):
     loaded_locale = LoadedLocale(self.locale, {
       "Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.",
-      "Monday": "Måndag"}, None, None)
+      "Monday": "Måndag"}, None)
     result = loaded_locale.text("Hello {{}}! It is {{}} today.",
                                 ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
-  def test_records_miss_when_one_miss(self):
-    misses_repository = {}
-    loaded_locale = LoadedLocale(self.locale, {}, {}, misses_repository)
-
-    loaded_locale.text('missing translation')
-
-    self.assertIn(self.locale, misses_repository)
-    self.assertIn('missing translation', misses_repository.get(self.locale))
-
-  def test_records_all_misses_when_several_misses(self):
-    misses_repository = {}
-    loaded_locale = LoadedLocale(self.locale, {}, {}, misses_repository)
-
-    loaded_locale.text('missing translation')
-    loaded_locale.text('another one')
-
-    self.assertIn(self.locale, misses_repository)
-    locale_misses = misses_repository.get(self.locale)
-    self.assertIn('missing translation', locale_misses)
-    self.assertIn('another one', locale_misses)
-
   def test_bird_name(self):
     bird_dictionary = {'Pica pica': 'Eurasian Magpie'}
-    locale = LoadedLocale(Locale(id=1, code='en'), None, bird_dictionary, None)
+    locale = LoadedLocale(Locale(id=1, code='en'), None, bird_dictionary)
 
     name = locale.name('Pica pica')
 
     self.assertEqual(name, 'Eurasian Magpie')
 
   def test_bird_name_when_missing(self):
-    locale = LoadedLocale(Locale(id=1, code='en'), None, None, None)
+    locale = LoadedLocale(Locale(id=1, code='en'), None, None)
     name = locale.name('Pica pica')
     self.assertEqual(name, 'Pica pica')
 

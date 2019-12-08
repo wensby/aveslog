@@ -22,28 +22,22 @@ class LoadedLocale:
   def __init__(self,
         locale: Locale,
         dictionary: Optional[dict],
-        bird_dictionary: Optional[dict],
-        misses_repository: Optional[dict]) -> None:
+        bird_dictionary: Optional[dict]
+  ) -> None:
     self.locale = locale
     self.dictionary = dictionary
     self.bird_dictionary = bird_dictionary
-    self.misses_repository = misses_repository
 
   def text(self, text: str, variables: List[str] = None) -> str:
     translation = self.__find_translation(text)
     if translation:
       return replace_text_variables(translation, variables)
     else:
-      self.__record_text_miss(text)
       return replace_text_variables(text, variables)
 
   def __find_translation(self, text: str) -> Optional[str]:
     if self.dictionary and text in self.dictionary:
       return self.dictionary[text]
-
-  def __record_text_miss(self, text: str) -> None:
-    if not self.misses_repository is None:
-      self.misses_repository.setdefault(self.locale, set()).add(text)
 
   def name(self, bird: Union[Bird, str]) -> str:
     binomial_name = bird.binomial_name if isinstance(bird, Bird) else bird
@@ -55,18 +49,13 @@ class LoadedLocale:
 
 class LocaleLoader:
 
-  def __init__(self,
-        locales_directory_path: str,
-        locales_misses_repository: dict) -> None:
+  def __init__(self, locales_directory_path: str) -> None:
     self.locales_directory_path = locales_directory_path
-    self.locales_misses_repository = locales_misses_repository
 
   def load_locale(self, locale: Locale) -> LoadedLocale:
     language_dictionary = self.load_dictionary(locale)
     bird_dictionary = self.load_bird_dictionary(locale)
-    return LoadedLocale(
-      locale, language_dictionary, bird_dictionary,
-      self.locales_misses_repository)
+    return LoadedLocale(locale, language_dictionary, bird_dictionary)
 
   def load_dictionary(self, locale: Locale) -> Optional[dict]:
     locale_directory_path = self.locale_directory_path(locale)
