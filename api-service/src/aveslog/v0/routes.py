@@ -1,15 +1,10 @@
-from http import HTTPStatus
-
-from flask import make_response, jsonify, g
-
 from aveslog.v0 import accounts_rest_api
 from aveslog.v0 import registration_requests_rest_api
 from aveslog.v0 import birds_rest_api
 from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0 import sightings_rest_api
-from aveslog.v0.models import Birder
-from aveslog.v0.rest_api import require_authentication
+from aveslog.v0 import birders_rest_api
 
 
 def create_birds_routes():
@@ -131,23 +126,9 @@ def create_sightings_routes() -> list:
 
 
 def create_birders_routes() -> list:
-  @require_authentication
-  def get_birder(birder_id: int):
-    birder = g.database_session.query(Birder).get(birder_id)
-    if not birder:
-      return make_response('', HTTPStatus.NOT_FOUND)
-    return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
-
   return [
     {
       'rule': '/birders/<int:birder_id>',
-      'func': get_birder,
+      'func': birders_rest_api.get_birder,
     },
   ]
-
-
-def convert_birder(birder: Birder) -> dict:
-  return {
-    'id': birder.id,
-    'name': birder.name,
-  }
