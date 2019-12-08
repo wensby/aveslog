@@ -7,7 +7,6 @@ from typing import Optional
 from flask import g
 from aveslog.v0.models import Account
 from aveslog.v0.models import AccountRegistration
-from aveslog.v0.models import PasswordResetToken
 
 
 def is_valid_username(username: str) -> bool:
