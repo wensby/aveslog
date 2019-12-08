@@ -11,7 +11,7 @@ const LanguageLink = ({ languageCode, label }) => {
 
   const handleClick = () => changeLanguage(languageCode);
 
-  if (i18n.language === languageCode) {
+  if (i18n.languages[0] === languageCode) {
     return <p className='selected'>{label}</p>;
   }
   return <button className='language-option' onClick={handleClick}>{label}</button>;

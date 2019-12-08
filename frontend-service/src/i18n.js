@@ -12,6 +12,7 @@ i18n
     ns: ['translation', 'bird'],
     defaultNS: 'translation',
     fallbackLng: 'en',
+    load: 'languageOnly',
     keySeparator: false,
     debug: true,
     interpolation: {
