@@ -4,7 +4,6 @@ from flask import Blueprint, request, g, Response, current_app
 
 from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
-from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.error import ErrorCode
 from aveslog.mail import MailDispatcher
 from aveslog.v0.localization import Locale
@@ -40,12 +39,11 @@ def create_api_v0_blueprint(
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
-  sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
   search_routes = create_search_routes()
   registration_routes = create_registration_requests_routes()
-  sighting_routes = create_sightings_routes(sighting_repository)
+  sighting_routes = create_sightings_routes()
   authentication_routes = create_authentication_routes()
   account_routes = create_account_routes()
   birders_routers = create_birders_routes()

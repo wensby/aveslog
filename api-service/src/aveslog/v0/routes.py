@@ -107,9 +107,10 @@ def create_authentication_routes() -> list:
   ]
 
 
-def create_sightings_routes(sighting_repository: SightingRepository) -> list:
+def create_sightings_routes() -> list:
   @require_authentication
   def get_birder_sightings(birder_id: int):
+    sighting_repository = SightingRepository()
     (sightings, total_rows) = sighting_repository.sightings(
       birder_id=birder_id)
     return sightings_response(sightings, False)
@@ -119,6 +120,7 @@ def create_sightings_routes(sighting_repository: SightingRepository) -> list:
     limit = request.args.get('limit', type=int)
     if limit is not None and limit <= 0:
       return sightings_failure_response('limit-invalid')
+    sighting_repository = SightingRepository()
     (sightings, total_rows) = sighting_repository.sightings(limit=limit)
     has_more = total_rows > limit if limit is not None else False
     return sightings_response(sightings, has_more)
