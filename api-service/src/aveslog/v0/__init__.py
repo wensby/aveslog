@@ -34,20 +34,13 @@ def create_api_v0_blueprint(
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
 
-  birds_routes = routes.create_birds_routes()
-  search_routes = routes.create_search_routes()
-  registration_routes = routes.create_registration_requests_routes()
-  sighting_routes = routes.create_sightings_routes()
-  authentication_routes = routes.create_authentication_routes()
-  account_routes = routes.create_account_routes()
-  birders_routers = routes.create_birders_routes()
-  register_routes(birds_routes)
-  register_routes(search_routes)
-  register_routes(registration_routes)
-  register_routes(sighting_routes)
-  register_routes(authentication_routes)
-  register_routes(account_routes)
-  register_routes(birders_routers)
+  register_routes(routes.birds_routes)
+  register_routes(routes.search_routes)
+  register_routes(routes.registration_requests_routes)
+  register_routes(routes.sightings_routes)
+  register_routes(routes.authentication_routes)
+  register_routes(routes.account_routes)
+  register_routes(routes.birders_routes)
 
   @blueprint.before_request
   def before_request():
