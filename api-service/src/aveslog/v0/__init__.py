@@ -43,20 +43,18 @@ def create_api_v0_blueprint(
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
-  register_routes(birds_routes)
   search_routes = create_search_routes()
-  register_routes(search_routes)
   registration_routes = create_registration_requests_routes()
-  register_routes(registration_routes)
-  sighting_routes = create_sightings_routes(
-    sighting_repository,
-  )
-  register_routes(sighting_routes)
+  sighting_routes = create_sightings_routes(sighting_repository)
   authentication_routes = create_authentication_routes()
-  register_routes(authentication_routes)
   account_routes = create_account_routes()
-  register_routes(account_routes)
   birders_routers = create_birders_routes()
+  register_routes(birds_routes)
+  register_routes(search_routes)
+  register_routes(registration_routes)
+  register_routes(sighting_routes)
+  register_routes(authentication_routes)
+  register_routes(account_routes)
   register_routes(birders_routers)
 
   @blueprint.before_request
