@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, request, g, Response, current_app
 
+from aveslog.v0 import routes
 from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
 from aveslog.v0.error import ErrorCode
@@ -12,13 +13,6 @@ from aveslog.v0.localization import LocaleDeterminerFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.rest_api import error_response
-from aveslog.v0.routes import create_birds_routes
-from aveslog.v0.routes import create_sightings_routes
-from aveslog.v0.routes import create_birders_routes
-from aveslog.v0.routes import create_authentication_routes
-from aveslog.v0.routes import create_registration_requests_routes
-from aveslog.v0.routes import create_account_routes
-from aveslog.v0.routes import create_search_routes
 
 
 def create_api_v0_blueprint(
@@ -40,13 +34,13 @@ def create_api_v0_blueprint(
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
 
-  birds_routes = create_birds_routes()
-  search_routes = create_search_routes()
-  registration_routes = create_registration_requests_routes()
-  sighting_routes = create_sightings_routes()
-  authentication_routes = create_authentication_routes()
-  account_routes = create_account_routes()
-  birders_routers = create_birders_routes()
+  birds_routes = routes.create_birds_routes()
+  search_routes = routes.create_search_routes()
+  registration_routes = routes.create_registration_requests_routes()
+  sighting_routes = routes.create_sightings_routes()
+  authentication_routes = routes.create_authentication_routes()
+  account_routes = routes.create_account_routes()
+  birders_routers = routes.create_birders_routes()
   register_routes(birds_routes)
   register_routes(search_routes)
   register_routes(registration_routes)
