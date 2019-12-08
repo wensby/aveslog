@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Blueprint, request, after_this_request, g, Response
+from flask import Blueprint, request, g, Response, current_app
 
 from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
@@ -24,8 +24,6 @@ from aveslog.v0.routes import create_search_routes
 
 def create_api_v0_blueprint(
       mail_dispatcher: MailDispatcher,
-      localespath: str,
-      user_locale_cookie_key: str,
       database_connection_details,
 ) -> Blueprint:
   blueprint = Blueprint('v0', __name__)
@@ -42,10 +40,6 @@ def create_api_v0_blueprint(
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
-  locale_loader = LocaleLoader(localespath)
-  locale_repository = LocaleRepository(localespath, locale_loader)
-  locale_determiner_factory = LocaleDeterminerFactory(user_locale_cookie_key,
-    locale_repository)
   sighting_repository = SightingRepository()
 
   birds_routes = create_birds_routes()
@@ -82,15 +76,18 @@ def create_api_v0_blueprint(
     return response
 
   def detect_user_locale():
+    localespath = current_app.config['LOCALES_PATH']
+    locale_loader = LocaleLoader(localespath)
+    locale_repository = LocaleRepository(localespath, locale_loader)
+    locale_determiner_factory = LocaleDeterminerFactory(locale_repository)
     locale_determiner = locale_determiner_factory.create_locale_determiner()
     locale_code = locale_determiner.determine_locale_from_request(request)
     if locale_code:
       locale = locale_repository.find_locale_by_code(locale_code)
       loaded_locale = locale_loader.load_locale(locale)
-      update_locale_context(user_locale_cookie_key, loaded_locale)
+      g.locale = loaded_locale
     else:
-      update_locale_context(
-        user_locale_cookie_key, LoadedLocale(Locale(id=None, code=None), None))
+      g.locale = LoadedLocale(Locale(id=None, code=None), None)
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):
@@ -101,20 +98,3 @@ def create_api_v0_blueprint(
     )
 
   return blueprint
-
-
-def update_locale_context(user_locale_cookie_key, loaded_locale: LoadedLocale):
-  previously_set_code = request.cookies.get(user_locale_cookie_key, None)
-  # when the response exists, set a cookie with the language if it is new
-  if loaded_locale.locale.code and loaded_locale.locale.code is not previously_set_code:
-    set_locale_cookie_after_this_request(loaded_locale.locale,
-      user_locale_cookie_key)
-  g.locale = loaded_locale
-
-
-def set_locale_cookie_after_this_request(locale: Locale,
-      user_locale_cookie_key):
-  @after_this_request
-  def set_locale_cookie(response):
-    response.set_cookie(user_locale_cookie_key, locale.code)
-    return response

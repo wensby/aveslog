@@ -93,37 +93,26 @@ class LocaleRepository:
 
 class LocaleDeterminerFactory:
 
-  def __init__(self,
-        user_locale_cookie_key: str,
-        locale_repository: LocaleRepository) -> None:
-    self.user_locale_cookie_key = user_locale_cookie_key
+  def __init__(self, locale_repository: LocaleRepository) -> None:
     self.locale_repository = locale_repository
 
   def create_locale_determiner(self) -> LocaleDeterminer:
     enabled = self.locale_repository.enabled_locale_codes()
-    return LocaleDeterminer(self.user_locale_cookie_key, enabled)
+    return LocaleDeterminer(enabled)
 
 
 class LocaleDeterminer:
 
-  def __init__(self, user_locale_cookie_key: str, locale_codes: list) -> None:
-    self.user_locale_cookie_key = user_locale_cookie_key
+  def __init__(self, locale_codes: list) -> None:
     self.locale_codes = locale_codes
 
   def determine_locale_from_request(self, request: Request) -> Optional[str]:
     if not self.locale_codes:
       return None
-    locale_code = self.__determine_from_cookies(request.cookies)
-    if not locale_code:
-      locale_code = self.__determine_from_headers(request.headers)
+    locale_code = self.__determine_from_headers(request.headers)
     if not locale_code:
       locale_code = next(iter(self.locale_codes), None)
     return locale_code
-
-  def __determine_from_cookies(self, cookies: dict) -> Optional[str]:
-    cookie_locale_code = cookies.get(self.user_locale_cookie_key)
-    if cookie_locale_code in self.locale_codes:
-      return cookie_locale_code
 
   def __determine_from_headers(self, headers: dict) -> Optional[str]:
     if 'Accept-Language' in headers:

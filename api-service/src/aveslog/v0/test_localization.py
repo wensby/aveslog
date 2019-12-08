@@ -64,7 +64,7 @@ class TestLocaleDeterminer(TestCase):
     self.request.cookies = dict()
     self.request.headers = {'Accept-Language': header_value}
     locales = {'en': english_locale, 'sv': swedish_locale}
-    determiner = LocaleDeterminer('cookie-key', ['en'])
+    determiner = LocaleDeterminer(['en'])
     locale = determiner.determine_locale_from_request(self.request)
     self.assertEqual(locale, 'en')
 
@@ -72,18 +72,9 @@ class TestLocaleDeterminer(TestCase):
     self.request.cookies = dict()
     self.request.headers = dict()
     locales = {'en': english_locale}
-    determiner = LocaleDeterminer('cookie-key', ['en'])
+    determiner = LocaleDeterminer(['en'])
     locale = determiner.determine_locale_from_request(self.request)
     self.assertEqual(locale, 'en')
-
-  def test_determine_locale_from_request_by_cookie(self):
-    self.request.cookies = {'cookie-key': 'sv'}
-    self.request.headers = {'Accept-Language': 'en'}
-    locales = {'en': english_locale, 'sv': swedish_locale}
-    determiner = LocaleDeterminer('cookie-key', ['en', 'sv'])
-    locale = determiner.determine_locale_from_request(self.request)
-    self.assertEqual(locale, 'sv')
-
 
 class TestLocaleRepository(TestCase):
 

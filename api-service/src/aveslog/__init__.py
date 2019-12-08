@@ -18,20 +18,13 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   configure_app(app, test_config)
 
   # Create blueprint dependencies
-  user_locale_cookie_key = 'user_locale'
   database_connection_details = create_database_connection_details()
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
-  localespath = os.path.join(app.root_path, 'locales')
-  api_external_host = os.environ['EXTERNAL_HOST']
-  app.config['LOCALES_PATH'] = localespath
-  app.config['EXTERNAL_HOST'] = api_external_host
 
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(
     mail_dispatcher,
-    localespath,
-    user_locale_cookie_key,
     database_connection_details,
   )
   app.register_blueprint(api_v0_blueprint)
@@ -41,6 +34,8 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
 
 def configure_app(app: Flask, test_config: dict) -> None:
+  app.config['LOCALES_PATH'] = os.path.join(app.root_path, 'locales')
+  app.config['EXTERNAL_HOST'] = os.environ['EXTERNAL_HOST']
   app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
   app.config['JSON_AS_ASCII'] = False
   app.config['RATELIMIT_HEADER_LIMIT'] = 'X-Rate-Limit-Limit'
