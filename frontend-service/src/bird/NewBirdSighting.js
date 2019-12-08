@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import BirdService from './BirdService';
 import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
-import { useReactRouter } from '../reactRouterHook';
 import SightingSuccess from '../sighting/SightingSuccess';
 
 export default ({ match }) => {
@@ -17,7 +16,6 @@ export default ({ match }) => {
   const { t } = useTranslation();
   const sightingService = new SightingService();
   const { getAccessToken, account } = useContext(UserContext);
-  const { history } = useReactRouter();
 
   useEffect(() => {
     const fetchData = async () => {
