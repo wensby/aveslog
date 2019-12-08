@@ -49,19 +49,6 @@ class TestLoadedLocale(TestCase):
                                 ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
-  def test_bird_name(self):
-    bird_dictionary = {'Pica pica': 'Eurasian Magpie'}
-    locale = LoadedLocale(Locale(id=1, code='en'), None, bird_dictionary)
-
-    name = locale.name('Pica pica')
-
-    self.assertEqual(name, 'Eurasian Magpie')
-
-  def test_bird_name_when_missing(self):
-    locale = LoadedLocale(Locale(id=1, code='en'), None, None)
-    name = locale.name('Pica pica')
-    self.assertEqual(name, 'Pica pica')
-
 
 english_locale = Mock()
 swedish_locale = Mock()

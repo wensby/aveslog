@@ -39,13 +39,6 @@ class LoadedLocale:
     if self.dictionary and text in self.dictionary:
       return self.dictionary[text]
 
-  def name(self, bird: Union[Bird, str]) -> str:
-    binomial_name = bird.binomial_name if isinstance(bird, Bird) else bird
-    if self.bird_dictionary and binomial_name in self.bird_dictionary:
-      return self.bird_dictionary[binomial_name]
-    else:
-      return binomial_name
-
 
 class LocaleLoader:
 
