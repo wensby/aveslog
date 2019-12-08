@@ -90,8 +90,7 @@ def create_api_v0_blueprint(
       update_locale_context(user_locale_cookie_key, loaded_locale)
     else:
       update_locale_context(
-        user_locale_cookie_key,
-        LoadedLocale(Locale(id=None, code=None), None, None))
+        user_locale_cookie_key, LoadedLocale(Locale(id=None, code=None), None))
 
   @blueprint.app_errorhandler(HTTPStatus.TOO_MANY_REQUESTS)
   def too_many_requests_handler(e):

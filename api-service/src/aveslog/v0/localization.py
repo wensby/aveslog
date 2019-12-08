@@ -1,11 +1,10 @@
 from __future__ import annotations
 import json
 import os
-from typing import Optional, List, Union, Set
+from typing import Optional, List, Set
 from flask import Request, g
 
 from aveslog.v0.models import Locale
-from aveslog.v0.models import Bird
 
 
 def replace_text_variables(text: str, variables: List[str] = None) -> str:
@@ -21,12 +20,10 @@ class LoadedLocale:
 
   def __init__(self,
         locale: Locale,
-        dictionary: Optional[dict],
-        bird_dictionary: Optional[dict]
+        dictionary: Optional[dict]
   ) -> None:
     self.locale = locale
     self.dictionary = dictionary
-    self.bird_dictionary = bird_dictionary
 
   def text(self, text: str, variables: List[str] = None) -> str:
     translation = self.__find_translation(text)
@@ -47,17 +44,11 @@ class LocaleLoader:
 
   def load_locale(self, locale: Locale) -> LoadedLocale:
     language_dictionary = self.load_dictionary(locale)
-    bird_dictionary = self.load_bird_dictionary(locale)
-    return LoadedLocale(locale, language_dictionary, bird_dictionary)
+    return LoadedLocale(locale, language_dictionary)
 
   def load_dictionary(self, locale: Locale) -> Optional[dict]:
     locale_directory_path = self.locale_directory_path(locale)
     return self.load_dict(f'{locale_directory_path}/{locale.code}.json')
-
-  def load_bird_dictionary(self, locale: Locale) -> Optional[dict]:
-    locale_directory_path = self.locale_directory_path(locale)
-    file_path = f'{locale_directory_path}/{locale.code}-bird-names.json'
-    return self.load_dict(file_path)
 
   def load_dict(self, file_path: str) -> Optional[dict]:
     if os.path.exists(file_path):

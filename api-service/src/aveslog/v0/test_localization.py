@@ -30,21 +30,21 @@ class TestLoadedLocale(TestCase):
   locale = Locale(id=1, code='en')
 
   def test_text_returns_argument_when_not_in_dictionary(self):
-    loaded_locale = LoadedLocale(self.locale, dict(), None)
+    loaded_locale = LoadedLocale(self.locale, dict())
     text = "I'm not in there"
     result = loaded_locale.text(text)
     self.assertTrue(result == text)
 
   def test_text_returns_translation_when_present_in_dictionary(self):
     loaded_locale = LoadedLocale(
-      self.locale, {"I'm in there": 'Jag är där inne'}, None)
+      self.locale, {"I'm in there": 'Jag är där inne'})
     result = loaded_locale.text("I'm in there")
     self.assertTrue(result == 'Jag är där inne')
 
   def test_text_replaces_variables_if_perfect_match_with_placeholders(self):
     loaded_locale = LoadedLocale(self.locale, {
       "Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.",
-      "Monday": "Måndag"}, None)
+      "Monday": "Måndag"})
     result = loaded_locale.text("Hello {{}}! It is {{}} today.",
                                 ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
