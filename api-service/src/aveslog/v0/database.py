@@ -6,10 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 class EngineFactory:
 
+  def __init__(self, echo=True):
+    self._echo = echo
+
   def create_engine(self, host: str, dbname: str, user: str,
         password: str) -> Engine:
     url = f'postgresql+psycopg2://{user}:{password}@{host}/{dbname}'
-    return create_engine(url, echo=True)
+    return create_engine(url, echo=self._echo)
 
 
 class SessionFactory:

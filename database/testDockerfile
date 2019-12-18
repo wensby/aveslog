@@ -1,4 +1,13 @@
 FROM postgres
+
+ENV POSTGISV 2.5
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+  postgresql-$PG_MAJOR-postgis-$POSTGISV \
+  postgresql-$PG_MAJOR-postgis-$POSTGISV-scripts
+
 VOLUME /var/lib/postgresql/data
 COPY 0index.sql /docker-entrypoint-initdb.d/
+COPY 00config.sql /docker-entrypoint-initdb.d/
 COPY schema/ /schema

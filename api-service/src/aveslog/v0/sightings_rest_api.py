@@ -2,13 +2,16 @@ from http import HTTPStatus
 from typing import List
 
 from flask import request, Response, make_response, jsonify, g
+from geoalchemy2 import WKTElement
 
 from aveslog.v0.models import Sighting
+from aveslog.v0.models import Position
 from aveslog.v0.models import Bird
 from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.sighting import SightingRepository
 from aveslog.v0.time import parse_date
 from aveslog.v0.time import parse_time
+from shapely import wkb
 
 
 @require_authentication
@@ -35,7 +38,7 @@ def get_sighting(sighting_id: int) -> Response:
   account = g.authenticated_account
   sighting = g.database_session.query(Sighting).get(sighting_id)
   if sighting and sighting.birder_id == account.birder_id:
-    return make_response(jsonify(convert_sighting(sighting)), HTTPStatus.OK)
+    return make_response(jsonify(sighting_representation(sighting)), HTTPStatus.OK)
   else:
     return get_sighting_failure_response()
 
@@ -53,6 +56,11 @@ def delete_sighting(sighting_id: int) -> Response:
   return sighting_deleted_response()
 
 
+def create_position(lat, lon):
+  element = WKTElement(f'POINT({lon} {lat})')
+  return Position(point=element)
+
+
 @require_authentication
 def post_sighting() -> Response:
   account = g.authenticated_account
@@ -65,6 +73,10 @@ def post_sighting() -> Response:
   if not bird:
     return make_response('', HTTPStatus.BAD_REQUEST)
   sighting = create_sighting(request.json, bird)
+  if 'position' in request.json:
+    request_position = request.json['position']
+    position = create_position(request_position['lat'], request_position['lon'])
+    sighting.position = position
   g.database_session.add(sighting)
   g.database_session.commit()
   return post_sighting_success_response(sighting.id)
@@ -72,7 +84,7 @@ def post_sighting() -> Response:
 
 def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:
   return make_response(jsonify({
-    'items': list(map(convert_sighting, sightings)),
+    'items': list(map(bird_summary_representation, sightings)),
     'hasMore': has_more,
   }), HTTPStatus.OK)
 
@@ -83,7 +95,7 @@ def sightings_failure_response(error_message):
   }), HTTPStatus.BAD_REQUEST)
 
 
-def convert_sighting(sighting: Sighting) -> dict:
+def bird_summary_representation(sighting: Sighting) -> dict:
   result = {
     'id': sighting.id,
     'birderId': sighting.birder_id,
@@ -92,6 +104,33 @@ def convert_sighting(sighting: Sighting) -> dict:
   }
   if sighting.sighting_time:
     result['time'] = sighting.sighting_time.isoformat()
+  if sighting.position:
+    point = wkb.loads(bytes(sighting.position.point.data))
+    result['position'] = {
+      'lat': point.y,
+      'lon': point.x,
+    }
+  return result
+
+
+def sighting_representation(sighting: Sighting) -> dict:
+  result = {
+    'id': sighting.id,
+    'birderId': sighting.birder_id,
+    'birdId': sighting.bird.binomial_name.lower().replace(' ', '-'),
+    'date': sighting.sighting_date.isoformat(),
+  }
+  if sighting.sighting_time:
+    result['time'] = sighting.sighting_time.isoformat()
+  position = sighting.position
+  if position:
+    point = wkb.loads(bytes(position.point.data))
+    result['position'] = {
+      'lat': point.y,
+      'lon': point.x,
+    }
+    if position.names:
+      result['position']['name'] = sighting.position.names[0].name
   return result
 
 

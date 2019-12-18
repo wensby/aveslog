@@ -9,17 +9,15 @@ from unittest.mock import Mock
 import psycopg2
 from flask import Response
 from flask.testing import FlaskClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from werkzeug.datastructures import Headers
 
 import aveslog
+from aveslog.v0 import EngineFactory, SessionFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import AuthenticationTokenFactory
-from aveslog.v0.models import Base
 
 
 def mock_return(value):
@@ -63,6 +61,7 @@ class AppTestCase(IntegrationTestCase):
     self._app.test_client_class = TestClient
     database_connection_details = aveslog.create_database_connection_details()
     self.database_connection = psycopg2.connect(**database_connection_details)
+    self.clear_database()
     self.app_context = self._app.test_request_context()
     self.app_context.push()
     self.client = self._app.test_client()
@@ -89,6 +88,30 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute(
       'INSERT INTO account_registration (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
+    self.database_connection.commit()
+
+  def db_insert_position(self, position_id, point):
+    coordinates = "POINT(%s %s)" % (point[1], point[0])
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO position (id, point) '
+      'VALUES (%s, ST_GeomFromText(%s));', (position_id, coordinates))
+    self.database_connection.commit()
+
+  def db_insert_position_name(
+        self,
+        position_name_id,
+        position_id,
+        locale_id,
+        detail_level,
+        name,
+        creation_time,
+  ):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO position_name (id, position_id, locale_id, detail_level, name, creation_time) '
+      'VALUES (%s, %s, %s, %s, %s, %s);',
+      (position_name_id, position_id, locale_id, detail_level, name, creation_time))
     self.database_connection.commit()
 
   def db_insert_bird(self, bird_id, binomial_name):
@@ -121,14 +144,21 @@ class AppTestCase(IntegrationTestCase):
       'VALUES (%s, %s);', (account_id, token))
     self.database_connection.commit()
 
-  def db_insert_sighting(self,
-        sighting_id, birder_id, bird_id, sighting_date, sighting_time):
+  def db_insert_sighting(
+        self,
+        sighting_id,
+        birder_id,
+        bird_id,
+        sighting_date,
+        sighting_time,
+        position_id,
+  ):
     cursor = self.database_connection.cursor()
     cursor.execute(
       'INSERT INTO '
-      'sighting (id, birder_id, bird_id, sighting_date, sighting_time) '
-      'VALUES (%s, %s, %s, %s, %s);',
-      (sighting_id, birder_id, bird_id, sighting_date, sighting_time))
+      'sighting (id, birder_id, bird_id, sighting_date, sighting_time, position_id) '
+      'VALUES (%s, %s, %s, %s, %s, %s);',
+      (sighting_id, birder_id, bird_id, sighting_date, sighting_time, position_id))
     self.database_connection.commit()
 
   def db_insert_bird_name(self, bird_name_id, bird_id, locale_id, name):
@@ -177,12 +207,20 @@ class AppTestCase(IntegrationTestCase):
     return self.client.post(f'{resource}?{query}')
 
   def tearDown(self) -> None:
+    self.clear_database()
+    self.database_connection.close()
+    self.app_context.pop()
+    logging.disable(logging.NOTSET)
+
+  def clear_database(self):
     cursor = self.database_connection.cursor()
+    cursor.execute('DELETE FROM position_name;')
     cursor.execute('DELETE FROM refresh_token;')
     cursor.execute('DELETE FROM password_reset_token;')
     cursor.execute('DELETE FROM hashed_password;')
     cursor.execute('DELETE FROM account;')
     cursor.execute('DELETE FROM sighting;')
+    cursor.execute('DELETE FROM position;')
     cursor.execute('DELETE FROM bird_thumbnail;')
     cursor.execute('DELETE FROM picture;')
     cursor.execute('DELETE FROM bird_name;')
@@ -191,9 +229,6 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('DELETE FROM account_registration;')
     cursor.execute('DELETE FROM locale;')
     self.database_connection.commit()
-    self.database_connection.close()
-    self.app_context.pop()
-    logging.disable(logging.NOTSET)
 
   def db_get_sighting_rows(self):
     cursor = self.database_connection.cursor()
@@ -201,7 +236,10 @@ class AppTestCase(IntegrationTestCase):
     self.database_connection.commit()
     return cursor.fetchall()
 
-def create_in_memory_sqlite_database_session(base):
-  engine = create_engine('sqlite://')
-  base.metadata.create_all(engine)
-  return sessionmaker(bind=engine)()
+
+def get_test_database_session():
+  engine_factory = EngineFactory(echo=False)
+  database_connection_details = aveslog.create_database_connection_details()
+  engine = engine_factory.create_engine(**database_connection_details)
+  session_factory = SessionFactory(engine)
+  return session_factory.create_session()

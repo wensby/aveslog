@@ -249,6 +249,10 @@ GET /birders/:id/sightings
       "birdId": "pica-pica",
       "date": "2019-11-19",
       "time": "20:17:00"
+      "position": {
+        "lat": 47.240055,
+        "lon": 2.2783327
+      }
     }
   ],
   "hasMore": false
@@ -277,7 +281,11 @@ Status: 200 OK
       "birderId": 8,
       "birdId": "pica-pica",
       "date": "2019-11-19",
-      "time": "20:17:00"
+      "time": "20:17:00",
+      "position": {
+        "lat": 47.240055,
+        "lon": 2.2783327
+      }
     },
     {
       "id": 15,
@@ -310,7 +318,12 @@ Status: 200 OK
   "birderId": 8,
   "birdId": "pica-pica",
   "date": "2019-11-19",
-  "time": "20:17:00"
+  "time": "20:17:00",
+  "position": {
+    "name': "La Prinquette, Bourges, Cher, Centre-Val de Loire, France métropolitaine, France",
+    "lat": 47.240055,
+    "lon": 2.2783327
+  },
 }
 ```
 
@@ -351,7 +364,11 @@ POST /sightings
     "binomialName": "Pica pica"
   },
   "date": "2019-11-19",
-  "time": "20:35:00"
+  "time": "20:35:00",
+  "position": {
+    "lat": 47.240055,
+    "lon": 2.2783327
+  }
 }
 ```
 
@@ -359,7 +376,7 @@ POST /sightings
 
 ```
 Status: 201 CREATED
-Location: /sightings/4
+Location: /sightings/8
 ```
 
 ## Account

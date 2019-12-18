@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
-from aveslog.test_util import create_in_memory_sqlite_database_session
+from aveslog.test_util import get_test_database_session
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import AccessToken
@@ -162,7 +162,7 @@ class TestJwtDecoder(TestCase):
 class TestPasswordUpdateController(TestCase):
 
   def setUp(self) -> None:
-    self.db_session = create_in_memory_sqlite_database_session(Base)
+    self.db_session = get_test_database_session()
     self.password_hasher = Mock(spec=PasswordHasher)
     self.controller = PasswordUpdateController(self.password_hasher)
 
@@ -186,3 +186,7 @@ class TestPasswordUpdateController(TestCase):
     self.assertFalse(account.refresh_tokens)
     self.assertEqual(account.hashed_password.salt, 'salt2')
     self.assertEqual(account.hashed_password.salted_hash, 'salted_hash2')
+
+  def tearDown(self):
+    self.db_session.rollback()
+    self.db_session.close()

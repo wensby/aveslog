@@ -1,11 +1,8 @@
 from unittest import TestCase
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-
+from aveslog.test_util import get_test_database_session
 from aveslog.v0.localization import Locale
 from aveslog.v0.models import Bird
-from aveslog.v0.models import Base
 from aveslog.v0.models import BirdName
 from aveslog.v0.search import BirdSearchMatch
 from aveslog.v0.search import BirdSearcher
@@ -18,9 +15,7 @@ class TestBirdSearcher(TestCase):
 
   def setUp(self):
     self.string_matcher = StringMatcher()
-    engine = create_engine('sqlite://')
-    Base.metadata.create_all(engine)
-    self.database_session: Session = sessionmaker(bind=engine)()
+    self.database_session = get_test_database_session()
 
   def test_search_returns_list_of_bird_matches(self):
     self.database_session.add(Bird(binomial_name='Pica pica'))

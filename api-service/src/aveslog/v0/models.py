@@ -9,6 +9,7 @@ from sqlalchemy import Date
 from sqlalchemy import Time
 from sqlalchemy import DateTime
 from sqlalchemy.orm import relationship
+from geoalchemy2 import Geography
 
 Base = declarative_base()
 
@@ -160,7 +161,9 @@ class Sighting(Base):
   bird_id = Column(Integer, ForeignKey('bird.id'))
   sighting_date = Column(Date, nullable=False)
   sighting_time = Column(Time)
+  position_id = Column(Integer, ForeignKey('position.id'))
   bird = relationship('Bird')
+  position = relationship('Position', uselist=False)
 
   def __eq__(self, other: Any) -> bool:
     if isinstance(other, Sighting):
@@ -175,6 +178,23 @@ class Sighting(Base):
     return (f"<Sighting(birder_id='{self.birder_id}', "
             f"bird_id='{self.bird_id}', sighting_date='{self.sighting_date}', "
             f"sighting_time='{self.sighting_time}')>")
+
+
+class Position(Base):
+  __tablename__ = 'position'
+  id = Column(Integer, primary_key=True)
+  point = Column(Geography('POINT', 4326), nullable=False)
+  names = relationship('PositionName')
+
+
+class PositionName(Base):
+  __tablename__ = 'position_name'
+  id = Column(Integer, primary_key=True)
+  position_id = Column(Integer, ForeignKey('position.id'), nullable=False)
+  locale_id = Column(Integer, ForeignKey('locale.id'), nullable=False)
+  detail_level = Column(Integer)
+  name = Column(String, nullable=False)
+  creation_time = Column(DateTime, nullable=False)
 
 
 class RefreshToken(Base):

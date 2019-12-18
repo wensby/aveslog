@@ -7,4 +7,6 @@ testing.postgresql
 pyjwt==1.4.2
 flask-cors
 SQLAlchemy==1.3.10
+GeoAlchemy2==0.6.3
 Flask-Limiter==1.1.0
+Shapely==1.7a2
