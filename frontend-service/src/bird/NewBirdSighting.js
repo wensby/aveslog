@@ -20,7 +20,7 @@ export default ({ match }) => {
   const { t } = useTranslation();
   const sightingService = new SightingService();
   const { getAccessToken, account } = useContext(UserContext);
-  const { latitude, longitude, error } = usePosition();
+  const { latitude, longitude, error } = usePosition(locationEnabled);
   const { i18n } = useTranslation();
   const language = i18n.languages[0];
 
@@ -55,11 +55,11 @@ export default ({ match }) => {
       });
       if (response.status == 200) {
         const json = await response.json();
-        setLocation([latitude, longitude]);
         setLocationDisplay(json.display_name);
       }
     }
     if (locationEnabled && latitude && longitude) {
+      setLocation([latitude, longitude]);
       fetchLocationDisplay(latitude, longitude);
     }
     else {
@@ -141,7 +141,7 @@ export default ({ match }) => {
                   </div>
                 </div>
                 <input type='text' id='locationTextInput' className='form-control'
-                  value={!location ? '' : locationDisplay} disabled />
+                  value={!location ? '' : locationDisplay || location} disabled />
               </div>
             </div>
             <input type='hidden' name='birdId' value={bird.id} />
