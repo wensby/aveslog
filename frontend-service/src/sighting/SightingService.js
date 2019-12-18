@@ -39,7 +39,7 @@ export default class SightingService {
     });
   }
 
-  async postSighting(accessToken, birderId, binomialName, date, time) {
+  async postSighting(accessToken, birderId, binomialName, date, time, location) {
     const body = {
       'birder': { 'id': birderId },
       'bird': { 'binomialName': binomialName },
@@ -47,6 +47,12 @@ export default class SightingService {
     };
     if (time) {
       body['time'] = time;
+    }
+    if (location) {
+      body['position'] = {
+        'lat': location[0],
+        'lon': location[1]
+      }
     }
     const response = await fetch(
       `${this.apiUrl}/sightings`, {

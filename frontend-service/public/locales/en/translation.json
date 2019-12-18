@@ -61,5 +61,6 @@
   "sightings-link": "See your sightings",
   "birders": "Birders",
   "logged-by": "Logged by <1>{{name}}</1>",
+  "location-label": "Location",
   "Logout": "Logout"
 }

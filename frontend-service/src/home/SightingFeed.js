@@ -23,6 +23,8 @@ function SightingFeedItemContainer({ sighting }) {
 function SightingFeedItem({ birder, sighting, bird }) {
   const { t, i18n } = useTranslation();
   const name = birder.name;
+  const language = i18n.languages[0];
+  const birdName = bird.names && bird.names[language] ? bird.names[language] : bird.binomialName;
   return (
     <div className='sighting-feed-card'>
       <BirdLink bird={bird} >
@@ -30,7 +32,7 @@ function SightingFeedItem({ birder, sighting, bird }) {
       </BirdLink>
       <div className='card-body' style={{padding: '10px'}}>
         <h4>
-          {bird.names[i18n.languages[0]] || bird.binomialName}
+          {birdName}
         </h4>
         <div>
           <Trans i18nKey='logged-by'>

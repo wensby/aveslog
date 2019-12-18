@@ -61,5 +61,6 @@
   "sightings-link": "Se dina observationer",
   "birders": "Fågelskådare",
   "logged-by": "Loggad av <1>{{name}}</1>",
+  "location-label": "Plats",
   "Logout": "Logga ut"
 }

@@ -5,6 +5,7 @@ import BirdService from './BirdService';
 import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
 import SightingSuccess from '../sighting/SightingSuccess';
+import { usePosition } from '../usePosition';
 
 export default ({ match }) => {
   const binomialName = match.params.binomialName;
@@ -12,10 +13,16 @@ export default ({ match }) => {
   const [bird, setBird] = useState(null);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
+  const [location, setLocation] = useState(null);
+  const [locationDisplay, setLocationDisplay] = useState('');
   const [timeEnabled, setTimeEnabled] = useState(true);
+  const [locationEnabled, setLocationEnabled] = useState(true);
   const { t } = useTranslation();
   const sightingService = new SightingService();
   const { getAccessToken, account } = useContext(UserContext);
+  const { latitude, longitude, error } = usePosition();
+  const { i18n } = useTranslation();
+  const language = i18n.languages[0];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,11 +45,33 @@ export default ({ match }) => {
     }
   }, [timeEnabled]);
 
+  useEffect(() => {
+    const fetchLocationDisplay = async (latitude, longitude) => {
+      const headers = new Headers({
+        'User-Agent': 'Aveslog.com'
+      });
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=21&addressdetails=1&accept-language=${language}`, {
+        headers: headers,
+      });
+      if (response.status == 200) {
+        const json = await response.json();
+        setLocation([latitude, longitude]);
+        setLocationDisplay(json.display_name);
+      }
+    }
+    if (locationEnabled && latitude && longitude) {
+      fetchLocationDisplay(latitude, longitude);
+    }
+    else {
+      setLocation(null);
+    }
+  }, [locationEnabled, latitude, longitude, language])
+
   const handleFormSubmit = async event => {
     event.preventDefault();
     const accessToken = await getAccessToken();
     const response = await sightingService.postSighting(
-      accessToken, account.birder.id, bird.binomialName, date, time
+      accessToken, account.birder.id, bird.binomialName, date, time, location,
     );
     if (response.status === 201) {
       const sightingLocation = response.headers.get('Location');
@@ -101,6 +130,20 @@ export default ({ match }) => {
                   onChange={event => setTime(event.target.value)} />
               </div>
             </div>
+            <div className='form-group row'>
+              <Label htmlFor='locationInput' label='location-label' />
+              <div className='input-group col-sm-10' id='locationInput'>
+                <div className='input-group-prepend'>
+                  <div className='input-group-text'>
+                    <input type='checkbox' id='locationCheckboxInput'
+                      name='locationCheckboxInput' checked={locationEnabled}
+                      onChange={event => setLocationEnabled(event.target.checked)} />
+                  </div>
+                </div>
+                <input type='text' id='locationTextInput' className='form-control'
+                  value={!location ? '' : locationDisplay} disabled />
+              </div>
+            </div>
             <input type='hidden' name='birdId' value={bird.id} />
             <button type='submit' className='button'>
               {t('submit-sighting-button')}
@@ -115,7 +158,8 @@ export default ({ match }) => {
 
 const BirdSection = ({ bird }) => {
   const { i18n } = useTranslation();
-  const name = bird.names[i18n.languages[0]] || bird.binomialName;
+  const language = i18n.languages[0];
+  const name = bird.names && bird.names[language] ? bird.names[language] : bird.binomialName;
 
   return (
     <div className='form-group row'>

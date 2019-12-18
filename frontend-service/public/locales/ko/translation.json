@@ -61,5 +61,6 @@
   "sightings-link": "관찰 리스트 보기",
   "birders": "버더",
   "logged-by": "<1>{{name}}</1>님이 기록했다",
+  "location-label": "위치",
   "Logout": "로그아웃"
 }
