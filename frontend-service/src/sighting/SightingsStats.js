@@ -12,6 +12,6 @@ export function SightingsStats({ sightings }) {
   );
 }
 
-export function countUniqueBirds(sightings) {
+function countUniqueBirds(sightings) {
   return new Set(sightings.map(sighting => sighting.birdId)).size;
 }
