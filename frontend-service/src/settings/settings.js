@@ -42,21 +42,21 @@ const PasswordChangeForm = () => {
     setShowFeedback(true);
   };
 
-  return <form onSubmit={handleFormSubmit}>
-    <div>
+  return (
+    <form onSubmit={handleFormSubmit}>
       {renderAlert()}
-      <label htmlFor='currentPassword'>{t('current-password')}</label>
-      <input className='form-input' id='currentPassword' type='password'
-        placeholder={t('current-password')}
-        value={currentPassword}
-        onChange={event => setCurrentPassword(event.target.value)} />
-    </div>
-    <NewPasswordFormGroup onChange={setNewPassword}
-        showFeedback={showFeedback} />
-    <div>
+      <div className='form-group'>
+        <label htmlFor='currentPassword'>{t('current-password')}</label>
+        <input className='form-input' id='currentPassword' type='password'
+          placeholder={t('current-password')}
+          value={currentPassword}
+          onChange={event => setCurrentPassword(event.target.value)} />
+        </div>
+      <NewPasswordFormGroup onChange={setNewPassword}
+          showFeedback={showFeedback} />
       <button className='button'>{t('password-change-button')}</button>
-    </div>
-  </form>;
+    </form>
+  );
 }
 
 export default function Settings() {
