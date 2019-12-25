@@ -63,9 +63,6 @@ class Locale(Base):
       return self.id == other.id and self.code == other.code
     return False
 
-  def __hash__(self) -> int:
-    return hash(self.id) ^ hash(self.code)
-
 
 class BirdName(Base):
   __tablename__ = 'bird_name'
