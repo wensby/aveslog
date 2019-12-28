@@ -192,7 +192,7 @@ class TestPostSighting(AppTestCase):
       account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    sighting_id = int(re.compile('^\/sightings\/([0-9]+)$').match(
+    sighting_id = int(re.compile('^/sightings/([0-9]+)$').match(
       response.headers['Location']).group(1))
     self.assertDictEqual(posted_sighting.json, {
       'id': sighting_id,
