@@ -188,12 +188,11 @@ class TestPostSighting(AppTestCase):
     position = (64.145981, -21.9422367)
 
     response = self.post_sighting(1, token.jwt, 'pica pica', '17:42', position)
-    posted_sighting = self.get_with_access_token(response.headers['Location'],
-      account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     pattern = re.compile('^/sightings/([0-9]+)$')
     sighting_id = int(pattern.match(response.headers['Location']).group(1))
+    posted_sighting = self.get_with_access_token(f'/sightings/{sighting_id}', account_id=1)
     self.assertDictEqual(posted_sighting.json, {
       'id': sighting_id,
       'birderId': 1,
