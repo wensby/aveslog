@@ -59,7 +59,7 @@ class AppTestCase(IntegrationTestCase):
     }
     self._app = aveslog.create_app(test_config=test_config)
     self._app.test_client_class = TestClient
-    database_connection_details = aveslog.create_database_connection_details()
+    database_connection_details = aveslog.v0.create_database_connection_details()
     self.database_connection = psycopg2.connect(**database_connection_details)
     self.clear_database()
     self.app_context = self._app.test_request_context()
@@ -239,7 +239,7 @@ class AppTestCase(IntegrationTestCase):
 
 def get_test_database_session():
   engine_factory = EngineFactory(echo=False)
-  database_connection_details = aveslog.create_database_connection_details()
+  database_connection_details = aveslog.v0.create_database_connection_details()
   engine = engine_factory.create_engine(**database_connection_details)
   session_factory = SessionFactory(engine)
   return session_factory.create_session()

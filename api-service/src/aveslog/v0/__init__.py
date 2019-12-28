@@ -1,3 +1,4 @@
+import os
 from http import HTTPStatus
 
 from flask import Blueprint, request, g, Response, current_app
@@ -15,10 +16,7 @@ from aveslog.v0.localization import LocaleRepository
 from aveslog.v0.rest_api import error_response
 
 
-def create_api_v0_blueprint(
-      mail_dispatcher: MailDispatcher,
-      database_connection_details,
-) -> Blueprint:
+def create_api_v0_blueprint(mail_dispatcher: MailDispatcher) -> Blueprint:
   blueprint = Blueprint('v0', __name__)
 
   def register_routes(routes):
@@ -29,6 +27,8 @@ def create_api_v0_blueprint(
       options = route.get('options', {})
       blueprint.add_url_rule(rule, endpoint, view_func, **options)
       blueprint.add_url_rule(f'/v0{rule}', endpoint, view_func, **options)
+
+  database_connection_details = create_database_connection_details()
 
   engine_factory = EngineFactory()
   engine = engine_factory.create_engine(**database_connection_details)
@@ -81,3 +81,11 @@ def create_api_v0_blueprint(
     )
 
   return blueprint
+
+def create_database_connection_details() -> dict:
+  return {
+    'host': os.environ.get('DATABASE_HOST'),
+    'dbname': os.environ.get('DATABASE_NAME'),
+    'user': os.environ.get('DATABASE_USER'),
+    'password': os.environ.get('DATABASE_PASSWORD')
+  }

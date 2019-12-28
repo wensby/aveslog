@@ -18,15 +18,11 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
   configure_app(app, test_config)
 
   # Create blueprint dependencies
-  database_connection_details = create_database_connection_details()
   mail_dispatcher_factory = MailDispatcherFactory(app)
   mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
 
   # Create and register blueprints
-  api_v0_blueprint = create_api_v0_blueprint(
-    mail_dispatcher,
-    database_connection_details,
-  )
+  api_v0_blueprint = create_api_v0_blueprint(mail_dispatcher)
   app.register_blueprint(api_v0_blueprint)
 
   app.logger.info('Flask app constructed')
@@ -96,12 +92,3 @@ def configure_rate_limiter(app):
   def clean_header(response):
     del response.headers['X-RateLimit-Reset']
     return response
-
-
-def create_database_connection_details() -> dict:
-  return {
-    'host': os.environ.get('DATABASE_HOST'),
-    'dbname': os.environ.get('DATABASE_NAME'),
-    'user': os.environ.get('DATABASE_USER'),
-    'password': os.environ.get('DATABASE_PASSWORD')
-  }
