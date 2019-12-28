@@ -183,17 +183,22 @@ class TestPostSighting(AppTestCase):
     self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'kenny', 'bostick!', 'kenny@mail.com')
 
-  def test_post_sighting_when_everything_ok(self) -> None:
-    token = self.create_access_token(1)
-    position = (64.145981, -21.9422367)
+  def test_post_sighting_when_everything_ok(self):
+    access_token = self.create_access_token(1).jwt
 
-    response = self.post_sighting(1, token.jwt, 'pica pica', '17:42', position)
+    sighting_post_response = self.post_sighting(
+      access_token,
+      1,
+      'pica pica',
+      '17:42',
+      (64.145981, -21.9422367),
+    )
 
-    self.assertEqual(response.status_code, HTTPStatus.CREATED)
-    pattern = re.compile('^/sightings/([0-9]+)$')
-    sighting_id = int(pattern.match(response.headers['Location']).group(1))
-    posted_sighting = self.get_with_access_token(f'/sightings/{sighting_id}', account_id=1)
-    self.assertDictEqual(posted_sighting.json, {
+    self.assertEqual(sighting_post_response.status_code, HTTPStatus.CREATED)
+    sighting_id = get_created_sighting_id(sighting_post_response)
+    sighting_url = f'/sightings/{sighting_id}'
+    sighting = self.get_with_access_token(sighting_url, account_id=1)
+    self.assertDictEqual(sighting.json, {
       'id': sighting_id,
       'birderId': 1,
       'birdId': 'pica-pica',
@@ -209,7 +214,7 @@ class TestPostSighting(AppTestCase):
     token = self.create_access_token(1)
     position = (64.145981, -21.9422367)
 
-    response = self.post_sighting(2, token.jwt, 'pica pica', '17:42', position)
+    response = self.post_sighting(token.jwt, 2, 'pica pica', '17:42', position)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
@@ -217,7 +222,7 @@ class TestPostSighting(AppTestCase):
     token = self.create_access_token(1)
     position = (64.145981, -21.9422367)
 
-    response = self.post_sighting(1, token.jwt, 'pikachu', '17:42', position)
+    response = self.post_sighting(token.jwt, 1, 'pikachu', '17:42', position)
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
 
@@ -225,7 +230,7 @@ class TestPostSighting(AppTestCase):
     token = self.create_access_token(1)
     position = (64.145981, -21.9422367)
 
-    response = self.post_sighting(1, token.jwt, 'pica pica', position=position)
+    response = self.post_sighting(token.jwt, 1, 'pica pica', position=position)
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sightings\/[0-9]+$')
@@ -233,7 +238,7 @@ class TestPostSighting(AppTestCase):
   def test_post_sighting_when_no_position(self) -> None:
     token = self.create_access_token(1)
 
-    response = self.post_sighting(1, token.jwt, 'pica pica', '17:42')
+    response = self.post_sighting(token.jwt, 1, 'pica pica', '17:42')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertRegex(response.headers['Location'], '^\/sightings\/[0-9]+$')
@@ -242,7 +247,7 @@ class TestPostSighting(AppTestCase):
     position = (64.145981, -21.9422367)
     jwt = 'invalid token'
 
-    response = self.post_sighting(1, jwt, 'pica pica', '17:42', position)
+    response = self.post_sighting(jwt, 1, 'pica pica', '17:42', position)
 
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
     self.assertEqual(response.json, {
@@ -252,8 +257,8 @@ class TestPostSighting(AppTestCase):
 
   def post_sighting(
         self,
+        access_token: str,
         birder_id: int,
-        token: str,
         binomial_name: str,
         time: str = None,
         position: tuple = None,
@@ -277,7 +282,7 @@ class TestPostSighting(AppTestCase):
     return self.client.post(
       '/sightings',
       headers={
-        'accessToken': token,
+        'accessToken': access_token,
       },
       json=data,
     )
@@ -336,3 +341,9 @@ class TestDeleteSighting(AppTestCase):
     resource = f'/sightings/{sighting_id}'
     headers = {'accessToken': authentication_token}
     return self.client.delete(resource, headers=headers)
+
+
+def get_created_sighting_id(response):
+  pattern = re.compile('^/sightings/([0-9]+)$')
+  sighting_id = int(pattern.match(response.headers['Location']).group(1))
+  return sighting_id
