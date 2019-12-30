@@ -1,10 +1,12 @@
+from datetime import datetime
 from http import HTTPStatus
 from typing import List
 
-from flask import request, Response, make_response, jsonify, g
+from flask import request, Response, make_response, jsonify, g, current_app
 from geoalchemy2 import WKTElement
 
-from aveslog.v0.models import Sighting
+from aveslog.v0.geocoding import create_geocoding
+from aveslog.v0.models import Sighting, PositionName, Locale
 from aveslog.v0.models import Position
 from aveslog.v0.models import Bird
 from aveslog.v0.rest_api import require_authentication
@@ -38,7 +40,8 @@ def get_sighting(sighting_id: int) -> Response:
   account = g.authenticated_account
   sighting = g.database_session.query(Sighting).get(sighting_id)
   if sighting and sighting.birder_id == account.birder_id:
-    return make_response(jsonify(sighting_representation(sighting)), HTTPStatus.OK)
+    return make_response(jsonify(sighting_representation(sighting)),
+      HTTPStatus.OK)
   else:
     return get_sighting_failure_response()
 
@@ -76,10 +79,34 @@ def post_sighting() -> Response:
   if 'position' in request.json:
     request_position = request.json['position']
     position = create_position(request_position['lat'], request_position['lon'])
+    coordinates = (request_position['lat'], request_position['lon'])
+    position_name = create_position_name(coordinates, g.database_session)
+    if position_name:
+      position.names.append(position_name)
     sighting.position = position
   g.database_session.add(sighting)
   g.database_session.commit()
   return post_sighting_success_response(sighting.id)
+
+
+def create_position_name(coordinates, db_session):
+  geocoding = create_geocoding(current_app.testing)
+  reverse_geocoding_result = geocoding.reverse_search(coordinates)
+  if reverse_geocoding_result:
+    language_code = reverse_geocoding_result.language_code
+    primary_language_subtag = language_code.split('-')[0]
+    locale = db_session.query(Locale) \
+      .filter_by(code=primary_language_subtag) \
+      .first()
+    if locale:
+      position_name = PositionName(
+        locale_id=locale.id,
+        detail_level=reverse_geocoding_result.detail_level,
+        name=reverse_geocoding_result.name,
+        creation_time=datetime.now(),
+      )
+      position_name.locale = locale
+      return position_name
 
 
 def sightings_response(sightings: List[Sighting], has_more: bool) -> Response:

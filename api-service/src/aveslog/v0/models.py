@@ -192,6 +192,7 @@ class PositionName(Base):
   detail_level = Column(Integer)
   name = Column(String, nullable=False)
   creation_time = Column(DateTime, nullable=False)
+  locale = relationship('Locale', uselist=False)
 
 
 class RefreshToken(Base):

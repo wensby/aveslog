@@ -180,6 +180,7 @@ class TestPostSighting(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
+    self.db_insert_locale(1, 'en')
     self.db_insert_bird(1, 'Pica pica')
     self.db_setup_account(1, 1, 'kenny', 'bostick!', 'kenny@mail.com')
 
@@ -205,6 +206,7 @@ class TestPostSighting(AppTestCase):
       'date': '2019-09-11',
       'time': '17:42:00',
       'position': {
+        'name': '(64.145981, -21.9422367) name',
         'lat': 64.145981,
         'lon': -21.9422367
       }

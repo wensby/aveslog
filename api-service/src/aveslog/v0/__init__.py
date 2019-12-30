@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from flask import Blueprint, request, g, Response, current_app
 
+from aveslog.v0.geocoding import Geocoding
 from aveslog.v0 import routes
 from aveslog.v0.database import EngineFactory
 from aveslog.v0.database import SessionFactory
@@ -81,6 +82,7 @@ def create_api_v0_blueprint(mail_dispatcher: MailDispatcher) -> Blueprint:
     )
 
   return blueprint
+
 
 def create_database_connection_details() -> dict:
   return {
