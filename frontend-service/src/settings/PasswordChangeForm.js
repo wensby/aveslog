@@ -5,7 +5,7 @@ import AuthenticationService from '../authentication/AuthenticationService';
 import { UserContext } from '../authentication/UserContext';
 import { useReactRouter } from '../reactRouterHook.js';
 
-const PasswordChangeForm = () => {
+export const PasswordChangeForm = () => {
   const { history } = useReactRouter();
   const { getAccessToken } = useContext(UserContext);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -56,17 +56,5 @@ const PasswordChangeForm = () => {
           showFeedback={showFeedback} />
       <button className='button'>{t('password-change-button')}</button>
     </form>
-  );
-}
-
-export default function Settings() {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <h1>{t('Settings')}</h1>
-      <h2>{t('change-password')}</h2>
-      <PasswordChangeForm />
-    </>
   );
 }
