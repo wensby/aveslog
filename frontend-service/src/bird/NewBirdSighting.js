@@ -6,7 +6,10 @@ import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
 import SightingSuccess from '../sighting/SightingSuccess';
 import { usePosition } from '../usePosition';
-import { usePositionName } from '../usePositionName';
+import Spinner from '../loading/Spinner';
+import { ToggleButtonGroup } from '../toggle/ToggleButtonGroup';
+import { ToggleButton } from "../toggle/ToggleButton";
+import './style.scss';
 
 export default ({ match }) => {
   const binomialName = match.params.binomialName;
@@ -14,14 +17,12 @@ export default ({ match }) => {
   const [bird, setBird] = useState(null);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [location, setLocation] = useState(null);
   const [timeEnabled, setTimeEnabled] = useState(true);
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const { t } = useTranslation();
   const sightingService = new SightingService();
   const { getAccessToken, account } = useContext(UserContext);
-  const { latitude, longitude, error } = usePosition(locationEnabled);
-  const positionName = usePositionName(location);
+  const { t } = useTranslation();
+  const [location, setLocation] = useState(null);
+  const [blockedByLocation, setBlockedByLocation] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,27 +45,18 @@ export default ({ match }) => {
     }
   }, [timeEnabled]);
 
-  useEffect(() => {
-    if (locationEnabled && !location) {
-      if (latitude && longitude) {
-        setLocation([latitude, longitude]);
-      }
-    }
-    else {
-      setLocation(null);
-    }
-  }, [locationEnabled, latitude, longitude])
-
   const handleFormSubmit = async event => {
     event.preventDefault();
-    const accessToken = await getAccessToken();
-    const response = await sightingService.postSighting(
-      accessToken, account.birder.id, bird.binomialName, date, time, location,
-    );
-    if (response.status === 201) {
-      const sightingLocation = response.headers.get('Location');
-      const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
-      setAddedSighting(sighting);
+    if (!blockedByLocation) {
+      const accessToken = await getAccessToken();
+      const response = await sightingService.postSighting(
+        accessToken, account.birder.id, bird.binomialName, date, time, location,
+      );
+      if (response.status === 201) {
+        const sightingLocation = response.headers.get('Location');
+        const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
+        setAddedSighting(sighting);
+      }
     }
   }
 
@@ -88,8 +80,10 @@ export default ({ match }) => {
     return <SightingSuccess sighting={addedSighting}/>;
   }
 
+
+
   return (
-    <div className='container'>
+    <div className='container sighting-form'>
       <div className='row'>
         <div className='col'>
           <h1>{t('new-sighting-title')}</h1>
@@ -118,22 +112,9 @@ export default ({ match }) => {
                   onChange={event => setTime(event.target.value)} />
               </div>
             </div>
-            <div className='form-group row'>
-              <Label htmlFor='locationInput' label='location-label' />
-              <div className='input-group col-sm-10' id='locationInput'>
-                <div className='input-group-prepend'>
-                  <div className='input-group-text'>
-                    <input type='checkbox' id='locationCheckboxInput'
-                      name='locationCheckboxInput' checked={locationEnabled}
-                      onChange={event => setLocationEnabled(event.target.checked)} />
-                  </div>
-                </div>
-                <input type='text' id='locationTextInput' className='form-control'
-                  value={!location ? '' : positionName || location} disabled />
-              </div>
-            </div>
+            <LocationSection onCoordinatesChanged={setLocation} onBlocking={setBlockedByLocation}/>
             <input type='hidden' name='birdId' value={bird.id} />
-            <button type='submit' className='button'>
+            <button type='submit' className='button' disabled={blockedByLocation}>
               {t('submit-sighting-button')}
             </button>
           </form>
@@ -166,3 +147,93 @@ const Label = ({ htmlFor, label }) => {
   const className = 'col-sm-2 col-form-label';
   return <label htmlFor={htmlFor} className={className}>{t(label)}</label>;
 };
+
+const LocationSection = ({ onCoordinatesChanged, onBlocking }) => {
+  const [coordintes, setCoordinates] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const { latitude, longitude, error } = usePosition(selected === 'current');
+  const { t } = useTranslation();
+  const [collapseState, setCollapseState] = useState('collapsed');
+
+  useEffect(() => {
+    const noCoordinates = coordintes == null;
+    const noError = error !== '';
+    setLoading(selected === 'current' && noCoordinates && noError);
+  }, [selected, coordintes, error])
+
+  useEffect(() => {
+    onBlocking(loading);
+  }, [loading])
+
+  useEffect(() => {
+    if (selected === 'current') {
+      if (latitude && longitude) {
+        setCoordinates([latitude, longitude])
+      }
+      else if (error) {
+        if (error.toUpperCase() === 'user denied geolocation'.toUpperCase()) {
+          setSelected(null);
+        }
+      }
+    }
+    else {
+      setCoordinates(null);
+    }
+  }, [selected, latitude, longitude, error]);
+
+  useEffect(() => {
+    onCoordinatesChanged(coordintes);
+  }, [coordintes]);
+
+  useEffect(() => {
+    if (selected !== null && (collapseState === 'collapsed' || collapseState === 'collapsing2')) {
+      setCollapseState('expanding');
+      setTimeout(() => {
+        setCollapseState('expanded');
+      }, 300);
+    }
+    else if (selected === null && (collapseState === 'expanding' || collapseState === 'expanded')) {
+      setCollapseState('collapsing2');
+      setTimeout(() => {
+        setCollapseState('collapsed');
+      }, 300);
+    }
+  }, [selected, collapseState])
+
+  return (
+    <div className={`location-section ${collapseState}`}>
+      <ToggleButtonGroup onSelected={setSelected}>
+        <ToggleButton value='current'>{t('current-location-label')}</ToggleButton>
+        <ToggleButton value='custom' disabled={true}>{t('custom-location-label')}</ToggleButton>
+      </ToggleButtonGroup>
+      <div className='location-expansion'>
+        <If condition={selected === 'current'}>
+          <CoordinatesLoading display={loading}/>
+          <CoordinatesLoadedIcon display={coordintes != null}/>
+        </If>
+      </div>
+    </div>
+  );
+}
+
+const If = ({condition, children}) => {
+  if (condition) {
+    return children;
+  }
+  return null;
+}
+
+const CoordinatesLoading = ({display}) => {
+  if (display) {
+    return <Spinner/>
+  }
+  return null;
+}
+
+const CoordinatesLoadedIcon = ({display}) => {
+  if (display) {
+    return <div className='loaded-icon'>✓</div>;
+  }
+  return null;
+}

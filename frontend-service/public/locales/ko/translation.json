@@ -62,5 +62,7 @@
   "birders": "버더",
   "logged-by": "<1>{{name}}</1>님이 기록했다",
   "location-label": "위치",
+  "current-location-label": "현재 위치",
+  "custom-location-label": "위치를 선택하기",
   "Logout": "로그아웃"
 }

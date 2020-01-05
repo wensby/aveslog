@@ -62,5 +62,7 @@
   "birders": "Fågelskådare",
   "logged-by": "Loggad av <1>{{name}}</1>",
   "location-label": "Plats",
+  "current-location-label": "Nuvarande plats",
+  "custom-location-label": "Välj plats",
   "Logout": "Logga ut"
 }

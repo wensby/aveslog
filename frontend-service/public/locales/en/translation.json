@@ -62,5 +62,7 @@
   "birders": "Birders",
   "logged-by": "Logged by <1>{{name}}</1>",
   "location-label": "Location",
+  "current-location-label": "My current device location",
+  "custom-location-label": "Choose location",
   "Logout": "Logout"
 }
