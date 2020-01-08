@@ -64,5 +64,7 @@
   "location-label": "Plats",
   "current-location-label": "Nuvarande plats",
   "custom-location-label": "Välj plats",
+  "filter-label": "Filter",
+  "year-filter-all": "alla",
   "Logout": "Logga ut"
 }

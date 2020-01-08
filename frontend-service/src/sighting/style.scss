@@ -1,5 +1,34 @@
+@import '../colors.scss';
+
 $header-height: 200px;
 $header-backdrop-blur: 32px;
+
+.sightings-filter {
+  & button {
+    color: $primary;
+    box-sizing: content-box;
+    background: none!important;
+    display: inline;
+    border: none;
+    font-family: inherit;
+    transform-origin: 0 0;
+    perspective-origin: 0 0;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+    
+    &:hover {
+      color: $black;
+    }
+    
+    &.selected {
+      color: $darkgrey;
+      cursor: unset;
+    }
+  }
+}
 
 .detailed-sighting-card > .card-header {
   display: grid;

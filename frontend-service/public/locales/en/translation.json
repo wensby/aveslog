@@ -64,5 +64,7 @@
   "location-label": "Location",
   "current-location-label": "My current device location",
   "custom-location-label": "Choose location",
+  "filter-label": "Filter",
+  "year-filter-all": "all",
   "Logout": "Logout"
 }
