@@ -1,5 +1,5 @@
 import React from 'react';
-import SightingList from './SightingList.js';
+import { SightingList } from './SightingList.js';
 import { SightingsStats } from './SightingsStats';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedAccountSightings } from '../useAuthenticatedAccountSightings';

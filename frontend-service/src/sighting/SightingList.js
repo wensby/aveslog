@@ -1,7 +1,7 @@
 import React from 'react';
 import SightingCard from './SightingCard.js';
 
-export default ({ sightings }) => {
+export function SightingList({ sightings }) {
 
   const renderSightingCard = sighting => {
     return (

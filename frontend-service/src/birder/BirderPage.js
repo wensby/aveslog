@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
-import SightingList from '../sighting/SightingList';
+import { SightingList } from '../sighting/SightingList';
 
 export default function BirderPage({ birder }) {
   const { getAccessToken } = useContext(UserContext);
