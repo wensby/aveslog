@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import BirdService from './BirdService';
-import SightingService from '../sighting/SightingService';
+import BirdService from '../bird/BirdService';
+import SightingService from './SightingService';
 import { UserContext } from '../authentication/UserContext';
-import SightingSuccess from '../sighting/SightingSuccess';
+import SightingSuccess from './SightingSuccess';
 import { usePosition } from '../usePosition';
 import Spinner from '../loading/Spinner';
 import { ToggleButtonGroup } from '../toggle/ToggleButtonGroup';

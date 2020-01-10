@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import BirdQueryResult from './BirdQueryResult';
 import BirdDetails from './BirdDetails.js';
-import NewBirdSighting from './NewBirdSighting';
+import NewBirdSighting from '../sighting/NewBirdSighting';
 
 export default function Bird({ match }) {
   const { path } = match;

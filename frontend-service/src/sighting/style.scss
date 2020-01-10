@@ -66,3 +66,65 @@ $header-backdrop-blur: 32px;
     object-fit: contain;
   }
 }
+
+.sighting-form button[type=submit] {
+  margin-top: 15px;
+  
+  &[disabled] {
+    background-color: $lighter;
+  }
+}
+
+.location-expansion {
+  height: 0px;
+  transition: height 0.3s ease-in-out;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border: 1px solid $lighter;
+  overflow: hidden;
+  text-align: center;
+  font-size: 50px;
+}
+
+.location-section {
+
+  &.collapsed .location-expansion {
+    border-width: 0;
+  }
+
+  &.expanding {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+
+    & .location-expansion {
+      height: 100px;
+    }
+  }
+
+  &.expanded {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+
+    & .location-expansion {
+      height: 100px;
+    }
+  }
+
+  &.collapsing2 {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+  }
+  
+  & .loaded-icon {
+    color: $success;
+  }
+}
