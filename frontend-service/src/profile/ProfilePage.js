@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
-import SightingCard from '../sighting/SightingCard';
 import AccountService from '../account/AccountService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 
