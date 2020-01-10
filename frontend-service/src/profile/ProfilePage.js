@@ -3,6 +3,7 @@ import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
 import SightingCard from '../sighting/SightingCard';
 import AccountService from '../account/AccountService';
+import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 
 export default ({ username }) => {
   const [sightings, setSightings] = useState([]);
@@ -34,14 +35,10 @@ export default ({ username }) => {
     }
   }, [account]);
 
-  const renderSightings = () => {
-    return sightings.map(sighting => <SightingCard sighting={sighting} key={sighting.id} />);
-  }
-
   return (
     <>
       <h1>{username}</h1>
-      {renderSightings()}
+      <FilterableSightingsList sightings={sightings} />
     </>
   );
 };
