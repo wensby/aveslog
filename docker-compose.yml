@@ -20,7 +20,7 @@ services:
       context: ./api-service
     image: api-service
     volumes:
-      - ./api-service/src/logs:/src/logs
+      - ./volumes/image/bird:/src/aveslog/static/image/bird
     container_name: api-service
     restart: always
     networks:
