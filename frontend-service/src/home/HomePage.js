@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
-import SightingFeedContainer from './SightingFeedContainer';
+import { SightingFeedContainer } from './SightingFeedContainer';
 
 export default function HomePage({ }) {
   const { authenticated } = useContext(UserContext);
