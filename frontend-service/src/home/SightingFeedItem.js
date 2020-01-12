@@ -6,7 +6,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import SightingTime from '../sighting/SightingTime';
 
 export function SightingFeedItem({ birder, sighting, bird }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const name = birder.name;
   const language = i18n.languages[0];
   const birdName = bird.names && bird.names[language] ? bird.names[language] : bird.binomialName;
