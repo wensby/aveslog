@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import DetailedSightingCard from './DetailedSightingCard';
+import { DetailedSightingCard } from './DetailedSightingCard';
 import BounceInRight from '../component/BounceInRight';
 
 export default function SightingSuccess({ sighting, stats }) {

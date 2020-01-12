@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext }  from '../authentication/UserContext';
 import SightingService from './SightingService';
-import DetailedSightingCard from './DetailedSightingCard';
+import { DetailedSightingCard } from './DetailedSightingCard';
 import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';

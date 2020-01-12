@@ -4,7 +4,7 @@ import { useBird } from '../bird/BirdHooks';
 import placeholder from '../bird/placeholder-bird.jpg';
 import './style.scss';
 
-export default function DetailedSightingCard({ sighting }) {
+export function DetailedSightingCard({ sighting }) {
   return (
     <div className='detailed-sighting-card card'>
       <CardHeader sighting={sighting} />
