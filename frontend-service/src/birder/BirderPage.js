@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
-import { SightingList } from '../sighting/SightingList';
+import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 
 export default function BirderPage({ birder }) {
   const { getAccessToken } = useContext(UserContext);
@@ -20,7 +20,7 @@ export default function BirderPage({ birder }) {
   return (
     <div>
       <h1>{birder.name}</h1>
-      <SightingList sightings={sightings} />
+      <FilterableSightingsList sightings={sightings} />
     </div>
   );
 }
