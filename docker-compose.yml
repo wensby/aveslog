@@ -19,8 +19,6 @@ services:
       dockerfile: Dockerfile
       context: ./api-service
     image: api-service
-    volumes:
-      - ./volumes/image/bird:/src/aveslog/static/image/bird
     container_name: api-service
     restart: always
     networks:
