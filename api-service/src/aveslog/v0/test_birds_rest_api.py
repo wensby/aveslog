@@ -17,7 +17,7 @@ class TestBird(AppTestCase):
     self.db_insert_bird_name(1, 1, 1, 'Skata')
     self.db_insert_bird_name(2, 1, 2, 'Eurasian Magpie')
     self.db_insert_bird_name(3, 1, 3, '까치')
-    self.db_insert_picture(1, 'image/bird/pica-pica-thumb.jpg', 'myCredit')
+    self.db_insert_picture(1, 'myPictureUrl', 'myCredit')
     self.db_insert_bird_thumbnail(1, 1)
 
     response = self.client.get('/birds/pica-pica')
@@ -32,11 +32,11 @@ class TestBird(AppTestCase):
         'ko': ['까치'],
       },
       'thumbnail': {
-        'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'url': 'myPictureUrl',
         'credit': 'myCredit',
       },
       'cover': {
-        'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
+        'url': 'myPictureUrl',
         'credit': 'myCredit',
       },
     })

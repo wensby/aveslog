@@ -1,11 +1,9 @@
-import os
 from http import HTTPStatus
 
 from flask import Response, make_response, jsonify, g
 from sqlalchemy.orm import joinedload
 
 from .models import Bird
-from .models import Picture
 from .models import BirdThumbnail
 
 
@@ -35,17 +33,12 @@ def bird_representation(bird: Bird) -> dict:
     representation['names'] = collect_bird_names(bird.names)
   if bird.thumbnail:
     thumbnail_representation = {
-      'url': external_picture_url(bird.thumbnail.picture),
+      'url': bird.thumbnail.picture.filepath,
       'credit': bird.thumbnail.picture.credit,
     }
     representation['thumbnail'] = thumbnail_representation
     representation['cover'] = thumbnail_representation
   return representation
-
-
-def external_picture_url(picture: Picture) -> str:
-  static_picture_url = os.path.join('/static/', picture.filepath)
-  return f"{os.environ['EXTERNAL_HOST']}{static_picture_url}"
 
 
 def collect_bird_names(bird_names):
