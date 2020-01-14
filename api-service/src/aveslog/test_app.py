@@ -108,9 +108,9 @@ class TestAppBehindProxy(IntegrationTestCase):
       client = app.test_client()
       client_1_headers = {'X-Forwarded-For': '203.0.113.195'}
       client_2_headers = {'X-Forwarded-For': '150.172.238.178'}
-      client.get('/birds/pica-pica', headers=client_1_headers)
-      response_1 = client.get('/birds/pica-pica', headers=client_1_headers)
-      response_2 = client.get('/birds/pica-pica', headers=client_2_headers)
+      client.get('/birds/poci-poci', headers=client_1_headers)
+      response_1 = client.get('/birds/poci-poci', headers=client_1_headers)
+      response_2 = client.get('/birds/poci-poci', headers=client_2_headers)
       self.assertEqual(response_1.status_code, HTTPStatus.TOO_MANY_REQUESTS)
       self.assertEqual(response_2.status_code, HTTPStatus.NOT_FOUND)
 
