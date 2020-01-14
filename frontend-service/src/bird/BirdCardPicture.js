@@ -7,6 +7,7 @@ export default function BirdCardPicture({ bird, ...other }) {
     className='bird-picture'
     onError={() => setSrc(placeholder)}
     src={src}
-    alt="Card" {...other}
+    alt="Card"
+    {...other}
   />;
 };
