@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 
-export default () => {
+export function SearchBar({}) {
   const { history } = useReactRouter();
   const [query, setQuery] = useState('');
   const { t } = useTranslation();

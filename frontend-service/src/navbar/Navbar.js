@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import './style.scss';
 import Menu from './Menu.js';
-import SearchBar from './SearchBar';
+import { SearchBar } from './SearchBar';
 import { UserContext } from '../authentication/UserContext.js';
 import { getMenuItems } from './MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
