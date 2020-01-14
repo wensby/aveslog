@@ -6,6 +6,7 @@ import SightingService from '../sighting/SightingService';
 export function SightingFeedContainer({ }) {
   const { getAccessToken } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
+
   useEffect(() => {
     const fetchSightings = async () => {
       const accessToken = await getAccessToken();
@@ -17,5 +18,6 @@ export function SightingFeedContainer({ }) {
     }
     fetchSightings();
   }, []);
+
   return <SightingFeed sightings={sightings} />;
 }
