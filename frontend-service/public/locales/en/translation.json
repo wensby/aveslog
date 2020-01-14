@@ -66,5 +66,6 @@
   "custom-location-label": "Choose location",
   "filter-label": "Filter",
   "year-filter-all": "all",
+  "result-info-label": "Showing results for search",
   "Logout": "Logout"
 }

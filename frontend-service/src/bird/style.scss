@@ -61,3 +61,12 @@
     color: $success;
   }
 }
+
+.bird-result-container {
+  position: relative;
+
+  & .info {
+    color: $lightgrey;
+    margin-bottom: 10px;
+  }
+}
