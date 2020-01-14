@@ -17,6 +17,10 @@ class BirdRepository {
     }
     return await this.birdPromisesById[birdId];
   }
+
+  async getBirdStatistics(birdId) {
+    return await this.birdService.getBirdStatistics(birdId);
+  }
 }
 
 const birdRepository = new BirdRepository();
