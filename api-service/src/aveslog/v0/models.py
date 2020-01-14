@@ -81,6 +81,7 @@ class Birder(Base):
   __tablename__ = 'birder'
   id = Column(Integer, primary_key=True)
   name = Column(String)
+  sightings = relationship('Sighting')
 
   def __repr__(self):
     return f"<Birder(name='{self.name}')>"

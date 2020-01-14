@@ -11,6 +11,10 @@ birds_routes = [
     'rule': '/birds/<string:bird_identifier>',
     'func': birds_rest_api.get_single_bird,
   },
+  {
+    'rule': '/birds/<string:bird_identifier>/statistics',
+    'func': birds_rest_api.get_bird_statistics,
+  },
 ]
 
 search_routes = [

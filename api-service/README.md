@@ -226,6 +226,23 @@ Status: 200 OK
 }
 ```
 
+### Get bird statistics
+
+```
+GET /birds/:bird/statistics
+```
+
+### Response
+
+```
+Status: 200 OK
+
+{
+  "sightingsCount": 2,
+  "birdersCount": 1
+}
+```
+
 ## Sightings
 
 ### List birder's sightings

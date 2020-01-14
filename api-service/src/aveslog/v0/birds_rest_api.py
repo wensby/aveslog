@@ -4,6 +4,8 @@ from flask import Response, make_response, jsonify, g
 from sqlalchemy.orm import joinedload
 
 from .models import Bird
+from .models import Sighting
+from .models import Birder
 from .models import BirdThumbnail
 
 
@@ -18,6 +20,24 @@ def get_single_bird(bird_identifier: str) -> Response:
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
   return make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
+
+
+def get_bird_statistics(bird_identifier: str) -> Response:
+  name = bird_identifier.replace('-', ' ').capitalize()
+  bird = g.database_session.query(Bird).filter_by(binomial_name=name).first()
+  if not bird:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  sightings_count = g.database_session.query(Sighting) \
+    .filter_by(bird=bird) \
+    .count()
+  birders_count = g.database_session.query(Birder) \
+    .filter(Birder.sightings.any(Sighting.bird == bird)) \
+    .count()
+  statistics = {
+    'sightingsCount': sightings_count,
+    'birdersCount': birders_count,
+  }
+  return make_response(jsonify(statistics), HTTPStatus.OK)
 
 
 def bird_summary_representation(bird: Bird) -> dict:

@@ -1,3 +1,4 @@
+from datetime import date
 from http import HTTPStatus
 
 from aveslog.test_util import AppTestCase
@@ -82,3 +83,36 @@ class TestBird(AppTestCase):
     self.assertLessEqual(reset, self.test_rate_limit_per_minute)
     self.assertEqual(limit, self.test_rate_limit_per_minute)
     self.assertEqual(remaining, expected_remaining)
+
+
+class TestGetBirdStatistics(AppTestCase):
+
+  def setUp(self):
+    super().setUp()
+    self.db_insert_bird(1, 'Pica pica')
+
+  def test_get_bird_statistics(self):
+    self.db_setup_account(2, 3, 'hulot', 'password', 'hulot@email.com')
+    self.db_setup_account(4, 5, 'kenny', 'password', 'kenny@email.com')
+    self.db_insert_sighting(6, 2, 1, date(2020, 1, 14), None, None)
+    self.db_insert_sighting(7, 2, 1, date(2020, 1, 14), None, None)
+
+    response = self.client.get('/birds/pica-pica/statistics')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'sightingsCount': 2,
+      'birdersCount': 1,
+    })
+
+  def test_get_bird_statistics_when_blank(self):
+    response = self.client.get('/birds/pica-pica/statistics')
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'sightingsCount': 0,
+      'birdersCount': 0,
+    })
+
+  def test_get_bird_statistics_when_no_such_bird(self):
+    response = self.client.get('/birds/pikachu/statistics')
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
