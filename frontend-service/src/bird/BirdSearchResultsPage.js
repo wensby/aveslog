@@ -5,7 +5,7 @@ import './style.css';
 import Loading from '../loading/Loading';
 import BirdResultCard from './BirdResultCard';
 
-export default function BirdQueryResult(props) {
+export function BirdSearchResultsPage(props) {
   const query = queryString.parse(props.location.search).q;
   const [resultItems, setResultItems] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState(null);
