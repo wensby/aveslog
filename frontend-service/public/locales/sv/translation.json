@@ -67,5 +67,7 @@
   "filter-label": "Filter",
   "year-filter-all": "alla",
   "result-info-label": "Visar resultat för sökning",
+  "registration-success-title": "Du är nu registrerad!",
+  "registration-success-message": "Från och med nu kan du logga in och hålla reda på dina fågelobservationer. Det är inte svårare än så. Lycka till!",
   "Logout": "Logga ut"
 }

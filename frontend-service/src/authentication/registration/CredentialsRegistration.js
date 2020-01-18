@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../../reactRouterHook';
 import AuthenticationService from '../AuthenticationService.js';
 import RegistrationForm from './CredentialsForm';
-import RegistrationSuccess from './RegistrationSuccess';
+import { RegistrationSuccess } from './RegistrationSuccess';
+import { FadeIn } from '../../component/FadeIn.js';
 
 export default () => {
   const { match } = useReactRouter();
@@ -61,7 +62,7 @@ export default () => {
   };
 
   if (success) {
-    return <RegistrationSuccess />;
+    return <FadeIn><RegistrationSuccess /></FadeIn>;
   }
   return (
     <div className='container'>
