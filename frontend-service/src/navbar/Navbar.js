@@ -13,7 +13,7 @@ function Brand() {
   return (
     <BootstrapNavbar.Brand>
       <Link to="/" className='text-decoration-none brand-name'>
-        Aves Log
+        Aveslog
       </Link>
     </BootstrapNavbar.Brand>
   );
