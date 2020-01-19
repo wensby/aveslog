@@ -1,23 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
-import { Navbar as BootstrapNavbar } from "react-bootstrap";
 import './style.scss';
 import Menu from './Menu.js';
 import { SearchBar } from './SearchBar';
 import { UserContext } from '../authentication/UserContext.js';
 import { getMenuItems } from './MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
-
-function Brand() {
-  return (
-    <div className='brand'>
-      <Link to="/" className='text-decoration-none brand-name'>
-        Aves<span />log
-      </Link>
-    </div>
-  );
-}
+import { NavbarMain } from './NavbarMain';
 
 export function Navbar() {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
@@ -122,29 +111,6 @@ export function Navbar() {
       className="navbar navbar-light shadow p-0 fixed-top">
       {renderStaticPart()}
       {renderExpandibleMenu()}
-    </div>
-  );
-}
-
-function NavbarMain() {
-  const { authenticated, account } = useContext(UserContext);
-
-  const renderUsername = () => {
-    if (authenticated && account) {
-      return (
-        <div className='navbar-username'>
-          <Link to={`/profile/${account.username}`}>
-            {account.username}
-          </Link>
-        </div>
-      );
-    }
-  }
-
-  return (
-    <div className='navbar-main'>
-      <Brand />
-      {renderUsername()}
     </div>
   );
 }
