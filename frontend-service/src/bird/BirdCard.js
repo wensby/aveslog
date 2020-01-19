@@ -2,7 +2,7 @@ import React from 'react';
 import BirdCardPicture from './BirdCardPicture';
 import BirdLink from './BirdLink';
 
-export default function BirdCard({ bird, children }) {
+export function BirdCard({ bird, children }) {
   return (
     <div className="card">
       <div className="card-horizontal">

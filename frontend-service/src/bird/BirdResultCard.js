@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import BirdCard from './BirdCard';
+import { BirdCard } from './BirdCard';
 import birdRepository from './BirdRepository';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
