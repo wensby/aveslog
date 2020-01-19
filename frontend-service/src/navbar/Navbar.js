@@ -1,17 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import './style.scss';
-import Menu from './Menu.js';
 import { SearchBar } from './SearchBar';
-import { UserContext } from '../authentication/UserContext.js';
-import { getMenuItems } from './MenuItemsFactory.js';
-import { useTranslation } from 'react-i18next';
 import { NavbarMain } from './NavbarMain';
+import { ExpandibleMenu } from './ExpandibleMenu';
 
 export function Navbar() {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
-  const { authenticated, account, unauthenticate } = useContext(UserContext);
-  const { t } = useTranslation();
   let fullNavbarRef = null;
   let gridRef = null;
 
@@ -95,22 +90,11 @@ export function Navbar() {
       </div>
     </div>;
 
-  const renderExpandibleMenu = () => {
-    const items = getMenuItems(authenticated, account, unauthenticate, t);
-    const needMaxHeight = ['expanding', 'expanded'].indexOf(menuCollapseState) >= 0;
-    const style = needMaxHeight ? { maxHeight: `${items.length * 37}px` } : {};
-    return (
-      <div className={`menu ${menuCollapseState}`} style={style}>
-        <Menu items={items} onClick={() => setTimeout(collapseMenu, 0)} />
-      </div>
-    );
-  }
-
   return (
     <div ref={setFullNavbarRef}
       className="navbar navbar-light shadow p-0 fixed-top">
       {renderStaticPart()}
-      {renderExpandibleMenu()}
+      <ExpandibleMenu menuCollapseState={menuCollapseState} onMenuClick={() => setTimeout(collapseMenu, 0)} />
     </div>
   );
 }
