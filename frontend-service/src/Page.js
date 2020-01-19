@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 
 import React from 'react';
-import Navbar from './navbar/Navbar.js';
+import { Navbar } from './navbar/Navbar.js';
 import Sidebar from './SideMenu.js';
 import Main from './Main.js';
 import Footer from './Footer.js';

@@ -19,7 +19,7 @@ function Brand() {
   );
 }
 
-export default function Navbar() {
+export function Navbar() {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
   const { authenticated, account, unauthenticate } = useContext(UserContext);
   const { t } = useTranslation();
