@@ -78,7 +78,7 @@ export function Navbar() {
   return (
     <div ref={setFullNavbarRef} className="navbar navbar-light shadow p-0 fixed-top">
       <NavbarConstant ref={setGridRef} onToggleNavbarClick={toggleNavbar} />
-      <ExpandibleMenu menuCollapseState={menuCollapseState} onMenuClick={() => setTimeout(collapseMenu, 0)} />
+      <ExpandibleMenu collapseState={menuCollapseState} onMenuClick={() => setTimeout(collapseMenu, 0)} />
     </div>
   );
 }
