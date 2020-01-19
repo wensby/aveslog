@@ -2,7 +2,7 @@ import React from 'react';
 import Nav from 'react-bootstrap/Nav';
 import './style.scss';
 
-export default ({ onClick, items }) => {
+export function Menu({ onClick, items }) {
 
   const renderItem = (item, index) => {
     return (

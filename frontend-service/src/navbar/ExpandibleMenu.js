@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import Menu from './Menu.js';
+import { Menu } from './Menu.js';
 import { UserContext } from '../authentication/UserContext.js';
 import { getMenuItems } from './MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
