@@ -11,11 +11,11 @@ import { useTranslation } from 'react-i18next';
 
 function Brand() {
   return (
-    <BootstrapNavbar.Brand>
+    <div className='brand'>
       <Link to="/" className='text-decoration-none brand-name'>
-        Aveslog
+        Aves<span />log
       </Link>
-    </BootstrapNavbar.Brand>
+    </div>
   );
 }
 
@@ -93,24 +93,9 @@ export function Navbar() {
     return gridRef && gridRef.contains(target);
   }
 
-  const renderUsername = () => {
-    if (authenticated && account) {
-      return (
-        <Link className='text-dark' to={`/profile/${account.username}`}>
-          {account.username}
-        </Link>
-      );
-    }
-  }
-
   const renderStaticPart = () =>
     <div ref={setGridRef} className='navbar-grid'>
-      <div className='navbar-main d-flex mr-0 flex-grow-1 align-self-center'>
-        <div className='flex-grow-1 align-self-center'>
-          <Brand />
-          {renderUsername()}
-        </div>
-      </div>
+      <NavbarMain />
       <div className='menu-button'>
         <Button onClick={toggleNavbar} className='navbar-toggler'>
           <span className="navbar-toggler-icon"></span>
@@ -137,6 +122,29 @@ export function Navbar() {
       className="navbar navbar-light shadow p-0 fixed-top">
       {renderStaticPart()}
       {renderExpandibleMenu()}
+    </div>
+  );
+}
+
+function NavbarMain() {
+  const { authenticated, account } = useContext(UserContext);
+
+  const renderUsername = () => {
+    if (authenticated && account) {
+      return (
+        <div className='navbar-username'>
+          <Link to={`/profile/${account.username}`}>
+            {account.username}
+          </Link>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div className='navbar-main'>
+      <Brand />
+      {renderUsername()}
     </div>
   );
 }

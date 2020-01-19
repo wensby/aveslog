@@ -5,6 +5,32 @@
   position: fixed;
 }
 
+.navbar-username {
+  padding-top: 0px;
+
+  & a {
+    color: $black;
+
+    &:hover {
+      color: $primary;
+      text-decoration: none;
+    }
+  }
+}
+
+.brand {
+  display: inline-block;
+  padding-top: 0.35rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  line-height: inherit;
+  white-space: nowrap;
+
+  &::before, &::after {
+    box-sizing: border-box;
+  }
+}
+
 .navbar-grid {
   width: 100%;
   display: grid;
@@ -42,13 +68,17 @@
 }
 
 .brand-name {
-  font-family: 'Carter One', cursive;
-  font-size: larger;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 130%;
   margin-left: 10px;
   color: $primary;
 
   &:hover {
     color: $darkgrey;
+  }
+
+  & span {
+    margin-left: 1px;
   }
 }
 
@@ -76,6 +106,8 @@
 
 .navbar-main {
   grid-area: main;
+  display: flex;
+  align-items: center;
 }
 
 .navbar-grid .menu-button {
