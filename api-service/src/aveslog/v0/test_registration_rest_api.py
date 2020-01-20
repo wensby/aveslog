@@ -13,7 +13,7 @@ class TestCreateRegistrationRequest(AppTestCase):
 
     response = self.post_registration_request('hulot@mail.com')
 
-    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertIsNone(response.json)
 
   def test_post_registration_request_when_email_invalid(self):

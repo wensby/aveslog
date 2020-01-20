@@ -35,7 +35,7 @@ def post_registration_request() -> Response:
     return error_response(ErrorCode.EMAIL_TAKEN, 'Email taken')
   elif result == 'email invalid':
     return error_response(ErrorCode.EMAIL_INVALID, 'Email invalid')
-  return make_response('', HTTPStatus.OK)
+  return make_response('', HTTPStatus.CREATED)
 
 
 def get_registration_request(token: str) -> Response:
