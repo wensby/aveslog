@@ -1,21 +1,18 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useBirdName } from './BirdHooks';
 
 export function BirdCardName({ bird }) {
-  const { i18n } = useTranslation();
+  const { local, binomial } = useBirdName(bird);
 
-  const language = i18n.languages[0];
-
-  if (bird.names && bird.names[language]) {
-    const localeName = bird.names[language];
+  if (local) {
     return (
       <>
-        <h5 key='1' className="card-title">{localeName}</h5>
+        <h5 key='1' className="card-title">{local}</h5>
         <h6 key='2' className="card-subtitle mb-2 text-muted">
-          {bird.binomialName}
+          {binomial}
         </h6>
       </>
     )
-    }
-  return <h5 key='1' className="card-title">{bird.binomialName}</h5>;
+  }
+  return <h5 key='1' className="card-title">{binomial}</h5>;
 };
