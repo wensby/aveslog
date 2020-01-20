@@ -11,7 +11,7 @@ import { ToggleButtonGroup } from '../toggle/ToggleButtonGroup';
 import { ToggleButton } from "../toggle/ToggleButton";
 import './style.scss';
 
-export default ({ match }) => {
+export function NewBirdSighting({ match }) {
   const binomialName = match.params.binomialName;
   const [addedSighting, setAddedSighting] = useState(null);
   const [bird, setBird] = useState(null);
