@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavbarBrand } from './NavbarBrand';
 import { NavbarUsername } from './NavbarUsername';
-import { UserContext } from '../authentication/UserContext.js';
+import { useAuthentication } from '../account/AccountHooks.js';
 
 export function NavbarMain() {
-  const { authenticated, account } = useContext(UserContext);
+  const { account } = useAuthentication();
 
   return (
     <div className='navbar-main'>
       <NavbarBrand />
-      {authenticated && <NavbarUsername username={account.username} />}
+      {account && <NavbarUsername username={account.username} />}
     </div>
   );
 }
