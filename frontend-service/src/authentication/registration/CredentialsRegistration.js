@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../../reactRouterHook';
 import AuthenticationService from '../AuthenticationService.js';
 import RegistrationForm from './CredentialsForm';
 import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
+import { UserContext } from '../UserContext.js';
 
 export default () => {
-  const { match } = useReactRouter();
+  const { match, history } = useReactRouter();
   const token = match.params.token;
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
   const [takenUsernames, setTakenUsernames] = useState([]);
+  const { setRefreshToken } = useContext(UserContext);
 
   const { t } = useTranslation();
   const authentication = new AuthenticationService();
@@ -45,6 +47,16 @@ export default () => {
       const response = await authentication.postRegistration(token, credentials);
       if (response.status === 201) {
         setSuccess(true);
+        const response = await authentication.postRefreshToken(credentials[0], credentials[1]);
+        if (response.status === 201) {
+          const refreshResponseJson = await response.json();
+          setRefreshToken({
+            id: refreshResponseJson.id,
+            jwt: refreshResponseJson.refreshToken, 
+            expiration: Date.parse(refreshResponseJson.expirationDate),
+          });
+          history.push('/');
+        }
       }
       else if (response.status === 409) {
         const json = await response.json();
