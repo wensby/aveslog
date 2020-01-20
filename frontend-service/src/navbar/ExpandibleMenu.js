@@ -10,7 +10,10 @@ export function ExpandibleMenu({ collapseState, onMenuClick }) {
   const items = getMenuItems(authenticated, account, unauthenticate, t);
   const needMaxHeight = ['expanding', 'expanded'].indexOf(collapseState) >= 0;
   const style = needMaxHeight ? { maxHeight: `${items.length * 37}px` } : {};
-  return (<div className={`menu ${collapseState}`} style={style}>
-    <Menu items={items} onClick={onMenuClick} />
-  </div>);
+
+  return (
+    <div className={`menu ${collapseState}`} style={style}>
+      <Menu items={items} onClick={onMenuClick} />
+    </div>
+  );
 }
