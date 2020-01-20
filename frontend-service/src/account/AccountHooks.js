@@ -6,5 +6,5 @@ export function useAuthentication() {
   if (authenticated) {
     return { account };
   }
-  return null;
+  return { };
 }
