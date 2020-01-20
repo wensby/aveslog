@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default ({ bird }) => {
+export function BirdCardName({ bird }) {
   const { i18n } = useTranslation();
 
   const language = i18n.languages[0];

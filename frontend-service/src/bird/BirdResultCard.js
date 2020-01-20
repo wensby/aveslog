@@ -3,7 +3,7 @@ import { BirdCard } from './BirdCard';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
-import BirdCardName from './BirdCardName';
+import { BirdCardName } from './BirdCardName';
 import { useBird } from './BirdHooks';
 
 export default ({ searchResult, ...other }) => {
