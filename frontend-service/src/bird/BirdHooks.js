@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import birdRepository from './BirdRepository';
+import { useTranslation } from 'react-i18next';
 
 export function useBird(birdId) {
   const [bird, setBird] = useState(null);
@@ -14,6 +15,19 @@ export function useBird(birdId) {
   });
 
   return bird;
+}
+
+export function useBirdName(bird) {
+  const { i18n } = useTranslation();
+  if (bird) {
+    const language = i18n.languages[0];
+    const local = bird.names && bird.names[language] ? bird.names[language] : null;
+    const binomial = bird.binomialName;
+    return { local, binomial };
+  }
+  else {
+    return { local: null, binomial: null };
+  }
 }
 
 export function useBirdStatistics(bird) {
