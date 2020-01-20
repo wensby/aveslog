@@ -2,9 +2,9 @@ import React from 'react';
 import { Switch } from "react-router-dom";
 import ProfilePage from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
-import ProfilesPage from './ProfilesPage';
+import { ProfilesPage } from './ProfilesPage';
 
-export default ({ match }) => {
+export function Profile({ match }) {
   const { path } = match;
 
   const renderProfilePage = props => {

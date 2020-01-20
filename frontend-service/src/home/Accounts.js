@@ -4,7 +4,7 @@ import { UserContext } from '../authentication/UserContext';
 import AccountService from '../account/AccountService';
 import AccountLink from './AccountLink';
 
-export default function Accounts() {
+export function Accounts() {
   const { authenticated, getAccessToken } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [usernames, setUsernames] = useState([]);

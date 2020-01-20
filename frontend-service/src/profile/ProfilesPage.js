@@ -1,6 +1,6 @@
 import React from 'react';
-import Accounts from '../home/Accounts';
+import { Accounts } from '../home/Accounts';
 
-export default function ProfilesPage({ }) {
+export function ProfilesPage({ }) {
   return <Accounts />;
 }
