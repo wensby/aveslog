@@ -1,5 +1,5 @@
 import React from 'react';
-import SightingCard from './SightingCard.js';
+import { SightingCard } from './SightingCard.js';
 
 export function SightingList({ sightings }) {
 
