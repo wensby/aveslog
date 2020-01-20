@@ -2,16 +2,16 @@ import React, { useState, useEffect, useContext } from 'react';
 import { UserContext }  from '../authentication/UserContext';
 import SightingService from './SightingService';
 import { DetailedSightingCard } from './DetailedSightingCard';
-import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';
+import { useHistory } from "react-router-dom";
 
 export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const { getAccessToken, account } = useContext(UserContext);
   const sightingService = new SightingService();
-  const { history } = useReactRouter();
+  const history = useHistory();
 
   useEffect(() => {
     const resolveSighting = async () => {

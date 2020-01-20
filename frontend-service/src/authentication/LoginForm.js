@@ -2,11 +2,11 @@ import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import { UserContext } from './UserContext.js';
-import { useReactRouter } from '../reactRouterHook.js';
+import { useHistory } from "react-router-dom";
 import './spinner.scss';
 
 export default ({ onError }) => {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

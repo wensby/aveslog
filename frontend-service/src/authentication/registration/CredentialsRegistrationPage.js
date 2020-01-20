@@ -6,9 +6,11 @@ import RegistrationForm from './CredentialsForm';
 import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
+import { useHistory } from "react-router-dom";
 
 export function CredentialsRegistrationPage() {
-  const { match, history } = useReactRouter();
+  const { match } = useReactRouter();
+  const history = useHistory();
   const token = match.params.token;
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');

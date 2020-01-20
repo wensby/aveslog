@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useReactRouter } from '../reactRouterHook';
 import { useTranslation } from 'react-i18next';
 import Icon from '../Icon.js';
+import { useHistory } from "react-router-dom";
 
 export function SearchBar({}) {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);
   const { t } = useTranslation();

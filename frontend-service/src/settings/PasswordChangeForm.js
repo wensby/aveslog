@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import NewPasswordFormGroup from '../authentication/NewPasswordFormGroup';
 import AuthenticationService from '../authentication/AuthenticationService';
 import { UserContext } from '../authentication/UserContext';
-import { useReactRouter } from '../reactRouterHook.js';
+import { useHistory } from "react-router-dom";
 
 export const PasswordChangeForm = () => {
-  const { history } = useReactRouter();
+  const history = useHistory();
   const { getAccessToken } = useContext(UserContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
