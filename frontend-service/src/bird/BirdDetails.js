@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
-import { UserContext } from '../authentication/UserContext';
 import { useBird, useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
+import { useAuthentication } from '../account/AccountHooks';
 
 export default function BirdDetails(props) {
   const { t } = useTranslation();
-  const { authenticated } = useContext(UserContext);
+  const { account } = useAuthentication()
   const bird = useBird(props.match.params.binomialName);
   const stats = useBirdStatistics(bird);
 
@@ -22,7 +22,7 @@ export default function BirdDetails(props) {
   }
 
   const renderAddSighting = () => {
-    if (authenticated) {
+    if (account) {
       return <NewBirdSightingLink bird={bird}>{t('add-sighting-link')}</NewBirdSightingLink>;
     }
   }
