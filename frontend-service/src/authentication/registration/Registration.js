@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import EmailRegistration from './EmailRegistration';
-import CredentialsRegistration from './CredentialsRegistration';
+import { CredentialsRegistration } from './CredentialsRegistration';
 
 export default ({ match }) => {
   const path = match.path;

@@ -7,7 +7,7 @@ import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
 
-export default () => {
+export function CredentialsRegistration() {
   const { match, history } = useReactRouter();
   const token = match.params.token;
   const [alert, setAlert] = useState(null);
