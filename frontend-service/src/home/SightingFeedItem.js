@@ -2,21 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import BirdCardPicture from '../bird/BirdCardPicture';
 import BirdLink from '../bird/BirdLink';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import SightingTime from '../sighting/SightingTime';
+import { useBirdName } from '../bird/BirdHooks';
 
 export function SightingFeedItem({ birder, sighting, bird }) {
-  const { i18n } = useTranslation();
   const name = birder.name;
-  const language = i18n.languages[0];
-  const birdName = bird.names && bird.names[language] ? bird.names[language] : bird.binomialName;
+  const { local, binomial } = useBirdName(bird);
   return (<div className='sighting-feed-card'>
     <BirdLink bird={bird}>
       <BirdCardPicture bird={bird} />
     </BirdLink>
     <div className='card-body' style={{ padding: '10px' }}>
       <h4>
-        {birdName}
+        {local || binomial}
       </h4>
       <div>
         <Trans i18nKey='logged-by'>
