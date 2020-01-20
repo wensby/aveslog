@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Icon from '../Icon.js';
 import { useHistory } from "react-router-dom";
+import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 
 export function SearchBar({}) {
   const history = useHistory();
@@ -28,20 +28,5 @@ export function SearchBar({}) {
         <button type='submit'>{t('Search')}</button>
       </div>
     </form>
-  );
-}
-
-function AdvancedSearchToggle({ active, onChange }) {
-  const advancedClick = e => {
-    e.preventDefault();
-    onChange(!active);
-  };
-
-  const className = 'search-advanced-icon' + (active ? ' expanded' : '');
-
-  return (
-    <div className={className} onClick={advancedClick}>
-      <Icon name='down' />
-    </div>
   );
 }
