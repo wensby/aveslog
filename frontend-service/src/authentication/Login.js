@@ -5,7 +5,7 @@ import LoginForm from './LoginForm.js';
 import './login.scss';
 
 const Separator = () => {
-  return <div className='separator'/>;
+  return <div className='separator' />;
 }
 
 const NewAccountSection = () => {
@@ -18,7 +18,7 @@ const NewAccountSection = () => {
   </div>
 }
 
-export default () => {
+export function Login() {
   const [loginErrorMessage, setLoginErrorMessage] = useState(null);
   const { t } = useTranslation();
 
@@ -26,31 +26,28 @@ export default () => {
     setLoginErrorMessage(message);
   }
 
-  const renderErrorMessage = () => {
-    if (loginErrorMessage) {
-      return (
-        <div className='row'>
-          <div className='col alert alert-danger' role='alert'>
-            {t(loginErrorMessage)}
-          </div>
-        </div>
-      );
-    }
-    else {
-      return null;
-    }
-  }
-
   return <div className='login'>
     <h1>{t('Login')}</h1>
-    {renderErrorMessage()}
+    {loginErrorMessage && <ErrorMessage message={loginErrorMessage} />}
     <LoginForm onError={setErrorMessage} />
     <div className='password-recover-link'>
-      <Link  to='/authentication/password-reset'>
+      <Link to='/authentication/password-reset'>
         {t('password-recover-link')}
       </Link>
     </div>
     <Separator />
     <NewAccountSection />
   </div>;
+}
+
+function ErrorMessage({ message }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className='row'>
+      <div className='col alert alert-danger' role='alert'>
+        {t(message)}
+      </div>
+    </div>
+  );
 }
