@@ -215,9 +215,6 @@ input:focus {
 }
 
 .sighting-feed-card {
-  border: 1px solid $lighter;
-  border-radius: 0.25rem;
-  padding: 0.25rem;
   display: flex;
   flex-direction: row;
 
@@ -317,6 +314,5 @@ input:focus {
 
 main {
   grid-area: main;
-  padding: 0 10px;
   padding-top: 15px;
 }
