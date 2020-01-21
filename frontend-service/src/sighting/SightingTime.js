@@ -2,9 +2,9 @@ import React from 'react';
 
 export default ({ sighting, ...props }) => {
   if (sighting.time) {
-    return <p {...props}>{`${sighting.date} ${sighting.time}`}</p>;
+    return <small {...props}>{`${sighting.date} ${sighting.time}`}</small>;
   }
   else {
-    return <p {...props}>{sighting.date}</p>;
+    return <small {...props}>{sighting.date}</small>;
   }
 };

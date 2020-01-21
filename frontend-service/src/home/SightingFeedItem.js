@@ -11,17 +11,22 @@ export function SightingFeedItem({ birder, sighting, bird }) {
   const { local, binomial } = useBirdName(bird);
 
   return (
-    <div className='sighting-feed-card'>
-      <BirdLink bird={bird}>
-        <BirdCardPicture bird={bird} />
-      </BirdLink>
+    <div className='feed-card sighting'>
+      <div className='bird-picture'>
+        <BirdLink bird={bird} >
+          <BirdCardPicture bird={bird} />
+        </BirdLink>
+      </div>
       <div>
-        <h4>{local || binomial}</h4>
+        <div className='bird-name'>{local || binomial}</div>
+        <hr />
         <div>
           <Trans i18nKey='logged-by'>
             Logged by <Link to={`/birder/${birder.id}`}>{{ name }}</Link>
           </Trans>
+          <div>
           <SightingTime sighting={sighting} />
+          </div>
         </div>
       </div>
     </div>
