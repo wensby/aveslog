@@ -6,7 +6,7 @@ import { useBird } from '../bird/BirdHooks';
 
 export function NewBirdSighting({ match }) {
   const binomialName = match.params.birdId;
-  const bird = useBird(binomialName);
+  const { bird } = useBird(binomialName);
   const [addedSighting, setAddedSighting] = useState(null);
 
   if (!bird) {

@@ -14,7 +14,7 @@ export function DetailedSightingCard({ sighting }) {
 }
 
 function CardHeader({ sighting }) {
-  const bird = useBird(sighting.birdId);
+  const { bird } = useBird(sighting.birdId);
   const [style, setStyle] = useState({});
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function CardHeader({ sighting }) {
 }
 
 function CardBody({ sighting }) {
-  const bird = useBird(sighting.birdId);
+  const { bird } = useBird(sighting.birdId);
 
   if (!bird) {
     return null;

@@ -4,17 +4,23 @@ import { useTranslation } from 'react-i18next';
 
 export function useBird(birdId) {
   const [bird, setBird] = useState(null);
+  const [error, setError] = useState(null);
 
   const resolveBird = async () => {
     const bird = await birdRepository.getBird(birdId);
-    setBird(bird);
+    if (bird) {
+      setBird(bird);
+    }
+    else {
+      setError('missing');
+    }
   }
 
   useEffect(() => {
     resolveBird();
   });
 
-  return bird;
+  return { bird, error };
 }
 
 export function useBirdName(bird) {

@@ -4,7 +4,7 @@ import { useBirder } from '../birder/BirderHooks';
 import { SightingFeedItem } from './SightingFeedItem';
 
 export function SightingFeedItemContainer({ sighting }) {
-  const bird = useBird(sighting.birdId);
+  const { bird } = useBird(sighting.birdId);
   const birder = useBirder(sighting.birderId);
 
   if (!bird || !birder) {

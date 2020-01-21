@@ -7,7 +7,7 @@ import { BirdCardName } from './BirdCardName';
 import { useBird } from './BirdHooks';
 
 export default ({ searchResult, ...other }) => {
-  const bird = useBird(searchResult.id);
+  const { bird } = useBird(searchResult.id);
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
 

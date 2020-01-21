@@ -8,7 +8,7 @@ import SightingTime from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
 
 export function SightingCard({ sighting }) {
-  const bird = useBird(sighting.birdId);
+  const { bird } = useBird(sighting.birdId);
 
   if (!bird) {
     return null;
