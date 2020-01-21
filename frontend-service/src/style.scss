@@ -214,41 +214,6 @@ input:focus {
   object-fit: cover;
 }
 
-.feed-card {
-
-  &:not(:first-of-type) {
-    margin-top: 5px;
-  }
-
-  &.sighting {
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    grid-template-rows: 100px;
-    grid-column-gap: 5px;
-
-    & .bird-picture {
-      border-radius: 50px;
-      overflow: hidden;
-      width: 100px;
-    }
-
-    & hr {
-      margin: 0;
-    }
-
-    & .bird-name {
-      font-weight: bold;
-      font-size: 1.3em;
-      
-    }
-  }
-
-  & img {
-    width: 100px;
-    height: 100px;
-  }
-}
-
 .sighting-form {
   & h2 {
     font-size: 1.5rem;

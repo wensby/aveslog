@@ -5,6 +5,7 @@ import BirdLink from '../bird/BirdLink';
 import { Trans } from 'react-i18next';
 import SightingTime from '../sighting/SightingTime';
 import { useBirdName } from '../bird/BirdHooks';
+import './SightingFeedItem.scss';
 
 export function SightingFeedItem({ birder, sighting, bird }) {
   const name = birder.name;
