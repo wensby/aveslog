@@ -10,7 +10,10 @@ export default class BirdService {
 
   async getBird(id) {
     const response = await fetch(`${this.apiUrl}/birds/${id}`);
-    return await response.json();
+    if (response.status === 200) {
+      return await response.json();
+    }
+    return null;
   }
 
   async getBirdStatistics(id) {
