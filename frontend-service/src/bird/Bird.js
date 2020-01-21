@@ -9,8 +9,8 @@ export default function Bird({ match }) {
   return (
     <Switch>
       <Route path={`${path}/search`} component={BirdSearchResultsPage}/>
-      <Route path={`${path}/:binomialName`} exact component={BirdPage}/>
-      <Route path={`${path}/:binomialName/new-sighting`} exact component={NewBirdSighting} />
+      <Route path={`${path}/:birdId`} exact component={BirdPage}/>
+      <Route path={`${path}/:birdId/new-sighting`} exact component={NewBirdSighting} />
     </Switch>
   );
 }
