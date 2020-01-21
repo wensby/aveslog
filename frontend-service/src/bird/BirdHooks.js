@@ -18,7 +18,7 @@ export function useBird(birdId) {
 
   useEffect(() => {
     resolveBird();
-  });
+  }, []);
 
   return { bird, error };
 }
