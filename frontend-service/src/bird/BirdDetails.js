@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { useBird, useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
-import { useAuthentication } from '../account/AccountHooks';
+import { useAuthentication } from '../authentication/AuthenticationHooks';
 
 export default function BirdDetails(props) {
   const { t } = useTranslation();

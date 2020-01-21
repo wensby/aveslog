@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavbarBrand } from './NavbarBrand';
 import { NavbarUsername } from './NavbarUsername';
-import { useAuthentication } from '../account/AccountHooks.js';
+import { useAuthentication } from '../authentication/AuthenticationHooks';
 
 export function NavbarMain() {
   const { account } = useAuthentication();
