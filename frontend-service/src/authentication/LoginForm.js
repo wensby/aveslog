@@ -46,13 +46,6 @@ export function LoginForm({ onError }) {
     }
   };
 
-  const renderLoading = () => {
-    if (loading) {
-      return <div className='spinner' />;
-    }
-    return null;
-  }
-
   return (
     <form className='login-form' onSubmit={handleLoginFormSubmit}>
       <div className='form-row'>
@@ -73,7 +66,7 @@ export function LoginForm({ onError }) {
       </div>
       <div className='d-flex flex-row'>
         <div className='d-flex ml-auto'>
-          {renderLoading()}
+          {loading && <div className='spinner' />}
           <button type='submit' className='button'>
             {t('Login')}
           </button>
