@@ -5,10 +5,10 @@ import { useBird, useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { useAuthentication } from '../authentication/AuthenticationHooks';
 
-export function BirdPage(props) {
+export function BirdPage({ match }) {
   const { t } = useTranslation();
   const { account } = useAuthentication()
-  const bird = useBird(props.match.params.binomialName);
+  const bird = useBird(match.params.binomialName);
   const stats = useBirdStatistics(bird);
 
   const renderPhotoCredits = () => {
@@ -30,7 +30,7 @@ export function BirdPage(props) {
   const renderStats = () => {
     return <div>
       Sightings: {stats.sightingsCount}
-      <br/>
+      <br />
       Lucky birders: {stats.birdersCount}
     </div>;
   }
