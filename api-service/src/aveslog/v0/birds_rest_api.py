@@ -19,7 +19,9 @@ def get_single_bird(bird_identifier: str) -> Response:
     .first()
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
+  response = make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
+  response.headers['Cache-Control'] = 'max-age=300'
+  return response
 
 
 def get_bird_statistics(bird_identifier: str) -> Response:
