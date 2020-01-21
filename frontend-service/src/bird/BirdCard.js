@@ -1,5 +1,5 @@
 import React from 'react';
-import BirdCardPicture from './BirdCardPicture';
+import { BirdCardPicture } from './BirdCardPicture';
 import BirdLink from './BirdLink';
 
 export function BirdCard({ bird, children }) {
