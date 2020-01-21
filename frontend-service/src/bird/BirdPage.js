@@ -5,7 +5,7 @@ import { useBird, useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { useAuthentication } from '../authentication/AuthenticationHooks';
 
-export default function BirdDetails(props) {
+export function BirdPage(props) {
   const { t } = useTranslation();
   const { account } = useAuthentication()
   const bird = useBird(props.match.params.binomialName);
