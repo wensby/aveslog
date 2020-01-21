@@ -9,20 +9,23 @@ import { useBirdName } from '../bird/BirdHooks';
 export function SightingFeedItem({ birder, sighting, bird }) {
   const name = birder.name;
   const { local, binomial } = useBirdName(bird);
-  return (<div className='sighting-feed-card'>
-    <BirdLink bird={bird}>
-      <BirdCardPicture bird={bird} />
-    </BirdLink>
-    <div className='card-body' style={{ padding: '10px' }}>
-      <h4>
-        {local || binomial}
-      </h4>
-      <div>
-        <Trans i18nKey='logged-by'>
-          Logged by <Link to={`/birder/${birder.id}`}>{{ name }}</Link>
-        </Trans>
-        <SightingTime sighting={sighting} />
+
+  return (
+    <div className='sighting-feed-card'>
+      <BirdLink bird={bird}>
+        <BirdCardPicture bird={bird} />
+      </BirdLink>
+      <div className='card-body' style={{ padding: '10px' }}>
+        <h4>
+          {local || binomial}
+        </h4>
+        <div>
+          <Trans i18nKey='logged-by'>
+            Logged by <Link to={`/birder/${birder.id}`}>{{ name }}</Link>
+          </Trans>
+          <SightingTime sighting={sighting} />
+        </div>
       </div>
     </div>
-  </div>);
+  );
 }
