@@ -3,7 +3,7 @@ import { useBird } from '../bird/BirdHooks';
 import { useBirder } from '../birder/BirderHooks';
 import { SightingFeedItem } from './SightingFeedItem';
 
-export default function SightingFeed({ sightings }) {
+export function SightingFeed({ sightings }) {
   return <>{sightings.map(sighting => <SightingFeedItemContainer sighting={sighting} />)}</>;
 }
 

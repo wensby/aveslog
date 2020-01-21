@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import SightingFeed from './SightingFeed';
+import { SightingFeed } from './SightingFeed';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 
