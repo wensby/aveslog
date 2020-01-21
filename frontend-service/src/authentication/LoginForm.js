@@ -5,7 +5,7 @@ import { UserContext } from './UserContext.js';
 import { useHistory } from "react-router-dom";
 import './spinner.scss';
 
-export default ({ onError }) => {
+export function LoginForm({ onError }) {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
@@ -27,7 +27,7 @@ export default ({ onError }) => {
         const refreshResponseJson = await response.json();
         setRefreshToken({
           id: refreshResponseJson.id,
-          jwt: refreshResponseJson.refreshToken, 
+          jwt: refreshResponseJson.refreshToken,
           expiration: Date.parse(refreshResponseJson.expirationDate),
         });
         history.push('/');
