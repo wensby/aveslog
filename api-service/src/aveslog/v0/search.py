@@ -28,13 +28,23 @@ class BirdSearcher:
 
   def search(self, name: Optional[str] = None) -> List[BirdSearchMatch]:
     birds = self.session.query(Bird).all()
-    result_builder = ResultBuilder(birds)
+    scores_by_bird: Dict[Bird, List[float]] = {}
     if name:
       binomial_name_matches = self.search_by_binomial_name(birds, name)
-      result_builder.add_matches(binomial_name_matches)
+      for bird in binomial_name_matches:
+        if bird not in scores_by_bird:
+          scores_by_bird[bird] = []
+        scores_by_bird[bird].append(binomial_name_matches[bird][0])
       language_name_matches = self.search_by_language_names(name)
-      result_builder.add_matches(language_name_matches)
-    return result_builder.create_bird_matches()
+      for bird in language_name_matches:
+        if bird not in scores_by_bird:
+          scores_by_bird[bird] = []
+        scores_by_bird[bird].append(language_name_matches[bird][0])
+    matches = []
+    for bird in scores_by_bird:
+      score = sum(scores_by_bird[bird]) / len(scores_by_bird[bird])
+      matches.append(BirdSearchMatch(bird, score))
+    return matches
 
   def search_by_binomial_name(self,
         birds: List[Bird],
@@ -56,31 +66,3 @@ class BirdSearcher:
       match = self.string_matcher.match(name.lower(), bird_name.name.lower())
       matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches
-
-
-class ResultBuilder:
-
-  def __init__(self, birds: List[Bird]):
-    self.matches_by_bird: Dict[Bird, List[float]] = {bird: [] for bird in birds}
-
-  def add_matches(self, matches: Dict[Bird, List[float]]):
-    if matches:
-      for bird, scores in matches.items():
-        for score in scores:
-          self.add_match_score(bird, score)
-
-  def add_match_score(self, bird: Bird, score: float):
-    self.matches_by_bird[bird].append(score)
-
-  def create_bird_matches(self) -> List[BirdSearchMatch]:
-    matches = []
-    for bird in self.matches_by_bird:
-      score = self.__average_score(bird)
-      if score > 0:
-        matches.append(BirdSearchMatch(bird, score))
-    return matches
-
-  def __average_score(self, bird: Bird) -> float:
-    if self.matches_by_bird[bird]:
-      return sum(self.matches_by_bird[bird]) / len(self.matches_by_bird[bird])
-    return 0.0
