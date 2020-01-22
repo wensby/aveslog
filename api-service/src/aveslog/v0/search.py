@@ -1,7 +1,7 @@
-from difflib import SequenceMatcher
 from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from .models import Bird
 from .models import BirdName
@@ -14,23 +14,15 @@ class BirdSearchMatch:
     self.score = score
 
 
-class StringMatcher:
-
-  def match(self, a: str, b: str) -> float:
-    return SequenceMatcher(None, a.lower(), b.lower()).ratio()
-
-
 class BirdSearcher:
 
-  def __init__(self, session: Session, string_matcher: StringMatcher):
+  def __init__(self, session: Session):
     self.session = session
-    self.string_matcher = string_matcher
 
   def search(self, name: Optional[str] = None) -> List[BirdSearchMatch]:
-    birds = self.session.query(Bird).all()
     scores_by_bird: Dict[Bird, List[float]] = {}
     if name:
-      binomial_name_matches = self.search_by_binomial_name(birds, name)
+      binomial_name_matches = self.search_by_binomial_name(name)
       for bird in binomial_name_matches:
         if bird not in scores_by_bird:
           scores_by_bird[bird] = []
@@ -39,30 +31,29 @@ class BirdSearcher:
       for bird in language_name_matches:
         if bird not in scores_by_bird:
           scores_by_bird[bird] = []
-        scores_by_bird[bird].append(language_name_matches[bird][0])
+        scores_by_bird[bird].extend(language_name_matches[bird])
     matches = []
     for bird in scores_by_bird:
-      score = sum(scores_by_bird[bird]) / len(scores_by_bird[bird])
+      score = max(scores_by_bird[bird])
       matches.append(BirdSearchMatch(bird, score))
     return matches
 
-  def search_by_binomial_name(self,
-        birds: List[Bird],
-        name: str,
-  ) -> Dict[Bird, List[float]]:
+  def search_by_binomial_name(self, name: str) -> Dict[Bird, List[float]]:
+    result = self.session.query(Bird, func.similarity(Bird.binomial_name, name)) \
+      .filter(func.similarity(Bird.binomial_name, name) > 0.3) \
+      .all()
     matches = dict()
-    for bird in birds:
-      if name.lower() in bird.binomial_name.lower():
-        matches[bird] = [self.string_matcher.match(name, bird.binomial_name)]
+    for bird, similarity in result:
+      matches[bird] = [similarity]
     return matches
 
   def search_by_language_names(self, name: str) -> Dict[Bird, List[float]]:
-    matches = dict()
-    bird_names: List[BirdName] = self.session.query(BirdName) \
-      .filter(BirdName.name.ilike(f'%{name}%')) \
+    result = self.session.query(BirdName, func.similarity(BirdName.name, name)) \
+      .filter(func.similarity(BirdName.name, name) > 0.3) \
       .all()
-    for bird_name in bird_names:
+    matches = dict()
+    for bird_name, similarity in result:
       bird = bird_name.bird
-      match = self.string_matcher.match(name.lower(), bird_name.name.lower())
+      match = similarity
       matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches

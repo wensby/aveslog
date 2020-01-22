@@ -8,7 +8,6 @@ from aveslog.v0.link import LinkFactory
 from aveslog.v0.models import Picture
 from aveslog.v0.search import BirdSearchMatch
 from aveslog.v0.search import BirdSearcher
-from aveslog.v0.search import StringMatcher
 
 
 def _external_picture_url(picture: Picture) -> str:
@@ -38,10 +37,7 @@ def search_birds() -> Response:
   embed = parse_embed_list(request.args)
   page_size = page_size if page_size else 30
   embed = embed if embed else []
-  bird_searcher = BirdSearcher(
-    g.database_session,
-    StringMatcher(),
-  )
+  bird_searcher = BirdSearcher(g.database_session)
   search_matches = bird_searcher.search(query)
   search_matches.sort(key=lambda m: m.score, reverse=True)
   bird_matches = list(

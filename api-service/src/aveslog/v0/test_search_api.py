@@ -40,16 +40,16 @@ class TestSearchBirds(AppTestCase):
             'url': 'myExternalHost/static/image/bird/pica-pica-thumb.jpg',
             'credit': '',
           },
-          'score': 0.6153846153846154,
+          'score': 1,
         }
       ]
     })
 
   def test_get_birds_with_custom_page_size(self):
     self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_bird(2, 'Passer domesticus')
+    self.db_insert_bird(2, 'Pica serica')
 
-    response = self.client.get('/search/birds?q=P&page_size=1')
+    response = self.client.get('/search/birds?q=Pica&page_size=1')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
@@ -57,7 +57,7 @@ class TestSearchBirds(AppTestCase):
         {
           'id': 'pica-pica',
           'binomialName': 'Pica pica',
-          'score': 0.2
+          'score': 1
         }
       ]
     })
