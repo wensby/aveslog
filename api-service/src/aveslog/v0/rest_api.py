@@ -26,6 +26,17 @@ def error_response(
   return make_response(jsonify(data), status_code)
 
 
+def cache(max_age=300) -> RouteFunction:
+  def decorator(route):
+    @wraps(route)
+    def route_wrapper(**kwargs):
+      response = route(**kwargs)
+      response.headers['Cache-Control'] = f'max-age={max_age}'
+      return response
+    return route_wrapper
+  return decorator
+
+
 def require_authentication(route) -> RouteFunction:
   """Wraps a route to require a valid authentication token
 

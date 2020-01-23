@@ -24,6 +24,7 @@ class TestBird(AppTestCase):
     response = self.client.get('/birds/pica-pica')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.headers['Cache-Control'], 'max-age=300')
     self.assertDictEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',

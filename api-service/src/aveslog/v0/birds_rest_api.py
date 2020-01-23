@@ -3,12 +3,14 @@ from http import HTTPStatus
 from flask import Response, make_response, jsonify, g
 from sqlalchemy.orm import joinedload
 
+from aveslog.v0.rest_api import cache
 from .models import Bird
 from .models import Sighting
 from .models import Birder
 from .models import BirdThumbnail
 
 
+@cache(max_age=300)
 def get_single_bird(bird_identifier: str) -> Response:
   binomial_name = (bird_identifier.replace('-', ' ').capitalize())
   bird = g.database_session.query(Bird) \
@@ -19,9 +21,7 @@ def get_single_bird(bird_identifier: str) -> Response:
     .first()
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
-  response = make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
-  response.headers['Cache-Control'] = 'max-age=300'
-  return response
+  return make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
 
 
 def get_bird_statistics(bird_identifier: str) -> Response:
