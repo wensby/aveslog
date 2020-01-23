@@ -14,6 +14,7 @@ class TestGetBirder(AppTestCase):
     response = self.get_with_access_token('/birders/1', account_id=1)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.headers['Cache-Control'], 'max-age=300')
     self.assertEqual(response.json, {
       'id': 1,
       'name': 'hulot',

@@ -3,9 +3,10 @@ from http import HTTPStatus
 from flask import g, make_response, jsonify
 
 from aveslog.v0.models import Birder
-from aveslog.v0.rest_api import require_authentication
+from aveslog.v0.rest_api import require_authentication, cache
 
 
+@cache(max_age=300)
 @require_authentication
 def get_birder(birder_id: int):
   birder = g.database_session.query(Birder).get(birder_id)
