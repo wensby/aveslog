@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
 import { SightingFeedContainer } from './SightingFeedContainer';
 
-export default function HomePage({ }) {
+export default function HomePage() {
   const { authenticated } = useContext(UserContext);
   const { t } = useTranslation();
 

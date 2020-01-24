@@ -7,7 +7,7 @@ import Bird from './bird/Bird.js';
 import Sighting from './sighting/Sighting.js';
 import { Profile } from './profile/Profile';
 import AuthenticatedRoute from './authentication/AuthenticatedRoute';
-import Birder from './birder/Birder';
+import { Birder } from './birder/Birder';
 
 export default () => {
   return (

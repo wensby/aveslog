@@ -5,6 +5,6 @@ export const useAuthenticatedAccountSightings = () => {
   const { sightings, refreshSightings } = useContext(SightingContext);
   useEffect(() => {
     refreshSightings();
-  }, []);
+  }, [refreshSightings]);
   return sightings
 }

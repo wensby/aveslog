@@ -23,7 +23,7 @@ export function SightingPage({match}) {
       }
     }
     resolveSighting();
-  }, [sightingId]);
+  }, [sightingId, getAccessToken, sightingService]);
 
   const handleDelete = async () => {
     const accessToken = await getAccessToken();

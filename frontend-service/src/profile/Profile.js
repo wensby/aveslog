@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch } from "react-router-dom";
-import ProfilePage from './ProfilePage.js';
+import { ProfilePage } from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 import { ProfilesPage } from './ProfilesPage';
 

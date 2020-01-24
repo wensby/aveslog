@@ -10,7 +10,6 @@ function UserProvider(props) {
   const [accessToken, setAccessToken] = useState(null);
   const [account, setAccount] = useState(null);
   const [resolvingLocalStorage, setResolvingLocalStorage] = useState(true);
-  const authenticationService = new AuthenticationService();
 
   useEffect(() => {
     const localStorageRefreshToken = localStorage.getItem('refreshToken');
@@ -36,7 +35,7 @@ function UserProvider(props) {
 
   useEffect(() => {
     const resolveAccessToken = async () => {
-      const accessToken = await fetchAccessToken(refreshToken);
+      const accessToken = await (new AuthenticationService().fetchAccessToken(refreshToken));
       if (accessToken) {
         setAccessToken(accessToken);
       }
@@ -49,7 +48,7 @@ function UserProvider(props) {
     }
   }, [refreshToken]);
 
-  async function fetchAccount(accessToken) {
+  const fetchAccount = async accessToken => {
     if (accessToken) {
       const response = await accountService.fetchAuthenticatedAccount(accessToken);
       if (response.status === 200) {
@@ -59,27 +58,15 @@ function UserProvider(props) {
       }
     }
   }
-
+  
   useEffect(() => {
     console.log(`new access token: ${JSON.stringify(accessToken)}`)
     fetchAccount(accessToken);
   }, [accessToken]);
 
-  const fetchAccessToken = async refreshToken => {
-    console.log('fetching access token');
-    const response = await authenticationService.getAccessToken(refreshToken.jwt);
-    if (response.status === 200) {
-      const json = await response.json();
-      const expirationDate = new Date();
-      expirationDate.setSeconds(expirationDate.getSeconds() + json.expiresIn);
-      return { jwt: json.jwt, expiration: expirationDate };
-    }
-    return null;
-  }
-
   const asyncUnauthenticate = async () => {
     const accessToken = await getAccessToken();
-    const response = await authenticationService.deleteRefreshToken(refreshToken, accessToken);
+    const response = await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
     if (response.status === 204) {
       setRefreshToken(null);
       setAccessToken(null);
@@ -97,7 +84,7 @@ function UserProvider(props) {
     const tenSeconds = 10000;
     if (!accessToken || (new Date().getTime() + tenSeconds) > accessToken.expiration) {
       console.log("access token need refreshing");
-      const accessToken = await fetchAccessToken(refreshToken);
+      const accessToken = await (new AuthenticationService().fetchAccessToken(refreshToken));
       if (accessToken) {
         setAccessToken(accessToken);
         return accessToken;

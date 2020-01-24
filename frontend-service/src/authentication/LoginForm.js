@@ -18,7 +18,7 @@ export function LoginForm({ onError }) {
     return authentication.postRefreshToken(username, password);
   }
 
-  const handleLoginFormSubmit = async (event) => {
+  const handleLoginFormSubmit = async event => {
     try {
       event.preventDefault();
       setLoading(true);

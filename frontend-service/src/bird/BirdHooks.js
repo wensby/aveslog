@@ -6,19 +6,18 @@ export function useBird(birdId) {
   const [bird, setBird] = useState(null);
   const [error, setError] = useState(null);
 
-  const resolveBird = async () => {
-    const bird = await birdRepository.getBird(birdId);
-    if (bird) {
-      setBird(bird);
-    }
-    else {
-      setError('missing');
-    }
-  }
-
   useEffect(() => {
+    const resolveBird = async () => {
+      const bird = await birdRepository.getBird(birdId);
+      if (bird) {
+        setBird(bird);
+      }
+      else {
+        setError('missing');
+      }
+    }
     resolveBird();
-  }, []);
+  }, [birdId]);
 
   return { bird, error };
 }

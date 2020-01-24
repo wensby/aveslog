@@ -4,7 +4,7 @@ import { UserContext } from '../authentication/UserContext';
 import AccountService from '../account/AccountService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 
-export default ({ username }) => {
+export function ProfilePage({ username }) {
   const [sightings, setSightings] = useState([]);
   const { getAccessToken } = useContext(UserContext);
   const [account, setAccount] = useState(null);
@@ -18,7 +18,7 @@ export default ({ username }) => {
       }
     };
     fetchAccount();
-  }, [username])
+  }, [username, getAccessToken])
 
   useEffect(() => {
     const fetchSightings = async () => {
@@ -32,7 +32,7 @@ export default ({ username }) => {
     if (account) {
       fetchSightings();
     }
-  }, [account]);
+  }, [account, getAccessToken]);
 
   return (
     <>

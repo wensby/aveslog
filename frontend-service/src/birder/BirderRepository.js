@@ -8,26 +8,11 @@ class BirderRepository {
   }
 
   async getBirder(birderId, token) {
-    this.setUpBirderFetch(birderId, token);
-    await this.resolveOngoingFetch(birderId);
-    delete this.promiseById[birderId];
-    return this.birderById[birderId];
-  }
-
-  setUpBirderFetch(birderId, token) {
-    if (birderId in this.promiseById) {
-      console.log('birder fetch already in progress');
-    }
-    else {
-      this.promiseById[birderId] = birderService.fetchBirder(birderId, token);
-    }
-  }
-
-  async resolveOngoingFetch(birderId) {
-    const response = await this.promiseById[birderId];
+    const response = await birderService.fetchBirder(birderId, token);
     if (response.status === 200) {
-      this.birderById[birderId] = await response.clone().json();
+      return await response.json();
     }
+    return null;
   }
 }
 

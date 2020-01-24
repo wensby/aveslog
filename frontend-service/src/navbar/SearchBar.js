@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 
-export function SearchBar({}) {
+export function SearchBar() {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);

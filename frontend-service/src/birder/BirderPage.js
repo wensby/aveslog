@@ -3,7 +3,7 @@ import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 
-export default function BirderPage({ birder }) {
+export function BirderPage({ birder }) {
   const { getAccessToken } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function BirderPage({ birder }) {
       }
     }
     fetchSightings();
-  }, [birder]);
+  }, [birder, getAccessToken]);
   return (
     <div>
       <h1>{birder.name}</h1>

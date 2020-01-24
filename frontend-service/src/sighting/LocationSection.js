@@ -23,7 +23,7 @@ export function LocationSection({ onCoordinatesChanged, onBlocking }) {
 
   useEffect(() => {
     onBlocking(loading);
-  }, [loading]);
+  }, [loading, onBlocking]);
 
   useEffect(() => {
     if (selected === 'current') {
@@ -43,7 +43,7 @@ export function LocationSection({ onCoordinatesChanged, onBlocking }) {
 
   useEffect(() => {
     onCoordinatesChanged(coordintes);
-  }, [coordintes]);
+  }, [coordintes, onCoordinatesChanged]);
 
   useEffect(() => {
     if (selected !== null && (collapseState === 'collapsed' || collapseState === 'collapsing2')) {
@@ -63,8 +63,8 @@ export function LocationSection({ onCoordinatesChanged, onBlocking }) {
   return (
     <div className={`location-section ${collapseState}`}>
       <ToggleButtonGroup onSelected={setSelected}>
-        <ToggleButton value='current'>{t('current-location-label')}</ToggleButton>
-        <ToggleButton value='custom' disabled={true}>{t('custom-location-label')}</ToggleButton>
+        <ToggleButton key='current' value='current'>{t('current-location-label')}</ToggleButton>
+        <ToggleButton key='custom' value='custom' disabled={true}>{t('custom-location-label')}</ToggleButton>
       </ToggleButtonGroup>
       <div className='location-expansion'>
         <If condition={selected === 'current'}>

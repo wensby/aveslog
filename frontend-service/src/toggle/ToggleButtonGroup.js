@@ -6,10 +6,10 @@ export function ToggleButtonGroup({onSelected, children}) {
 
   useEffect(() => {
     onSelected(selectedTab);
-  }, [selectedTab]);
+  }, [selectedTab, onSelected]);
 
   return (
-    <div class='toggle-button-group'>
+    <div className='toggle-button-group'>
       {children.map(child => React.cloneElement(child, {
         selected: selectedTab,
         onSelected: setSelectedTab
