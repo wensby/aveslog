@@ -1,0 +1,46 @@
+@import '../colors.scss';
+
+.toggle-button {
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: bold;
+  background-color: rgb(240, 240, 240);;
+  transition: 
+      color .05s ease-in-out, 
+      border .05s ease-in-out,
+      background-color .05s ease-in-out;
+  
+  &.selected {
+    background-color: $darkgrey;
+    border-color: $darkgrey;
+    color: $white;
+  }
+  
+  &:not([disabled]):hover {
+    background-color: $light-primary;
+    border-color: $light-primary;
+  }
+
+  &.selected:hover {
+    background-color: $darkgrey;
+    border-color: $darkgrey;
+  }
+
+  &:focus {
+    outline: unset;
+    border-style: solid;
+  }
+
+  &:nth-child(1) {
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+  }
+
+  &:nth-last-child(1) {
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
+  }
+}
+
