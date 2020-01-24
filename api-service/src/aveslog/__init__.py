@@ -69,7 +69,8 @@ def configure_cross_origin_resource_sharing(app: Flask) -> None:
     r'/*': {
       'supports_credentials': True,
       'expose_headers': 'Location',
-      'origins': app.config['FRONTEND_HOST']
+      'origins': app.config['FRONTEND_HOST'],
+      'max_age': 600,
     }
   })
 
