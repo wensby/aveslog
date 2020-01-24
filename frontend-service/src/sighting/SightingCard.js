@@ -1,7 +1,7 @@
 import React from 'react';
 import { BirdCard } from '../bird/BirdCard.js';
 import { BirdCardName } from '../bird/BirdCardName.js';
-import SightingTime from './SightingTime.js';
+import { SightingTime } from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
 import { CardBodyRight } from './CardBodyRight';
 

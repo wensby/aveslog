@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ sighting, ...props }) => {
+export function SightingTime({ sighting, ...props }) {
   if (sighting.time) {
     return <small {...props}>{`${sighting.date} ${sighting.time}`}</small>;
   }
