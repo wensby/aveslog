@@ -35,7 +35,7 @@ class Bird(Base):
   __tablename__ = 'bird'
   id = Column(Integer, primary_key=True)
   binomial_name = Column(String, nullable=False)
-  names = relationship('BirdName')
+  common_names = relationship('BirdCommonName')
   thumbnail: BirdThumbnail = relationship('BirdThumbnail', uselist=False)
 
   def __eq__(self, other: Any):
@@ -64,8 +64,8 @@ class Locale(Base):
     return False
 
 
-class BirdName(Base):
-  __tablename__ = 'bird_name'
+class BirdCommonName(Base):
+  __tablename__ = 'bird_common_name'
   id = Column(Integer, primary_key=True)
   bird_id = Column(Integer, ForeignKey('bird.id'), nullable=False)
   locale_id = Column(Integer, ForeignKey('locale.id'), nullable=False)
@@ -74,7 +74,7 @@ class BirdName(Base):
   locale = relationship('Locale', uselist=False, lazy='joined')
 
   def __repr__(self) -> str:
-    return f"<BirdName(name='{self.name}')>"
+    return f"<BirdCommonName(name='{self.name}')>"
 
 
 class Birder(Base):

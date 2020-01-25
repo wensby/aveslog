@@ -3,7 +3,7 @@ from unittest import TestCase
 from aveslog.test_util import get_test_database_session
 from aveslog.v0.localization import Locale
 from aveslog.v0.models import Bird
-from aveslog.v0.models import BirdName
+from aveslog.v0.models import BirdCommonName
 from aveslog.v0.search import BirdSearchMatch
 from aveslog.v0.search import BirdSearcher
 
@@ -38,7 +38,7 @@ class TestBirdSearcher(TestCase):
     self.database_session.add(locale)
     self.database_session.flush()
     bird = Bird(binomial_name='Pica pica')
-    bird.names.append(BirdName(locale_id=locale.id, name='Skata'))
+    bird.common_names.append(BirdCommonName(locale_id=locale.id, name='Skata'))
     self.database_session.add(bird)
     self.database_session.commit()
     searcher = BirdSearcher(self.database_session)

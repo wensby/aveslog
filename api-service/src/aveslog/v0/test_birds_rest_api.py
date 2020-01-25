@@ -15,9 +15,9 @@ class TestBird(AppTestCase):
     self.db_insert_locale(1, 'sv')
     self.db_insert_locale(2, 'en')
     self.db_insert_locale(3, 'ko')
-    self.db_insert_bird_name(1, 1, 1, 'Skata')
-    self.db_insert_bird_name(2, 1, 2, 'Eurasian Magpie')
-    self.db_insert_bird_name(3, 1, 3, '까치')
+    self.db_insert_bird_common_name(1, 1, 1, 'Skata')
+    self.db_insert_bird_common_name(2, 1, 2, 'Eurasian Magpie')
+    self.db_insert_bird_common_name(3, 1, 3, '까치')
     self.db_insert_picture(1, 'myPictureUrl', 'myCredit')
     self.db_insert_bird_thumbnail(1, 1)
 

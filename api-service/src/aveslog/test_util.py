@@ -161,12 +161,12 @@ class AppTestCase(IntegrationTestCase):
       (sighting_id, birder_id, bird_id, sighting_date, sighting_time, position_id))
     self.database_connection.commit()
 
-  def db_insert_bird_name(self, bird_name_id, bird_id, locale_id, name):
+  def db_insert_bird_common_name(self, bird_common_name_id, bird_id, locale_id, name):
     cursor = self.database_connection.cursor()
     cursor.execute(
-      'INSERT INTO bird_name (id, bird_id, locale_id, name) '
+      'INSERT INTO bird_common_name (id, bird_id, locale_id, name) '
       'VALUES (%s, %s, %s, %s);',
-      (bird_name_id, bird_id, locale_id, name),
+      (bird_common_name_id, bird_id, locale_id, name),
     )
     self.database_connection.commit()
 
@@ -223,7 +223,7 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('DELETE FROM position;')
     cursor.execute('DELETE FROM bird_thumbnail;')
     cursor.execute('DELETE FROM picture;')
-    cursor.execute('DELETE FROM bird_name;')
+    cursor.execute('DELETE FROM bird_common_name;')
     cursor.execute('DELETE FROM bird;')
     cursor.execute('DELETE FROM birder;')
     cursor.execute('DELETE FROM account_registration;')

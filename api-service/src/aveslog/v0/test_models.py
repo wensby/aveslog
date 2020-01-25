@@ -2,17 +2,17 @@ from datetime import date, time
 from unittest import TestCase
 
 from aveslog.v0.models import Birder
-from aveslog.v0.models import BirdName
+from aveslog.v0.models import BirdCommonName
 from aveslog.v0.models import PasswordResetToken
 from aveslog.v0.models import Picture
 from aveslog.v0.models import Sighting
 
 
-class TestBirdName(TestCase):
+class TestBirdCommonName(TestCase):
 
   def test_repr(self):
-    bird_name = BirdName(name='Skata')
-    self.assertEqual(repr(bird_name), "<BirdName(name='Skata')>")
+    common_name = BirdCommonName(name='Skata')
+    self.assertEqual(repr(common_name), "<BirdCommonName(name='Skata')>")
 
 
 class TestBirder(TestCase):

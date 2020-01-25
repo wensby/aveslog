@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from .models import Bird
-from .models import BirdName
+from .models import BirdCommonName
 
 
 class BirdSearchMatch:
@@ -48,12 +48,12 @@ class BirdSearcher:
     return matches
 
   def search_by_language_names(self, name: str) -> Dict[Bird, List[float]]:
-    result = self.session.query(BirdName, func.similarity(BirdName.name, name)) \
-      .filter(func.similarity(BirdName.name, name) > 0.3) \
+    result = self.session.query(BirdCommonName, func.similarity(BirdCommonName.name, name)) \
+      .filter(func.similarity(BirdCommonName.name, name) > 0.3) \
       .all()
     matches = dict()
-    for bird_name, similarity in result:
-      bird = bird_name.bird
+    for common_name, similarity in result:
+      bird = common_name.bird
       match = similarity
       matches[bird] = matches[bird] + [match] if bird in matches else [match]
     return matches

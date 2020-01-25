@@ -14,7 +14,7 @@ from .models import BirdThumbnail
 def get_single_bird(bird_identifier: str) -> Response:
   binomial_name = (bird_identifier.replace('-', ' ').capitalize())
   bird = g.database_session.query(Bird) \
-    .options(joinedload(Bird.names)) \
+    .options(joinedload(Bird.common_names)) \
     .options(joinedload(Bird.thumbnail)
     .options(joinedload(BirdThumbnail.picture))) \
     .filter_by(binomial_name=binomial_name) \
@@ -51,8 +51,8 @@ def bird_summary_representation(bird: Bird) -> dict:
 
 def bird_representation(bird: Bird) -> dict:
   representation = bird_summary_representation(bird)
-  if bird.names:
-    representation['commonNames'] = collect_bird_names(bird.names)
+  if bird.common_names:
+    representation['commonNames'] = collect_common_names(bird.common_names)
   if bird.thumbnail:
     thumbnail_representation = {
       'url': bird.thumbnail.picture.filepath,
@@ -63,11 +63,11 @@ def bird_representation(bird: Bird) -> dict:
   return representation
 
 
-def collect_bird_names(bird_names):
+def collect_common_names(common_names):
   names_by_locale_code = {}
-  for bird_name in bird_names:
-    code = bird_name.locale.code
-    name = bird_name.name
+  for common_name in common_names:
+    code = common_name.locale.code
+    name = common_name.name
     if code not in names_by_locale_code:
       names_by_locale_code[code] = []
     names_by_locale_code[code].append(name)

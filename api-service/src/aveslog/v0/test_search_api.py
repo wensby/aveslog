@@ -81,7 +81,7 @@ class TestSearchBirds(AppTestCase):
   def test_search_by_locale_name(self):
     self.db_insert_locale(1, 'sv')
     self.db_insert_bird(1, 'Pica pica')
-    self.db_insert_bird_name(1, 1, 1, 'Skata')
+    self.db_insert_bird_common_name(1, 1, 1, 'Skata')
 
     response = self.client.get('/search/birds?q=Skata')
 
