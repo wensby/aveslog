@@ -4,6 +4,7 @@ import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { useAuthentication } from '../authentication/AuthenticationHooks';
+import { CommonNamesSection } from './CommonNamesSection';
 
 export function DetailedBirdCard({ bird }) {
   const { t } = useTranslation();
@@ -13,6 +14,8 @@ export function DetailedBirdCard({ bird }) {
   return (
     <div>
       <BirdCover bird={bird} />
+      <CommonNamesSection namesByLanguageCode={bird.names}/>
+      <hr />
       <div>
         Sightings: {stats.sightingsCount}
         <br />

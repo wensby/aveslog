@@ -1,0 +1,18 @@
+@import '../layout.scss';
+
+div.common-names-section {
+  padding: 0 .5em;
+
+  @media only screen and (min-width : $break-small) {
+    padding: 0;
+  }
+  
+  & h2 {
+    font-size: 1.5em;
+  }
+
+  & div {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
