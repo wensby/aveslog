@@ -204,7 +204,7 @@ Status: 200 OK
 {
   "id": "pica-pica",
   "binomialName": "Pica pica",
-  "names": {
+  "commonNames": {
     "sv": [
       "Skata"
     ],

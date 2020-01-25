@@ -28,7 +28,7 @@ class TestBird(AppTestCase):
     self.assertDictEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
-      'names': {
+      'commonNames': {
         'sv': ['Skata'],
         'en': ['Eurasian Magpie'],
         'ko': ['까치'],

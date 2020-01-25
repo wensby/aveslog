@@ -52,7 +52,7 @@ def bird_summary_representation(bird: Bird) -> dict:
 def bird_representation(bird: Bird) -> dict:
   representation = bird_summary_representation(bird)
   if bird.names:
-    representation['names'] = collect_bird_names(bird.names)
+    representation['commonNames'] = collect_bird_names(bird.names)
   if bird.thumbnail:
     thumbnail_representation = {
       'url': bird.thumbnail.picture.filepath,
