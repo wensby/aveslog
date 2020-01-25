@@ -5,6 +5,7 @@ from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0 import sightings_rest_api
 from aveslog.v0 import birders_rest_api
+from aveslog.v0 import locales_rest_api
 
 birds_routes = [
   {
@@ -21,6 +22,13 @@ search_routes = [
   {
     'rule': '/search/birds',
     'func': search_api.search_birds,
+  }
+]
+
+locales_routes = [
+  {
+    'rule': '/locales',
+    'func': locales_rest_api.get_locales,
   }
 ]
 

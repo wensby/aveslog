@@ -543,6 +543,24 @@ Status: 200 OK
 }
 ```
 
+## Locales
+
+### Get locales
+
+```
+GET /locales
+```
+
+**Response**
+
+```
+Status: 200 OK
+
+{
+  "items": ['sv', 'en']
+}
+```
+
 
 ## Registration Requests
 
