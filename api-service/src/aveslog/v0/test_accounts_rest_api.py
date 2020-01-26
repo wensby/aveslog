@@ -28,7 +28,7 @@ class TestGetActiveAccounts(AppTestCase):
     })
 
 
-class TestAccount(AppTestCase):
+class TestGetAccount(AppTestCase):
 
   def setUp(self) -> None:
     super().setUp()
@@ -101,7 +101,6 @@ class TestAccount(AppTestCase):
       return self.client.get('/account')
     else:
       return self.client.get('/account', headers={'accessToken': token})
-
 
 class TestCreateAccount(AppTestCase):
 
