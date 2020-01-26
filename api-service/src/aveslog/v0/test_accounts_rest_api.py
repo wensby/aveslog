@@ -37,6 +37,23 @@ class TestGetAccount(AppTestCase):
     jwt_factory = JwtFactory(secret_key)
     self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
 
+  def test_get_account_when_access_token_ok(self):
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    token = self.token_factory.create_access_token(1)
+
+    response = self.get_own_account(token.jwt)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'id': 1,
+      'username': 'hulot',
+      'email': 'hulot@mail.com',
+      'birder': {
+        'id': 1,
+        'name': 'hulot',
+      },
+    })
+
   def test_get_account_when_authenticated_account_disappears(self):
     token = self.token_factory.create_access_token(1)
 
@@ -77,23 +94,6 @@ class TestGetAccount(AppTestCase):
     self.assertDictEqual(response.json, {
       'code': ErrorCode.ACCESS_TOKEN_EXPIRED,
       'message': 'Access token expired',
-    })
-
-  def test_get_account_when_access_token_ok(self):
-    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
-    token = self.token_factory.create_access_token(1)
-
-    response = self.get_own_account(token.jwt)
-
-    self.assertEqual(response.status_code, HTTPStatus.OK)
-    self.assertDictEqual(response.json, {
-      'id': 1,
-      'username': 'hulot',
-      'email': 'hulot@mail.com',
-      'birder': {
-        'id': 1,
-        'name': 'hulot',
-      },
     })
 
   def get_own_account(self, token):
