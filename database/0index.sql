@@ -12,6 +12,10 @@
 \i /schema/public/table/bird_common_name.sql
 \i /schema/public/table/position.sql
 \i /schema/public/table/position_name.sql
+\i /schema/public/table/role.sql
+\i /schema/public/table/account_role.sql
+\i /schema/public/table/resource_permission.sql
+\i /schema/public/table/role_resource_permission.sql
 
 \i /schema/public/foreign-key-constraint/account.sql
 \i /schema/public/foreign-key-constraint/bird_thumbnail.sql
@@ -21,3 +25,5 @@
 \i /schema/public/foreign-key-constraint/sighting.sql
 \i /schema/public/foreign-key-constraint/bird_common_name.sql
 \i /schema/public/foreign-key-constraint/position_name.sql
+\i /schema/public/foreign-key-constraint/account_role.sql
+\i /schema/public/foreign-key-constraint/role_resource_permission.sql

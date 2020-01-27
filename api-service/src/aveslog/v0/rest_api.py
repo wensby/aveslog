@@ -3,10 +3,13 @@ from http import HTTPStatus
 from typing import Callable
 
 from flask import Response, make_response, jsonify, request, current_app, g
+from sqlalchemy import text
 
 from aveslog.v0.authentication import JwtDecoder
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.models import Account
+from aveslog.v0.models import Role
+from aveslog.v0.models import ResourcePermission
 
 RouteFunction = Callable[..., Response]
 
@@ -33,7 +36,9 @@ def cache(max_age=300) -> RouteFunction:
       response = route(**kwargs)
       response.headers['Cache-Control'] = f'max-age={max_age}'
       return response
+
     return route_wrapper
+
   return decorator
 
 
@@ -61,6 +66,26 @@ def require_authentication(route) -> RouteFunction:
     if not account:
       return authorized_account_missing_response()
     g.authenticated_account = account
+    return route(**kwargs)
+
+  return route_wrapper
+
+
+def require_permission(route) -> RouteFunction:
+  """Wraps a route to requiring an authentication with necessary permissions"""
+
+  @wraps(route)
+  def route_wrapper(**kwargs):
+    account: Account = g.authenticated_account
+    matching_permissions = g.database_session.query(ResourcePermission) \
+      .join(ResourcePermission.roles) \
+      .filter(Role.accounts.any(id=account.id)) \
+      .filter(text(":resource ~ resource_regex")) \
+      .params(resource=request.path) \
+      .filter(ResourcePermission.method==request.method) \
+      .all()
+    if not matching_permissions:
+      return unauthorized_response()
     return route(**kwargs)
 
   return route_wrapper
@@ -94,5 +119,13 @@ def access_token_expired_response() -> Response:
   return error_response(
     ErrorCode.ACCESS_TOKEN_EXPIRED,
     'Access token expired',
+    status_code=HTTPStatus.UNAUTHORIZED,
+  )
+
+
+def unauthorized_response() -> Response:
+  return error_response(
+    ErrorCode.AUTHORIZATION_REQUIRED,
+    'Authorization required',
     status_code=HTTPStatus.UNAUTHORIZED,
   )

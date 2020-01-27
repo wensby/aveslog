@@ -38,6 +38,7 @@ def create_api_v0_blueprint(mail_dispatcher: MailDispatcher) -> Blueprint:
   register_routes(routes.birds_routes)
   register_routes(routes.search_routes)
   register_routes(routes.locales_routes)
+  register_routes(routes.roles_routes)
   register_routes(routes.registration_requests_routes)
   register_routes(routes.sightings_routes)
   register_routes(routes.authentication_routes)

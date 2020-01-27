@@ -1,7 +1,8 @@
 from typing import Any
 
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column
+from sqlalchemy import Column, Table
 from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
@@ -94,6 +95,20 @@ class HashedPassword(Base):
   salted_hash = Column(String, nullable=False)
 
 
+account_role_table = Table('account_role', Base.metadata,
+  Column('account_id', Integer, ForeignKey('account.id'), nullable=False),
+  Column('role_id', Integer, ForeignKey('role.id'), nullable=False))
+
+role_resource_permission_table = Table('role_resource_permission',
+  Base.metadata,
+  Column('role_id', Integer, ForeignKey('role.id'), nullable=False),
+  Column(
+    'resource_permission_id', Integer, ForeignKey(
+      'resource_permission.id'
+    ), nullable=False
+  ))
+
+
 class Account(Base):
   __tablename__ = 'account'
   id = Column(Integer, primary_key=True)
@@ -107,10 +122,45 @@ class Account(Base):
   hashed_password: HashedPassword = relationship('HashedPassword',
     uselist=False)
   password_reset_token = relationship('PasswordResetToken', uselist=False)
+  roles = relationship(
+    'Role', secondary=account_role_table, back_populates='accounts'
+  )
 
   def __repr__(self):
     return (f"<Account(username='{self.username}', email='{self.email}', "
             f"birder_id='{self.birder_id}', locale_id='{self.locale_id}')>")
+
+
+class Role(Base):
+  __tablename__ = 'role'
+  id = Column(Integer, primary_key=True)
+  name = Column(String, nullable=False, unique=True)
+
+  accounts = relationship(
+    'Account', secondary=account_role_table, back_populates='roles'
+  )
+  resource_permissions = relationship(
+    'ResourcePermission',
+    secondary=role_resource_permission_table,
+    back_populates='roles'
+  )
+
+
+class ResourcePermission(Base):
+  __tablename__ = 'resource_permission'
+  id = Column(Integer, primary_key=True)
+  name = Column(String)
+  resource_regex = Column(String, nullable=False)
+  method = Column(String, nullable=False)
+
+  roles = relationship(
+    'Role',
+    secondary=role_resource_permission_table,
+    back_populates='resource_permissions'
+  )
+
+  def __repr__(self):
+    return f'ResourcePermission<name={self.name}, resource_regex={self.resource_regex}, method={self.method}>'
 
 
 class AccountRegistration(Base):

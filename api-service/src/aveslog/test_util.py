@@ -77,6 +77,12 @@ class AppTestCase(IntegrationTestCase):
       (locale_id, code))
     self.database_connection.commit()
 
+  def db_insert_role(self, role_id, role_name):
+    cursor = self.database_connection.cursor()
+    cursor.execute('INSERT INTO role (id, name) VALUES (%s, %s);',
+      (role_id, role_name))
+    self.database_connection.commit()
+
   def db_delete_refresh_token(self, refresh_token_id: int) -> None:
     cursor = self.database_connection.cursor()
     cursor.execute('DELETE FROM refresh_token WHERE id = %s;',
@@ -142,6 +148,27 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute(
       'INSERT INTO password_reset_token (account_id, token) '
       'VALUES (%s, %s);', (account_id, token))
+    self.database_connection.commit()
+
+  def db_insert_resource_permission(self, id, resource_regex, method):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO resource_permission (id, resource_regex, method) '
+      'VALUES (%s, %s, %s);', (id, resource_regex, method))
+    self.database_connection.commit()
+
+  def db_insert_role_resource_permission(self, role_id, resource_permission_id):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO role_resource_permission (role_id, resource_permission_id) '
+      'VALUES (%s, %s);', (role_id, resource_permission_id))
+    self.database_connection.commit()
+
+  def db_insert_account_role(self, account_id, role_id):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO account_role (account_id, role_id) '
+      'VALUES (%s, %s);', (account_id, role_id))
     self.database_connection.commit()
 
   def db_insert_sighting(
@@ -218,6 +245,10 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('DELETE FROM refresh_token;')
     cursor.execute('DELETE FROM password_reset_token;')
     cursor.execute('DELETE FROM hashed_password;')
+    cursor.execute('DELETE FROM account_role;')
+    cursor.execute('DELETE FROM role_resource_permission;')
+    cursor.execute('DELETE FROM role;')
+    cursor.execute('DELETE FROM resource_permission;')
     cursor.execute('DELETE FROM account;')
     cursor.execute('DELETE FROM sighting;')
     cursor.execute('DELETE FROM position;')

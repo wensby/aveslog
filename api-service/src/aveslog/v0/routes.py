@@ -6,6 +6,7 @@ from aveslog.v0 import authentication_rest_api
 from aveslog.v0 import sightings_rest_api
 from aveslog.v0 import birders_rest_api
 from aveslog.v0 import locales_rest_api
+from aveslog.v0 import roles_rest_api
 
 birds_routes = [
   {
@@ -22,6 +23,13 @@ search_routes = [
   {
     'rule': '/search/birds',
     'func': search_api.search_birds,
+  }
+]
+
+roles_routes = [
+  {
+    'rule': '/roles/<string:role_id>/permissions',
+    'func': roles_rest_api.get_role_permissions,
   }
 ]
 
