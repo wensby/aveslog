@@ -83,6 +83,7 @@ Status: 404 Not Found
 | 14 | One or more of the provided parameters to the request failed a validation. See provided errors for more detailed information. |
 | 15 | Username does not follow required format. |
 | 16 | Password does not follow required format. |
+| 17 | Provided locale code not one of the allowed codes. |
 
 
 ## Authentication
@@ -232,7 +233,7 @@ Status: 200 OK
 GET /birds/:bird/statistics
 ```
 
-### Response
+**Response**
 
 ```
 Status: 200 OK
@@ -241,6 +242,34 @@ Status: 200 OK
   "sightingsCount": 2,
   "birdersCount": 1
 }
+```
+
+### Add bird common name
+
+This endpoint requires that the authenticated account hava a role with required
+permission.
+
+```
+POST /birds/:bird/common-names
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Post Data Example**
+
+```
+{
+  "locale": "sv",
+  "name": "Skata"
+}
+```
+
+**Response**
+
+```
+Status: 201 CREATED
 ```
 
 ## Sightings

@@ -11,6 +11,7 @@ from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import Authenticator
 from aveslog.v0.rest_api import error_response
+from aveslog.v0.rest_api import validation_failed_error_response
 from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.account import is_valid_username
 from aveslog.v0.account import PasswordHasher
@@ -101,14 +102,6 @@ def validate_fields(password, username):
       'message': 'Password need to adhere to format: ^.{8,128}$'
     })
   return errors
-
-
-def validation_failed_error_response(field_validation_errors):
-  return error_response(
-    ErrorCode.VALIDATION_FAILED,
-    'Validation failed',
-    additional_errors=field_validation_errors,
-  )
 
 
 @require_authentication

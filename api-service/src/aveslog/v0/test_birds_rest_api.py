@@ -117,3 +117,105 @@ class TestGetBirdStatistics(AppTestCase):
   def test_get_bird_statistics_when_no_such_bird(self):
     response = self.client.get('/birds/pikachu/statistics')
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+
+class TestCreateBirdCommonName(AppTestCase):
+
+  def setUp(self):
+    super().setUp()
+    self.db_insert_locale(1, 'sv')
+    self.db_insert_bird(2, 'Pica pica')
+    self.db_setup_account(3, 4, 'hulot', 'password', 'hulot@mail.com')
+
+  def test_create_common_name_when_ok(self):
+    self._setup_correct_permissions()
+    token = self.create_access_token(4)
+
+    response = self.client.post(
+      '/birds/pica-pica/common-names',
+      headers={
+        'accessToken': token.jwt,
+      },
+      json={
+        'locale': 'sv', 'name': 'Skata'
+      })
+
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    bird_response = self.client.get('/birds/pica-pica')
+    self.assertDictEqual(bird_response.json['commonNames'], {
+      'sv': ['Skata'],
+    })
+
+  def test_post_common_name_when_bird_id_missing(self):
+    self._setup_correct_permissions()
+    token = self.create_access_token(4)
+
+    response = self.client.post(
+      '/birds/pica-poci/common-names',
+      headers={
+        'accessToken': token.jwt,
+      },
+      json={
+        'locale': 'sv', 'name': 'Skata'
+      })
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+  def test_post_common_name_when_locale_invalid(self):
+    self._setup_correct_permissions()
+    token = self.create_access_token(4)
+
+    response = self.client.post(
+      '/birds/pica-pica/common-names',
+      headers={
+        'accessToken': token.jwt,
+      },
+      json={
+        'locale': 'dk', 'name': 'Skata'
+      })
+
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+  def test_create_common_name_without_permitted_role(self):
+    self.db_insert_role(5, 'permitted')
+    self.db_insert_resource_permission(6, '^/birds/[^/]+/common-names$', 'POST')
+    self.db_insert_role_resource_permission(5, 6)
+    # note permitted role not given to account
+    token = self.create_access_token(4)
+
+    response = self.client.post(
+      '/birds/pica-pica/common-names',
+      headers={
+        'accessToken': token.jwt,
+      },
+      json={
+        'locale': 'sv', 'name': 'Skata'
+      })
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def test_create_common_name_without_correct_permission(self):
+    self.db_insert_role(5, 'permitted')
+    # note resource regex of permission below doesn't match resource
+    self.db_insert_resource_permission(6, '^/birds/picapica/common-names$',
+      'POST')
+    self.db_insert_role_resource_permission(5, 6)
+    self.db_insert_account_role(4, 5)
+    token = self.create_access_token(4)
+
+    response = self.client.post(
+      '/birds/pica-pica/common-names',
+      headers={
+        'accessToken': token.jwt,
+      },
+      json={
+        'locale': 'sv', 'name': 'Skata'
+      })
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def _setup_correct_permissions(self):
+    self.db_insert_role(5, 'permitted')
+    self.db_insert_resource_permission(6, '^/birds/[^/]+/common-names$', 'POST')
+    self.db_insert_role_resource_permission(5, 6)
+    self.db_insert_account_role(4, 5)

@@ -29,6 +29,14 @@ def error_response(
   return make_response(jsonify(data), status_code)
 
 
+def validation_failed_error_response(field_validation_errors):
+  return error_response(
+    ErrorCode.VALIDATION_FAILED,
+    'Validation failed',
+    additional_errors=field_validation_errors,
+  )
+
+
 def cache(max_age=300) -> RouteFunction:
   def decorator(route):
     @wraps(route)
@@ -82,7 +90,7 @@ def require_permission(route) -> RouteFunction:
       .filter(Role.accounts.any(id=account.id)) \
       .filter(text(":resource ~ resource_regex")) \
       .params(resource=request.path) \
-      .filter(ResourcePermission.method==request.method) \
+      .filter(ResourcePermission.method == request.method) \
       .all()
     if not matching_permissions:
       return unauthorized_response()

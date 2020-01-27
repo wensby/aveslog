@@ -1,10 +1,14 @@
 from http import HTTPStatus
 
-from flask import Response, make_response, jsonify, g
+from flask import Response, make_response, jsonify, g, request
 from sqlalchemy.orm import joinedload
 
+from aveslog.v0.error import ErrorCode
+from aveslog.v0.rest_api import validation_failed_error_response
 from aveslog.v0.rest_api import cache
-from .models import Bird
+from aveslog.v0.rest_api import require_authentication
+from aveslog.v0.rest_api import require_permission
+from .models import Bird, BirdCommonName, Locale
 from .models import Sighting
 from .models import Birder
 from .models import BirdThumbnail
@@ -40,6 +44,29 @@ def get_bird_statistics(bird_identifier: str) -> Response:
     'birdersCount': birders_count,
   }
   return make_response(jsonify(statistics), HTTPStatus.OK)
+
+
+@require_authentication
+@require_permission
+def post_common_name(bird_identifier: str) -> Response:
+  binomial_name = bird_identifier.replace('-', ' ').capitalize()
+  bird = g.database_session.query(Bird). \
+    filter_by(binomial_name=binomial_name).first()
+  if not bird:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  locale_code = request.json['locale']
+  name = request.json['name']
+  locale = g.database_session.query(Locale).filter_by(code=locale_code).first()
+  if not locale:
+    errors = [{
+      'code': ErrorCode.INVALID_LOCALE_CODE,
+      'field': 'locale_code',
+      'message': 'Locale code not one of the valid options',
+    }]
+    return validation_failed_error_response(errors)
+  bird.common_names.append(BirdCommonName(locale_id=locale.id, name=name))
+  g.database_session.commit()
+  return make_response(jsonify({}), HTTPStatus.CREATED)
 
 
 def bird_summary_representation(bird: Bird) -> dict:
