@@ -259,6 +259,7 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('DELETE FROM birder;')
     cursor.execute('DELETE FROM account_registration;')
     cursor.execute('DELETE FROM locale;')
+    cursor.execute('ALTER SEQUENCE bird_common_name_id_seq RESTART WITH 1;')
     self.database_connection.commit()
 
   def db_get_sighting_rows(self):

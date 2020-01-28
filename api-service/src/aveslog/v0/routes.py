@@ -19,6 +19,14 @@ birds_routes = [
   },
   {
     'rule': '/birds/<string:bird_identifier>/common-names',
+    'func': birds_rest_api.get_common_names,
+  },
+  {
+    'rule': '/birds/<string:bird_identifier>/common-names/<int:id>',
+    'func': birds_rest_api.get_common_name,
+  },
+  {
+    'rule': '/birds/<string:bird_identifier>/common-names',
     'func': birds_rest_api.post_common_name,
     'options': {'methods': ['POST']},
   }
