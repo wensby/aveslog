@@ -197,7 +197,7 @@ Status: 200 OK
 GET /birds/:bird
 ```
 
-#### Response
+**Response**
 
 ```
 Status: 200 OK
@@ -205,17 +205,6 @@ Status: 200 OK
 {
   "id": "pica-pica",
   "binomialName": "Pica pica",
-  "commonNames": {
-    "sv": [
-      "Skata"
-    ],
-    "en": [
-      "Eurasian magpie"
-    ],
-    "ko": [
-      "까치"
-    ]
-  }
   "thumbnail": {
     "url": "https://api.aveslog.com/static/image/bird/pica-pica-thumb.jpg",
     "credit": "Anna Larsson",
@@ -226,6 +215,10 @@ Status: 200 OK
   }
 }
 ```
+
+**Embeddable fields**
+
+`commonNames`
 
 ### Get bird statistics
 

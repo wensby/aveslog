@@ -16,6 +16,7 @@ from .models import BirdThumbnail
 
 @cache(max_age=300)
 def get_single_bird(bird_identifier: str) -> Response:
+  embedded_fields = request.args.get('embed', '').split(',')
   binomial_name = (bird_identifier.replace('-', ' ').capitalize())
   bird = g.database_session.query(Bird) \
     .options(joinedload(Bird.common_names)) \
@@ -25,7 +26,8 @@ def get_single_bird(bird_identifier: str) -> Response:
     .first()
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response(jsonify(bird_representation(bird)), HTTPStatus.OK)
+  return make_response(jsonify(bird_representation(bird, embedded_fields)),
+    HTTPStatus.OK)
 
 
 def get_bird_statistics(bird_identifier: str) -> Response:
@@ -109,10 +111,11 @@ def bird_summary_representation(bird: Bird) -> dict:
   }
 
 
-def bird_representation(bird: Bird) -> dict:
+def bird_representation(bird: Bird, embedded_fields: list) -> dict:
   representation = bird_summary_representation(bird)
-  if bird.common_names:
-    representation['commonNames'] = collect_common_names(bird.common_names)
+  if 'commonNames' in embedded_fields and bird.common_names:
+    representation['commonNames'] = list(
+      map(common_name_representation, bird.common_names))
   if bird.thumbnail:
     thumbnail_representation = {
       'url': bird.thumbnail.picture.filepath,
@@ -121,17 +124,6 @@ def bird_representation(bird: Bird) -> dict:
     representation['thumbnail'] = thumbnail_representation
     representation['cover'] = thumbnail_representation
   return representation
-
-
-def collect_common_names(common_names):
-  names_by_locale_code = {}
-  for common_name in common_names:
-    code = common_name.locale.code
-    name = common_name.name
-    if code not in names_by_locale_code:
-      names_by_locale_code[code] = []
-    names_by_locale_code[code].append(name)
-  return names_by_locale_code
 
 
 def common_name_representation(common_name: BirdCommonName):

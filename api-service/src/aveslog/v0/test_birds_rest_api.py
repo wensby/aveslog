@@ -28,11 +28,39 @@ class TestBird(AppTestCase):
     self.assertDictEqual(response.json, {
       'id': 'pica-pica',
       'binomialName': 'Pica pica',
-      'commonNames': {
-        'sv': ['Skata'],
-        'en': ['Eurasian Magpie'],
-        'ko': ['까치'],
+      'thumbnail': {
+        'url': 'myPictureUrl',
+        'credit': 'myCredit',
       },
+      'cover': {
+        'url': 'myPictureUrl',
+        'credit': 'myCredit',
+      },
+    })
+    self.assert_rate_limit_headers(response, 59)
+
+  def test_get_bird_embed_common_names(self):
+    self.db_insert_locale(1, 'sv')
+    self.db_insert_locale(2, 'en')
+    self.db_insert_locale(3, 'ko')
+    self.db_insert_bird_common_name(1, 1, 1, 'Skata')
+    self.db_insert_bird_common_name(2, 1, 2, 'Eurasian Magpie')
+    self.db_insert_bird_common_name(3, 1, 3, '까치')
+    self.db_insert_picture(1, 'myPictureUrl', 'myCredit')
+    self.db_insert_bird_thumbnail(1, 1)
+
+    response = self.client.get('/birds/pica-pica?embed=commonNames')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.headers['Cache-Control'], 'max-age=300')
+    self.assertDictEqual(response.json, {
+      'id': 'pica-pica',
+      'binomialName': 'Pica pica',
+      'commonNames': [
+        {'id': 1, 'locale': 'sv', 'name': 'Skata'},
+        {'id': 2, 'locale': 'en', 'name': 'Eurasian Magpie'},
+        {'id': 3, 'locale': 'ko', 'name': '까치'},
+      ],
       'thumbnail': {
         'url': 'myPictureUrl',
         'credit': 'myCredit',
