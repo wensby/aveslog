@@ -9,7 +9,7 @@ export default class BirdService {
   }
 
   async getBird(id) {
-    const response = await fetch(`${this.apiUrl}/birds/${id}`);
+    const response = await fetch(`${this.apiUrl}/birds/${id}?embed=commonNames`);
     if (response.status === 200) {
       return await response.json();
     }

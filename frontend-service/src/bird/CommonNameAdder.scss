@@ -1,0 +1,48 @@
+@import '../colors.scss';
+
+div.common-name-adder {
+  box-sizing: unset;
+  padding: .5em;
+  margin: .2em 0;
+  border-radius: .5em;
+  border: solid 1px $lighter;
+  height: 1.7em;
+  max-height: 1.7em;
+
+  &:not(.expanded) {
+    width: 15px;
+  }
+
+  &:hover:not(.expanded) {
+    border-color: $primary;
+    cursor: pointer;
+    fill: $primary;
+  }
+
+  & select {
+    margin-right: .5em;
+  }
+
+  & input {
+    border-radius: .3em;
+    border: solid 1px $lighter;
+  }
+
+  & button {
+    margin-left: .5em;
+    border-radius: .5em;
+    border: 1px solid transparent;
+    line-height: 1.5;
+    font-weight: bold;
+    background-color: rgb(240, 240, 240);
+
+    &:hover {
+      background-color: $primary;
+      color: $white;
+    }
+
+    &:focus {
+      outline: unset;
+    }
+  }
+}

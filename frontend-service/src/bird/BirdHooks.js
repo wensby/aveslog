@@ -26,7 +26,14 @@ export function useBirdName(bird) {
   const { i18n } = useTranslation();
   if (bird) {
     const language = i18n.languages[0];
-    const local = bird.commonNames && bird.commonNames[language] ? bird.commonNames[language] : null;
+    let local = null;
+    if (bird.commonNames) {
+      bird.commonNames.forEach(element => {
+        if (element.locale === language) {
+          local = element.name;
+        }
+      });
+    }
     const binomial = bird.binomialName;
     return { local, binomial };
   }

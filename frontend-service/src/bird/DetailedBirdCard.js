@@ -14,7 +14,7 @@ export function DetailedBirdCard({ bird }) {
   return (
     <div>
       <BirdCover bird={bird} />
-      <CommonNamesSection namesByLanguageCode={bird.commonNames}/>
+      <CommonNamesSection bird={bird} />
       <hr />
       <div>
         Sightings: {stats.sightingsCount}
