@@ -4,11 +4,11 @@ import Icon from '../Icon.js';
 import './CommonNameAdder.scss';
 import { UserContext } from '../authentication/UserContext';
 
-export function CommonNameAdder({ birdId, locales }) {
+export function CommonNameAdder({ birdId, locales, onNameAdded }) {
   const { getAccessToken } = useContext(UserContext);
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation();
-  const [selectedLanguage, setSelectedLangauge] = useState(locales[0]);
+  const [selectedLanguage, setSelectedLangauge] = useState(null);
   const [name, setName] = useState('');
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => { setExpanded(false) });
@@ -16,6 +16,10 @@ export function CommonNameAdder({ birdId, locales }) {
     e.preventDefault();
     setExpanded(true);
   };
+
+  useEffect(() => {
+    setSelectedLangauge(locales[0]);
+  }, [locales])
 
   const handleSubmit = event => {
     const postName = async name => {
@@ -32,6 +36,7 @@ export function CommonNameAdder({ birdId, locales }) {
         }),
       });
       if (response.status === 201) {
+        onNameAdded();
         setName('');
         setExpanded(false);
       }
