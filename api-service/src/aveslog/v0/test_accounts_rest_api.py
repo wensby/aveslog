@@ -102,6 +102,7 @@ class TestGetAccount(AppTestCase):
     else:
       return self.client.get('/account', headers={'accessToken': token})
 
+
 class TestCreateAccount(AppTestCase):
 
   def test_post_account_when_credentials_ok(self):
