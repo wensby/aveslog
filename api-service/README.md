@@ -244,6 +244,47 @@ Status: 200 OK
 }
 ```
 
+### Get single bird's common name
+
+```
+GET /birds/:bird/common-names/:id
+```
+
+**Response**
+
+```
+{
+  "id": 1,
+  "locale": "sv",
+  "name": "Skata"
+}
+```
+
+### Get bird's common names
+
+```
+GET /birds/:bird/common-names
+```
+
+**Response**
+
+```
+{
+  "items": [
+    {
+      "id": 1,
+      "locale": "sv",
+      "name": "Skata"
+    },
+    {
+      "id": 2,
+      "locale": "en",
+      "name": "Eurasian Magpie"
+    }
+  ]
+}
+```
+
 ### Add bird common name
 
 This endpoint requires that the authenticated account hava a role with required
