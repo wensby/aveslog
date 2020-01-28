@@ -84,6 +84,10 @@ account_routes = [
     'func': accounts_rest_api.get_me,
   },
   {
+    'rule': '/account/roles',
+    'func': accounts_rest_api.get_authenticated_accounts_roles,
+  },
+  {
     'rule': '/account/password',
     'func': accounts_rest_api.post_password,
     'options': {'methods': ['POST']},

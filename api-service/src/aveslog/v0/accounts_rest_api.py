@@ -19,6 +19,8 @@ from aveslog.v0.account import is_valid_password
 from aveslog.v0.models import AccountRegistration, HashedPassword
 from aveslog.v0.models import Account
 from aveslog.v0.models import Birder
+from aveslog.v0.models import Role
+from aveslog.v0.models import ResourcePermission
 
 
 def create_account() -> Response:
@@ -51,6 +53,22 @@ def authenticated_account_representation(account):
     'email': account.email,
   })
   return representation
+
+
+def roles_representation(role: Role) -> dict:
+  return {
+    'name': role.name,
+    'permissions': list(
+      map(permission_representation, role.resource_permissions)
+    ),
+  }
+
+
+def permission_representation(permission: ResourcePermission) -> dict:
+  return {
+    'method': permission.method,
+    'resource_regex': permission.resource_regex,
+  }
 
 
 def account_representation(account):
@@ -125,6 +143,13 @@ def get_accounts() -> Response:
 def get_me() -> Response:
   account = g.authenticated_account
   json = jsonify(authenticated_account_representation(account))
+  return make_response(json, HTTPStatus.OK)
+
+
+@require_authentication
+def get_authenticated_accounts_roles() -> Response:
+  roles = g.authenticated_account.roles
+  json = jsonify({'items': list(map(roles_representation, roles))})
   return make_response(json, HTTPStatus.OK)
 
 

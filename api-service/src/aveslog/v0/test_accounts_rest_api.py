@@ -103,6 +103,45 @@ class TestGetAccount(AppTestCase):
       return self.client.get('/account', headers={'accessToken': token})
 
 
+class TestAuthenticatedAccountsRoles(AppTestCase):
+
+  def setUp(self) -> None:
+    super().setUp()
+    secret_key = self._app.secret_key
+    time_supplier = datetime.datetime.utcnow
+    jwt_factory = JwtFactory(secret_key)
+    self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
+
+  def test_get_authenticated_accounts_roles_when_ok(self):
+    cursor = self.database_connection.cursor()
+    self.database_connection.commit()
+    self.db_setup_account(1, 2, 'kenny', 'password', 'bostick@mail.com')
+    self.db_insert_role(3, 'coolguy')
+    self.db_insert_account_role(2, 3)
+    self.db_insert_resource_permission(4, '^/.*$', 'POST')
+    self.db_insert_role_resource_permission(3, 4)
+    access_token_jwt = self.token_factory.create_access_token(2).jwt
+
+    response = self.client.get(
+      '/account/roles', headers={'accessToken': access_token_jwt}
+    )
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'name': 'coolguy',
+          'permissions': [
+            {
+              'method': 'POST',
+              'resource_regex': '^/.*$',
+            },
+          ],
+        },
+      ],
+    })
+
+
 class TestCreateAccount(AppTestCase):
 
   def test_post_account_when_credentials_ok(self):
