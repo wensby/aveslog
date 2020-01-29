@@ -38,7 +38,7 @@ export function CommonNamesSection({ bird }) {
 
   useEffect(() => {
     setVacantLocales(locales.filter(x => !(x in namesByLanguageCode)));
-  }, [namesByLanguageCode])
+  }, [namesByLanguageCode, locales])
 
   useEffect(() => {
     setShowAdder(vacantLocales.length > 0 && permissionToPostCommonNames);
