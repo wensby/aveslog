@@ -11,6 +11,8 @@ export function CommonNamesSection({ bird }) {
   const [commonNames, setCommonNames] = useState([])
   const [namesByLanguageCode, setNamesByLanguageCode] = useState({});
   const [vacantLocales, setVacantLocales] = useState([]);
+  const permissionToPostCommonNames = useResourcePermission(`/birds/${bird.id}/common-names`, 'POST');
+  const { t } = useTranslation();
 
   useEffect(() => {
     const resolveCommonNames = async () => {
@@ -53,9 +55,6 @@ export function CommonNamesSection({ bird }) {
   useEffect(() => {
     setVacantLocales(locales.filter(x => !(x in namesByLanguageCode)));
   }, [namesByLanguageCode])
-
-  const permissionToPostCommonNames = useResourcePermission(`/birds/${bird.id}/common-names`, 'POST');
-  const { t } = useTranslation();
 
   return (
     <div className='common-names-section'>
