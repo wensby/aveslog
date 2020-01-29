@@ -23,7 +23,7 @@ export function usePermissions() {
       }
     };
     resolvePermissions();
-  }, []);
+  }, [getAccessToken]);
 
   return { permissions };
 }
