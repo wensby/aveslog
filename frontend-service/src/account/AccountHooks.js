@@ -36,7 +36,7 @@ export function useResourcePermission(resource, method) {
     setPresent(permissions
       .filter(x => x.method === method)
       .filter(x => RegExp(x.resource_regex).test(resource)).length > 0);
-  }, [permissions]);
+  }, [permissions, resource, method]);
 
   return present;
 }
