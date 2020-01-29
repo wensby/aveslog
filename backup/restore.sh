@@ -5,5 +5,8 @@ if [ -z "$1" ]; then
 fi
 
 backup_dir=$1
-cat $backup_dir/dump.sql | docker exec -i database-service \
-  psql -U postgres -d birding-database
+docker cp $backup_dir/backup.dump database-service:/backup.dump
+docker exec -i database-service \
+  pg_restore -U postgres -d birding-database \
+  -v --clean --if-exists \
+  /backup.dump
