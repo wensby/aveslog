@@ -5,37 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { CommonNameAdder } from './CommonNameAdder.js';
 import { useLocales } from './LocalesHooks.js';
 import { useResourcePermission } from '../account/AccountHooks.js'
+import { useCommonNames } from '../bird/BirdHooks.js';
 
 export function CommonNamesSection({ bird }) {
-  const locales = useLocales();
-  const [commonNames, setCommonNames] = useState([])
+  const [forceReloadNames, setForceReloadNames] = useState(false);
   const [namesByLanguageCode, setNamesByLanguageCode] = useState({});
   const [vacantLocales, setVacantLocales] = useState([]);
+  const [showAdder, setShowAdder] = useState(false);
+  const locales = useLocales();
+  const commonNames = useCommonNames(bird, forceReloadNames);
   const permissionToPostCommonNames = useResourcePermission(`/birds/${bird.id}/common-names`, 'POST');
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const resolveCommonNames = async () => {
-      const response = await fetch(`${window._env_.API_URL}/birds/${bird.id}/common-names`);
-      if (response.status === 200) {
-        const json = await response.json();
-        setCommonNames(json.items);
-      }
-    };
-    resolveCommonNames();
-  }, []);
-
   const cacheBustAndRefetchCommonNames = () => {
-    const resolveCommonNames = async () => {
-      const response = await fetch(`${window._env_.API_URL}/birds/${bird.id}/common-names`, {
-        cache: 'reload',
-      });
-      if (response.status === 200) {
-        const json = await response.json();
-        setCommonNames(json.items);
-      }
-    };
-    resolveCommonNames();
+    setForceReloadNames(true);
+    setInterval(() => { setForceReloadNames(false) }, 0);
   };
 
   useEffect(() => {
@@ -56,13 +40,17 @@ export function CommonNamesSection({ bird }) {
     setVacantLocales(locales.filter(x => !(x in namesByLanguageCode)));
   }, [namesByLanguageCode])
 
+  useEffect(() => {
+    setShowAdder(vacantLocales.length > 0 && permissionToPostCommonNames);
+  }, [vacantLocales, permissionToPostCommonNames])
+
   return (
     <div className='common-names-section'>
       <h2>{t('common-names-title')}</h2>
       <div className='names-cluster'>
         {Object.entries(namesByLanguageCode).map(([key, value]) => <CommonNameItem key={key + value} code={key} name={value} />)}
       </div>
-      {vacantLocales.length > 0 && permissionToPostCommonNames && <CommonNameAdder onNameAdded={cacheBustAndRefetchCommonNames} bird={bird} locales={vacantLocales} />}
+      {showAdder && <CommonNameAdder onNameAdded={cacheBustAndRefetchCommonNames} bird={bird} locales={vacantLocales} />}
     </div>
 
   );

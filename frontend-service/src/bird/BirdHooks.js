@@ -58,3 +58,35 @@ export function useBirdStatistics(bird) {
 
   return statistics;
 }
+
+export function useCommonNames(bird, forceReload) {
+  const [names, setNames] = useState([]);
+  const apiUrl = window._env_.API_URL;
+  const url = `${apiUrl}/birds/${bird.id}/common-names`;
+
+  useEffect(() => {
+    const resolveNames = async () => {
+      const response = await fetch(url);
+      if (response.status === 200) {
+        setNames((await response.json()).items);
+      }
+    };
+    if (bird) {
+      resolveNames();
+    }
+  }, [bird]);
+
+  useEffect(() => {
+    const resolveNames = async () => {
+      const response = await fetch(url, { cache: 'reload' });
+      if (response.status === 200) {
+        setNames((await response.json()).items);
+      }
+    };
+    if (forceReload) {
+      resolveNames();
+    }
+  }, [forceReload]);
+
+  return names;
+}
