@@ -66,7 +66,7 @@ export function CommonNamesSection({ bird }) {
       <div className='names-cluster'>
         {Object.entries(namesByLanguageCode).map(([key, value]) => <CommonNameItem key={key + value} code={key} name={value} />)}
       </div>
-      {vacantLocales.length > 0 && permissionToPostCommonNames && <CommonNameAdder onNameAdded={cacheBustAndRefetchCommonNames} birdId={bird.id} locales={vacantLocales} />}
+      {vacantLocales.length > 0 && permissionToPostCommonNames && <CommonNameAdder onNameAdded={cacheBustAndRefetchCommonNames} bird={bird} locales={vacantLocales} />}
     </div>
 
   );

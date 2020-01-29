@@ -1,15 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useRef, useEffect } from 'react';
 import Icon from '../Icon.js';
 import './CommonNameAdder.scss';
-import { UserContext } from '../authentication/UserContext';
+import { CommonNameForm } from './CommonNameForm';
 
-export function CommonNameAdder({ birdId, locales, onNameAdded }) {
-  const { getAccessToken } = useContext(UserContext);
+export function CommonNameAdder({ bird, locales, onNameAdded }) {
   const [expanded, setExpanded] = useState(false);
-  const { t } = useTranslation();
-  const [selectedLanguage, setSelectedLangauge] = useState(null);
-  const [name, setName] = useState('');
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => { setExpanded(false) });
   const activate = e => {
@@ -17,48 +12,15 @@ export function CommonNameAdder({ birdId, locales, onNameAdded }) {
     setExpanded(true);
   };
 
-  useEffect(() => {
-    setSelectedLangauge(locales[0]);
-  }, [locales])
-
-  const handleSubmit = event => {
-    const postName = async name => {
-      const accessToken = await getAccessToken();
-      const response = await fetch(`${window._env_.API_URL}/birds/${birdId}/common-names`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accessToken': accessToken.jwt
-        },
-        body: JSON.stringify({
-          'locale': selectedLanguage,
-          'name': name
-        }),
-      });
-      if (response.status === 201) {
-        onNameAdded();
-        setName('');
-        setExpanded(false);
-      }
-    }
-    event.preventDefault();
-    postName(name);
-  };
-
-  const onLanguageChange = event => {
-    setSelectedLangauge(event.target.value);
+  const handleNamedAdded = () => {
+    setExpanded(false);
+    onNameAdded();
   }
 
   if (expanded) {
     return (
       <div ref={wrapperRef} className={'common-name-adder' + (expanded ? ' expanded' : '')}>
-        <form onSubmit={handleSubmit}>
-          <select value={selectedLanguage} onChange={onLanguageChange}>
-            {locales.map(l => <option value={l}>{l.toUpperCase()}</option>)}
-          </select>
-          <input value={name} type='text' onChange={event => setName(event.target.value)} />
-          <button type='submit'>{t('add-button')}</button>
-        </form>
+        <CommonNameForm bird={bird} locales={locales} onNameAdded={handleNamedAdded} />
       </div>
     );
   }
