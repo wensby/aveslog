@@ -5,15 +5,16 @@ div.common-name-item {
   margin: .2em .2em .2em 0;
   border: 1px solid $lighter;
   border-radius: .5em;
+  display: flex;
 
-  & span:nth-child(1) {
+  & div:nth-child(1) {
     margin-right: .5em;
     font-weight: bolder;
     text-transform: uppercase;
     color: $darkgrey;
   }
 
-  & span:nth-child(2) {
+  & div:nth-child(2) {
     text-transform: capitalize;
     font-size: 1.1em;
   }
