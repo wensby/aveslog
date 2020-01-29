@@ -74,7 +74,7 @@ export function useCommonNames(bird, forceReload) {
     if (bird) {
       resolveNames();
     }
-  }, [bird]);
+  }, [bird, url]);
 
   useEffect(() => {
     const resolveNames = async () => {
@@ -86,7 +86,7 @@ export function useCommonNames(bird, forceReload) {
     if (forceReload) {
       resolveNames();
     }
-  }, [forceReload]);
+  }, [forceReload, url]);
 
   return names;
 }
