@@ -51,11 +51,16 @@ def get_bird_statistics(bird_identifier: str) -> Response:
 @cache(max_age=300)
 def get_common_names(bird_identifier: str) -> Response:
   binomial_name = bird_identifier.replace('-', ' ').capitalize()
+  locale_filter = request.args.get('locale', None)
   bird = g.database_session.query(Bird). \
     filter_by(binomial_name=binomial_name).first()
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
-  common_names = bird.common_names
+  common_name_query = g.database_session.query(BirdCommonName).join(
+    BirdCommonName.locale).filter(BirdCommonName.bird == bird)
+  if locale_filter:
+    common_name_query = common_name_query.filter(Locale.code == locale_filter)
+  common_names = common_name_query.all()
   json = jsonify({
     'items': list(map(common_name_representation, common_names))
   })

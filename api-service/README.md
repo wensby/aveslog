@@ -278,6 +278,12 @@ GET /birds/:bird/common-names
 }
 ```
 
+**Filters**
+
+`locale`
+example
+`/birds/pica-pica/common-names?locale=sv`
+
 ### Add bird common name
 
 This endpoint requires that the authenticated account hava a role with required

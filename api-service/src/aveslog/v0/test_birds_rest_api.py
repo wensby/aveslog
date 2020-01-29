@@ -157,6 +157,7 @@ class TestGetBirdsCommonNames(AppTestCase):
     self.db_insert_bird_common_name(1, 1, 1, 'Skata')
     self.db_insert_bird_common_name(2, 1, 2, 'Eurasian Magpie')
     self.db_insert_bird_common_name(3, 1, 3, '까치')
+
     response = self.client.get('/birds/pica-pica/common-names')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
@@ -166,6 +167,23 @@ class TestGetBirdsCommonNames(AppTestCase):
         {'id': 1, 'locale': 'sv', 'name': 'Skata'},
         {'id': 2, 'locale': 'en', 'name': 'Eurasian Magpie'},
         {'id': 3, 'locale': 'ko', 'name': '까치'},
+      ],
+    })
+
+  def test_get_birds_common_names_filter_locale(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_locale(1, 'sv')
+    self.db_insert_locale(2, 'en')
+    self.db_insert_bird_common_name(1, 1, 1, 'Skata')
+    self.db_insert_bird_common_name(2, 1, 2, 'Eurasian Magpie')
+
+    response = self.client.get('/birds/pica-pica/common-names?locale=sv')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertEqual(response.headers['Cache-Control'], 'max-age=300')
+    self.assertDictEqual(response.json, {
+      'items': [
+        {'id': 1, 'locale': 'sv', 'name': 'Skata'},
       ],
     })
 
