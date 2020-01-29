@@ -27,3 +27,16 @@ export function usePermissions() {
 
   return { permissions };
 }
+
+export function useResourcePermission(resource, method) {
+  const { permissions } = usePermissions();
+  const [present, setPresent] = useState(false);
+
+  useEffect(() => {
+    setPresent(permissions
+      .filter(x => x.method === method)
+      .filter(x => RegExp(x.resource_regex).test(resource)).length > 0);
+  }, [permissions]);
+
+  return present;
+}

@@ -4,10 +4,9 @@ import './CommonNamesSection.scss';
 import { useTranslation } from 'react-i18next';
 import { CommonNameAdder } from './CommonNameAdder.js';
 import { useLocales } from './LocalesHooks.js';
-import { usePermissions } from '../account/AccountHooks.js'
+import { useResourcePermission } from '../account/AccountHooks.js'
 
 export function CommonNamesSection({ bird }) {
-  const { permissions } = usePermissions();
   const locales = useLocales();
   const [commonNames, setCommonNames] = useState([])
   const [namesByLanguageCode, setNamesByLanguageCode] = useState({});
@@ -55,9 +54,7 @@ export function CommonNamesSection({ bird }) {
     setVacantLocales(locales.filter(x => !(x in namesByLanguageCode)));
   }, [namesByLanguageCode])
 
-  const permissionToPostCommonNames = permissions
-    .filter(x => x.method === 'POST')
-    .filter(x => RegExp(x.resource_regex).test(`/birds/${bird.id}/common-names`)).length > 0;
+  const permissionToPostCommonNames = useResourcePermission(`/birds/${bird.id}/common-names`, 'POST');
   const { t } = useTranslation();
 
   return (

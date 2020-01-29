@@ -16,7 +16,6 @@ export function SearchBar() {
   const onFormSubmit = event => {
     event.preventDefault();
     history.push(`/bird/search?q=${query}`);
-    setQuery('');
   }
 
   return (
