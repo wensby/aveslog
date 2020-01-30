@@ -6,7 +6,7 @@ export function useBird(birdId) {
   const [bird, setBird] = useState(null);
   const [error, setError] = useState(null);
   const apiUrl = window._env_.API_URL;
-  const url = `${apiUrl}/birds/${birdId}?embed=commonNames`;
+  const url = `${apiUrl}/birds/${birdId}`;
 
   useEffect(() => {
     const resolveBird = async () => {
