@@ -10,7 +10,7 @@ export function SightingFormLinkButton({ bird }) {
     <div className='sighting-form-link-button'>
       <NewBirdSightingLink bird={bird}>
         <Icon name='eye' />
-        {t('add-sighting-link')}
+        <span>{t('add-sighting-link')}</span>
       </NewBirdSightingLink>
     </div>
   );

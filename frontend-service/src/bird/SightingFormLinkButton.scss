@@ -2,6 +2,10 @@
 
 div.sighting-form-link-button {
 
+  & span {
+    white-space: nowrap;
+  }
+
   & svg {
     width: 2em;
     fill: $primary;
