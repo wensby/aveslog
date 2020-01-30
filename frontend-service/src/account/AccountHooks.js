@@ -3,7 +3,7 @@ import { UserContext } from '../authentication/UserContext';
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { getAccessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(UserContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
@@ -22,8 +22,10 @@ export function usePermissions() {
         }, []));
       }
     };
-    resolvePermissions();
-  }, [getAccessToken]);
+    if (authenticated) {
+      resolvePermissions();
+    }
+  }, [authenticated, getAccessToken]);
 
   return { permissions };
 }
