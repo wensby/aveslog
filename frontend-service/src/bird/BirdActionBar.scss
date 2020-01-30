@@ -1,0 +1,48 @@
+@import '../colors.scss';
+
+$transition-time: .05s;
+
+div.bird-action-bar {
+  padding: .2em;
+  box-shadow: 0 0 1em .2em transparentize($black, .95);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  overflow: hidden;
+
+  &>div {
+    font-weight: bold;
+    margin: .2em;
+    padding: .1em;
+    border: 1px solid transparent;
+    border-radius: .4em;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    transition:
+      background-color $transition-time ease-in-out,
+      border-color $transition-time ease-in-out;
+
+    & a {
+      width: 100%;
+    }
+
+    & * {
+      fill: $primary;
+      transition:
+        color $transition-time ease-in-out,
+        fill $transition-time ease-in-out;
+    }
+
+    &:hover {
+      border-color: transparent;
+      background-color: $primary;
+
+      & * {
+        color: $white;
+        text-decoration: none;
+        fill: $white;
+      }
+    }
+  }
+}

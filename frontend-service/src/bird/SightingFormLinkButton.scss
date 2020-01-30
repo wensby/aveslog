@@ -1,0 +1,14 @@
+@import '../colors.scss';
+
+div.sighting-form-link-button {
+
+  & svg {
+    width: 2em;
+    fill: $primary;
+    margin-right: .5em;
+
+    &:hover {
+      fill: $primary;
+    }
+  }
+}
