@@ -5,19 +5,21 @@ import { useTranslation } from 'react-i18next';
 export function useBird(birdId) {
   const [bird, setBird] = useState(null);
   const [error, setError] = useState(null);
+  const apiUrl = window._env_.API_URL;
+  const url = `${apiUrl}/birds/${birdId}?embed=commonNames`;
 
   useEffect(() => {
     const resolveBird = async () => {
-      const bird = await birdRepository.getBird(birdId);
-      if (bird) {
-        setBird(bird);
+      const response = await fetch(url);
+      if (response.status === 200) {
+        setBird(await response.json());
       }
       else {
         setError('missing');
       }
     }
     resolveBird();
-  }, [birdId]);
+  }, [birdId, url]);
 
   return { bird, error };
 }
