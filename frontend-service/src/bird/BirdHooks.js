@@ -23,23 +23,32 @@ export function useBird(birdId) {
 }
 
 export function useBirdName(bird) {
+  const [name, setName] = useState(null);
   const { i18n } = useTranslation();
-  if (bird) {
-    const language = i18n.languages[0];
-    let local = null;
-    if (bird.commonNames) {
-      bird.commonNames.forEach(element => {
-        if (element.locale === language) {
-          local = element.name;
+  const language = i18n.languages[0];
+  const apiUrl = window._env_.API_URL;
+  const url = `${apiUrl}/birds/${bird.id}/common-names?locale=${language}`;
+
+  useEffect(() => {
+    const resolveCommonName = async () => {
+      const response = await fetch(url);
+      if (response.status === 200) {
+        const json = await response.json();
+        if (json.items.length > 0) {
+          setName(json.items[0].name);
         }
-      });
-    }
-    const binomial = bird.binomialName;
-    return { local, binomial };
-  }
-  else {
-    return { local: null, binomial: null };
-  }
+        else {
+          setName(null);
+        }
+      }
+      else {
+        setName(null);
+      }
+    };
+    resolveCommonName();
+  }, [bird, language, url]);
+  
+  return { local: name, binomial: bird ? bird.binomialName : null };
 }
 
 export function useBirdStatistics(bird) {
