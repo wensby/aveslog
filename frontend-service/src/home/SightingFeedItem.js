@@ -4,12 +4,12 @@ import { BirdCardPicture } from '../bird/BirdCardPicture';
 import BirdLink from '../bird/BirdLink';
 import { Trans } from 'react-i18next';
 import { SightingTime } from '../sighting/SightingTime';
-import { useBirdName } from '../bird/BirdHooks';
+import { useCommonName } from '../bird/BirdHooks';
 import './SightingFeedItem.scss';
 
 export function SightingFeedItem({ birder, sighting, bird }) {
   const name = birder.name;
-  const { local, binomial, loading } = useBirdName(bird);
+  const { commonName, loading } = useCommonName(bird);
 
   return (
     <div className='feed-card sighting'>
@@ -19,7 +19,7 @@ export function SightingFeedItem({ birder, sighting, bird }) {
         </BirdLink>
       </div>
       <div>
-        <div className='bird-name'>{loading ? '' : local || binomial}</div>
+        <div className='bird-name'>{loading ? '' : commonName || bird.binomialName}</div>
         <hr />
         <div>
           <Trans i18nKey='logged-by'>

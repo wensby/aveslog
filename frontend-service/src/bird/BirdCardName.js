@@ -1,21 +1,21 @@
 import React from 'react';
-import { useBirdName } from './BirdHooks';
+import { useCommonName } from './BirdHooks';
 
 export function BirdCardName({ bird }) {
-  const { local, binomial, loading } = useBirdName(bird);
+  const { commonName, loading } = useCommonName(bird);
 
   if (loading) {
     return null;
   }
-  else if (local) {
+  else if (commonName) {
     return (
       <>
-        <h5 key='1' className="card-title">{local}</h5>
+        <h5 key='1' className="card-title">{commonName}</h5>
         <h6 key='2' className="card-subtitle mb-2 text-muted">
-          {binomial}
+          {bird.binomialName}
         </h6>
       </>
     )
   }
-  return <h5 key='1' className="card-title">{binomial}</h5>;
+  return <h5 key='1' className="card-title">{bird.binomialName}</h5>;
 };
