@@ -1,0 +1,19 @@
+
+.fade-in-bottom {
+  overflow: hidden;
+
+  &>div {
+    animation: fade-in-bottom .5s cubic-bezier(1.000, 0.000, 0.000, 1.000) both;
+  }
+}
+
+@keyframes fade-in-bottom {
+  0% {
+    transform: translateY(.5em);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
