@@ -16,8 +16,8 @@ from .models import BirdThumbnail
 
 @cache(max_age=300)
 def get_single_bird(bird_identifier: str) -> Response:
-  embedded_fields = request.args.get('embed', '').split(',')
-  binomial_name = (bird_identifier.replace('-', ' ').capitalize())
+  binomial_name = bird_identifier.replace('-', ' ').capitalize()
+  embed = request.args.get('embed', '').split(',')
   bird = g.database_session.query(Bird) \
     .options(joinedload(Bird.common_names)) \
     .options(joinedload(Bird.thumbnail)
@@ -26,8 +26,23 @@ def get_single_bird(bird_identifier: str) -> Response:
     .first()
   if not bird:
     return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response(jsonify(bird_representation(bird, embedded_fields)),
-    HTTPStatus.OK)
+  bird_response = bird_summary_representation(bird)
+  if 'commonNames' in embed and bird.common_names:
+    bird_response['commonNames'] = list(
+      map(common_name_representation, bird.common_names)
+    )
+  if bird.thumbnail:
+    thumbnail_representation = picture_representation(bird.thumbnail.picture)
+    bird_response['thumbnail'] = thumbnail_representation
+    bird_response['cover'] = thumbnail_representation
+  return make_response(jsonify(bird_response), HTTPStatus.OK)
+
+
+def picture_representation(picture):
+  return {
+    'url': picture.filepath,
+    'credit': picture.credit,
+  }
 
 
 def get_bird_statistics(bird_identifier: str) -> Response:
@@ -114,21 +129,6 @@ def bird_summary_representation(bird: Bird) -> dict:
     'id': bird.binomial_name.lower().replace(' ', '-'),
     'binomialName': bird.binomial_name,
   }
-
-
-def bird_representation(bird: Bird, embedded_fields: list) -> dict:
-  representation = bird_summary_representation(bird)
-  if 'commonNames' in embedded_fields and bird.common_names:
-    representation['commonNames'] = list(
-      map(common_name_representation, bird.common_names))
-  if bird.thumbnail:
-    thumbnail_representation = {
-      'url': bird.thumbnail.picture.filepath,
-      'credit': bird.thumbnail.picture.credit,
-    }
-    representation['thumbnail'] = thumbnail_representation
-    representation['cover'] = thumbnail_representation
-  return representation
 
 
 def common_name_representation(common_name: BirdCommonName):
