@@ -17,26 +17,16 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
   };
 
   const handleSubmit = event => {
-    const postName = async (name) => {
+    const postName = async (langauge, name) => {
       const accessToken = await getAccessToken();
-      const response = await fetch(`${window._env_.API_URL}/birds/${bird.id}/common-names`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accessToken': accessToken.jwt
-        },
-        body: JSON.stringify({
-          'locale': selectedLanguage,
-          'name': name
-        }),
-      });
+      const response = await postCommonName(accessToken, bird, langauge, name);
       if (response.status === 201) {
         onNameAdded();
         setName('');
       }
-    };
+    }
     event.preventDefault();
-    postName(name);
+    postName(selectedLanguage, name);
   };
 
   return (
@@ -49,3 +39,17 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
     </form>
   );
 }
+
+const postCommonName = async (accessToken, bird, language, name) => {
+  return await fetch(`${window._env_.API_URL}/birds/${bird.id}/common-names`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'accessToken': accessToken.jwt
+    },
+    body: JSON.stringify({
+      'locale': language,
+      'name': name
+    }),
+  });
+};
