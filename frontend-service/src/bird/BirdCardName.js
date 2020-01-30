@@ -2,9 +2,12 @@ import React from 'react';
 import { useBirdName } from './BirdHooks';
 
 export function BirdCardName({ bird }) {
-  const { local, binomial } = useBirdName(bird);
+  const { local, binomial, loading } = useBirdName(bird);
 
-  if (local) {
+  if (loading) {
+    return null;
+  }
+  else if (local) {
     return (
       <>
         <h5 key='1' className="card-title">{local}</h5>

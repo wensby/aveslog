@@ -25,6 +25,7 @@ export function useBird(birdId) {
 }
 
 export function useBirdName(bird) {
+  const [loading, setLoading] = useState(true);
   const [name, setName] = useState(null);
   const { i18n } = useTranslation();
   const language = i18n.languages[0];
@@ -33,6 +34,7 @@ export function useBirdName(bird) {
 
   useEffect(() => {
     const resolveCommonName = async () => {
+      setLoading(true);
       const response = await fetch(url);
       if (response.status === 200) {
         const json = await response.json();
@@ -46,11 +48,12 @@ export function useBirdName(bird) {
       else {
         setName(null);
       }
+      setLoading(false);
     };
     resolveCommonName();
   }, [bird, language, url]);
   
-  return { local: name, binomial: bird ? bird.binomialName : null };
+  return { local: name, binomial: bird ? bird.binomialName : null, loading };
 }
 
 export function useBirdStatistics(bird) {
