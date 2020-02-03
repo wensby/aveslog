@@ -1,4 +1,4 @@
-FROM postgres
+FROM postgres:11
 
 ENV POSTGISV 2.5
 
