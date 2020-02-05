@@ -6,10 +6,10 @@ const accountService = new AccountService()
 const UserContext = React.createContext();
 
 function UserProvider(props) {
+  const [resolvingLocalStorage, setResolvingLocalStorage] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [account, setAccount] = useState(null);
-  const [resolvingLocalStorage, setResolvingLocalStorage] = useState(true);
 
   useEffect(() => {
     const localStorageRefreshToken = localStorage.getItem('refreshToken');
@@ -18,6 +18,7 @@ function UserProvider(props) {
       setRefreshToken(JSON.parse(localStorageRefreshToken));
     }
     else {
+      console.log('No refresh token found in local storage.');
       setResolvingLocalStorage(false);
     }
   }, []);
@@ -27,11 +28,11 @@ function UserProvider(props) {
       console.log('storing refresh token in storage');
       localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
     }
-    else {
+    else if (!resolvingLocalStorage) {
       console.log('clearing refresh token from storage');
       localStorage.removeItem('refreshToken');
     }
-  }, [refreshToken]);
+  }, [refreshToken, resolvingLocalStorage]);
 
   useEffect(() => {
     const resolveAccessToken = async () => {
@@ -48,8 +49,8 @@ function UserProvider(props) {
     }
   }, [refreshToken]);
 
-  const fetchAccount = async accessToken => {
-    if (accessToken) {
+  useEffect(() => {
+    const fetchAccount = async accessToken => {
       const response = await accountService.fetchAuthenticatedAccount(accessToken);
       if (response.status === 200) {
         const json = await response.json();
@@ -57,11 +58,9 @@ function UserProvider(props) {
         setResolvingLocalStorage(false);
       }
     }
-  }
-  
-  useEffect(() => {
-    console.log(`new access token: ${JSON.stringify(accessToken)}`)
-    fetchAccount(accessToken);
+    if (accessToken) {
+      fetchAccount(accessToken);
+    }
   }, [accessToken]);
 
   const asyncUnauthenticate = async () => {
@@ -91,7 +90,6 @@ function UserProvider(props) {
       }
     }
     else {
-      console.log("access token doesn't need refreshing");
       return accessToken;
     }
   }
