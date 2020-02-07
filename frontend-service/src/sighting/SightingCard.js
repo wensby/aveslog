@@ -9,7 +9,7 @@ export function SightingCard({ sighting }) {
   const { bird } = useBird(sighting.birdId);
 
   if (!bird) {
-    return null;
+    return <SightingCardPlaceholder />;
   }
   else {
     return (
@@ -23,3 +23,7 @@ export function SightingCard({ sighting }) {
     );
   }
 }
+
+export const SightingCardPlaceholder = React.forwardRef((props, ref) => {
+  return <div ref={ref} className='card' style={{ height: '152px' }} />;
+});

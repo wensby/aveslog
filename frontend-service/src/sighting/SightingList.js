@@ -1,16 +1,16 @@
 import React from 'react';
-import { SightingCard } from './SightingCard.js';
-import { LazyLoadComponent } from 'react-lazy-load-image-component';
+import { SightingCard, SightingCardPlaceholder } from './SightingCard.js';
+import { LazyLoad } from '../LazyLoad.js';
 
-export function SightingList({ sightings }) {
+export const SightingList = ({ sightings }) => {
 
   const renderSightingCard = sighting => {
     return (
-      <LazyLoadComponent placeholder={<div style={{height: '150px'}}></div>}><React.Fragment key={sighting.id}>
-        <SightingCard sighting={sighting} key={sighting.id} />
-      </React.Fragment></LazyLoadComponent>
+      <LazyLoad offset={1000} key={sighting.id} placeholder={<SightingCardPlaceholder />}>
+        <SightingCard sighting={sighting} />
+      </LazyLoad>
     );
   };
 
   return <div className='text-break'>{sightings.map(renderSightingCard)}</div>;
-}
+};
