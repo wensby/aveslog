@@ -1,16 +1,16 @@
 import React, { Suspense } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Page from './Page.js'
 import { UserProvider } from './authentication/UserContext.js';
 import { ScrollProvider } from './ScrollContext.js';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { SightingProvider } from './sighting/SightingContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 
-export default ({ version }) => {
+export const App = ({ version }) => {
   prepareLocalStorage(version);
 
   return (
-    <Router>
+    <BrowserRouter>
       <ScrollProvider>
         <UserProvider>
           <SightingProvider>
@@ -20,13 +20,13 @@ export default ({ version }) => {
           </SightingProvider>
         </UserProvider>
       </ScrollProvider>
-    </Router>
+    </BrowserRouter>
   );
 }
 
 /**
- * Clears the local storage and updates the app version if the version differs
- * from previously set app version.
+ * Iff the provided version differs from previously set app version in local
+ * storage, clears the local storage and updates the app version.
  */
 function prepareLocalStorage(version) {
   const key = 'appVersion';
