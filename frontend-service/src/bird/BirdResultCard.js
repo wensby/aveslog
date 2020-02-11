@@ -26,10 +26,8 @@ export default ({ searchResult, ...other }) => {
   
   return (
     <BirdCard bird={bird} {...other} >
-      <div className="card-body">
-        <BirdCardName bird={bird} />
-        {renderAddSightingLink(bird)}
-      </div>
+      <BirdCardName bird={bird} />
+      {renderAddSightingLink(bird)}
     </BirdCard>
   );
 }

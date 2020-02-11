@@ -1,5 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.css';
-
 import React from 'react';
 import { Navbar } from './navbar/Navbar.js';
 import Sidebar from './SideMenu.js';

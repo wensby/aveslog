@@ -1,5 +1,4 @@
 import React from 'react';
-import Nav from 'react-bootstrap/Nav';
 import './style.scss';
 
 export function Menu({ onClick, items }) {
@@ -13,8 +12,8 @@ export function Menu({ onClick, items }) {
   };
 
   return (
-    <Nav className='navbar-nav mr-auto' id='collapsableMenuList'>
+    <div className='navbar-nav mr-auto' id='collapsableMenuList'>
       {items.map(renderItem)}
-    </Nav>
+    </div>
   );
 }

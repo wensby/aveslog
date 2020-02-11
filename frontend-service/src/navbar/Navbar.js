@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './style.scss';
 import { ExpandibleMenu } from './ExpandibleMenu';
 import { NavbarConstant } from './NavbarConstant';
+import './Navbar.scss';
 
 export function Navbar() {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');

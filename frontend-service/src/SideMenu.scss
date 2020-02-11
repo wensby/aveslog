@@ -1,0 +1,19 @@
+.sidemenu {
+  box-sizing: border-box;
+
+  & .sidebar {
+    flex-direction: column !important;
+    border-left: 1px solid #dee2e6 !important;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    box-sizing: border-box;
+  }
+}
+
+.nav-link {
+  display: block;
+  padding: .5rem 1rem;
+}

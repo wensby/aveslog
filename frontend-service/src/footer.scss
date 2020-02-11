@@ -8,6 +8,12 @@ footer {
   width: 100%;
   height: $footer-height;
   padding: 20px;
+  display: block;
+  box-sizing: border-box;
+}
+
+.text-muted {
+  color: #6c757d !important;
 }
 
 footer .language-option {
@@ -22,6 +28,7 @@ footer .language-option {
   padding: 0;
   perspective-origin: 0 0;
   cursor: pointer;
+  font-size: inherit;
 }
 
 footer .language-option:focus {

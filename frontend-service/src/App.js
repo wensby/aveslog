@@ -1,5 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.css';
-
 import React, { Suspense } from 'react';
 import Page from './Page.js'
 import { UserProvider } from './authentication/UserContext.js';

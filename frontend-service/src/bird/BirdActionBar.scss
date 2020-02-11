@@ -6,8 +6,9 @@ div.bird-action-bar {
   padding: .2em;
   box-shadow: 0 0 1em .2em transparentize($black, .95);
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid: 40px / 1fr 1fr 1fr;
   overflow: hidden;
+  box-sizing: border-box;
 
   &>div {
     font-weight: bold;
@@ -28,6 +29,7 @@ div.bird-action-bar {
     }
 
     & * {
+      vertical-align: middle;
       fill: $primary;
       transition:
         color $transition-time ease-in-out,

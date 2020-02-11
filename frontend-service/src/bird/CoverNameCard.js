@@ -1,11 +1,12 @@
 import React from 'react';
 import { useCommonName } from './BirdHooks';
+import './CoverNameCard.scss';
 
 export function CoverNameCard({ bird }) {
   const { commonName, loading } = useCommonName(bird);
 
   return (
-    <div className='w-100 d-flex justify-content-center'>
+    <div className='bird-name-card w-100 d-flex justify-content-center'>
       <div className='shadow bg-white text-center pt-1 mb-0 px-2 rounded-top'>
         <h1 className='text-dark bird-page-name pb-2 mb-0'>
           {loading ? '' : commonName || ''}</h1>

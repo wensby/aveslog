@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCommonName } from './BirdHooks';
 import { FadeInBottom } from './FadeInBottom';
+import './BirdCardName.scss';
 
 export function BirdCardName({ bird }) {
   const { commonName, loading } = useCommonName(bird);

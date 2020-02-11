@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from '../AuthenticationService.js';
 import { Link } from 'react-router-dom'
+import { PageHeading } from '../../PageHeading';
+import './EmailRegistration.scss';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -46,14 +48,14 @@ export default () => {
     <div className='container'>
       <div className='row'>
         <div className='col'>
-          <h1>{t('Registration')}</h1>
+          <PageHeading>{t('Registration')}</PageHeading>
           <p>{t('register-link-request-prompt-message')}</p>
         </div>
       </div>
       {renderAlert()}
       <div className='row'>
         <div className='col'>
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleFormSubmit} className='email-registration-form'>
             <div className='form-group'>
               <label htmlFor='emailInput'>{t('Email address')}</label>
               <input

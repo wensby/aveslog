@@ -7,6 +7,7 @@ import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
+import { PageHeading } from '../../PageHeading';
 
 export function CredentialsRegistrationPage() {
   const { match } = useReactRouter();
@@ -82,7 +83,7 @@ export function CredentialsRegistrationPage() {
     <div className='container'>
       <div className='row'>
         <div className='col'>
-          <h2>{ t('Registration') }</h2>
+          <PageHeading>{ t('Registration') }</PageHeading>
           <p>
             { t('registration-form-instructions') }
           </p>

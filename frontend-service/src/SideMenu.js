@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { UserContext } from './authentication/UserContext.js';
 import { getMenuItems } from './navbar/MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
+import './SideMenu.scss';
 
 export default () => {
   const { t } = useTranslation();

@@ -4,7 +4,6 @@
   "main": "server.js",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.3.1",
     "express": "^4.16.4",
     "i18next": "^17.0.18",
     "i18next-browser-languagedetector": "^3.0.1",
@@ -12,7 +11,6 @@
     "node-sass": "4.13.1",
     "query-string": "6.8.2",
     "react": "^16.10.1",
-    "react-bootstrap": "^1.0.0-beta.12",
     "react-dom": "^16.10.1",
     "react-i18next": "^10.13.1",
     "react-router": "^5.1.2",

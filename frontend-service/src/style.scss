@@ -14,6 +14,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: .875rem;
   width: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
 }
 
 a {
@@ -23,6 +27,30 @@ a {
   &:hover {
     color: $black;
   }
+}
+
+button {
+  cursor: pointer;
+}
+
+.alert {
+	position: relative;
+	padding: .75rem 1.25rem;
+	margin-bottom: 1rem;
+	border: 1px solid transparent;
+	border-radius: .25rem;
+}
+
+.alert-danger {
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+}
+
+.alert-success {
+	color: #1c7220;
+	background-color: #d7f8d9;
+	border-color: #c6f5ce;
 }
 
 .button {
@@ -114,6 +142,11 @@ a {
   display: block;
 }
 
+hr {
+  border: 0;
+  border-top: 1px solid rgba(0,0,0,.1);
+}
+
 .success-text {
   color: $success;
 }
@@ -197,6 +230,7 @@ input:focus {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 15%;
+  background-color: #EEE;
 }
 
 .picture-cover {

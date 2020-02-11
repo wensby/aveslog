@@ -6,6 +6,7 @@ import { UserContext } from '../authentication/UserContext';
 import { BirdSection } from "./BirdSection";
 import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
+import './NewSightingForm.scss';
 
 export function NewSightingForm({ bird, onSuccess }) {
   const { t } = useTranslation();
@@ -58,38 +59,34 @@ export function NewSightingForm({ bird, onSuccess }) {
   };
 
   return (
-    <div className='container sighting-form'>
-      <div className='row'>
-        <div className='col'>
-          <h1>{t('new-sighting-title')}</h1>
-          <form onSubmit={handleFormSubmit}>
-            <BirdSection bird={bird} />
-            <div className='form-group row'>
-              <Label htmlFor='dateInput' label='date-label' />
-              <div className='col-sm-10'>
-                <input type='date' id='dateInput' className='form-control' value={date} onChange={event => setDate(event.target.value)} />
-              </div>
-            </div>
-            <div className='form-group row'>
-              <Label htmlFor='timeInput' label='time-label' />
-              <div className='input-group col-sm-10' id='timeInput'>
-                <div className='input-group-prepend'>
-                  <div className='input-group-text'>
-                    <input type='checkbox' id='timeCheckboxInput' name='timeCheckboxInput' checked={timeEnabled} onChange={event => setTimeEnabled(event.target.checked)} />
-                  </div>
-                </div>
-                <input type='time' id='timeTimeInput' className='form-control' value={time} disabled={!timeEnabled} onChange={event => setTime(event.target.value)} />
-              </div>
-            </div>
-            <LocationSection onCoordinatesChanged={setLocation} onBlocking={setBlockedByLocation} />
-            <input type='hidden' name='birdId' value={bird.id} />
-            <button type='submit' className='button' disabled={blockedByLocation}>
-              {t('submit-sighting-button')}
-            </button>
-          </form>
-          <Link to='/'>{t('cancel-new-sighting-link')}</Link>
+    <div className='sighting-form'>
+      <h1>{t('new-sighting-title')}</h1>
+      <form onSubmit={handleFormSubmit}>
+        <BirdSection bird={bird} />
+        <div className='form-group row'>
+          <Label htmlFor='dateInput' label='date-label' />
+          <div className='col-sm-10'>
+            <input type='date' id='dateInput' className='form-control' value={date} onChange={event => setDate(event.target.value)} />
+          </div>
         </div>
-      </div>
+        <div className='form-group row'>
+          <Label htmlFor='timeInput' label='time-label' />
+          <div className='input-group col-sm-10' id='timeInput'>
+            <div className='input-group-prepend'>
+              <div className='input-group-text'>
+                <input type='checkbox' id='timeCheckboxInput' name='timeCheckboxInput' checked={timeEnabled} onChange={event => setTimeEnabled(event.target.checked)} />
+              </div>
+            </div>
+            <input type='time' id='timeTimeInput' className='form-control' value={time} disabled={!timeEnabled} onChange={event => setTime(event.target.value)} />
+          </div>
+        </div>
+        <LocationSection onCoordinatesChanged={setLocation} onBlocking={setBlockedByLocation} />
+        <input type='hidden' name='birdId' value={bird.id} />
+        <button type='submit' className='button' disabled={blockedByLocation}>
+          {t('submit-sighting-button')}
+        </button>
+      </form>
+      <Link to='/'>{t('cancel-new-sighting-link')}</Link>
     </div>
   );
 }

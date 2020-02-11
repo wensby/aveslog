@@ -4,6 +4,7 @@ import AuthenticationService from './AuthenticationService.js';
 import { UserContext } from './UserContext.js';
 import { useHistory } from "react-router-dom";
 import './spinner.scss';
+import './LoginForm.scss';
 
 export function LoginForm({ onError }) {
   const history = useHistory();
@@ -48,24 +49,24 @@ export function LoginForm({ onError }) {
 
   return (
     <form className='login-form' onSubmit={handleLoginFormSubmit}>
-      <div className='form-row'>
-        <div className='form-group col-6'>
+      <div className='credentials-fields'>
+        <div>
           <label htmlFor='usernameInput'>{t('username-label')}</label>
           <input value={username}
             onChange={event => setUsername(event.target.value)}
             id='usernameInput' className='form-control' type='text'
             name='username' placeholder={t('username-label')} />
         </div>
-        <div className='form-group col-6'>
-          <label htmlFor='passwordInput'>{t('Password')}</label>
-          <input value={password}
-            onChange={event => setPassword(event.target.value)}
-            id='passwordInput' className='form-control' type='password'
-            name='password' placeholder={t('Password')} />
+        <div>
+        <label htmlFor='passwordInput'>{t('Password')}</label>
+        <input value={password}
+          onChange={event => setPassword(event.target.value)}
+          id='passwordInput' className='form-control' type='password'
+          name='password' placeholder={t('Password')} />
         </div>
       </div>
-      <div className='d-flex flex-row'>
-        <div className='d-flex ml-auto'>
+      <div className='login-button-row'>
+        <div>
           {loading && <div className='spinner' />}
           <button type='submit' className='button'>
             {t('Login')}

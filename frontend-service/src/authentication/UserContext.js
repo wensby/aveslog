@@ -42,6 +42,7 @@ function UserProvider(props) {
       }
       else {
         setRefreshToken(null);
+        localStorage.removeItem('refreshToken');
       }
     }
     if (refreshToken) {
