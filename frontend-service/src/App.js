@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Page from './Page.js'
 import { UserProvider } from './authentication/UserContext.js';
-import { ScrollProvider } from './ScrollContext.js';
+import { WindowScrollProvider } from './WindowScrollContext.js';
 import { SightingProvider } from './sighting/SightingContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 
@@ -11,7 +11,7 @@ export const App = ({ version }) => {
 
   return (
     <BrowserRouter>
-      <ScrollProvider>
+      <WindowScrollProvider>
         <UserProvider>
           <SightingProvider>
             <Suspense fallback={<SuspenseLoader />}>
@@ -19,7 +19,7 @@ export const App = ({ version }) => {
             </Suspense>
           </SightingProvider>
         </UserProvider>
-      </ScrollProvider>
+      </WindowScrollProvider>
     </BrowserRouter>
   );
 }
