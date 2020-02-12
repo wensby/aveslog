@@ -146,6 +146,11 @@ Status: 200 OK
 }
 ```
 
+**Possible Errors**
+
+`Status: 401 UNAUTHORIZED` When refresh token used to get access token is either
+invalid, expired, or revoked.
+
 ### Password Reset
 
 Just like registering a new account, resetting a password is a 2-step process.
