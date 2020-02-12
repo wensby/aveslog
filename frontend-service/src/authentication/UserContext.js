@@ -4,35 +4,32 @@ import AuthenticationService from './AuthenticationService.js';
 
 const accountService = new AccountService()
 const UserContext = React.createContext();
+const refreshTokenKey = 'refreshToken';
 
-function UserProvider(props) {
-  const [resolvingLocalStorage, setResolvingLocalStorage] = useState(true);
+const UserProvider = ({ children }) => {
+  const [loadingSession, setLoadingSession] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [account, setAccount] = useState(null);
 
   useEffect(() => {
-    const localStorageRefreshToken = localStorage.getItem('refreshToken');
+    const localStorageRefreshToken = localStorage.getItem(refreshTokenKey);
     if (localStorageRefreshToken) {
-      console.log('Refresh token recovered from local storage.');
       setRefreshToken(JSON.parse(localStorageRefreshToken));
     }
     else {
-      console.log('No refresh token found in local storage.');
-      setResolvingLocalStorage(false);
+      setLoadingSession(false);
     }
   }, []);
 
   useEffect(() => {
     if (refreshToken) {
-      console.log('storing refresh token in storage');
-      localStorage.setItem('refreshToken', JSON.stringify(refreshToken));
+      localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
     }
-    else if (!resolvingLocalStorage) {
-      console.log('clearing refresh token from storage');
-      localStorage.removeItem('refreshToken');
+    else if (!loadingSession) {
+      localStorage.removeItem(refreshTokenKey);
     }
-  }, [refreshToken, resolvingLocalStorage]);
+  }, [refreshToken, loadingSession]);
 
   useEffect(() => {
     const resolveAccessToken = async () => {
@@ -42,7 +39,7 @@ function UserProvider(props) {
       }
       else {
         setRefreshToken(null);
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem(refreshTokenKey);
       }
     }
     if (refreshToken) {
@@ -56,7 +53,7 @@ function UserProvider(props) {
       if (response.status === 200) {
         const json = await response.json();
         setAccount(json);
-        setResolvingLocalStorage(false);
+        setLoadingSession(false);
       }
     }
     if (accessToken) {
@@ -95,7 +92,7 @@ function UserProvider(props) {
     }
   }
 
-  if (resolvingLocalStorage) {
+  if (loadingSession) {
     return null;
   }
   return (
@@ -103,12 +100,10 @@ function UserProvider(props) {
       authenticated: refreshToken,
       account,
       unauthenticate,
-      refreshToken,
       setRefreshToken,
-      setAccessToken,
       getAccessToken,
     }}>
-      {props.children}
+      {children}
     </UserContext.Provider>
   );
 }
