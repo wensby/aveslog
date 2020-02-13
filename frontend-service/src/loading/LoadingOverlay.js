@@ -1,8 +1,8 @@
 import React from 'react';
-import './style.scss';
 import Spinner from './Spinner';
+import './LoadingOverlay.scss';
 
-export default () => {
+export const LoadingOverlay = () => {
   return (
     <div className='loading-overlay' >
       <Spinner />

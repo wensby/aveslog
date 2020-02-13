@@ -157,10 +157,10 @@ hr {
 }
 
 %navbar-pushed {
-  padding-top: 112px;
+  padding-top: 112px + 15px;
 
   @media only screen and (min-width : $break-small) {
-    padding-top: 64px;
+    padding-top: 64px + 15px;
   }
 }
 
@@ -289,14 +289,13 @@ input:focus {
 }
 
 .main-grid {
-  @extend %navbar-pushed;
-  @extend %padding-to-footer;
   width: 100%;
-  overflow: hidden;
   background-color: white;
-  height: auto;
+  top: 0;
+  bottom: 0;
   display: grid;
   grid: 1fr / 1fr;
+  min-height: 100vh;
   grid-template-areas:
     'main';
   -webkit-perspective: 500px;
@@ -332,6 +331,7 @@ input:focus {
 }
 
 main {
+  @extend %navbar-pushed;
+  @extend %padding-to-footer;
   grid-area: main;
-  padding-top: 15px;
 }

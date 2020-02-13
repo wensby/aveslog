@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BirdService from './BirdService.js';
 import './style.scss';
-import Loading from '../loading/Loading';
+import { LoadingOverlay } from '../loading/LoadingOverlay';
 import { BirdSearchResults } from './BirdSearchResults.js';
 
 export function BirdSearchResultsContainer({ query }) {
@@ -26,7 +26,7 @@ export function BirdSearchResultsContainer({ query }) {
   }, [query, displayedQuery]);
 
   if (loading) {
-    return <div className='bird-result-container text-break'><Loading /></div>;
+    return <LoadingOverlay />;
   }
   return <BirdSearchResults query={query} birds={resultItems} />;
 };
