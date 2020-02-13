@@ -3,6 +3,8 @@ import { NavbarConstant } from './NavbarConstant.js';
 import { ExpandibleMenu } from './ExpandibleMenu.js';
 import './Navbar.scss';
 
+export const NavbarContext = React.createContext();
+
 export const Navbar = () => {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
   let fullNavbarRef = null;
@@ -48,7 +50,7 @@ export const Navbar = () => {
         }
       }, 300);
     }
-  }, [menuCollapseState])
+  }, [menuCollapseState]);
 
   const setFullNavbarRef = node => {
     fullNavbarRef = node;
@@ -76,9 +78,11 @@ export const Navbar = () => {
   }
 
   return (
-    <div ref={setFullNavbarRef} className='navbar'>
-      <NavbarConstant ref={setGridRef} onToggleNavbarClick={toggleNavbar} />
-      <ExpandibleMenu state={menuCollapseState} onItemClick={collapseMenu} />
-    </div>
+    <NavbarContext.Provider value={{ toggleNavbar, collapseMenu }}>
+      <div ref={setFullNavbarRef} className='navbar'>
+        <NavbarConstant ref={setGridRef} />
+        <ExpandibleMenu state={menuCollapseState} />
+      </div>
+    </NavbarContext.Provider>
   );
 };
