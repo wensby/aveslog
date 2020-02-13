@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './style.scss';
 import { ExpandibleMenu } from './ExpandibleMenu';
 import { NavbarConstant } from './NavbarConstant';
 import './Navbar.scss';
@@ -77,7 +76,7 @@ export function Navbar() {
   }
 
   return (
-    <div ref={setFullNavbarRef} className="navbar navbar-light shadow p-0 fixed-top">
+    <div ref={setFullNavbarRef} className='navbar'>
       <NavbarConstant ref={setGridRef} onToggleNavbarClick={toggleNavbar} />
       <ExpandibleMenu state={menuCollapseState} onItemClick={collapseMenu} />
     </div>
