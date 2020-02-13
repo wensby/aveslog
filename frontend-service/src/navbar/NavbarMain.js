@@ -2,6 +2,7 @@ import React from 'react';
 import { NavbarBrand } from './NavbarBrand';
 import { NavbarUsername } from './NavbarUsername';
 import { useAuthentication } from '../authentication/AuthenticationHooks';
+import './NavbarMain.scss';
 
 export function NavbarMain() {
   const { account } = useAuthentication();
