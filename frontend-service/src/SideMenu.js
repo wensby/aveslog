@@ -2,7 +2,7 @@ import React from 'react';
 import { useMenuItems } from './useMenuItems.js';
 import './SideMenu.scss';
 
-export default () => {
+export const SideMenu = () => {
   const items = useMenuItems();
 
   const renderItem = (item, index) => {
@@ -16,4 +16,4 @@ export default () => {
       </nav>
     </div>
   );
-}
+};
