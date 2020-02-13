@@ -3,11 +3,10 @@ import { UserContext } from '../authentication/UserContext';
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { authenticated, getAccessToken } = useContext(UserContext);
+  const { authenticated, accessToken } = useContext(UserContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
-      const accessToken = await getAccessToken();
       const response = await fetch(`${window._env_.API_URL}/account/roles`, {
         headers: {
           'accessToken': accessToken.jwt
@@ -25,7 +24,7 @@ export function usePermissions() {
     if (authenticated) {
       resolvePermissions();
     }
-  }, [authenticated, getAccessToken]);
+  }, [authenticated]);
 
   return { permissions };
 }

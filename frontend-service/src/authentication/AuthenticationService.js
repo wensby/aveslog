@@ -22,26 +22,6 @@ export default class AuthenticationService {
     });
   }
 
-  async getAccessToken(refreshToken) {
-    return await fetch(`${this.apiUrl}/authentication/access-token`, {
-      headers: {
-        'refreshToken': refreshToken,
-      },
-    });
-  }
-
-  async fetchAccessToken(refreshToken) {
-    console.log('fetching access token');
-    const response = await this.getAccessToken(refreshToken.jwt);
-    if (response.status === 200) {
-      const json = await response.json();
-      const expirationDate = new Date();
-      expirationDate.setSeconds(expirationDate.getSeconds() + json.expiresIn);
-      return { jwt: json.jwt, expiration: expirationDate };
-    }
-    return null;
-  }
-
   async postPasswordResetEmail(email) {
     return await fetch(
       `${this.apiUrl}/authentication/password-reset`,

@@ -9,13 +9,12 @@ import { useHistory } from "react-router-dom";
 export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
-  const { getAccessToken, account } = useContext(UserContext);
+  const { accessToken, account } = useContext(UserContext);
   const sightingService = new SightingService();
   const history = useHistory();
 
   useEffect(() => {
     const resolveSighting = async () => {
-      const accessToken = await getAccessToken();
       const response = await sightingService.fetchSighting(accessToken, sightingId);
       if (response.status === 200) {
         const sighting = await response.json();
@@ -23,10 +22,9 @@ export function SightingPage({match}) {
       }
     }
     resolveSighting();
-  }, [sightingId, getAccessToken, sightingService]);
+  }, [sightingId, accessToken, sightingService]);
 
   const handleDelete = async () => {
-    const accessToken = await getAccessToken();
     const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
     if (deleted) {
       history.push('/sighting');

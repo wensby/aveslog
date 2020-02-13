@@ -1,107 +1,129 @@
-import React, { useState, useEffect } from 'react';
-import AccountService from '../account/AccountService.js';
+import React, { useState, useEffect, useRef } from 'react';
 import AuthenticationService from './AuthenticationService.js';
 
-const accountService = new AccountService()
 const UserContext = React.createContext();
 const refreshTokenKey = 'refreshToken';
 
 const UserProvider = ({ children }) => {
-  const [loadingSession, setLoadingSession] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [account, setAccount] = useState(null);
+  const latestRefreshToken = useRef(refreshToken);
+  latestRefreshToken.current = refreshToken;
 
   useEffect(() => {
     const localStorageRefreshToken = localStorage.getItem(refreshTokenKey);
     if (localStorageRefreshToken) {
+      console.log('Recovered local storage refresh token');
       setRefreshToken(JSON.parse(localStorageRefreshToken));
     }
-    else {
-      setLoadingSession(false);
-    }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (refreshToken) {
-      localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
-    }
-    else if (!loadingSession) {
-      localStorage.removeItem(refreshTokenKey);
-    }
-  }, [refreshToken, loadingSession]);
-
-  useEffect(() => {
-    const resolveAccessToken = async () => {
-      const accessToken = await (new AuthenticationService().fetchAccessToken(refreshToken));
-      if (accessToken) {
+    const refreshAccessToken = async refreshToken => {
+      const response = await fetchAccessToken(refreshToken);
+      if (response.status === 200) {
+        const json = await response.json();
+        const accessToken = createAccessToken(json);
+        console.log('Resolved new access token');
         setAccessToken(accessToken);
+        setTimeout(() => {
+          console.log('Access token refresh timeout hit');
+          if (latestRefreshToken.current === refreshToken) {
+            refreshAccessToken(refreshToken);
+          }
+        }, (json.expiresIn - 60) * 1000);
       }
-      else {
-        setRefreshToken(null);
-        localStorage.removeItem(refreshTokenKey);
+      else if (response.status === 401) {
+        unauthenticate();
       }
-    }
+    };
     if (refreshToken) {
-      resolveAccessToken();
+      refreshAccessToken(refreshToken);
+    }
+    else {
+      setAccessToken(null);
     }
   }, [refreshToken]);
 
   useEffect(() => {
-    const fetchAccount = async accessToken => {
-      const response = await accountService.fetchAuthenticatedAccount(accessToken);
-      if (response.status === 200) {
-        const json = await response.json();
-        setAccount(json);
-        setLoadingSession(false);
+    if (!loading) {
+      if (refreshToken) {
+        localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
+      }
+      else {
+        localStorage.removeItem(refreshTokenKey);
       }
     }
+
+  }, [refreshToken, loading]);
+
+  useEffect(() => {
     if (accessToken) {
-      fetchAccount(accessToken);
+      resolveAccount(accessToken);
     }
   }, [accessToken]);
 
-  const asyncUnauthenticate = async () => {
-    const accessToken = await getAccessToken();
-    const response = await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
-    if (response.status === 204) {
-      setRefreshToken(null);
-      setAccessToken(null);
-      setAccount(false);
+  const resolveAccount = async accessToken => {
+    const response = await fetchAuthenticatedAccount(accessToken);
+    if (response.status === 200) {
+      const json = await response.json();
+      setAccount(json);
     }
-  }
+  };
 
-  const unauthenticate = () => {
+  const fetchAuthenticatedAccount = async accessToken => {
+    const url = `${window._env_.API_URL}/account`;
+    return await fetch(url, {
+      'headers': {
+        'accessToken': accessToken.jwt
+      }
+    });
+  };
+
+  const fetchAccessToken = async refreshToken => {
+    console.log('Fetching new access token');
+    return await fetch(`${window._env_.API_URL}/authentication/access-token`, {
+      headers: {
+        'refreshToken': refreshToken.jwt,
+      },
+    });
+  };
+
+  const unauthenticate = async () => {
     if (refreshToken) {
-      asyncUnauthenticate();
-    }
-  }
-
-  const getAccessToken = async () => {
-    const tenSeconds = 10000;
-    if (!accessToken || (new Date().getTime() + tenSeconds) > accessToken.expiration) {
-      console.log("access token need refreshing");
-      const accessToken = await (new AuthenticationService().fetchAccessToken(refreshToken));
-      if (accessToken) {
-        setAccessToken(accessToken);
-        return accessToken;
+      const response = await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
+      if (response.status === 204) {
+        setRefreshToken(null);
+        localStorage.removeItem(refreshTokenKey);
+        setAccessToken(null);
+        setAccount(false);
       }
     }
-    else {
-      return accessToken;
-    }
-  }
+  };
 
-  if (loadingSession) {
+  const createAccessToken = json => {
+    return { jwt: json.jwt, expiration: createFutureDate(json.expiresIn) };
+  };
+
+  const createFutureDate = seconds => {
+    const date = new Date();
+    date.setSeconds(date.getSeconds() + seconds);
+    return date;
+  };
+
+  if (loading || (refreshToken && !account)) {
     return null;
   }
   return (
     <UserContext.Provider value={{
-      authenticated: refreshToken,
+      authenticated: accessToken !== null,
       account,
       unauthenticate,
       setRefreshToken,
-      getAccessToken,
+      accessToken,
     }}>
       {children}
     </UserContext.Provider>

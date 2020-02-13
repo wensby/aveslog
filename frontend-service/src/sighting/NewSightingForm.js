@@ -10,7 +10,7 @@ import './NewSightingForm.scss';
 
 export function NewSightingForm({ bird, onSuccess }) {
   const { t } = useTranslation();
-  const { getAccessToken, account } = useContext(UserContext);
+  const { accessToken, account } = useContext(UserContext);
   const [blockedByLocation, setBlockedByLocation] = useState(false);
   const sightingService = new SightingService();
   const [date, setDate] = useState('');
@@ -48,7 +48,6 @@ export function NewSightingForm({ bird, onSuccess }) {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!blockedByLocation) {
-      const accessToken = await getAccessToken();
       const response = await sightingService.postSighting(accessToken, account.birder.id, bird.binomialName, date, time, location);
       if (response.status === 201) {
         const sightingLocation = response.headers.get('Location');

@@ -6,7 +6,7 @@ const sightingService = new SightingService();
 const SightingContext = React.createContext();
 
 const SightingProvider = props => {
-  const { account, getAccessToken, unauthenticate } = useContext(UserContext);
+  const { account, accessToken, unauthenticate } = useContext(UserContext);
   const [sightingsAccount, setSightingsAccount] = useState(null);
   const [sightings, setSightings] = useState([]);
 
@@ -18,7 +18,6 @@ const SightingProvider = props => {
   }, [account, sightingsAccount]);
 
   const refreshSightings = async () => {
-    const accessToken = await getAccessToken();
     const response = await sightingService.fetchBirderSightings(account.birder.id, accessToken);
     if (response.status === 200) {
       const json = await response.json();

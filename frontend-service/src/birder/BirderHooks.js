@@ -3,17 +3,16 @@ import { UserContext } from '../authentication/UserContext';
 import birderRepository from './BirderRepository';
 
 export function useBirder(birderId) {
-  const { getAccessToken } = useContext(UserContext);
+  const { accessToken } = useContext(UserContext);
   const [birder, setBirder] = useState(null);  
 
   useEffect(() => {
     const resolveBirder = async () => {
-      const token = await getAccessToken();
-      const birder = await birderRepository.getBirder(birderId, token);
+      const birder = await birderRepository.getBirder(birderId, accessToken);
       setBirder(birder);
     }
     resolveBirder();
-  }, [birderId, getAccessToken]);
+  }, [birderId, accessToken]);
 
   return birder;
 }
