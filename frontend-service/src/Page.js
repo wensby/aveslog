@@ -5,7 +5,7 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import './style.scss';
 
-export default () => {
+export const Page = () => {
   return (
     <>
       <Navbar />
@@ -14,4 +14,4 @@ export default () => {
       <Footer />
     </>
   );
-}
+};
