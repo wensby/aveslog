@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import './SearchBar.scss';
 
-export function SearchBar() {
+export const SearchBar = () => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);
@@ -29,4 +29,4 @@ export function SearchBar() {
       </div>
     </form>
   );
-}
+};
