@@ -12,29 +12,6 @@ div.navbar {
   box-shadow: 0 .5rem 1rem transparentize(black, .85);
 }
 
-.search-advanced-icon {
-  margin-top: 6px;
-  margin-left: -40px;
-  padding-right: 10px;
-
-  &.expanded svg {
-    transform: rotate(180deg);
-    fill: $black;
-  }
-
-  & svg {
-    width: 30px;
-    height: 30px;
-    fill: $lighter;
-    transition: transform .1s ease-in-out;
-
-    &:hover {
-      fill: $darkgrey;
-      cursor: pointer;
-    }
-  }
-}
-
 .navbar-username {
   padding-top: 0px;
 
