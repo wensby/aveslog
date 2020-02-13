@@ -3,7 +3,7 @@ import { ExpandibleMenu } from './ExpandibleMenu';
 import { NavbarConstant } from './NavbarConstant';
 import './Navbar.scss';
 
-export function Navbar() {
+export const Navbar = () => {
   const [menuCollapseState, setMenuCollapseState] = useState('collapsed');
   let fullNavbarRef = null;
   let gridRef = null;
@@ -81,4 +81,4 @@ export function Navbar() {
       <ExpandibleMenu state={menuCollapseState} onItemClick={collapseMenu} />
     </div>
   );
-}
+};
