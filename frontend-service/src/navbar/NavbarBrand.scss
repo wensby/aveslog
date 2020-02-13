@@ -1,0 +1,34 @@
+@import '../colors.scss';
+
+.navbar-brand {
+  display: inline-block;
+  padding-top: 0.35rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  line-height: inherit;
+  white-space: nowrap;
+
+  &::before, &::after {
+    box-sizing: border-box;
+  }
+}
+
+@font-face {
+  font-family: 'Luckiest Guy';
+  src: url('../LuckiestGuy-Regular.ttf');
+}
+
+.brand-name {
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 130%;
+  margin-left: 10px;
+  color: $primary;
+
+  &:hover {
+    color: $darkgrey;
+  }
+
+  & span {
+    margin-left: 1px;
+  }
+}
