@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ExpandibleMenu } from './ExpandibleMenu';
-import { NavbarConstant } from './NavbarConstant';
+import { NavbarConstant } from './NavbarConstant.js';
+import { ExpandibleMenu } from './ExpandibleMenu.js';
 import './Navbar.scss';
 
 export const Navbar = () => {

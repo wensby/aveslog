@@ -1,8 +1,15 @@
 @import '../colors.scss';
 @import '../layout.scss';
 
-.navbar {
+div.navbar {
+  display: flex;
+  flex-wrap: wrap;
   position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+  box-shadow: 0 .5rem 1rem transparentize(black, .85);
 }
 
 .search-advanced-icon {
@@ -51,30 +58,6 @@
 
   &::before, &::after {
     box-sizing: border-box;
-  }
-}
-
-.navbar-grid {
-  width: 100%;
-  display: grid;
-  background-color: $white;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 64px 48px;
-  grid-template-areas:
-    "main button"
-    "search search";
-
-  @media #{$tablet-landscape-up} {
-    grid: 64px/ 3fr 7fr;
-    grid-template-areas:
-      'main search';
-  }
-
-  @media #{$desktop-up} {
-    grid: 64px / 1fr 750px 1fr;
-    padding-right: 0;
-    grid-template-areas:
-      "main search _";
   }
 }
 
@@ -156,62 +139,10 @@ font-weight: 400;
   }
 }
 
-.menu {
-  background-color: $white;
-  transition: max-height .3s;
-  padding-left: 15px;
-  width: 100%;
-  height: auto;
-  max-height: 0px;
-  overflow-y: hidden;
-
-  &.collapsed {
-    visibility: hidden;
-  }
-
-  &.expanding, &.expanded, &.collapsing {
-    display: block;
-  }
-
-  @media #{$tablet-landscape-up} {
-    display: none !important;
-  }
-}
-
 .navbar-main {
   grid-area: main;
   display: flex;
   align-items: center;
-}
-
-.navbar-grid .menu-button {
-  grid-area: button;
-  align-self: center;
-  justify-self: end;
-  padding: 7px;
-
-  @media #{$tablet-landscape-up} {
-    display: none;
-  }
-}
-
-.navbar-grid .search-bar-item {
-  grid-area: search;
-  align-self: center;
-
-  @media #{$tablet-landscape-up} {
-    padding-right: 7px;
-  }
-
-  @media #{$desktop-up} {
-    padding-right: 0px;
-  }
-}
-
-.navbar-grid .menu {
-  grid-area: menu;
-  align-self: center;
-  transition: position .5s;
 }
 
 .search-bar {
@@ -252,16 +183,4 @@ font-weight: 400;
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
   }
-}
-
-.navbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1030;
-  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
 }

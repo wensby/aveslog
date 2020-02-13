@@ -1,0 +1,56 @@
+@import '../colors.scss';
+@import '../layout.scss';
+
+.navbar-constant {
+  width: 100%;
+  display: grid;
+  background-color: $white;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 64px 48px;
+  grid-template-areas:
+    "main button"
+    "search search";
+
+  @media #{$tablet-landscape-up} {
+    grid: 64px/ 3fr 7fr;
+    grid-template-areas:
+      'main search';
+  }
+
+  @media #{$desktop-up} {
+    grid: 64px / 1fr 750px 1fr;
+    padding-right: 0;
+    grid-template-areas:
+      "main search _";
+  }
+}
+
+.navbar-constant .search-bar-item {
+  grid-area: search;
+  align-self: center;
+
+  @media #{$tablet-landscape-up} {
+    padding-right: 7px;
+  }
+
+  @media #{$desktop-up} {
+    padding-right: 0px;
+  }
+}
+
+.navbar-constant .menu {
+  grid-area: menu;
+  align-self: center;
+  transition: position .5s;
+}
+
+.navbar-constant .menu-button {
+  grid-area: button;
+  align-self: center;
+  justify-self: end;
+  padding: 7px;
+
+  @media #{$tablet-landscape-up} {
+    display: none;
+  }
+}
