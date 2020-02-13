@@ -1,0 +1,14 @@
+@import '../colors.scss';
+
+div.navbar-username {
+  padding-top: 0px;
+
+  & a {
+    color: $black;
+
+    &:hover {
+      color: $primary;
+      text-decoration: none;
+    }
+  }
+}
