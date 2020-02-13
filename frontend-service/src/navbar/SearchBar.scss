@@ -8,6 +8,42 @@
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  max-width: 0px;
+  border: 1px solid transparent;
+  transition: 
+      color 0.15s ease-in-out, 
+      background-color 0.15s ease-in-out, 
+      box-shadow 0.15s ease-in-out, 
+      max-width 0.1s ease-in, 
+      padding 0.1s ease-in;
+  color: $white;
+  background-color: $primary;
+  border-radius: 0;
+  border-width: 0;
+  padding: .5rem 1rem;
+  white-space: nowrap;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  &:hover {
+    color: $white;
+    background-color: $black;
+  }
+
+  @media #{$tablet-landscape-up} {
+    transition: max-width 0s, padding 0s;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    max-width: 100px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  &.expanded {
+    max-width: 100px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 .search-bar input {
@@ -27,6 +63,9 @@
 
 .search-bar {
   display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 0;
   font-size: 1.25rem;
   height: 48px;
 }
@@ -41,26 +80,5 @@
   @media #{$tablet-landscape-up} {
     border-top-left-radius: 0.5rem;
     border-bottom-left-radius: 0.5rem;
-  }
-}
-
-.search-bar button {
-  border: 1px solid transparent;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  color: $white;
-  background-color: $primary;
-  border-radius: 0;
-  border-width: 0;
-  padding: .5rem 1rem;
-  white-space: nowrap;
-
-  &:hover {
-    color: $white;
-    background-color: $black;
-  }
-
-  @media #{$tablet-landscape-up} {
-    border-top-right-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
   }
 }
