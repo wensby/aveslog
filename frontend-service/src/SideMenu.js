@@ -1,13 +1,9 @@
-import React, { useContext } from 'react';
-import { UserContext } from './authentication/UserContext.js';
-import { getMenuItems } from './navbar/MenuItemsFactory.js';
-import { useTranslation } from 'react-i18next';
+import React from 'react';
+import { useMenuItems } from './useMenuItems.js';
 import './SideMenu.scss';
 
 export default () => {
-  const { t } = useTranslation();
-  const { authenticated, account, unauthenticate } = useContext(UserContext);
-  const items = getMenuItems(authenticated, account, unauthenticate, t);
+  const items = useMenuItems();
 
   const renderItem = (item, index) => {
     return <div className="nav-item" key={index}>{item}</div>;

@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from './authentication/UserContext.js';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-const getMenuItems = (authenticated, account, unauthenticate, t) => {
+export const useMenuItems = () => {
+  const { authenticated, account, unauthenticate } = useContext(UserContext);
+  const { t } = useTranslation();
+
   if (authenticated && account) {
     return [
       <Link className="nav-link"
@@ -20,6 +25,4 @@ const getMenuItems = (authenticated, account, unauthenticate, t) => {
           to={'/authentication/login'}>{t('Login')}</Link>,
     ];
   }
-}
-
-export { getMenuItems };
+};
