@@ -1,3 +1,6 @@
+@import '../layout.scss';
+@import '../colors.scss';
+
 .search-bar button {
   font-weight: 400;
   cursor: pointer;
@@ -19,5 +22,45 @@
     vertical-align: middle;
     overflow: hidden;
     line-height: 1.5;
+  }
+}
+
+.search-bar {
+  display: flex;
+  font-size: 1.25rem;
+  height: 48px;
+}
+
+.search-bar .form-input {
+  padding: .75rem 1rem;
+  font-size: inherit;
+  border-radius: 0;
+  border-right-width: 0;
+  height: inherit;
+
+  @media #{$tablet-landscape-up} {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+  }
+}
+
+.search-bar button {
+  border: 1px solid transparent;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  color: $white;
+  background-color: $primary;
+  border-radius: 0;
+  border-width: 0;
+  padding: .5rem 1rem;
+  white-space: nowrap;
+
+  &:hover {
+    color: $white;
+    background-color: $black;
+  }
+
+  @media #{$tablet-landscape-up} {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
   }
 }
