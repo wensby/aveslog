@@ -5,7 +5,7 @@ import { getMenuItems } from './MenuItemsFactory.js';
 import { useTranslation } from 'react-i18next';
 import './ExpandibleMenu.scss';
 
-export function ExpandibleMenu({ state, onItemClick }) {
+export const ExpandibleMenu = ({ state, onItemClick }) => {
   const { authenticated, account, unauthenticate } = useContext(UserContext);
   const { t } = useTranslation();
   const items = getMenuItems(authenticated, account, unauthenticate, t);
