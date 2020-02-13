@@ -1,0 +1,53 @@
+@import '../colors.scss';
+
+.navbar-toggler {
+  box-sizing: border-box;
+  padding: 0;
+  border-style: none;
+  color: rgba(0,0,0,.5);
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  -webkit-appearance: button;
+  text-transform: none;
+  margin: 0;
+  font-family: inherit;
+  padding: .25rem .75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-color: rgba(0,0,0,.1);
+  border-radius: .25rem;
+  font-weight: 400;
+
+  &:hover {
+    background-color: $primary;
+  }
+  &:active {
+    background-color: $white!important;
+  }
+  &:focus {
+    box-shadow: none!important;
+  }
+}
+
+.navbar-toggler-icon {
+  font-size: 1.25rem;
+  font-weight: 400;
+  text-align: center;
+  text-transform: none;
+  font-family: inherit;
+  line-height: 1;
+  display: inline-block;
+  box-sizing: border-box;
+  color: rgba(0,0,0,.5);
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  content: "";
+  background: no-repeat 50%;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
