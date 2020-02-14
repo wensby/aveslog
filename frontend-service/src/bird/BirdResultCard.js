@@ -21,7 +21,7 @@ export const BirdResultCard = ({ searchResult, ...other }) => {
   };
 
   if (!bird) {
-    return null;
+    return <BirdResultCardPlaceholder />;
   }
   
   return (
@@ -31,3 +31,7 @@ export const BirdResultCard = ({ searchResult, ...other }) => {
     </BirdCard>
   );
 };
+
+export const BirdResultCardPlaceholder = React.forwardRef((props, ref) => {
+  return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '152px' }} />;
+});

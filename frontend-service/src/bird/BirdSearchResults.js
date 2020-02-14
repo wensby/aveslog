@@ -1,7 +1,8 @@
 import React from 'react';
-import { BirdResultCard } from './BirdResultCard';
+import { BirdResultCard, BirdResultCardPlaceholder } from './BirdResultCard';
 import { useTranslation } from 'react-i18next';
 import './style.scss';
+import { LazyLoad } from '../LazyLoad.js';
 
 export function BirdSearchResults({ query, birds }) {
   const { t } = useTranslation();
@@ -17,10 +18,10 @@ export function BirdSearchResults({ query, birds }) {
   );
 };
 
-function BirdSearchResultItem({ item, ...props }) {
+function BirdSearchResultItem({ item, key }) {
   return (
-    <React.Fragment {...props}>
+    <LazyLoad offset={300} key={key} placeholder={<BirdResultCardPlaceholder />}>
       <BirdResultCard searchResult={item} />
-    </React.Fragment>
+    </LazyLoad>
   );
 }
