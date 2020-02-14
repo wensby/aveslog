@@ -94,13 +94,13 @@ const UserProvider = ({ children }) => {
 
   const unauthenticate = async () => {
     if (refreshToken) {
-      const response = await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
-      if (response.status === 204) {
-        setRefreshToken(null);
-        localStorage.removeItem(refreshTokenKey);
-        setAccessToken(null);
-        setAccount(false);
+      if (accessToken) {
+        await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
       }
+      setRefreshToken(null);
+      localStorage.removeItem(refreshTokenKey);
+      setAccessToken(null);
+      setAccount(null);
     }
   };
 
