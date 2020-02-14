@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
 import { useBird } from './BirdHooks';
 
-export default ({ searchResult, ...other }) => {
+export const BirdResultCard = ({ searchResult, ...other }) => {
   const { bird } = useBird(searchResult.id);
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
@@ -30,4 +30,4 @@ export default ({ searchResult, ...other }) => {
       {renderAddSightingLink(bird)}
     </BirdCard>
   );
-}
+};

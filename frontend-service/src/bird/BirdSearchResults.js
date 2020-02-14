@@ -1,5 +1,5 @@
 import React from 'react';
-import BirdResultCard from './BirdResultCard';
+import { BirdResultCard } from './BirdResultCard';
 import { useTranslation } from 'react-i18next';
 import './style.scss';
 
