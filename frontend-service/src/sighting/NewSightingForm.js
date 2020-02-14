@@ -62,25 +62,37 @@ export function NewSightingForm({ bird, onSuccess }) {
       <h1>{t('new-sighting-title')}</h1>
       <form onSubmit={handleFormSubmit}>
         <BirdSection bird={bird} />
-        <div className='form-group row'>
+        <div className='date-group'>
           <Label htmlFor='dateInput' label='date-label' />
-          <div className='col-sm-10'>
-            <input type='date' id='dateInput' className='form-control' value={date} onChange={event => setDate(event.target.value)} />
-          </div>
+          <input
+            type='date'
+            id='dateInput'
+            className='date-input'
+            value={date}
+            onChange={event => setDate(event.target.value)} />
         </div>
-        <div className='form-group row'>
+        <div className='time-group'>
           <Label htmlFor='timeInput' label='time-label' />
-          <div className='input-group col-sm-10' id='timeInput'>
-            <div className='input-group-prepend'>
-              <div className='input-group-text'>
-                <input type='checkbox' id='timeCheckboxInput' name='timeCheckboxInput' checked={timeEnabled} onChange={event => setTimeEnabled(event.target.checked)} />
-              </div>
-            </div>
-            <input type='time' id='timeTimeInput' className='form-control' value={time} disabled={!timeEnabled} onChange={event => setTime(event.target.value)} />
+          <div className='time-checkbox-container'>
+            <input
+              type='checkbox'
+              id='timeCheckboxInput'
+              name='timeCheckboxInput'
+              className='time-checkbox'
+              checked={timeEnabled}
+              onChange={event => setTimeEnabled(event.target.checked)} />
           </div>
+          <input
+            type='time'
+            id='timeTimeInput'
+            className='time-input'
+            value={time}
+            disabled={!timeEnabled}
+            onChange={event => setTime(event.target.value)} />
         </div>
-        <LocationSection onCoordinatesChanged={setLocation} onBlocking={setBlockedByLocation} />
-        <input type='hidden' name='birdId' value={bird.id} />
+        <LocationSection
+          onCoordinatesChanged={setLocation}
+          onBlocking={setBlockedByLocation} />
         <button type='submit' className='button' disabled={blockedByLocation}>
           {t('submit-sighting-button')}
         </button>

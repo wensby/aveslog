@@ -1,3 +1,26 @@
+@import '../colors.scss';
+
+%input {
+  box-sizing: border-box;
+  display: block;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  font-family: Arial, Helvetica, sans-serif;
+
+  &:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+  }
+}
+
 div.sighting-form {
 
   & h1 {
@@ -18,8 +41,101 @@ div.sighting-form {
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
     margin-bottom: 1rem;
+  }
+
+  & form {
+    & div.date-group {
+      display: grid;
+      grid: 1fr / 100px 1fr;
+
+      & .date-input {
+        @extend %input;
+        width: 100%;
+      } 
+    }
+
+    & div.time-group {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      display: grid;
+      grid: 1fr / 100px 40px 1fr;
+
+      & .time-checkbox-container {
+        background-color: $lighter;
+        border-top-left-radius: .5rem;
+        border-bottom-left-radius: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      & .time-input {
+        @extend %input;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.sighting-form button[type=submit] {
+  margin-top: 15px;
+  
+  &[disabled] {
+    background-color: $lighter;
+  }
+}
+
+.location-expansion {
+  height: 0px;
+  transition: height 0.3s ease-in-out;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border: 1px solid $lighter;
+  overflow: hidden;
+  text-align: center;
+  font-size: 50px;
+}
+
+.location-section {
+
+  &.collapsed .location-expansion {
+    border-width: 0;
+  }
+
+  &.expanding {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+
+    & .location-expansion {
+      height: 100px;
+    }
+  }
+
+  &.expanded {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+
+    & .location-expansion {
+      height: 100px;
+    }
+  }
+
+  &.collapsing2 {
+    & .toggle-button {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-bottom-width: 0px;
+    }
+  }
+  
+  & .loaded-icon {
+    color: $success;
   }
 }
