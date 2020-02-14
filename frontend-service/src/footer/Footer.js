@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import './footer.scss';
+import './Footer.scss';
 
 const LanguageLink = ({ languageCode, label }) => {
   const { i18n } = useTranslation();
@@ -17,7 +17,7 @@ const LanguageLink = ({ languageCode, label }) => {
   return <button className='language-option' onClick={handleClick}>{label}</button>;
 }
 
-export default () => {
+export const Footer = () => {
   return (
     <footer className='text-muted'>
       <div className='language'>
@@ -27,4 +27,4 @@ export default () => {
       </div>
     </footer>
   );
-}
+};
