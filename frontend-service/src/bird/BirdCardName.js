@@ -6,20 +6,14 @@ import './BirdCardName.scss';
 export function BirdCardName({ bird }) {
   const { commonName, loading } = useCommonName(bird);
 
-  if (loading) {
-    return null;
-  }
-  else if (commonName) {
+  if (commonName) {
     return (
       <>
         <FadeInBottom>
-          <h5 key='1' className="card-title">{commonName}</h5>
+          <div className='bird-name'>{commonName}</div>
         </FadeInBottom>
-        <h6 key='2' className="card-subtitle mb-2 text-muted">
-          {bird.binomialName}
-        </h6>
       </>
     )
   }
-  return <h5 key='1' className="card-title">{bird.binomialName}</h5>;
+  return <div className='bird-name'> </div>;
 };

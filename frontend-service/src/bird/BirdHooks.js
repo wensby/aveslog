@@ -50,8 +50,9 @@ export function useCommonName(bird) {
       }
       setLoading(false);
     };
+    setCommonName(null);
     resolveCommonName();
-  }, [bird, language, url]);
+  }, [language, url]);
   
   return { commonName, loading };
 }
