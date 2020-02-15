@@ -1,14 +1,7 @@
 .bird-card-body {
-  & h5, h6 {
+  & div {
     margin-top: 0;
-  }
-  
-  & h5 {
     font-size: 1.2rem;
-    margin-bottom: 0.4rem;
-  }
-  
-  & h6 {
-    font-size: 1rem;
+    font-weight: bold;
   }
 }
