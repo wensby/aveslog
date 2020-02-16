@@ -336,4 +336,5 @@ main {
   @extend %navbar-pushed;
   @extend %padding-to-footer;
   grid-area: main;
+  max-width: 100vw;
 }

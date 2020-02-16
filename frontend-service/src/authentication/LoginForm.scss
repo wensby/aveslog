@@ -16,16 +16,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-}
 
-.credentials-fields div {
-  display: grid;
-  gap: 10px;
+  & input {
+    width: 100%;
+  }
 }
 
 .form-control {
   box-sizing: border-box;
-  display: block;
   height: calc(1.5em + .75rem + 2px);
   padding: .375rem .75rem;
   font-size: 1rem;
