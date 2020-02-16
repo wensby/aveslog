@@ -10,8 +10,6 @@ export const NavbarConstant = React.forwardRef((props, ref) => (
     <div className='menu-button'>
       <NavbarToggler />
     </div>
-    <div className='search-bar-item'>
-      <SearchBar />
-    </div>
+    <SearchBar />
   </div>
 ));

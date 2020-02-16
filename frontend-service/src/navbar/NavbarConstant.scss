@@ -25,16 +25,16 @@
   }
 }
 
-.navbar-constant .search-bar-item {
+.navbar-constant .search-bar {
   grid-area: search;
   align-self: center;
 
   @media #{$tablet-landscape-up} {
-    padding-right: 7px;
+    margin-right: 7px;
   }
 
   @media #{$desktop-up} {
-    padding-right: 0px;
+    margin-right: 0px;
   }
 }
 
