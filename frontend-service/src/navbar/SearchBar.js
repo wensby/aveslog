@@ -8,22 +8,12 @@ export const SearchBar = () => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);
-  const [searchButtonVisible, setSearchButtonVisible] = useState(false);
   const { t } = useTranslation();
   const inputRef = useRef(null);
 
   const syncQueryState = event => {
     setQuery(event.target.value);
   }
-
-  useEffect(() => {
-    if (query || advanced) {
-      setSearchButtonVisible(true);
-    }
-    else {
-      setSearchButtonVisible(false);
-    }
-  }, [query, advanced]);
 
   const onFormSubmit = event => {
     event.preventDefault();
@@ -32,13 +22,19 @@ export const SearchBar = () => {
   }
 
   return (
-    <form onSubmit={onFormSubmit}>
-      <div className='search-bar'>
-        <input ref={inputRef} className='form-input' placeholder={t('Search bird')}
+    <form className='search-bar' onSubmit={onFormSubmit}>
+      <div className='text-input'>
+        <input ref={inputRef} placeholder={t('Search bird')}
           aria-label='Search bird' onChange={syncQueryState} value={query} />
         <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
-        <button className={searchButtonVisible ? 'expanded' : ''} type='submit'>{t('Search')}</button>
       </div>
+      <SearchButton expanded={query || advanced} />
     </form>
   );
 };
+
+const SearchButton = ({ expanded }) => {
+  const { t } = useTranslation();
+  const className = expanded ? 'expanded' : null;
+  return <button className={className} type='submit'>{t('Search')}</button>;
+}

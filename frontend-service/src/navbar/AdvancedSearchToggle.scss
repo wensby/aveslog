@@ -1,6 +1,7 @@
 @import '../colors.scss';
 
 .advanced-search-icon {
+  box-sizing: border-box;
   margin-top: 6px;
   margin-left: -40px;
   padding-right: 10px;
@@ -11,6 +12,10 @@
   }
 
   & svg {
+    box-sizing: border-box;
+    vertical-align: middle;
+    overflow: hidden;
+    line-height: 1.5;
     width: 30px;
     height: 30px;
     fill: $lighter;
