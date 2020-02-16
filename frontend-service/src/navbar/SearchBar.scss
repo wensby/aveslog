@@ -10,8 +10,9 @@ form.search-bar {
   & div.text-input {
     display: flex;
     width: 100%;
+    align-items: center;
 
-    & input {
+    & input.search-input {
       width: 100%;
       padding: .75rem 1rem;
       border: 1px solid $lighter;
@@ -30,6 +31,11 @@ form.search-bar {
         border-bottom-left-radius: 0.5rem;
         border-left-width: 1px;
       }
+    }
+
+    & .advanced-search-toggle {
+      margin-left: -40px;
+      margin-right: 10px;
     }
   }
 

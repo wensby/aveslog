@@ -2,17 +2,17 @@ import React from 'react';
 import Icon from '../Icon.js';
 import './AdvancedSearchToggle.scss';
 
-export function AdvancedSearchToggle({ active, onChange }) {
-  const advancedClick = e => {
+export const AdvancedSearchToggle = ({ active, onChange }) => {
+  const click = e => {
     e.preventDefault();
     onChange(!active);
   };
   
-  const className = 'advanced-search-icon' + (active ? ' expanded' : '');
+  const className = 'advanced-search-toggle' + (active ? ' expanded' : '');
 
   return (
-    <div className={className} onClick={advancedClick}>
+    <div className={className} onClick={click}>
       <Icon name='down' />
     </div>
   );
-}
+};
