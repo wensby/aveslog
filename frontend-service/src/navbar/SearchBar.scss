@@ -3,7 +3,6 @@
 
 form.search-bar {
   display: flex;
-  height: 48px;
   max-width: 100vw;
   font-size: 1.25rem;
 
@@ -16,8 +15,7 @@ form.search-bar {
       width: 100%;
       padding: .75rem 1rem;
       border: 1px solid $lighter;
-      border-right-width: 0;
-      border-left-width: 0;
+      border-width: 1px 0;
       color: $black;
       background-color: $white;
       font-size: inherit;
@@ -27,8 +25,7 @@ form.search-bar {
           box-shadow 0.15s ease-in-out;
 
       @media #{$tablet-landscape-up} {
-        border-top-left-radius: 0.5rem;
-        border-bottom-left-radius: 0.5rem;
+        border-radius: 0.5rem 0 0 0.5rem;
         border-left-width: 1px;
       }
     }
@@ -41,8 +38,8 @@ form.search-bar {
 
   & button {
     white-space: nowrap;
-    font-weight: 500;
     font-size: inherit;
+    font-weight: 500;
     max-width: 0;
     border: 1px solid transparent;
     padding: 0;
@@ -63,10 +60,9 @@ form.search-bar {
   
     @media #{$tablet-landscape-up} {
       transition: max-width 0s, padding 0s;
-      border-top-right-radius: 0.5rem;
-      border-bottom-right-radius: 0.5rem;
+      border-radius: 0 0.5rem 0.5rem 0;
       padding: 0 16px;
-      max-width: 100px;
+      max-width: unset;
     }
   
     &.expanded {
