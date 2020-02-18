@@ -11,7 +11,7 @@ export const SideMenu = () => {
 
   return (
     <div className='sidemenu'>
-      <nav className='sidebar nav flex-column border-left' id='sidebarList'>
+      <nav className='sidebar'>
         {items.map(renderItem)}
       </nav>
     </div>

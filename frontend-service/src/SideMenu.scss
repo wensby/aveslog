@@ -10,6 +10,10 @@
     margin-bottom: 0;
     list-style: none;
     box-sizing: border-box;
+
+    & .nav-link {
+      font-weight: 500;
+    }
   }
 }
 
