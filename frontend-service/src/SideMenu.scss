@@ -1,16 +1,10 @@
 .sidemenu {
-  box-sizing: border-box;
 
   & .sidebar {
     margin-left: 10px;
-    flex-direction: column !important;
-    border-left: 1px solid #dee2e6 !important;
     display: flex;
-    flex-wrap: wrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    box-sizing: border-box;
+    flex-direction: column;
+    border-left: 1px solid #dee2e6;
 
     & a {
       font-weight: 500;
