@@ -94,7 +94,6 @@ export function CredentialsRegistrationPage() {
         <div className='col'>
           <CredentialsForm
             email={email}
-            token={token}
             onSubmit={handleFormSubmit}
             takenUsernames={takenUsernames} />
         </div>

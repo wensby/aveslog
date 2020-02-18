@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NewPasswordFormGroup from '../NewPasswordFormGroup';
 
 
-export const CredentialsForm = ({ email, token, onSubmit, takenUsernames }) => {
+export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
@@ -28,7 +28,6 @@ export const CredentialsForm = ({ email, token, onSubmit, takenUsernames }) => {
         valid={usernameValid} showFeedback={showFeedback} />
       <NewPasswordFormGroup onChange={setPassword}
         showFeedback={showFeedback} />
-      <input type='hidden' name='token' value={token} />
       <SubmitButton />
     </form>
   );
