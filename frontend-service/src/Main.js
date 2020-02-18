@@ -11,8 +11,8 @@ import { Birder } from './birder/Birder';
 
 export const Main = () => {
   return (
-    <div className='main-grid'>
-      <main role="main">
+    <div className='main'>
+      <main role='main'>
         <Route path='/' exact component={HomePage} />
         <Route path='/authentication' component={Authentication} />
         <Route path='/profile' component={Profile} />

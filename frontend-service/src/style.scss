@@ -159,18 +159,6 @@ hr {
   color: $success;
 }
 
-%navbar-pushed {
-  padding-top: 112px + 15px;
-
-  @media only screen and (min-width : $break-small) {
-    padding-top: 64px + 15px;
-  }
-}
-
-%padding-to-footer {
-  padding-bottom: $footer-height + 40px;
-}
-
 .sighting-stats {
   margin-bottom: 10px;
   display: flex;
@@ -283,53 +271,4 @@ input:focus {
   #registerRequestFormContainer {
     width: 520px;
   }
-}
-
-.main-grid {
-  width: 100%;
-  background-color: white;
-  top: 0;
-  bottom: 0;
-  display: grid;
-  grid: 1fr / 1fr;
-  min-height: 100vh;
-  grid-template-areas:
-    'main';
-  -webkit-perspective: 500px;
-  perspective: 500px;
-
-  @media only screen and (min-width : 768px) {
-    grid: auto / 3fr 7fr;
-    grid-template-areas:
-      '. main';
-  }
-
-  @media only screen and (min-width : 1224px) {
-    grid: auto / 1fr 750px 1fr;
-    grid-template-areas:
-      '. main .';
-  }
-}
-
-.sidemenu {
-  @extend %navbar-pushed;
-  display: none;
-  z-index: 1;
-  position: fixed;
-  top: 0px;
-
-  @media only screen and (min-width : 768px) {
-    display: block;
-  }
-}
-
-.sidebar {
-  padding-top: 15px;
-}
-
-main {
-  @extend %navbar-pushed;
-  @extend %padding-to-footer;
-  grid-area: main;
-  max-width: 100vw;
 }
