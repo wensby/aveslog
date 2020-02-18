@@ -6,6 +6,7 @@ footer {
   background-color: $black;
   padding: 1.1rem;
   box-sizing: border-box;
+  white-space: nowrap;
 
   & .languages {
     display: flex;
