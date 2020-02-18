@@ -2,6 +2,7 @@
   border: 1px solid #EEE;
   display: grid;
   grid: 150px / 150px auto;
+  overflow: hidden;
   grid-template-areas:
     'picture body';
 
