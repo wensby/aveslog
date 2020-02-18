@@ -1,20 +1,15 @@
 div.navbar {
   display: flex;
   flex-wrap: wrap;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1030;
   box-shadow: 0 .5rem 1rem transparentize(black, .85);
-}
 
-.navbar-nav .nav-link {
-  padding-right: 0;
-  padding-left: 0;
-  color: rgba(0,0,0,.5);
-
-  &:hover {
-    color: rgba(0,0,0,.7);
+  & .navbar-nav .nav-link {
+    padding-right: 0;
+    padding-left: 0;
+    color: rgba(0,0,0,.5);
+  
+    &:hover {
+      color: rgba(0,0,0,.7);
+    }
   }
 }
