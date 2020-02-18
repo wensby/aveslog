@@ -2,6 +2,7 @@
   box-sizing: border-box;
 
   & .sidebar {
+    margin-left: 10px;
     flex-direction: column !important;
     border-left: 1px solid #dee2e6 !important;
     display: flex;
