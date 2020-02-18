@@ -7,14 +7,9 @@ export const SideMenu = () => {
   const items = useMenuItems();
 
   const renderItem = (item, index) => {
-    const click = () => {
-      if (item.action) {
-        item.action();
-      }
-    };
     return (
       <div className='nav-item' key={index}>
-        <Link className='nav-link' to={item.link} onClick={click}>{item.label}</Link>
+        <Link className='nav-link' to={item.link} onClick={item.action}>{item.label}</Link>
       </div>
     );
   };
