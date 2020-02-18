@@ -1,3 +1,5 @@
+@import './layout.scss';
+
 .main {
   display: grid;
   grid: 1fr / 1fr;
@@ -6,13 +8,13 @@
   -webkit-perspective: 500px;
   perspective: 500px;
 
-  @media only screen and (min-width : 768px) {
+  @media only screen and (min-width : $break-small) {
     grid: auto / 3fr 7fr;
     grid-template-areas:
       '. main';
   }
 
-  @media only screen and (min-width : 1224px) {
+  @media only screen and (min-width : $break-large) {
     grid: auto / 1fr 750px 1fr;
     grid-template-areas:
       '. main .';
