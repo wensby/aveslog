@@ -37,42 +37,18 @@ div#root {
   }
 
   & .main {
+    @extend %navbar-pushed;
+    @extend %padding-to-footer;
     width: 100%;
-    background-color: white;
-    top: 0;
-    bottom: 0;
-    display: grid;
-    grid: 1fr / 1fr;
-    min-height: 100vh;
-    grid-template-areas:
-      'main';
     -webkit-perspective: 500px;
     perspective: 500px;
-  
-    @media only screen and (min-width : 768px) {
-      grid: auto / 3fr 7fr;
-      grid-template-areas:
-        '. main';
-    }
-  
-    @media only screen and (min-width : 1224px) {
-      grid: auto / 1fr 750px 1fr;
-      grid-template-areas:
-        '. main .';
-    }
   }
   
   & footer {
-    width: 100%;
-    bottom: 0px;
+    bottom: 0;
+    right: 0;
+    left: 0;
     position: absolute;
     height: $footer-height;
   }
-}
-
-main {
-  @extend %navbar-pushed;
-  @extend %padding-to-footer;
-  grid-area: main;
-  max-width: 100vw;
 }
