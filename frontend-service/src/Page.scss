@@ -46,7 +46,9 @@ div#root {
   & .main {
     @extend %navbar-pushed;
     padding-bottom: $footer-height + 40px;
+    box-sizing: border-box;
     width: 100%;
+    min-height: 100vh;
     -webkit-perspective: 500px;
     perspective: 500px;
   }

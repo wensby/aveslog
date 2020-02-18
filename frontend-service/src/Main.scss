@@ -23,5 +23,6 @@ div.main {
   & main {
     grid-area: main;
     max-width: 100vw;
+    position: relative;
   }
 }
