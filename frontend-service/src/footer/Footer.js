@@ -2,6 +2,18 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import './Footer.scss';
 
+export const Footer = () => {
+  return (
+    <footer>
+      <div className='languages'>
+        <LanguageLink languageCode='en' label='English' />
+        <LanguageLink languageCode='sv' label='Svenska' />
+        <LanguageLink languageCode='ko' label='한국어' />
+      </div>
+    </footer>
+  );
+};
+
 const LanguageLink = ({ languageCode, label }) => {
   const { i18n } = useTranslation();
 
@@ -14,17 +26,5 @@ const LanguageLink = ({ languageCode, label }) => {
   if (i18n.languages[0] === languageCode) {
     return <p className='selected'>{label}</p>;
   }
-  return <button className='language-option' onClick={handleClick}>{label}</button>;
+  return <button onClick={handleClick}>{label}</button>;
 }
-
-export const Footer = () => {
-  return (
-    <footer className='text-muted'>
-      <div className='language'>
-        <LanguageLink languageCode='en' label='English' />
-        <LanguageLink languageCode='sv' label='Svenska' />
-        <LanguageLink languageCode='ko' label='한국어' />
-      </div>
-    </footer>
-  );
-};

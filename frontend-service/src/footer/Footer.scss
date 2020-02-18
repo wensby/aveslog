@@ -2,52 +2,39 @@
 @import '../layout.scss';
 
 footer {
+  color: #6c757d;
   background-color: $black;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  height: $footer-height;
-  padding: 20px;
-  display: block;
+  padding: 1.1rem;
   box-sizing: border-box;
-}
 
-.text-muted {
-  color: #6c757d !important;
-}
+  & .languages {
+    display: flex;
+    flex-direction: row;
 
-footer .language-option {
-  color: $lightgrey;
-  box-sizing: content-box;
-  background: none!important;
-  display: inline;
-  border: none;
-  padding: 0!important;
-  font-family: inherit;
-  transform-origin: 0 0;
-  padding: 0;
-  perspective-origin: 0 0;
-  cursor: pointer;
-  font-size: inherit;
-}
+    & * {
+      margin: 0 .5rem;
+      line-height: 1.5rem;
+      font-size: inherit;
+      padding: 0;
+      border: none;
+      background: none;
+      color: $lightgrey;
 
-footer .language-option:focus {
-  outline: none;
-}
+      &:focus {
+        outline: none;
+      }
 
-footer .language-option:hover {
-  color: $primary;
-}
+      &:hover {
+        color: $primary;
+      }
 
-footer .language-option.selected {
-  color: $darkgrey;
-}
+      &:active {
+        color: $white;
+      }
 
-.language {
-  display: flex;
-  flex-direction: row;
-}
-
-.language > * {
-  margin: 0px 5px;
+      &.selected {
+        color: $darkgrey;
+      }
+    }
+  }
 }
