@@ -9,7 +9,7 @@ import { Profile } from './profile/Profile';
 import AuthenticatedRoute from './authentication/AuthenticatedRoute';
 import { Birder } from './birder/Birder';
 
-export default () => {
+export const Main = () => {
   return (
     <div className='main-grid'>
       <main role="main">
@@ -23,4 +23,4 @@ export default () => {
       </main>
     </div>
   );
-}
+};

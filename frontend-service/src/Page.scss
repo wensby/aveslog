@@ -1,6 +1,8 @@
 @import './layout.scss';
 
 div#root {
+  position: relative;
+  min-height: 100vh;
 
   & div.navbar {
     position: fixed;
