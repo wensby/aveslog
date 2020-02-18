@@ -11,13 +11,10 @@
     list-style: none;
     box-sizing: border-box;
 
-    & .nav-link {
+    & a {
       font-weight: 500;
+      display: block;
+      padding: .5rem 1rem;
     }
   }
-}
-
-.nav-link {
-  display: block;
-  padding: .5rem 1rem;
 }

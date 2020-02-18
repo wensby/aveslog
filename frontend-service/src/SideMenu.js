@@ -7,11 +7,7 @@ export const SideMenu = () => {
   const items = useMenuItems();
 
   const renderItem = (item, index) => {
-    return (
-      <div className='nav-item' key={index}>
-        <Link className='nav-link' to={item.link} onClick={item.action}>{item.label}</Link>
-      </div>
-    );
+    return <Link className='nav-link' key={index} to={item.link} onClick={item.action}>{item.label}</Link>;
   };
 
   return (

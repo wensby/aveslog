@@ -22,4 +22,9 @@
   @media #{$tablet-landscape-up} {
     display: none !important;
   }
+
+  & a {
+    display: block;
+    padding: .5rem 1rem;
+  }
 }
