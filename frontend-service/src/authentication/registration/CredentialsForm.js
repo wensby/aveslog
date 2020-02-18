@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NewPasswordFormGroup from '../NewPasswordFormGroup';
 
 
-export default ({ email, token, onSubmit, takenUsernames }) => {
+export const CredentialsForm = ({ email, token, onSubmit, takenUsernames }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
@@ -32,7 +32,7 @@ export default ({ email, token, onSubmit, takenUsernames }) => {
       <SubmitButton />
     </form>
   );
-}
+};
 
 const EmailFormGroup = ({ value }) => {
   const { t } = useTranslation();

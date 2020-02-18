@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../../reactRouterHook';
 import AuthenticationService from '../AuthenticationService.js';
-import RegistrationForm from './CredentialsForm';
+import { CredentialsForm } from './CredentialsForm';
 import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
@@ -92,7 +92,7 @@ export function CredentialsRegistrationPage() {
       {renderAlert()}
       <div className='row'>
         <div className='col'>
-          <RegistrationForm
+          <CredentialsForm
             email={email}
             token={token}
             onSubmit={handleFormSubmit}
