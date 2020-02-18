@@ -8,10 +8,6 @@
   }
 }
 
-%padding-to-footer {
-  padding-bottom: $footer-height + 40px;
-}
-
 div#root {
   position: relative;
   min-height: 100vh;
@@ -38,7 +34,7 @@ div#root {
 
   & .main {
     @extend %navbar-pushed;
-    @extend %padding-to-footer;
+    padding-bottom: $footer-height + 40px;
     width: 100%;
     -webkit-perspective: 500px;
     perspective: 500px;
