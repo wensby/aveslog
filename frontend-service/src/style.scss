@@ -9,19 +9,6 @@
   border:0;
 }
 
-a {
-  color: $primary;
-  text-decoration: none;
-
-  &:hover {
-    color: $black;
-  }
-}
-
-button {
-  cursor: pointer;
-}
-
 .alert {
 	position: relative;
 	padding: .75rem 1.25rem;

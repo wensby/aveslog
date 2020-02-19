@@ -1,4 +1,5 @@
 @import './layout.scss';
+@import './colors.scss';
 
 %navbar-pushed {
   padding-top: 112px + 15px;
@@ -17,6 +18,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: .875rem;
   line-height: 1.5;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+
+  &:hover {
+    color: $black;
+  }
+}
+
+button {
+  cursor: pointer;
 }
 
 div#root {
