@@ -2,26 +2,22 @@
 
 main {
   display: grid;
-  grid: 1fr / 1fr;
-  grid-template-areas:
-    'main';
+  grid-template-areas: 'content';
   -webkit-perspective: 500px;
   perspective: 500px;
 
   @media only screen and (min-width : $break-small) {
-    grid: auto / 3fr 7fr;
-    grid-template-areas:
-      '. main';
+    grid-template-columns: 3fr 7fr;
+    grid-template-areas: '. content';
   }
 
   @media only screen and (min-width : $break-large) {
-    grid: auto / 1fr 750px 1fr;
-    grid-template-areas:
-      '. main .';
+    grid-template-columns: 1fr 750px 1fr;
+    grid-template-areas: '. content .';
   }
 
   & > div {
-    grid-area: main;
+    grid-area: content;
     max-width: 100vw;
     position: relative;
   }
