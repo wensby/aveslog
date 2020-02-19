@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import AuthenticationService from '../AuthenticationService.js';
 import { Link } from 'react-router-dom'
 import { PageHeading } from '../../PageHeading';
-import './EmailRegistration.scss';
 import { Alert } from '../../generic/Alert.js';
+import './EmailRegistrationPage.scss';
 
-export default () => {
+export const EmailRegistrationPage = () => {
   const [email, setEmail] = useState('');
   const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
@@ -83,4 +83,4 @@ export default () => {
       </div>
     </div>
   );
-}
+};
