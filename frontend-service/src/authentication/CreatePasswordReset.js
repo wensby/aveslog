@@ -42,9 +42,9 @@ export default () => {
   }
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col'>
+    <div>
+      <div>
+        <div>
           <h1>{ t('Password Reset') }</h1>
           <p>{ t('password-reset-email-prompt-message') }</p>
           { renderAlert() }

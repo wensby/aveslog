@@ -79,9 +79,9 @@ export function CredentialsRegistrationPage() {
     return <FadeIn><RegistrationSuccess /></FadeIn>;
   }
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col'>
+    <div>
+      <div>
+        <div>
           <PageHeading>{ t('Registration') }</PageHeading>
           <p>
             { t('registration-form-instructions') }
@@ -89,8 +89,8 @@ export function CredentialsRegistrationPage() {
         </div>
       </div>
       {renderAlert()}
-      <div className='row'>
-        <div className='col'>
+      <div>
+        <div>
           <CredentialsForm
             email={email}
             onSubmit={handleFormSubmit}

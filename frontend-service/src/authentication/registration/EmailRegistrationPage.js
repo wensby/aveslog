@@ -45,16 +45,16 @@ export const EmailRegistrationPage = () => {
   }
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col'>
+    <div>
+      <div>
+        <div>
           <PageHeading>{t('Registration')}</PageHeading>
           <p>{t('register-link-request-prompt-message')}</p>
         </div>
       </div>
       {renderAlert()}
-      <div className='row'>
-        <div className='col'>
+      <div>
+        <div>
           <form onSubmit={handleFormSubmit} className='email-registration-form'>
             <div className='form-group'>
               <label htmlFor='emailInput'>{t('Email address')}</label>
@@ -76,8 +76,8 @@ export const EmailRegistrationPage = () => {
           </form>
         </div>
       </div>
-      <div className='row mt-2'>
-        <div className='col'>
+      <div>
+        <div>
           <Link to='/authentication/login'>{t('Back to login')}</Link>
         </div>
       </div>

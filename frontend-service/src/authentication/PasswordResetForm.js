@@ -50,9 +50,9 @@ export default function PasswordResetForm(props) {
   };
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col'>
+    <div>
+      <div>
+        <div>
           <h1>{ t('password-reset-title') }</h1>
           <p>{ t('password-reset-form-prompt-message') }</p>
           {renderAlert()}
