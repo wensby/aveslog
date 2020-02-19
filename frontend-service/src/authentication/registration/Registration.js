@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import EmailRegistration from './EmailRegistration';
 import { CredentialsRegistrationPage } from './CredentialsRegistrationPage';
 
-export default ({ match }) => {
+export const Registration = ({ match }) => {
   const path = match.path;
   return (
     <Switch>
@@ -11,4 +11,4 @@ export default ({ match }) => {
       <Route path={`${path}/:token`} component={CredentialsRegistrationPage} />
     </Switch>
   );
-}
+};
