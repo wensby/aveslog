@@ -18,7 +18,7 @@ const NewAccountSection = () => {
   </div>
 }
 
-export function Login() {
+export const LoginPage = () => {
   const [loginErrorMessage, setLoginErrorMessage] = useState(null);
   const { t } = useTranslation();
 
@@ -38,7 +38,7 @@ export function Login() {
     <Separator />
     <NewAccountSection />
   </div>;
-}
+};
 
 function ErrorMessage({ message }) {
   const { t } = useTranslation();
