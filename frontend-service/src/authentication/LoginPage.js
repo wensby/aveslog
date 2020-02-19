@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LoginForm } from './LoginForm.js';
+import { PageHeading } from '../generic/PageHeading.js';
 import './LoginPage.scss';
 import { Alert } from '../generic/Alert.js';
 
@@ -25,7 +26,7 @@ export const LoginPage = () => {
 
   return (
     <div className='login-page'>
-      <h1>{t('Login')}</h1>
+      <PageHeading>{t('Login')}</PageHeading>
       {errorMessage && <ErrorMessage message={errorMessage} />}
       <LoginForm onError={setErrorMessage} />
       <div className='password-recover-link'>

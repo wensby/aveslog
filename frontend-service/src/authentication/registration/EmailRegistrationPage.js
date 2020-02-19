@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from '../AuthenticationService.js';
 import { Link } from 'react-router-dom'
-import { PageHeading } from '../../PageHeading';
+import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert.js';
 import './EmailRegistrationPage.scss';
 

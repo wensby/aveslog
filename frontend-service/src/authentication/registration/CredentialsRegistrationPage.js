@@ -7,7 +7,7 @@ import { RegistrationSuccess } from './RegistrationSuccess';
 import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
-import { PageHeading } from '../../PageHeading';
+import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
 
 export function CredentialsRegistrationPage() {
