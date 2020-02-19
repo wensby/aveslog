@@ -6,39 +6,39 @@
   margin-left: auto;
   margin-right: auto;
   flex-direction: column;
-}
 
-.login-page h1 {
-  margin-bottom: .5rem;
-  line-height: 1.2;
-  font-weight: bolder;
-  font-size: 2.5rem;
-  margin-top: 0;
-}
+  & h1 {
+    margin-bottom: .5rem;
+    line-height: 1.2;
+    font-weight: bolder;
+    font-size: 2.5rem;
+    margin-top: 0;
+  }
 
-.login-page a {
-  font-weight: 400;
-  font-size: 16px;
-}
+  & a {
+    font-weight: 400;
+    font-size: 16px;
 
-.login-page a:hover {
-  text-decoration: none;
-}
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  
+  & .password-recover-link {
+    margin-top: 20px;
+    text-align: center;
+  }
 
-.login-page .password-recover-link {
-  margin-top: 20px;
-  text-align: center;
+  & .separator {
+    border-top-style: solid;
+    border-top-color: #CED4DA;
+    border-top-width: 1px;
+    margin: 40px 0 20px 0;
+  }
 }
 
 .new-account-section {
   text-align: center;
-}
-
-.login-page .separator {
-  border-top-style: solid;
-  border-top-color: #CED4DA;
-  border-top-width: 1px;
-  margin: 40px 0 20px 0;
 }
 
 .bold-question {
@@ -49,5 +49,4 @@
 .login-form {
   max-width: 600px;
   align-content: center;
-  
 }
