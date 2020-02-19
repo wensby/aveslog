@@ -13,4 +13,4 @@ export const Authentication = ({ match }) => {
       <Route path={`${path}/password-reset`} component={PasswordReset} />
     </Switch>
   );
-}
+};
