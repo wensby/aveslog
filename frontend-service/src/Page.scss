@@ -43,7 +43,7 @@ div#root {
     }
   }
 
-  & .main {
+  & main {
     @extend %navbar-pushed;
     padding-bottom: $footer-height + 40px;
     box-sizing: border-box;

@@ -33,9 +33,9 @@ export function ProfilePage({ username }) {
   }, [account, accessToken]);
 
   return (
-    <>
+    <div>
       <h1>{username}</h1>
       <FilterableSightingsList sightings={sightings} />
-    </>
+    </div>
   );
 };

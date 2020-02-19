@@ -47,10 +47,10 @@ export function SightingPage({match}) {
   };
 
   return (
-    <>
+    <div>
       <DetailedSightingCard sighting={sighting}/>
       {renderDelete()}
-    </>
+    </div>
   );
 }
 

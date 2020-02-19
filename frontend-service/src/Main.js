@@ -12,16 +12,14 @@ import './Main.scss';
 
 export const Main = () => {
   return (
-    <div className='main'>
-      <main role='main'>
-        <Route path='/' exact component={HomePage} />
-        <Route path='/authentication' component={Authentication} />
-        <Route path='/profile' component={Profile} />
-        <Route path='/birder' component={Birder} />
-        <AuthenticatedRoute path='/settings' exact component={Settings} />
-        <Route path='/bird' component={Bird} />
-        <Route path='/sighting' component={Sighting} />
-      </main>
-    </div>
+    <main role='main'>
+      <Route path='/' exact component={HomePage} />
+      <Route path='/authentication' component={Authentication} />
+      <Route path='/profile' component={Profile} />
+      <Route path='/birder' component={Birder} />
+      <AuthenticatedRoute path='/settings' exact component={Settings} />
+      <Route path='/bird' component={Bird} />
+      <Route path='/sighting' component={Sighting} />
+    </main>
   );
 };

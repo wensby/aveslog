@@ -11,9 +11,9 @@ export default function HomePage() {
     return null;
   }
   return (
-    <>
+    <div>
       <h1>{t("It's birding time!")}</h1>
       <SightingFeedContainer />
-    </>
+    </div>
   );
 }

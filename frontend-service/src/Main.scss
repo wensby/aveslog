@@ -1,6 +1,6 @@
 @import './layout.scss';
 
-div.main {
+main {
   display: grid;
   grid: 1fr / 1fr;
   grid-template-areas:
@@ -20,7 +20,7 @@ div.main {
       '. main .';
   }
 
-  & main {
+  & > div {
     grid-area: main;
     max-width: 100vw;
     position: relative;

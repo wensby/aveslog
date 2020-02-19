@@ -8,9 +8,9 @@ export default function SightingsPage() {
   const { t } = useTranslation();
 
   return (
-    <>
+    <div>
       <h1>{t('Sightings')}</h1>
       <FilterableSightingsList sightings={sightings} />
-    </>
+    </div>
   );
 }

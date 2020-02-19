@@ -4,9 +4,9 @@ import { PasswordChangeForm } from './PasswordChangeForm';
 
 export default function Settings() {
   const { t } = useTranslation();
-  return (<>
+  return (<div>
     <h1>{t('Settings')}</h1>
     <h2>{t('change-password')}</h2>
     <PasswordChangeForm />
-  </>);
+  </div>);
 }
