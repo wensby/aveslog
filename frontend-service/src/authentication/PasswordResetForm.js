@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import NewPasswordFormGroup from './NewPasswordFormGroup';
+import { Alert } from '../generic/Alert.js';
 
 export default function PasswordResetForm(props) {
   const { t } = useTranslation();
@@ -12,11 +13,7 @@ export default function PasswordResetForm(props) {
 
   const renderAlert = () => {
     if (alert) {
-      return (
-        <div className={`alert alert-${alert.type}`} role='alert'>
-          { t(alert.message) }
-        </div>
-      );
+      return <Alert type={alert.type} message={t(alert.message)}/>;
     }
     else {
       return null;

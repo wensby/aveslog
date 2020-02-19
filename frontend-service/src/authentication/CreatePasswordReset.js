@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
+import { Alert } from '../generic/Alert.js';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -11,9 +12,7 @@ export default () => {
   const renderAlert = () => {
     if (alert) {
       return (
-        <div className={`alert alert-${alert.type}`} role='alert'>
-          { t(alert.message) }
-        </div>
+        <Alert type={alert.type} message={t(alert.message)} />
       );
     }
     return null;

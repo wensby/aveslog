@@ -4,6 +4,7 @@ import AuthenticationService from '../AuthenticationService.js';
 import { Link } from 'react-router-dom'
 import { PageHeading } from '../../PageHeading';
 import './EmailRegistration.scss';
+import { Alert } from '../../generic/Alert.js';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -13,8 +14,7 @@ export default () => {
 
   const renderAlert = () => {
     if (alert) {
-      return <div className={`col alert alert-${alert.type}`}
-        role='alert'>{t(alert.message)}</div>;
+      return <Alert type={alert.type} message={t(alert.message)} />;
     }
     else {
       return null;

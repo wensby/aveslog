@@ -4,6 +4,7 @@ import NewPasswordFormGroup from '../authentication/NewPasswordFormGroup';
 import AuthenticationService from '../authentication/AuthenticationService';
 import { UserContext } from '../authentication/UserContext';
 import { useHistory } from "react-router-dom";
+import { Alert } from '../generic/Alert';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
@@ -19,8 +20,7 @@ export const PasswordChangeForm = () => {
     if (errorMessage) {
       return (
         <div className='row'>
-          <div className={`col alert alert-${errorMessage.category}`}
-            role='alert'>{ errorMessage.message }</div>
+          <Alert type={errorMessage.category} message={errorMessage.message} />
         </div>
       );
     }

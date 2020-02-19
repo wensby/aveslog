@@ -8,6 +8,7 @@ import { FadeIn } from '../../component/FadeIn.js';
 import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../PageHeading';
+import { Alert } from '../../generic/Alert';
 
 export function CredentialsRegistrationPage() {
   const { match } = useReactRouter();
@@ -37,9 +38,7 @@ export function CredentialsRegistrationPage() {
     if (alert) {
       return (
         <div className='row'>
-          <div className={`col alert alert-${alert.category}`} role='alert'>
-            { alert.message }
-          </div>
+          <Alert type={alert.category} message={alert.message} />
         </div>
       );
     }

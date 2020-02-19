@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LoginForm } from './LoginForm.js';
 import './LoginPage.scss';
+import { Alert } from '../generic/Alert.js';
 
 const Separator = () => {
   return <div className='separator' />;
@@ -43,9 +44,7 @@ function ErrorMessage({ message }) {
 
   return (
     <div className='row'>
-      <div className='col alert alert-danger' role='alert'>
-        {t(message)}
-      </div>
+      <Alert type='danger' message={t(message)} />
     </div>
   );
 }

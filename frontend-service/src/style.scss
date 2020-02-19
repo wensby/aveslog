@@ -9,26 +9,6 @@
   border:0;
 }
 
-.alert {
-	position: relative;
-	padding: .75rem 1.25rem;
-	margin-bottom: 1rem;
-	border: 1px solid transparent;
-	border-radius: .25rem;
-}
-
-.alert-danger {
-	color: #721c24;
-	background-color: #f8d7da;
-	border-color: #f5c6cb;
-}
-
-.alert-success {
-	color: #1c7220;
-	background-color: #d7f8d9;
-	border-color: #c6f5ce;
-}
-
 .button {
   display: flex;
   background-color: $primary;
