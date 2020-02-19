@@ -46,41 +46,25 @@ export const EmailRegistrationPage = () => {
 
   return (
     <div>
-      <div>
-        <div>
-          <PageHeading>{t('Registration')}</PageHeading>
-          <p>{t('register-link-request-prompt-message')}</p>
-        </div>
-      </div>
+      <PageHeading>{t('Registration')}</PageHeading>
+      <p>{t('register-link-request-prompt-message')}</p>
       {renderAlert()}
-      <div>
-        <div>
-          <form onSubmit={handleFormSubmit} className='email-registration-form'>
-            <div className='form-group'>
-              <label htmlFor='emailInput'>{t('Email address')}</label>
-              <input
-                value={email}
-                onChange={event => setEmail(event.target.value)}
-                id='emailInput'
-                className='form-control'
-                type='text'
-                name='email'
-                placeholder={t('Enter email')}
-              />
-            </div>
-            <button
-              className='button'
-              type='submit'>
-              {t('Continue')}
-            </button>
-          </form>
+      <form onSubmit={handleFormSubmit} className='email-registration-form'>
+        <div className='form-group'>
+          <label htmlFor='emailInput'>{t('Email address')}</label>
+          <input
+            value={email}
+            onChange={event => setEmail(event.target.value)}
+            id='emailInput'
+            className='form-control'
+            type='text'
+            name='email'
+            placeholder={t('Enter email')}
+          />
         </div>
-      </div>
-      <div>
-        <div>
-          <Link to='/authentication/login'>{t('Back to login')}</Link>
-        </div>
-      </div>
+        <button className='button' type='submit'>{t('Continue')}</button>
+      </form>
+      <Link to='/authentication/login'>{t('Back to login')}</Link>
     </div>
   );
 };
