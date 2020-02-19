@@ -17,11 +17,9 @@ export const Footer = () => {
 const LanguageLink = ({ languageCode, label }) => {
   const { i18n } = useTranslation();
 
-  const changeLanguage = lng => {
-    i18n.changeLanguage(lng);
+  const handleClick = () => {
+    i18n.changeLanguage(languageCode);
   };
-
-  const handleClick = () => changeLanguage(languageCode);
 
   if (i18n.languages[0] === languageCode) {
     return <p className='selected'>{label}</p>;
