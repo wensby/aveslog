@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from "react-router-dom";
 import Settings from './settings/SettingsRoute'
 import HomePage from './home/HomePage';
-import Authentication from './authentication/Authentication.js'
+import { Authentication } from './authentication/Authentication.js'
 import Bird from './bird/Bird.js';
 import Sighting from './sighting/Sighting.js';
 import { Profile } from './profile/Profile';
