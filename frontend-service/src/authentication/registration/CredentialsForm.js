@@ -56,7 +56,7 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
         type='text' name='username' aria-describedby='usernameHelpBlock'
         placeholder={t('Username')} value={value}
         onChange={event => onChange(event.target.value)} />
-      <small id='usernameHelpBlock' className='form-text text-muted'>
+      <small id='usernameHelpBlock'>
         {t('username-help-block')}
       </small>
       <div className='valid-feedback'>{t('username-valid-feedback')}</div>

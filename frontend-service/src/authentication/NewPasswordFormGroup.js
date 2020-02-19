@@ -38,7 +38,7 @@ const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
         type='password' name='password' aria-describedby='passwordHelpBlock'
         placeholder={t('Password')} value={value}
         onChange={event => onChange(event.target.value)} />
-      <small id='passwordHelpBlock' className='form-text text-muted'>
+      <small id='passwordHelpBlock'>
         {t('password-format-help-message')}
       </small>
       <div className='valid-feedback'>{t('password-valid-feedback')}</div>

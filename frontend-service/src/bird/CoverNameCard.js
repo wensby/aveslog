@@ -6,12 +6,13 @@ export function CoverNameCard({ bird }) {
   const { commonName, loading } = useCommonName(bird);
 
   return (
-    <div className='bird-name-card w-100 d-flex justify-content-center'>
-      <div className='shadow bg-white text-center pt-1 mb-0 px-2 rounded-top'>
-        <h1 className='text-dark bird-page-name pb-2 mb-0'>
+    <div className='bird-name-card'>
+      <div>
+        <h1 className='bird-page-name'>
           {loading ? '' : commonName || ''}</h1>
-        <p className='font-italic font-weight-light text-muted mb-0 pb-2'>
-          {bird.binomialName}</p>
+        <p>
+          {bird.binomialName}
+        </p>
       </div>
     </div>
   );

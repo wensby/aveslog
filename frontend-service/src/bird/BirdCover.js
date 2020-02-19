@@ -7,7 +7,7 @@ export function BirdCover({ bird }) {
     style = { backgroundImage: `url(${bird.cover.url})` };
   }
   return (
-    <div className='picture-cover-container rounded-top overflow-hidden' style={style}>
+    <div className='picture-cover-container' style={style}>
       <div className='picture-cover'></div>
       <CoverNameCard bird={bird} />
     </div>

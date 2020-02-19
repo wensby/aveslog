@@ -121,24 +121,6 @@ input:focus {
   outline-width: 0;
 }
 
-#navbarLogo {
-  display: inline;
-}
-
-#navbarLogoImage {
-  width: 50px;
-}
-
-.navbar .form-control {
-  padding: .75rem 1rem;
-  border-radius: 0;
-}
-
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-}
-
 /*
  * Content
  */
@@ -169,37 +151,5 @@ input:focus {
 @media (min-width: 768px) {
   .bird-page-name {
     font-size: 35px;
-  }
-}
-
-.card-bird-thumbnail {
-  object-fit: cover;
-  object-position: 0% 15%;
-  width: 100%;
-  max-height: 100px;
-}
-
-@media (min-width: 576px) {
-  .card-bird-thumbnail {
-    max-height: 150px;
-    height: 100%;
-    object-position: 50%;
-  }
-
-  #card-bird-thumbnail-col {
-    max-width: 150px;
-    height: 150px;
-  }
-}
-
-.card-horizontal {
-  display: flex;
-  flex: 1 1 auto;
-}
-
-/* => md */
-@media (min-width: 768px) {
-  #registerRequestFormContainer {
-    width: 520px;
   }
 }
