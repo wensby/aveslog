@@ -1,6 +1,6 @@
 @import '../colors.scss';
 
-.login {
+.login-page {
   display: flex;
   max-width: 600px;
   margin-left: auto;
@@ -8,7 +8,7 @@
   flex-direction: column;
 }
 
-.login h1 {
+.login-page h1 {
   margin-bottom: .5rem;
   line-height: 1.2;
   font-weight: bolder;
@@ -16,16 +16,16 @@
   margin-top: 0;
 }
 
-.login a {
+.login-page a {
   font-weight: 400;
   font-size: 16px;
 }
 
-.login a:hover {
+.login-page a:hover {
   text-decoration: none;
 }
 
-.login .password-recover-link {
+.login-page .password-recover-link {
   margin-top: 20px;
   text-align: center;
 }
@@ -34,7 +34,7 @@
   text-align: center;
 }
 
-.login .separator {
+.login-page .separator {
   border-top-style: solid;
   border-top-color: #CED4DA;
   border-top-width: 1px;

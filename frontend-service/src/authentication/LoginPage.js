@@ -23,7 +23,7 @@ export const LoginPage = () => {
   const { t } = useTranslation();
 
   return (
-    <div className='login'>
+    <div className='login-page'>
       <h1>{t('Login')}</h1>
       {errorMessage && <ErrorMessage message={errorMessage} />}
       <LoginForm onError={setErrorMessage} />
