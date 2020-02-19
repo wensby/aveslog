@@ -1,4 +1,5 @@
 @import '../colors.scss';
+@import '../layout.scss';
 
 .login-page {
   display: flex;
@@ -8,11 +9,18 @@
   flex-direction: column;
 
   & h1 {
+    @extend %phone-side-margins;
     margin-bottom: .5rem;
     line-height: 1.2;
     font-weight: bolder;
     font-size: 2.5rem;
     margin-top: 0;
+  }
+
+  & .login-form {
+    @extend %phone-side-margins;
+    max-width: 600px;
+    align-content: center;
   }
 
   & a {
@@ -44,9 +52,4 @@
 .bold-question {
   font-size: 18px;
   font-weight: 900;
-}
-
-.login-form {
-  max-width: 600px;
-  align-content: center;
 }
