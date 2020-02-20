@@ -5,6 +5,10 @@ div.email-registration-page {
   & h1.page-heading {
     @extend %common-page-heading-positioning;
   }
+
+  & > * {
+    @extend %phone-side-margins;
+  }
 }
 
 .email-registration-form {
