@@ -63,24 +63,8 @@ input:focus {
   outline-width: 0;
 }
 
-/*
- * Content
- */
-
-.bird-page-name {
-  font-size: 25px;
-  z-index: 1;
-}
-
 .bird-picture {
   height: 150px;
   width: 150px;
   object-fit: cover;
-}
-
-/* => md */
-@media (min-width: 768px) {
-  .bird-page-name {
-    font-size: 35px;
-  }
 }
