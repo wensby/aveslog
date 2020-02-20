@@ -69,7 +69,7 @@ const Form = () => {
         <input value={email} onChange={handleEmailChange} id='email' className='form-control'
           type='text' placeholder={t('Enter email')} />
       </div>
-      <button className='button' type='submit'>{t('Continue')}</button>
+      <button type='submit'>{t('Continue')}</button>
     </form>
   );
 };
