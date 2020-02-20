@@ -9,16 +9,16 @@ div.email-registration-page {
   & > * {
     @extend %phone-side-margins;
   }
-}
 
-.email-registration-form {
+  & form {
 
-  & button {
-    margin-top: 10px;
-  }
-
-  & input {
-    margin-top: 10px;
-    width: 100%;
+    & button {
+      margin-top: 10px;
+    }
+  
+    & input {
+      margin-top: 10px;
+      width: 100%;
+    }
   }
 }
