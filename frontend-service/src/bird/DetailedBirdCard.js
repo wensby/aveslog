@@ -3,12 +3,13 @@ import { useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { CommonNamesSection } from './CommonNamesSection';
 import { BirdActionBar } from './BirdActionBar';
+import './DetailedBirdCard.scss';
 
 export function DetailedBirdCard({ bird }) {
   const stats = useBirdStatistics(bird);
 
   return (
-    <div>
+    <div className='detailed-bird-card'>
       <BirdCover bird={bird} />
       <BirdActionBar bird={bird} />
       <CommonNamesSection bird={bird} />

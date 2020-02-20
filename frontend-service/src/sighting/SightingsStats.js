@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StatCard } from "./StatCard";
+import './SightingsStats.scss';
 
 export function SightingsStats({ sightings }) {
   const { t } = useTranslation();

@@ -9,18 +9,6 @@
   border:0;
 }
 
-hr {
-  border: 0;
-  border-top: 1px solid rgba(0,0,0,.1);
-}
-
-.sighting-stats {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: stretch;
-  justify-content: evenly;
-}
-
 input:focus {
   border-color: $light-primary;
   box-shadow: 0 0 0 0.2rem rgba(238, 99, 82, 0.25);
