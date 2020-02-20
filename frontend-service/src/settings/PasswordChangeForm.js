@@ -47,7 +47,7 @@ export const PasswordChangeForm = () => {
       {renderAlert()}
       <div className='form-group'>
         <label htmlFor='currentPassword'>{t('current-password')}</label>
-        <input className='form-input' id='currentPassword' type='password'
+        <input id='currentPassword' type='password'
           placeholder={t('current-password')}
           value={currentPassword}
           onChange={event => setCurrentPassword(event.target.value)} />

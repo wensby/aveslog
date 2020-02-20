@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import './NewPasswordFormGroup.scss';
 
 export default ({ onChange, showFeedback }) => {
   const [password, setPassword] = useState('');
@@ -17,13 +18,13 @@ export default ({ onChange, showFeedback }) => {
     onChange(validPassword);
   }, [validPattern, passwordsMatch, onChange, password])
 
-  return <>
+  return <div className='new-password-form-group'>
     <PasswordFormGroup value={password} onChange={setPassword}
       valid={validPattern} showFeedback={showFeedback} />
     <PasswordConfirmationFormGroup value={passwordConfirmation}
       onChange={setPasswordConfirmation}
       valid={passwordsMatch} showFeedback={showFeedback} />
-  </>;
+  </div>;
 }
 
 const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
@@ -34,7 +35,7 @@ const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
   return (
     <div className='form-group'>
       <label htmlFor='passwordInput'>{t('Password')}</label>
-      <input id='passwordInput' className={`form-input ${feedbackClass}`}
+      <input id='passwordInput' className={feedbackClass}
         type='password' name='password' aria-describedby='passwordHelpBlock'
         placeholder={t('Password')} value={value}
         onChange={event => onChange(event.target.value)} />
@@ -59,7 +60,7 @@ const PasswordConfirmationFormGroup = props => {
         {t('password-confirm-password-label')}
       </label>
       <input id='confirmPasswordInput' type='password' name='confirmPassword'
-        className={`form-input ${feedbackClass}`} value={value}
+        className={feedbackClass} value={value}
         placeholder={t('password-confirm-password-label')}
         onChange={event => onChange(event.target.value)} />
       <div className='valid-feedback'>
