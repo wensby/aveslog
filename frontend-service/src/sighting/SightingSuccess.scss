@@ -1,0 +1,8 @@
+@import '../colors.scss';
+
+div.sighting-success {
+  
+  & .success-text {
+    color: $success;
+  }
+}

@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DetailedSightingCard } from './DetailedSightingCard';
 import { BounceInRight } from '../component/BounceInRight';
+import './SightingSuccess.scss';
 
 export default function SightingSuccess({ sighting, stats }) {
   const { t } = useTranslation();
 
   return (
-    <div>
+    <div className='sighting-success'>
       <h1 className='success-text'>{t('sighting-success')}</h1>
       <BounceInRight>
         <DetailedSightingCard sighting={sighting} />
