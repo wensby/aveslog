@@ -45,7 +45,7 @@ export const EmailRegistrationPage = () => {
   }
 
   return (
-    <div>
+    <div className='email-registration-page'>
       <PageHeading>{t('Registration')}</PageHeading>
       <p>{t('register-link-request-prompt-message')}</p>
       {renderAlert()}

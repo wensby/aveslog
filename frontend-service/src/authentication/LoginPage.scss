@@ -8,10 +8,8 @@
   margin-right: auto;
   flex-direction: column;
 
-  & h1 {
-    @extend %phone-side-margins;
-    margin-bottom: .5rem;
-    margin-top: 0;
+  & h1.page-heading {
+    @extend %common-page-heading-positioning;
   }
 
   & .login-form {

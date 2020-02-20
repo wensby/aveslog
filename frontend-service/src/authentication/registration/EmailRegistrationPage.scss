@@ -1,3 +1,12 @@
+@import '../../layout.scss';
+
+div.email-registration-page {
+
+  & h1.page-heading {
+    @extend %common-page-heading-positioning;
+  }
+}
+
 .email-registration-form {
 
   & button {
