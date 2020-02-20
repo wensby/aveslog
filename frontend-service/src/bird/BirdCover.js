@@ -1,5 +1,6 @@
 import React from 'react';
 import { CoverNameCard } from './CoverNameCard';
+import './BirdCover.scss';
 
 export function BirdCover({ bird }) {
   let style = {};
