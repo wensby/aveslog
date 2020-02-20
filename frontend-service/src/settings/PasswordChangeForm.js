@@ -5,6 +5,7 @@ import AuthenticationService from '../authentication/AuthenticationService';
 import { UserContext } from '../authentication/UserContext';
 import { useHistory } from "react-router-dom";
 import { Alert } from '../generic/Alert';
+import './PasswordChangeForm.scss';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
@@ -42,7 +43,7 @@ export const PasswordChangeForm = () => {
   };
 
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form onSubmit={handleFormSubmit} className='password-change-form'>
       {renderAlert()}
       <div className='form-group'>
         <label htmlFor='currentPassword'>{t('current-password')}</label>
@@ -53,7 +54,7 @@ export const PasswordChangeForm = () => {
         </div>
       <NewPasswordFormGroup onChange={setNewPassword}
           showFeedback={showFeedback} />
-      <button className='button'>{t('password-change-button')}</button>
+      <button>{t('password-change-button')}</button>
     </form>
   );
 }

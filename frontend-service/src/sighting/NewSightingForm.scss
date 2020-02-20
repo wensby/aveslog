@@ -79,6 +79,20 @@ div.sighting-form {
 }
 
 .sighting-form button[type=submit] {
+  display: flex;
+  background-color: $primary;
+  color: $white;
+  font-weight: bold;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: 
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out, 
+    border-color 0.15s ease-in-out, 
+    box-shadow 0.15s ease-in-out;
   margin-top: 15px;
   
   &[disabled] {

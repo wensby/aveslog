@@ -5,6 +5,7 @@ import { DetailedSightingCard } from './DetailedSightingCard';
 import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';
 import { useHistory } from "react-router-dom";
+import './SightingPage.scss';
 
 export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
@@ -47,7 +48,7 @@ export function SightingPage({match}) {
   };
 
   return (
-    <div>
+    <div className='sighting-page'>
       <DetailedSightingCard sighting={sighting}/>
       {renderDelete()}
     </div>

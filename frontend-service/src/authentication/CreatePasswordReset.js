@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import { Alert } from '../generic/Alert.js';
+import './CreatePasswordReset.scss';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -42,7 +43,7 @@ export default () => {
   }
 
   return (
-    <div>
+    <div class='create-password-reset'>
       <div>
         <div>
           <h1>{ t('Password Reset') }</h1>
@@ -60,11 +61,7 @@ export default () => {
                 name='email'
                 type='text'/>
             </div>
-            <button
-              className='button'
-              type='submit'>
-              { t('Send') }
-              </button>
+            <button type='submit'>{ t('Send') }</button>
           </form>
         </div>
       </div>

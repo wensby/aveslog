@@ -93,7 +93,7 @@ export function NewSightingForm({ bird, onSuccess }) {
         <LocationSection
           onCoordinatesChanged={setLocation}
           onBlocking={setBlockedByLocation} />
-        <button type='submit' className='button' disabled={blockedByLocation}>
+        <button type='submit' disabled={blockedByLocation}>
           {t('submit-sighting-button')}
         </button>
       </form>

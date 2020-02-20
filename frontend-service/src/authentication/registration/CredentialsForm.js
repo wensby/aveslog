@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import NewPasswordFormGroup from '../NewPasswordFormGroup';
+import './CredentialsForm.scss'
 
 
 export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
@@ -22,7 +23,7 @@ export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className='credentials-form'>
       <EmailFormGroup value={email} />
       <UsernameFormGroup value={username} onChange={setUsername}
         valid={usernameValid} showFeedback={showFeedback} />
@@ -66,9 +67,5 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
 
 const SubmitButton = () => {
   const { t } = useTranslation();
-  return (
-    <button className='button' type='submit'>
-      {t('registration-button')}
-    </button>
-  );
+  return <button type='submit'>{t('registration-button')}</button>;
 };

@@ -59,8 +59,7 @@ export default function PasswordResetForm(props) {
           <form onSubmit={submitForm}>
             <NewPasswordFormGroup onChange={setPassword}
               showFeedback={showFeedback} />
-            <button className='button'
-              type='submit'>{ t('button-submit-label') }</button>
+            <button type='submit'>{ t('button-submit-label') }</button>
           </form>
         </div>
       </div>

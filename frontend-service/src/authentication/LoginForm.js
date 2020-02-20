@@ -68,9 +68,7 @@ export function LoginForm({ onError }) {
       <div className='login-button-row'>
         <div>
           {loading && <div className='spinner' />}
-          <button type='submit' className='button'>
-            {t('Login')}
-          </button>
+          <button type='submit'>{t('Login')}</button>
         </div>
       </div>
     </form>
