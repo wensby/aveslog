@@ -29,12 +29,12 @@ export function useCommonName(bird) {
   const [commonName, setCommonName] = useState(null);
   const { i18n } = useTranslation();
   const language = i18n.languages[0];
-  const apiUrl = window._env_.API_URL;
-  const url = `${apiUrl}/birds/${bird.id}/common-names?locale=${language}`;
 
   useEffect(() => {
     const resolveCommonName = async () => {
       setLoading(true);
+      const apiUrl = window._env_.API_URL;
+      const url = `${apiUrl}/birds/${bird.id}/common-names?locale=${language}`;
       const response = await fetch(url);
       if (response.status === 200) {
         const json = await response.json();
@@ -51,8 +51,16 @@ export function useCommonName(bird) {
       setLoading(false);
     };
     setCommonName(null);
+    if (bird.commonNames) {
+      const result = bird.commonNames.filter(commonName => commonName.locale === language);
+      if (result) {
+        setCommonName(result[0].name);
+        setLoading(false);
+        return;
+      }
+    }
     resolveCommonName();
-  }, [language, url]);
+  }, [bird, language]);
   
   return { commonName, loading };
 }
