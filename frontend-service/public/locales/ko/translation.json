@@ -24,7 +24,7 @@
   "Back to login": "로그인 돌아가기",
   "registration-email-submit-success-message": "이메일 보냈습니다.",
   "registration-email-submit-failure-message": "이메일은 이미 사용한 이메일입니다.",
-  "register-link-request-prompt-message": "이메일를 입력하면 새로운 사용자 계정 만드는 린크를 보낼거예요.",
+  "register-link-request-prompt-message": "이메일를 입력하면 새로운 사용자 계정 만드는 링크를 전달 드립니다.",
   "button-submit-label": "제출",
   "password-reset-title": "비밀번호 초기화",
   "password-reset-form-prompt-message": "",
@@ -72,5 +72,6 @@
   "today": "오늘",
   "common-names-title": "일반적인 이름",
   "add-button": "추가",
+  "send-registration-link-button-label": "링크를 보내기",
   "Logout": "로그아웃"
 }

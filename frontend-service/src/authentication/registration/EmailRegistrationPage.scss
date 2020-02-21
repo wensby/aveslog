@@ -4,18 +4,20 @@
 div.email-registration-page {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 
   & h1.page-heading {
     @extend %common-page-heading-positioning;
   }
 
-  & > * {
+  & p {
     @extend %phone-side-margins;
   }
 
   & form {
+    @extend %phone-side-margins;
     align-self: stretch;
+    display: flex;
+    flex-direction: column;
 
     & button {
       margin-top: 10px;
@@ -27,7 +29,7 @@ div.email-registration-page {
     }
 
     & button {
-      display: flex;
+      align-self: flex-end;
       background-color: $primary;
       color: $white;
       font-weight: bold;
@@ -53,7 +55,16 @@ div.email-registration-page {
     }
   }
 
+  & > hr {
+    margin-left: 0;
+    margin-right: 0;
+    align-self: stretch;
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,.1);
+  }
+
   & > a {
-    margin-top: 1rem;
+    @extend %phone-side-margins;
+    align-self: flex-start;
   }
 }

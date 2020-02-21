@@ -38,6 +38,7 @@ export const EmailRegistrationPage = () => {
         <p>{t('register-link-request-prompt-message')}</p>
         {alert && <SubmitAlert alert={alert} />}
         <Form />
+        <hr />
         <Link to='/authentication/login'>{t('Back to login')}</Link>
       </div>
     </PageContext.Provider>
@@ -69,7 +70,7 @@ const Form = () => {
         <input value={email} onChange={handleEmailChange} id='email' className='form-control'
           type='text' placeholder={t('Enter email')} />
       </div>
-      <button type='submit'>{t('Continue')}</button>
+      <button type='submit'>{t('send-registration-link-button-label')}</button>
     </form>
   );
 };
