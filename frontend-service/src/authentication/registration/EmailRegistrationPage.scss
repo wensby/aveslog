@@ -2,6 +2,8 @@
 @import '../../colors.scss';
 
 div.email-registration-page {
+  display: flex;
+  flex-direction: column;
 
   & h1.page-heading {
     @extend %common-page-heading-positioning;
@@ -12,6 +14,7 @@ div.email-registration-page {
   }
 
   & form {
+    box-sizing: border-box;
 
     & button {
       margin-top: 10px;
@@ -47,5 +50,9 @@ div.email-registration-page {
         background-color: $darkgrey;
       }
     }
+  }
+
+  & > a {
+    margin-top: 1rem;
   }
 }
