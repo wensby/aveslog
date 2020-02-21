@@ -3,14 +3,14 @@
 div.clear-search-button {
   cursor: pointer;
   fill: $lighter;
+  display: flex;
+  justify-content: center;
+
+  & svg {
+    height: 100%;
+  }
 
   &:hover {
     fill: $darkgrey;
-  }
-
-  & svg {
-    vertical-align: middle;
-    width: 100%;
-    height: 100%;
   }
 }

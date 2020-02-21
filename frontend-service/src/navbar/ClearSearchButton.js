@@ -7,7 +7,7 @@ export const ClearSearchButton = () => {
   const { clear } = useContext(SearchBarContext);
   return (
     <div className='clear-search-button' onClick={clear}>
-      <Icon name='cross' />
+      <Icon name='cross' viewBox='0 0 1 1'/>
     </div>
   );
 };
