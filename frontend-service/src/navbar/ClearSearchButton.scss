@@ -1,6 +1,6 @@
 @import '../colors.scss';
 
-.advanced-search-toggle {
+div.clear-search-button {
   cursor: pointer;
   fill: $lighter;
 
@@ -12,11 +12,5 @@
     vertical-align: middle;
     width: 100%;
     height: 100%;
-    transition: transform .1s ease-in-out;
-  }
-
-  &.expanded svg {
-    transform: rotate(180deg);
-    fill: $darkgrey;
   }
 }

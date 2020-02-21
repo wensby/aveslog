@@ -2,9 +2,10 @@ import React, { useState, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
+import { ClearSearchButton } from './ClearSearchButton';
 import './SearchBar.scss';
 
-const SearchBarContext = React.createContext();
+export const SearchBarContext = React.createContext();
 
 export const SearchBar = () => {
   const history = useHistory();
@@ -18,12 +19,20 @@ export const SearchBar = () => {
     inputRef.current.blur();
   }
 
+  const clear = () => {
+    setQuery('');
+    inputRef.current.focus();
+  }
+
   return (
-    <SearchBarContext.Provider value={{ query, advanced }}>
+    <SearchBarContext.Provider value={{ query, advanced, clear }}>
       <form className='search-bar' onSubmit={submit}>
         <div className='text-input'>
           <SearchInput ref={inputRef} value={query} onChange={setQuery} />
-          <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
+          <div className='right'>
+            {query && <ClearSearchButton />}
+            <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
+          </div>
         </div>
         <SearchButton />
       </form>

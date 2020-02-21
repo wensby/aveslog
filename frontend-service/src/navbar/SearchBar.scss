@@ -7,11 +7,12 @@ form.search-bar {
   font-size: 1.25rem;
 
   & div.text-input {
-    display: flex;
+    position: relative;
     width: 100%;
     align-items: center;
 
     & input.search-input {
+      box-sizing: border-box;
       width: 100%;
       padding: .75rem 1rem;
       border: 1px solid $lighter;
@@ -30,9 +31,24 @@ form.search-bar {
       }
     }
 
-    & .advanced-search-toggle {
-      margin-left: -40px;
-      margin-right: 10px;
+    & div.right {
+      position: absolute;
+      align-items: center;
+      display: flex;
+      top: 0;
+      right: 0;
+      bottom: 0;
+
+      & > * {
+        box-sizing: border-box;
+        height: 100%;
+        width: 2.5rem;
+        padding: .5rem 0;
+      }
+
+      & div.advanced-search-toggle {
+        margin-right: .5rem;
+      }
     }
   }
 
