@@ -10,6 +10,9 @@ $desktop-up: "only screen and (min-width : 1224px)";
 
   @media only screen and (min-width : $break-small) {
     margin-left: unset;
+  }
+
+  @media only screen and (min-width : $break-large) {
     margin-right: unset;
   }
 }
