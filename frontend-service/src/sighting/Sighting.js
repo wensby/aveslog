@@ -4,7 +4,7 @@ import SightingsPage from './SightingsPage';
 import { SightingPage } from './SightingPage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute.js';
 
-export default ({match}) => {
+export const Sighting = ({ match }) => {
   const { path } = match;
   return (
     <Switch>
@@ -12,4 +12,4 @@ export default ({match}) => {
       <Route path={`${path}/:sightingId`} component={SightingPage} />
     </Switch>
   );
-}
+};
