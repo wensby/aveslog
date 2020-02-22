@@ -25,7 +25,7 @@ export function Accounts() {
     else {
       setLoading(false);
     }
-  }, [authenticated, accessToken]);
+  }, [authenticated]);
 
   if (loading) {
     return <Spinner />;

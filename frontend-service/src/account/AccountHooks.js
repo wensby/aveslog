@@ -44,7 +44,7 @@ export function useResourcePermission(resource, method) {
 }
 
 export const useAccount = username => {
-  const { accessToken } = useContext(UserContext);
+  const { accessToken, authenticated } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);
@@ -64,7 +64,7 @@ export const useAccount = username => {
     setAccount(null);
     setError(null);
     fetchAccount();
-  }, [username, accessToken])
+  }, [username, authenticated])
 
   return { loading, account, error }
 };

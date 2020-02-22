@@ -12,7 +12,7 @@ export function useBirder(birderId) {
       setBirder(birder);
     }
     resolveBirder();
-  }, [birderId, accessToken]);
+  }, [birderId]);
 
   return birder;
 }

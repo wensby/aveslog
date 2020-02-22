@@ -15,7 +15,7 @@ export function BirderPage({ birder }) {
       }
     }
     fetchSightings();
-  }, [birder, accessToken]);
+  }, [birder]);
   return (
     <div>
       <h1>{birder.name}</h1>

@@ -11,19 +11,18 @@ export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const { accessToken, account } = useContext(UserContext);
-  const sightingService = new SightingService();
   const history = useHistory();
 
   useEffect(() => {
     const resolveSighting = async () => {
-      const response = await sightingService.fetchSighting(accessToken, sightingId);
+      const response = await (new SightingService()).fetchSighting(accessToken, sightingId);
       if (response.status === 200) {
         const sighting = await response.json();
         setSighting(sighting);
       }
     }
     resolveSighting();
-  }, [sightingId, accessToken, sightingService]);
+  }, [sightingId]);
 
   const handleDelete = async () => {
     const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);

@@ -20,7 +20,7 @@ export function ProfilePage({ username }) {
     if (account) {
       fetchSightings();
     }
-  }, [account, accessToken]);
+  }, [account]);
 
   return (
     <div>

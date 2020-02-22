@@ -4,7 +4,7 @@ import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 
 export function SightingFeedContainer() {
-  const { accessToken } = useContext(UserContext);
+  const { accessToken, authenticated } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
 
   useEffect(() => {
@@ -15,8 +15,10 @@ export function SightingFeedContainer() {
         setSightings(json.items);
       }
     }
-    fetchSightings();
-  }, [accessToken]);
+    if (authenticated) {
+      fetchSightings();
+    }
+  }, [authenticated]);
 
   return <SightingFeed sightings={sightings} />;
 }
