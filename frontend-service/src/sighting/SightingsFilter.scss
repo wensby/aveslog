@@ -1,0 +1,28 @@
+@import '../colors.scss';
+
+.sightings-filter {
+  & button {
+    color: $primary;
+    box-sizing: content-box;
+    background: none!important;
+    display: inline;
+    border: none;
+    font-family: inherit;
+    transform-origin: 0 0;
+    perspective-origin: 0 0;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+    
+    &:hover {
+      color: $black;
+    }
+    
+    &.selected {
+      color: $darkgrey;
+      cursor: unset;
+    }
+  }
+}

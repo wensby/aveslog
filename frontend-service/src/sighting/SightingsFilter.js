@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FilterYearOption } from './FilterYearOption';
+import './SightingsFilter.scss';
 
 export function SightingsFilter({ sightings, selectedYear, onYearChange }) {
   const [years, setYears] = useState([]);
