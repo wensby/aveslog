@@ -1,23 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
 import { UserContext } from '../authentication/UserContext';
-import AccountService from '../account/AccountService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
+import { useAccount } from '../account/AccountHooks';
 
 export function ProfilePage({ username }) {
   const [sightings, setSightings] = useState([]);
   const { accessToken } = useContext(UserContext);
-  const [account, setAccount] = useState(null);
-
-  useEffect(() => {
-    const fetchAccount = async () => {
-      const response = await new AccountService().fetchAccount(accessToken, username);
-      if (response.status === 200) {
-        setAccount(await response.json());
-      }
-    };
-    fetchAccount();
-  }, [username, accessToken])
+  const { account } = useAccount(username);
 
   useEffect(() => {
     const fetchSightings = async () => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from '../authentication/UserContext';
+import AccountService from '../account/AccountService';
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
@@ -41,3 +42,29 @@ export function useResourcePermission(resource, method) {
 
   return present;
 }
+
+export const useAccount = username => {
+  const { accessToken } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
+  const [account, setAccount] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAccount = async () => {
+      setLoading(true);
+      const response = await new AccountService().fetchAccount(accessToken, username);
+      if (response.status === 200) {
+        setAccount(await response.json());
+      }
+      else {
+        setError((await response.json()).message);
+      }
+      setLoading(false);
+    };
+    setAccount(null);
+    setError(null);
+    fetchAccount();
+  }, [username, accessToken])
+
+  return { loading, account, error }
+};
