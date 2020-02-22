@@ -53,7 +53,7 @@ export function useCommonName(bird) {
     setCommonName(null);
     if (bird.commonNames) {
       const result = bird.commonNames.filter(commonName => commonName.locale === language);
-      if (result) {
+      if (result.length > 0) {
         setCommonName(result[0].name);
         setLoading(false);
         return;
