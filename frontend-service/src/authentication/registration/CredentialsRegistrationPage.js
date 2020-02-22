@@ -10,29 +10,23 @@ import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
 
-export function CredentialsRegistrationPage() {
+export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
   const history = useHistory();
   const token = match.params.token;
+  const { registrationRequest } = useRegistrationRequest(token);
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
   const [success, setSuccess] = useState(false);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const { setRefreshToken } = useContext(UserContext);
-
   const { t } = useTranslation();
-  const authentication = new AuthenticationService();
 
   useEffect(() => {
-    const fetchEmail = async () => {
-      const response = await new AuthenticationService().fetchRegistration(token);
-      if (response.status === 200) {
-        const json = await response.json();
-        setEmail(json['email']);
-      }
+    if (registrationRequest) {
+      setEmail(registrationRequest['email']);
     }
-    fetchEmail();
-  }, [token]);
+  }, [registrationRequest]);
 
   const renderAlert = () => {
     if (alert) {
@@ -46,15 +40,15 @@ export function CredentialsRegistrationPage() {
 
   const handleFormSubmit = async credentials => {
     try {
-      const response = await authentication.postRegistration(token, credentials);
+      const response = await new AuthenticationService().postRegistration(token, credentials);
       if (response.status === 201) {
         setSuccess(true);
-        const response = await authentication.postRefreshToken(credentials[0], credentials[1]);
+        const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
         if (response.status === 201) {
           const refreshResponseJson = await response.json();
           setRefreshToken({
             id: refreshResponseJson.id,
-            jwt: refreshResponseJson.refreshToken, 
+            jwt: refreshResponseJson.refreshToken,
             expiration: Date.parse(refreshResponseJson.expirationDate),
           });
           history.push('/');
@@ -80,23 +74,24 @@ export function CredentialsRegistrationPage() {
   }
   return (
     <div>
-      <div>
-        <div>
-          <PageHeading>{ t('Registration') }</PageHeading>
-          <p>
-            { t('registration-form-instructions') }
-          </p>
-        </div>
-      </div>
+      <PageHeading>{t('Registration')}</PageHeading>
+      <p>{t('registration-form-instructions')}</p>
       {renderAlert()}
-      <div>
-        <div>
-          <CredentialsForm
-            email={email}
-            onSubmit={handleFormSubmit}
-            takenUsernames={takenUsernames} />
-        </div>
-      </div>
+      <CredentialsForm email={email} onSubmit={handleFormSubmit} takenUsernames={takenUsernames} />
     </div>
   );
+};
+
+const useRegistrationRequest = token => {
+  const [registrationRequest, setRegistrationRequest] = useState(null);
+  useEffect(() => {
+    const resolveRegistrationRequest = async () => {
+      const response = await new AuthenticationService().fetchRegistration(token);
+      if (response.status === 200) {
+        setRegistrationRequest(await response.json());
+      }
+    }
+    resolveRegistrationRequest();
+  }, [token]);
+  return { registrationRequest };
 }
