@@ -14,7 +14,7 @@ export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
   const history = useHistory();
   const { token } = match.params;
-  const { registrationRequest } = useRegistrationRequest(token);
+  const { registrationRequest, error } = useRegistrationRequest(token);
   const [alert, setAlert] = useState(null);
   const email = registrationRequest ? registrationRequest.email : '';
   const [success, setSuccess] = useState(false);
@@ -52,7 +52,9 @@ export const CredentialsRegistrationPage = () => {
     catch (err) {
     }
   };
-
+  if (error === 404) {
+    history.push('/authentication/login');
+  }
   if (success) {
     return <FadeIn><RegistrationSuccess /></FadeIn>;
   }
@@ -68,15 +70,20 @@ export const CredentialsRegistrationPage = () => {
 
 const useRegistrationRequest = token => {
   const [registrationRequest, setRegistrationRequest] = useState(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const resolveRegistrationRequest = async () => {
       const response = await new AuthenticationService().fetchRegistration(token);
       if (response.status === 200) {
         setRegistrationRequest(await response.json());
       }
+      else {
+        setError(response.status);
+      }
     }
+    setError(null);
     setRegistrationRequest(null);
     resolveRegistrationRequest();
   }, [token]);
-  return { registrationRequest };
+  return { registrationRequest, error };
 }
