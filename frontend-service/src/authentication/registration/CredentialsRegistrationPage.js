@@ -5,6 +5,7 @@ import { FadeIn } from '../../component/FadeIn.js';
 import { useHistory } from "react-router-dom";
 import { useRegistrationRequest } from '../AuthenticationHooks.js';
 import { CredentialsRegistration } from './CredentialsRegistration';
+import { LoadingOverlay } from '../../loading/LoadingOverlay.js';
 
 export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
@@ -22,6 +23,9 @@ export const CredentialsRegistrationPage = () => {
   }
   if (success) {
     return <FadeIn><RegistrationSuccess /></FadeIn>;
+  }
+  else if (!registrationRequest) {
+    return <LoadingOverlay />;
   }
   return <CredentialsRegistration
     token={token}
