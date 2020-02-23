@@ -81,6 +81,7 @@ const useRegistrationRequest = token => {
         setRegistrationRequest(await response.json());
       }
     }
+    setRegistrationRequest(null);
     resolveRegistrationRequest();
   }, [token]);
   return { registrationRequest };
