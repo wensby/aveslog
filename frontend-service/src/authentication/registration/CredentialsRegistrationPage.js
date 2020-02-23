@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactRouter } from '../../reactRouterHook';
 import AuthenticationService from '../AuthenticationService.js';
@@ -9,6 +9,7 @@ import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
+import { useRegistrationRequest } from '../AuthenticationHooks.js';
 
 export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
@@ -81,23 +82,3 @@ const CredentialsRegistration = ({ token, registrationRequest, onSuccess }) => {
     </div>
   );
 };
-
-const useRegistrationRequest = token => {
-  const [registrationRequest, setRegistrationRequest] = useState(null);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    const resolveRegistrationRequest = async () => {
-      const response = await new AuthenticationService().fetchRegistration(token);
-      if (response.status === 200) {
-        setRegistrationRequest(await response.json());
-      }
-      else {
-        setError(response.status);
-      }
-    }
-    setError(null);
-    setRegistrationRequest(null);
-    resolveRegistrationRequest();
-  }, [token]);
-  return { registrationRequest, error };
-}
