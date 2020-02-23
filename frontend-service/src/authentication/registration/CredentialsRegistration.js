@@ -6,6 +6,7 @@ import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
+import './CredentialsRegistration.scss';
 
 export const CredentialsRegistration = ({ token, registrationRequest, onSuccess }) => {
   const { setRefreshToken } = useContext(UserContext);
