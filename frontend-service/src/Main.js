@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import Settings from './settings/SettingsRoute'
 import HomePage from './home/HomePage';
 import { Authentication } from './authentication/Authentication.js'
-import Bird from './bird/Bird.js';
+import { BirdRoute } from './bird/BirdRoute.js';
 import { Sighting } from './sighting/Sighting.js';
 import { Profile } from './profile/Profile';
 import AuthenticatedRoute from './authentication/AuthenticatedRoute';
@@ -18,7 +18,7 @@ export const Main = () => {
       <Route path='/profile' component={Profile} />
       <Route path='/birder' component={Birder} />
       <AuthenticatedRoute path='/settings' exact component={Settings} />
-      <Route path='/bird' component={Bird} />
+      <Route path='/bird' component={BirdRoute} />
       <Route path='/sighting' component={Sighting} />
     </main>
   );
