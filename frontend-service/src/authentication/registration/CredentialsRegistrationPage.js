@@ -16,17 +16,11 @@ export const CredentialsRegistrationPage = () => {
   const { token } = match.params;
   const { registrationRequest } = useRegistrationRequest(token);
   const [alert, setAlert] = useState(null);
-  const [email, setEmail] = useState('');
+  const email = registrationRequest ? registrationRequest.email : '';
   const [success, setSuccess] = useState(false);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const { setRefreshToken } = useContext(UserContext);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (registrationRequest) {
-      setEmail(registrationRequest['email']);
-    }
-  }, [registrationRequest]);
 
   const handleFormSubmit = async credentials => {
     try {
