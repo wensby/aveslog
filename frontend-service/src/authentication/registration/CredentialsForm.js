@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import NewPasswordFormGroup from '../NewPasswordFormGroup';
+import { CredentialsRegistrationContext } from './CredentialsRegistration';
 import './CredentialsForm.scss'
 
 
-export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
+export const CredentialsForm = ({ email }) => {
+  const { takenUsernames, submit } = useContext(CredentialsRegistrationContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
@@ -17,7 +19,7 @@ export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
   const handleSubmit = event => {
     event.preventDefault();
     if (usernameValid && password) {
-      onSubmit([username, password]);
+      submit([username, password]);
     }
     setShowFeedback(true);
   }

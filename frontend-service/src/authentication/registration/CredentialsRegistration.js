@@ -8,6 +8,8 @@ import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
 import './CredentialsRegistration.scss';
 
+export const CredentialsRegistrationContext = React.createContext();
+
 export const CredentialsRegistration = ({ token, registrationRequest, onSuccess }) => {
   const { setRefreshToken } = useContext(UserContext);
   const [takenUsernames, setTakenUsernames] = useState([]);
@@ -16,7 +18,7 @@ export const CredentialsRegistration = ({ token, registrationRequest, onSuccess 
   const history = useHistory();
   const email = registrationRequest ? registrationRequest.email : '';
 
-  const handleFormSubmit = async credentials => {
+  const submit = async credentials => {
     try {
       const response = await new AuthenticationService().postRegistration(token, credentials);
       if (response.status === 201) {
@@ -48,11 +50,13 @@ export const CredentialsRegistration = ({ token, registrationRequest, onSuccess 
   };
 
   return (
-    <div className='credentials-registration'>
-      <PageHeading>{t('Registration')}</PageHeading>
-      <p>{t('registration-form-instructions')}</p>
-      {alert && <Alert type={alert.category} message={alert.message} />}
-      <CredentialsForm email={email} onSubmit={handleFormSubmit} takenUsernames={takenUsernames} />
-    </div>
+    <CredentialsRegistrationContext.Provider value={{ takenUsernames, submit }}>
+      <div className='credentials-registration'>
+        <PageHeading>{t('Registration')}</PageHeading>
+        <p>{t('registration-form-instructions')}</p>
+        {alert && <Alert type={alert.category} message={alert.message} />}
+        <CredentialsForm email={email} />
+      </div>
+    </CredentialsRegistrationContext.Provider>
   );
 };
