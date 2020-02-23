@@ -23,7 +23,7 @@ export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className='credentials-form'>
+    <form className='credentials-form' onSubmit={handleSubmit} >
       <EmailFormGroup value={email} />
       <UsernameFormGroup value={username} onChange={setUsername}
         valid={usernameValid} showFeedback={showFeedback} />
@@ -37,10 +37,9 @@ export const CredentialsForm = ({ email, onSubmit, takenUsernames }) => {
 const EmailFormGroup = ({ value }) => {
   const { t } = useTranslation();
   return (
-    <div className='form-group'>
+    <div className='email-form-group'>
       <label htmlFor='emailInput'>{t('Email address')}</label>
-      <input id='emailInput' readOnly className='form-control' type='email'
-        name='email' value={value} />
+      <input id='emailInput' readOnly name='email' value={value} />
     </div>
   );
 };

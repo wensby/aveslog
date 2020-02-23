@@ -12,21 +12,40 @@ import { Alert } from '../../generic/Alert';
 
 export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
-  const history = useHistory();
+  const [success, setSuccess] = useState(false);
   const { token } = match.params;
   const { registrationRequest, error } = useRegistrationRequest(token);
-  const [alert, setAlert] = useState(null);
-  const email = registrationRequest ? registrationRequest.email : '';
-  const [success, setSuccess] = useState(false);
-  const [takenUsernames, setTakenUsernames] = useState([]);
+  const history = useHistory();
+
+  const handleSuccess = () => {
+    setSuccess(true);
+  };
+
+  if (error === 404) {
+    history.push('/authentication/login');
+  }
+  if (success) {
+    return <FadeIn><RegistrationSuccess /></FadeIn>;
+  }
+  return <CredentialsRegistration
+    token={token}
+    registrationRequest={registrationRequest}
+    onSuccess={handleSuccess} />;
+};
+
+const CredentialsRegistration = ({ token, registrationRequest, onSuccess }) => {
   const { setRefreshToken } = useContext(UserContext);
+  const [takenUsernames, setTakenUsernames] = useState([]);
+  const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
+  const history = useHistory();
+  const email = registrationRequest ? registrationRequest.email : '';
 
   const handleFormSubmit = async credentials => {
     try {
       const response = await new AuthenticationService().postRegistration(token, credentials);
       if (response.status === 201) {
-        setSuccess(true);
+        onSuccess();
         const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
         if (response.status === 201) {
           const refreshResponseJson = await response.json();
@@ -52,14 +71,9 @@ export const CredentialsRegistrationPage = () => {
     catch (err) {
     }
   };
-  if (error === 404) {
-    history.push('/authentication/login');
-  }
-  if (success) {
-    return <FadeIn><RegistrationSuccess /></FadeIn>;
-  }
+
   return (
-    <div>
+    <div className='credentials-registration'>
       <PageHeading>{t('Registration')}</PageHeading>
       <p>{t('registration-form-instructions')}</p>
       {alert && <Alert type={alert.category} message={alert.message} />}
