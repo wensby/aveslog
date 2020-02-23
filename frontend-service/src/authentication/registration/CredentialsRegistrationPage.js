@@ -28,16 +28,6 @@ export const CredentialsRegistrationPage = () => {
     }
   }, [registrationRequest]);
 
-  const renderAlert = () => {
-    if (alert) {
-      return (
-        <div className='row'>
-          <Alert type={alert.category} message={alert.message} />
-        </div>
-      );
-    }
-  }
-
   const handleFormSubmit = async credentials => {
     try {
       const response = await new AuthenticationService().postRegistration(token, credentials);
@@ -76,7 +66,7 @@ export const CredentialsRegistrationPage = () => {
     <div>
       <PageHeading>{t('Registration')}</PageHeading>
       <p>{t('registration-form-instructions')}</p>
-      {renderAlert()}
+      {alert && <Alert type={alert.category} message={alert.message} />}
       <CredentialsForm email={email} onSubmit={handleFormSubmit} takenUsernames={takenUsernames} />
     </div>
   );
