@@ -13,7 +13,7 @@ import { Alert } from '../../generic/Alert';
 export const CredentialsRegistrationPage = () => {
   const { match } = useReactRouter();
   const history = useHistory();
-  const token = match.params.token;
+  const { token } = match.params;
   const { registrationRequest } = useRegistrationRequest(token);
   const [alert, setAlert] = useState(null);
   const [email, setEmail] = useState('');
