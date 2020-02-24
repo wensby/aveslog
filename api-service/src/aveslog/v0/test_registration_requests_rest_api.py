@@ -53,6 +53,7 @@ class TestGetRegistrationRequest(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertDictEqual(response.json, {
+      'token': 'myToken',
       'email': 'hulot@mail.com',
     })
 

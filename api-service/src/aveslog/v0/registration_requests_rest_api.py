@@ -43,6 +43,7 @@ def get_registration_request(token: str) -> Response:
     .filter_by(token=token).first()
   if registration:
     return make_response(jsonify({
+      'token': registration.token,
       'email': registration.email,
     }), HTTPStatus.OK)
   return make_response('', HTTPStatus.NOT_FOUND)

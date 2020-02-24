@@ -682,6 +682,7 @@ GET /registration-requests/:registration-request-token
 Status: 200 OK
 
 {
+  "token": "31b8b6209316b29d98fa7d9b1f7c5e34",
   "email": "hulot@mail.com"
 }
 ```
