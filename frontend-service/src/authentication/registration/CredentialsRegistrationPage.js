@@ -28,7 +28,6 @@ export const CredentialsRegistrationPage = () => {
     return <LoadingOverlay />;
   }
   return <CredentialsRegistration
-    token={token}
     registrationRequest={registrationRequest}
     onSuccess={handleSuccess} />;
 };

@@ -10,7 +10,7 @@ import './CredentialsRegistration.scss';
 
 export const CredentialsRegistrationContext = React.createContext();
 
-export const CredentialsRegistration = ({ token, registrationRequest, onSuccess }) => {
+export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
   const { setRefreshToken } = useContext(UserContext);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const [alert, setAlert] = useState(null);
@@ -20,7 +20,7 @@ export const CredentialsRegistration = ({ token, registrationRequest, onSuccess 
 
   const submit = async credentials => {
     try {
-      const response = await new AuthenticationService().postRegistration(token, credentials);
+      const response = await new AuthenticationService().postRegistration(registrationRequest.token, credentials);
       if (response.status === 201) {
         onSuccess();
         const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
