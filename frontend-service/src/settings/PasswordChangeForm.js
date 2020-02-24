@@ -36,7 +36,7 @@ export const PasswordChangeForm = () => {
       }
       else {
         const message = (await response.json())['message'];
-        setErrorMessage({category: 'danger', message: message});
+        setErrorMessage({ category: 'danger', message: message });
       }
     }
     setShowFeedback(true);
@@ -51,9 +51,9 @@ export const PasswordChangeForm = () => {
           placeholder={t('current-password')}
           value={currentPassword}
           onChange={event => setCurrentPassword(event.target.value)} />
-        </div>
+      </div>
       <NewPasswordFormGroup onChange={setNewPassword}
-          showFeedback={showFeedback} />
+        showFeedback={showFeedback} />
       <button>{t('password-change-button')}</button>
     </form>
   );
