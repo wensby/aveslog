@@ -1,11 +1,12 @@
 import React from 'react';
 import { useTranslation } from "react-i18next";
 import { PasswordChangeForm } from './PasswordChangeForm';
+import './Settings.scss';
 
 export const Settings = () => {
   const { t } = useTranslation();
   return (
-    <div>
+    <div className='settings'>
       <h1>{t('Settings')}</h1>
       <h2>{t('change-password')}</h2>
       <PasswordChangeForm />
