@@ -39,7 +39,7 @@ export const CredentialsRegistrationForm = ({ }) => {
 const EmailFormGroup = ({ value }) => {
   const { t } = useTranslation();
   return (
-    <div className='email-form-group'>
+    <div className='form-group'>
       <label htmlFor='emailInput'>{t('Email address')}</label>
       <input id='emailInput' readOnly name='email' value={value} />
     </div>
@@ -54,13 +54,11 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
   return (
     <div className='form-group'>
       <label htmlFor='usernameInput'>{t('Username')}</label>
-      <input id='usernameInput' className={`form-control${feedbackClass}`}
-        type='text' name='username' aria-describedby='usernameHelpBlock'
+      <input id='usernameInput' className={feedbackClass}
+        type='text' aria-describedby='usernameHelpBlock'
         placeholder={t('Username')} value={value}
         onChange={event => onChange(event.target.value)} />
-      <small id='usernameHelpBlock'>
-        {t('username-help-block')}
-      </small>
+      <small id='usernameHelpBlock'>{t('username-help-block')}</small>
       <div className='valid-feedback'>{t('username-valid-feedback')}</div>
     </div>
   );
