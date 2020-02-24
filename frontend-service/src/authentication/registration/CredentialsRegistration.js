@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from '../AuthenticationService.js';
-import { CredentialsForm } from './CredentialsForm';
+import { CredentialsRegistrationForm } from './CredentialsRegistrationForm';
 import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
@@ -50,12 +50,12 @@ export const CredentialsRegistration = ({ token, registrationRequest, onSuccess 
   };
 
   return (
-    <CredentialsRegistrationContext.Provider value={{ takenUsernames, submit }}>
+    <CredentialsRegistrationContext.Provider value={{ email, takenUsernames, submit }}>
       <div className='credentials-registration'>
         <PageHeading>{t('Registration')}</PageHeading>
         <p>{t('registration-form-instructions')}</p>
         {alert && <Alert type={alert.category} message={alert.message} />}
-        <CredentialsForm email={email} />
+        <CredentialsRegistrationForm />
       </div>
     </CredentialsRegistrationContext.Provider>
   );
