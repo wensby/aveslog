@@ -21,14 +21,16 @@ export const CredentialsRegistrationPage = () => {
   if (error === 404) {
     history.push('/authentication/login');
   }
-  if (success) {
+  else if (success) {
     return <FadeIn><RegistrationSuccess /></FadeIn>;
   }
   else if (!registrationRequest) {
     return <LoadingOverlay />;
   }
-  return <CredentialsRegistration
-    registrationRequest={registrationRequest}
-    onSuccess={handleSuccess} />;
+  else {
+    return <CredentialsRegistration
+      registrationRequest={registrationRequest}
+      onSuccess={handleSuccess} />;
+  }
 };
 
