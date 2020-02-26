@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { SightingFeed } from './SightingFeed';
+import { Feed } from './Feed';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 
 const FeedContext = React.createContext();
 
-export const SightingFeedContainer = () => {
+export const FeedContainer = () => {
   const { accessToken, authenticated } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
 
@@ -24,7 +24,7 @@ export const SightingFeedContainer = () => {
 
   return (
     <FeedContext.Provider value={{sightings}}>
-      <SightingFeed sightings={sightings} />
+      <Feed sightings={sightings} />
     </FeedContext.Provider>
   );
 }

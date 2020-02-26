@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
-import { SightingFeedContainer } from './SightingFeedContainer';
+import { FeedContainer } from './FeedContainer';
 
 export const HomePage = () => {
   const { authenticated } = useContext(UserContext);
@@ -13,7 +13,7 @@ export const HomePage = () => {
   return (
     <div>
       <h1>{t("It's birding time!")}</h1>
-      <SightingFeedContainer />
+      <FeedContainer />
     </div>
   );
 }
