@@ -7,13 +7,10 @@ export const HomePage = () => {
   const { authenticated } = useContext(UserContext);
   const { t } = useTranslation();
 
-  if (!authenticated) {
-    return null;
-  }
   return (
     <div>
       <h1>{t("It's birding time!")}</h1>
-      <FeedContainer />
+      {authenticated && <FeedContainer />}
     </div>
   );
 }
