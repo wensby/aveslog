@@ -162,8 +162,8 @@ class ResourcePermission(Base):
     return f'ResourcePermission<name={self.name}, resource_regex={self.resource_regex}, method={self.method}>'
 
 
-class AccountRegistration(Base):
-  __tablename__ = 'account_registration'
+class RegistrationRequest(Base):
+  __tablename__ = 'registration_request'
   id = Column(Integer, primary_key=True)
   email = Column(String, nullable=False)
   token = Column(String, nullable=False)

@@ -1,5 +1,5 @@
 \i /schema/public/table/account.sql
-\i /schema/public/table/account_registration.sql
+\i /schema/public/table/registration_request.sql
 \i /schema/public/table/bird.sql
 \i /schema/public/table/bird_thumbnail.sql
 \i /schema/public/table/hashed_password.sql

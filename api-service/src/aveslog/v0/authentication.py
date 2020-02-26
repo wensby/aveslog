@@ -7,7 +7,7 @@ from jwt import encode, decode, ExpiredSignatureError, InvalidTokenError
 from sqlalchemy.orm import Session
 
 from aveslog.v0.models import Account
-from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import RegistrationRequest
 from aveslog.v0.models import RefreshToken
 from aveslog.v0.link import LinkFactory
 from aveslog.v0.localization import LoadedLocale
@@ -72,23 +72,23 @@ class AccountRegistrationController:
   def initiate_registration(
         self,
         email: str,
-        locale: LoadedLocale) -> Union[AccountRegistration, str]:
+        locale: LoadedLocale) -> Union[RegistrationRequest, str]:
     if not is_valid_email_address(email):
       return 'email invalid'
     if self.account_repository.find_account_by_email(email):
       return 'email taken'
     token = self.token_factory.create_token()
-    registration = AccountRegistration(email=email, token=token)
-    registration = self.account_repository.add_account_registration(
-      registration)
-    self.__send_registration_email(email, registration, locale)
-    return registration
+    registration_request = RegistrationRequest(email=email, token=token)
+    registration_request = self.account_repository.add_account_registration(
+      registration_request)
+    self.__send_registration_email(email, registration_request, locale)
+    return registration_request
 
   def __send_registration_email(self,
         email_address: str,
-        registration: AccountRegistration,
+        registration_request: RegistrationRequest,
         locale: LoadedLocale) -> None:
-    link = self.__create_registration_link(registration.token)
+    link = self.__create_registration_link(registration_request.token)
     self.__dispatch_registration_mail(email_address, link, locale)
 
   def __dispatch_registration_mail(self,

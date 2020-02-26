@@ -13,7 +13,7 @@ from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import LocaleLoader
 from aveslog.v0.localization import LocaleRepository
-from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import RegistrationRequest
 
 
 def post_registration_request() -> Response:
@@ -39,12 +39,12 @@ def post_registration_request() -> Response:
 
 
 def get_registration_request(token: str) -> Response:
-  registration = g.database_session.query(AccountRegistration) \
+  registration_request = g.database_session.query(RegistrationRequest) \
     .filter_by(token=token).first()
-  if registration:
+  if registration_request:
     return make_response(jsonify({
-      'token': registration.token,
-      'email': registration.email,
+      'token': registration_request.token,
+      'email': registration_request.email,
     }), HTTPStatus.OK)
   return make_response('', HTTPStatus.NOT_FOUND)
 

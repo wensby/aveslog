@@ -6,7 +6,7 @@ from typing import Optional
 
 from flask import g
 from aveslog.v0.models import Account
-from aveslog.v0.models import AccountRegistration
+from aveslog.v0.models import RegistrationRequest
 
 
 def is_valid_username(username: str) -> bool:
@@ -46,11 +46,11 @@ class AccountRepository:
     self.hasher = password_hasher
 
   def add_account_registration(self,
-        account_registration: AccountRegistration,
-  ) -> Optional[AccountRegistration]:
-    g.database_session.add(account_registration)
+        registration_request: RegistrationRequest,
+  ) -> Optional[RegistrationRequest]:
+    g.database_session.add(registration_request)
     g.database_session.commit()
-    return account_registration
+    return registration_request
 
   def find_account_by_email(self, email: str) -> Optional[Account]:
     return g.database_session.query(Account). \
