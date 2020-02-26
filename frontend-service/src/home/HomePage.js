@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext';
 import { FeedContainer } from './FeedContainer';
+import { PageHeading } from '../generic/PageHeading.js';
 
 export const HomePage = () => {
   const { authenticated } = useContext(UserContext);
@@ -9,7 +10,7 @@ export const HomePage = () => {
 
   return (
     <div>
-      <h1>{t("It's birding time!")}</h1>
+      <PageHeading>{t("It's birding time!")}</PageHeading>
       {authenticated && <FeedContainer />}
     </div>
   );
