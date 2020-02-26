@@ -3,7 +3,7 @@ import { SightingFeed } from './SightingFeed';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 
-export function SightingFeedContainer() {
+export const SightingFeedContainer = () => {
   const { accessToken, authenticated } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
 
