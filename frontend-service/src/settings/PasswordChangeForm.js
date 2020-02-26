@@ -6,6 +6,7 @@ import { UserContext } from '../authentication/UserContext';
 import { useHistory } from "react-router-dom";
 import { Alert } from '../generic/Alert';
 import './PasswordChangeForm.scss';
+import { FormGroup } from '../generic/FormGroup';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
@@ -45,13 +46,13 @@ export const PasswordChangeForm = () => {
   return (
     <form onSubmit={handleFormSubmit} className='password-change-form'>
       {renderAlert()}
-      <div className='form-group'>
+      <FormGroup>
         <label htmlFor='currentPassword'>{t('current-password')}</label>
         <input id='currentPassword' type='password'
           placeholder={t('current-password')}
           value={currentPassword}
           onChange={event => setCurrentPassword(event.target.value)} />
-      </div>
+      </FormGroup>
       <NewPasswordFormGroup onChange={setNewPassword}
         showFeedback={showFeedback} />
       <button>{t('password-change-button')}</button>

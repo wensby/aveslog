@@ -2,6 +2,10 @@
 
 .login-form {
 
+  & .form-group {
+    margin-top: 10px;
+  }
+
   & .login-button-row {
     margin-top: 10px;
     box-sizing: border-box;
@@ -68,30 +72,4 @@
   border-radius: .25rem;
   -webkit-transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-}
-
-.form-group {
-  margin-top: 10px;
-}
-
-.form-group .is-invalid {
-  border-color: red;
-}
-
-.form-group .is-valid {
-  border-color: green;
-}
-
-.valid-feedback, .invalid-feedback {
-  display:none;
-}
-
-.is-invalid ~ .invalid-feedback {
-  color: red;
-  display: block;
-}
-
-.is-valid ~ .valid-feedback {
-  color: green;
-  display: block;
 }

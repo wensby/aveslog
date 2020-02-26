@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import { Alert } from '../generic/Alert.js';
 import './CreatePasswordReset.scss';
+import { FormGroup } from '../generic/FormGroup.js';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -50,7 +51,7 @@ export default () => {
           <p>{ t('password-reset-email-prompt-message') }</p>
           { renderAlert() }
           <form onSubmit={handleFormSubmit}>
-            <div className='form-group'>
+            <FormGroup>
               <label htmlFor='emailInput'>{ t('Email') }</label>
               <input
                 value={email}
@@ -60,7 +61,7 @@ export default () => {
                 id='emailInput'
                 name='email'
                 type='text'/>
-            </div>
+              </FormGroup>
             <button type='submit'>{ t('Send') }</button>
           </form>
         </div>

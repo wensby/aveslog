@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import NewPasswordFormGroup from '../NewPasswordFormGroup';
 import { CredentialsRegistrationContext } from './CredentialsRegistration';
 import './CredentialsRegistrationForm.scss'
+import { FormGroup } from '../../generic/FormGroup';
 
 
 export const CredentialsRegistrationForm = ({ }) => {
@@ -39,10 +40,10 @@ export const CredentialsRegistrationForm = ({ }) => {
 const EmailFormGroup = ({ value }) => {
   const { t } = useTranslation();
   return (
-    <div className='form-group'>
+    <FormGroup>
       <label htmlFor='emailInput'>{t('Email address')}</label>
       <input id='emailInput' readOnly name='email' value={value} />
-    </div>
+    </FormGroup>
   );
 };
 
@@ -52,7 +53,7 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
   const className = showFeedback ? validClassName : null;
 
   return (
-    <div className='form-group'>
+    <FormGroup>
       <label htmlFor='usernameInput'>{t('Username')}</label>
       <input id='usernameInput' className={className}
         type='text' aria-describedby='usernameHelpBlock'
@@ -60,7 +61,7 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
         onChange={event => onChange(event.target.value)} />
       <small id='usernameHelpBlock'>{t('username-help-block')}</small>
       <div className='valid-feedback'>{t('username-valid-feedback')}</div>
-    </div>
+    </FormGroup>
   );
 };
 

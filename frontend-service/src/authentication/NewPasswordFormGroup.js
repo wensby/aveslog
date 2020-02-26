@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import './NewPasswordFormGroup.scss';
+import { FormGroup } from '../generic/FormGroup';
 
 export default ({ onChange, showFeedback }) => {
   const [password, setPassword] = useState('');
@@ -33,7 +34,7 @@ const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
   const feedbackClass = showFeedback ? validClassName : '';
 
   return (
-    <div className='form-group'>
+    <FormGroup>
       <label htmlFor='passwordInput'>{t('Password')}</label>
       <input id='passwordInput' className={feedbackClass}
         type='password' name='password' aria-describedby='passwordHelpBlock'
@@ -44,7 +45,7 @@ const PasswordFormGroup = ({ value, onChange, valid, showFeedback }) => {
       </small>
       <div className='valid-feedback'>{t('password-valid-feedback')}</div>
       <div className='invalid-feedback'>{t('password-invalid-feedback')}</div>
-    </div>
+    </FormGroup>
   );
 };
 
@@ -55,7 +56,7 @@ const PasswordConfirmationFormGroup = props => {
   const feedbackClass = showFeedback ? validClassName : '';
 
   return (
-    <div className='form-group'>
+    <FormGroup>
       <label htmlFor='confirmPasswordInput'>
         {t('password-confirm-password-label')}
       </label>
@@ -69,6 +70,6 @@ const PasswordConfirmationFormGroup = props => {
       <div className='invalid-feedback'>
         {t('password-confirmation-invalid-feedback')}
       </div>
-    </div>
+    </FormGroup>
   );
 };
