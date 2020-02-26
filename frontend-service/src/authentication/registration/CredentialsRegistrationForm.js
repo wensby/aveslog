@@ -48,13 +48,13 @@ const EmailFormGroup = ({ value }) => {
 
 const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
   const { t } = useTranslation();
-  const validClassName = valid ? ' is-valid' : ' is-invalid';
-  const feedbackClass = showFeedback ? validClassName : '';
+  const validClassName = valid ? 'is-valid' : 'is-invalid';
+  const className = showFeedback ? validClassName : null;
 
   return (
     <div className='form-group'>
       <label htmlFor='usernameInput'>{t('Username')}</label>
-      <input id='usernameInput' className={feedbackClass}
+      <input id='usernameInput' className={className}
         type='text' aria-describedby='usernameHelpBlock'
         placeholder={t('Username')} value={value}
         onChange={event => onChange(event.target.value)} />
