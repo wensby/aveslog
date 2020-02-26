@@ -23,7 +23,7 @@ export const FeedContainer = () => {
   }, [authenticated]);
 
   return (
-    <FeedContext.Provider value={{sightings}}>
+    <FeedContext.Provider value={{ sightings }}>
       <Feed sightings={sightings} />
     </FeedContext.Provider>
   );
