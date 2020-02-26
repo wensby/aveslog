@@ -15,5 +15,5 @@ export const Feed = ({ sightings }) => {
     elements.push(<SightingFeedItemContainer sighting={sighting} key={index} />);
   });
 
-  return <>{elements}</>;
+  return <div className='feed'>{elements}</div>;
 };
