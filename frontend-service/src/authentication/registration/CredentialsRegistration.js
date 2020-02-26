@@ -19,33 +19,29 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
   const email = registrationRequest ? registrationRequest.email : '';
 
   const submit = async credentials => {
-    try {
-      const response = await new AuthenticationService().postRegistration(registrationRequest.token, credentials);
+    const response = await new AuthenticationService().postRegistration(registrationRequest.token, credentials);
+    if (response.status === 201) {
+      onSuccess();
+      const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
       if (response.status === 201) {
-        onSuccess();
-        const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
-        if (response.status === 201) {
-          const refreshResponseJson = await response.json();
-          setRefreshToken({
-            id: refreshResponseJson.id,
-            jwt: refreshResponseJson.refreshToken,
-            expiration: Date.parse(refreshResponseJson.expirationDate),
-          });
-          history.push('/');
-        }
-      }
-      else if (response.status === 409) {
-        const json = await response.json();
-        if (json['code'] === 3) {
-          setTakenUsernames(takenUsernames.concat([credentials[0]]))
-          setAlert({
-            category: 'danger',
-            message: 'Username already taken.',
-          });
-        }
+        const refreshResponseJson = await response.json();
+        setRefreshToken({
+          id: refreshResponseJson.id,
+          jwt: refreshResponseJson.refreshToken,
+          expiration: Date.parse(refreshResponseJson.expirationDate),
+        });
+        history.push('/');
       }
     }
-    catch (err) {
+    else if (response.status === 409) {
+      const json = await response.json();
+      if (json['code'] === 3) {
+        setTakenUsernames(takenUsernames.concat([credentials[0]]))
+        setAlert({
+          category: 'danger',
+          message: 'Username already taken.',
+        });
+      }
     }
   };
 
