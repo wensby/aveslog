@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BirdCardName } from '../bird/BirdCardName';
 import { useBird } from '../bird/BirdHooks';
 import placeholder from '../bird/placeholder-bird.jpg';
-import './style.scss';
+import './DetailedSightingCard.scss';
 
 export function DetailedSightingCard({ sighting }) {
   return (

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SightingSuccess from './SightingSuccess';
-import './style.scss';
 import { NewSightingForm } from './NewSightingForm';
 import { useBird } from '../bird/BirdHooks';
 
