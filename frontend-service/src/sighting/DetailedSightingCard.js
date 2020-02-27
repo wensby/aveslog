@@ -50,6 +50,7 @@ function CardBody({ sighting }) {
       <BirdCardName bird={bird} />
       <div>{sighting.date}</div>
       <div>{sighting.time}</div>
+      {sighting.position && sighting.position.name && <div>{sighting.position.name}</div>}
     </div>
   );
 }
