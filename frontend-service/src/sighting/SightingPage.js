@@ -21,7 +21,9 @@ export function SightingPage({match}) {
         setSighting(sighting);
       }
     }
-    resolveSighting();
+    if (accessToken) {
+      resolveSighting();
+    }
   }, [sightingId]);
 
   const handleDelete = async () => {
