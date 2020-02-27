@@ -2,10 +2,10 @@
 @import './colors.scss';
 
 %navbar-pushed {
-  padding-top: 112px + 15px;
+  padding-top: 112px;
 
   @media only screen and (min-width : $break-small) {
-    padding-top: 64px + 15px;
+    padding-top: 64px;
   }
 }
 
