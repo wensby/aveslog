@@ -9,7 +9,7 @@ import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';
 import './SightingCard.scss';
 
-export function SightingCard({ sighting }) {
+export const SightingCard = ({ sighting }) => {
   const { bird } = useBird(sighting.birdId);
   const { account } = useContext(UserContext);
   const { t } = useTranslation();
@@ -39,7 +39,7 @@ export function SightingCard({ sighting }) {
       </div>
     </div>
   );
-}
+};
 
 export const SightingCardPlaceholder = React.forwardRef((props, ref) => {
   return <div ref={ref} className='sighting-card placeholder' />;
