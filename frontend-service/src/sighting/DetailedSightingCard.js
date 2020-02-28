@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BirdCardName } from '../bird/BirdCardName';
 import { useBird } from '../bird/BirdHooks';
-import placeholder from '../bird/placeholder-bird.jpg';
+import { BirdCardPicture } from '../bird/BirdCardPicture';
 import './DetailedSightingCard.scss';
 
 export const DetailedSightingCard = ({ sighting }) => {
@@ -27,12 +27,11 @@ const CardHeader = ({ sighting }) => {
     return null;
   }
 
-  const src = (bird && bird.thumbnail && bird.thumbnail.url) || placeholder;
   return (
     <div className='card-header'>
       <div className='background' style={style} />
       <div className='middle-front'>
-        <img src={src} alt="Card" />;
+        <BirdCardPicture bird={bird} />
       </div>
     </div>
   );
