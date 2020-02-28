@@ -6,7 +6,7 @@ import './BirdCard.scss';
 export const BirdCard = ({ bird, children }) => {
   return (
     <div className='bird-card'>
-      <div className='bird-card-picture img-square-wrapper'>
+      <div className='bird-card-picture'>
         <BirdLink bird={bird} >
           <BirdThumbnailImage bird={bird} />
         </BirdLink>
