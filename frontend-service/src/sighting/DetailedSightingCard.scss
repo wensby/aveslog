@@ -3,39 +3,42 @@
 $header-height: 200px;
 $header-backdrop-blur: 32px;
 
-.detailed-sighting-card > .card-header {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: $header-height;
-  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
-  border-style: none;
-  background-color: black;
-  overflow: hidden;
-  padding: 0;
-}
+.detailed-sighting-card {
 
-.card-header > .background {
-  grid-row: 1;
-  overflow: hidden;
-  grid-column: 1 / 4;
-  height: $header-height + ($header-backdrop-blur * 8);
-  background-repeat: repeat-x;
-  background-position: center;
-  margin: -($header-backdrop-blur * 4);
-  filter: blur($header-backdrop-blur);
-  -webkit-filter: blur($header-backdrop-blur);
-}
+  & > .card-header {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-template-rows: $header-height;
+    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+    border-style: none;
+    background-color: black;
+    overflow: hidden;
+    padding: 0;
 
-.card-header > .middle-front {
-  grid-row: 1;
-  grid-column: 2;
-  z-index: 1;
-  margin-top: 50px;
-  height: $header-height - 50px;
+    & > .background {
+      grid-row: 1;
+      overflow: hidden;
+      grid-column: 1 / 4;
+      height: $header-height + ($header-backdrop-blur * 8);
+      background-repeat: repeat-x;
+      background-position: center;
+      margin: -($header-backdrop-blur * 4);
+      filter: blur($header-backdrop-blur);
+      -webkit-filter: blur($header-backdrop-blur);
+    }
 
-  & img {
-    height: 100%; 
-    width: 100%; 
-    object-fit: contain;
+    & > .middle-front {
+      grid-row: 1;
+      grid-column: 2;
+      z-index: 1;
+      margin-top: 50px;
+      height: $header-height - 50px;
+    
+      & img {
+        height: 100%; 
+        width: 100%; 
+        object-fit: contain;
+      }
+    }
   }
 }
