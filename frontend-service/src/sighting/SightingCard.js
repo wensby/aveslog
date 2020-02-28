@@ -10,8 +10,8 @@ import { Link } from 'react-router-dom';
 import './SightingCard.scss';
 
 export const SightingCard = ({ sighting }) => {
-  const { bird } = useBird(sighting.birdId);
   const { account } = useContext(UserContext);
+  const { bird } = useBird(sighting.birdId);
   const { t } = useTranslation();
 
   if (!bird) {
@@ -30,9 +30,9 @@ export const SightingCard = ({ sighting }) => {
           <BirdCardName bird={bird} className='common-name' />
           <div className='binomial-name'>{bird.binomialName}</div>
         </div>
-        <SightingTime className='card-text' sighting={sighting} />
-        {sighting.birderId === account.birder.id && <div className='card-body text-right'>
-          <Link to={`/sighting/${sighting.id}`} className='card-link'>
+        <SightingTime sighting={sighting} />
+        {sighting.birderId === account.birder.id && <div>
+          <Link to={`/sighting/${sighting.id}`}>
             {t('sighting-item-edit-link')}
           </Link>
         </div>}
@@ -42,5 +42,5 @@ export const SightingCard = ({ sighting }) => {
 };
 
 export const SightingCardPlaceholder = React.forwardRef((props, ref) => {
-  return <div ref={ref} className='sighting-card placeholder' />;
+  return <div ref={ref} className='sighting-card' />;
 });
