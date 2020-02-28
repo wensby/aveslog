@@ -4,16 +4,16 @@ import { useBird } from '../bird/BirdHooks';
 import placeholder from '../bird/placeholder-bird.jpg';
 import './DetailedSightingCard.scss';
 
-export function DetailedSightingCard({ sighting }) {
+export const DetailedSightingCard = ({ sighting }) => {
   return (
     <div className='detailed-sighting-card card'>
       <CardHeader sighting={sighting} />
       <CardBody sighting={sighting} />
     </div>
   );
-}
+};
 
-function CardHeader({ sighting }) {
+const CardHeader = ({ sighting }) => {
   const { bird } = useBird(sighting.birdId);
   const [style, setStyle] = useState({});
 
@@ -36,9 +36,9 @@ function CardHeader({ sighting }) {
       </div>
     </div>
   );
-}
+};
 
-function CardBody({ sighting }) {
+const CardBody = ({ sighting }) => {
   const { bird } = useBird(sighting.birdId);
 
   if (!bird) {
@@ -53,4 +53,4 @@ function CardBody({ sighting }) {
       {sighting.position && sighting.position.name && <div>{sighting.position.name}</div>}
     </div>
   );
-}
+};
