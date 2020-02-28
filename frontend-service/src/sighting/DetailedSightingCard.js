@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BirdCardName } from '../bird/BirdCardName';
 import { useBird } from '../bird/BirdHooks';
-import { BirdCardPicture } from '../bird/BirdCardPicture';
+import { BirdThumbnailImage } from '../bird/BirdThumbnailImage';
 import './DetailedSightingCard.scss';
 
 export const DetailedSightingCard = ({ sighting }) => {
@@ -31,7 +31,7 @@ const CardHeader = ({ sighting }) => {
     <div className='card-header'>
       <div className='background' style={style} />
       <div className='middle-front'>
-        <BirdCardPicture bird={bird} />
+        <BirdThumbnailImage bird={bird} />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BirdCardPicture } from '../bird/BirdCardPicture';
+import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
 import BirdLink from '../bird/BirdLink';
 import { Trans } from 'react-i18next';
 import { SightingTime } from '../sighting/SightingTime';
@@ -13,9 +13,9 @@ export function SightingFeedItem({ birder, sighting, bird }) {
 
   return (
     <div className='feed-card sighting'>
-      <div className='bird-picture'>
+      <div className='bird-thumbnail'>
         <BirdLink bird={bird} >
-          <BirdCardPicture bird={bird} />
+          <BirdThumbnailImage bird={bird} />
         </BirdLink>
       </div>
       <div>

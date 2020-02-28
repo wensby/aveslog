@@ -1,5 +1,5 @@
 import React from 'react';
-import { BirdCardPicture } from './BirdCardPicture';
+import { BirdThumbnailImage } from './BirdThumbnailImage.js';
 import BirdLink from './BirdLink';
 import './BirdCard.scss';
 
@@ -8,7 +8,7 @@ export function BirdCard({ bird, children }) {
     <div className='bird-card'>
       <div className='bird-card-picture img-square-wrapper'>
         <BirdLink bird={bird} >
-          <BirdCardPicture bird={bird} />
+          <BirdThumbnailImage bird={bird} />
         </BirdLink>
       </div>
       <div className='bird-card-body'>

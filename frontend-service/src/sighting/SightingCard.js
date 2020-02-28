@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
-import { BirdCardPicture } from '../bird/BirdCardPicture';
+import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
 import BirdLink from '../bird/BirdLink';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
@@ -22,7 +22,7 @@ export function SightingCard({ sighting }) {
     <div className='sighting-card' >
       <div className='picture'>
         <BirdLink bird={bird} >
-          <BirdCardPicture bird={bird} />
+          <BirdThumbnailImage bird={bird} />
         </BirdLink>
       </div>
       <div className='details'>
