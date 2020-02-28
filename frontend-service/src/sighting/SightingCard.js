@@ -3,7 +3,7 @@ import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
 import { useBird } from '../bird/BirdHooks.js';
 import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
-import BirdLink from '../bird/BirdLink';
+import { BirdLink } from '../bird/BirdLink.js';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
-import BirdLink from '../bird/BirdLink';
+import { BirdLink } from '../bird/BirdLink.js';
 import { Trans } from 'react-i18next';
 import { SightingTime } from '../sighting/SightingTime';
 import { useCommonName } from '../bird/BirdHooks';

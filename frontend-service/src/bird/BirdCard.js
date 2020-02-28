@@ -1,6 +1,6 @@
 import React from 'react';
 import { BirdThumbnailImage } from './BirdThumbnailImage.js';
-import BirdLink from './BirdLink';
+import { BirdLink } from './BirdLink.js';
 import './BirdCard.scss';
 
 export const BirdCard = ({ bird, children }) => {
