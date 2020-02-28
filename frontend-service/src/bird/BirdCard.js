@@ -3,7 +3,7 @@ import { BirdThumbnailImage } from './BirdThumbnailImage.js';
 import BirdLink from './BirdLink';
 import './BirdCard.scss';
 
-export function BirdCard({ bird, children }) {
+export const BirdCard = ({ bird, children }) => {
   return (
     <div className='bird-card'>
       <div className='bird-card-picture img-square-wrapper'>
