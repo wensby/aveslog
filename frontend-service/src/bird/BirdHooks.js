@@ -4,26 +4,24 @@ import { useTranslation } from 'react-i18next';
 import { BirdsContext } from './BirdsContext';
 
 export const useBird = birdId => {
-  const { birds, addBird } = useContext(BirdsContext);
+  const { addBird } = useContext(BirdsContext);
   const [bird, setBird] = useState(null);
-  const [loading, setLoading] = useState(null);
   const birdPromise = useBirdPromise(birdId);
+  const contextBird = useContextBird(birdId);
 
   useEffect(() => {
-    const correctBirdState = bird && bird.id === birdId;
-    if (!loading && !correctBirdState && birdId in birds) {
-      setBird(birds[birdId]);
+    if (contextBird) {
+      setBird(contextBird);
     }
-  }, [birdId, birds, bird, loading]);
+  }, [contextBird]);
 
   useEffect(() => {
     const resolveBirdPromise = async promise => {
-      setLoading(true);
       const response = await promise;
       if (response.status === 200 && !response.bodyUsed) {
-        addBird(await response.json());
+        const bird = await response.json();
+        addBird(bird);
       }
-      setLoading(false);
     };
     if (birdPromise) {
       resolveBirdPromise(birdPromise);
@@ -31,6 +29,11 @@ export const useBird = birdId => {
   }, [birdPromise]);
 
   return { bird, error: null };
+};
+
+const useContextBird = birdId => {
+  const { birds } = useContext(BirdsContext);
+  return birds.has(birdId) ? birds.get(birdId) : null;
 };
 
 const useBirdPromise = birdId => {

@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 const BirdsContext = React.createContext();
 
 const BirdsProvider = ({ children }) => {
-  const [birds, setBirds] = useState({});
+  const [birds, setBirds] = useState(new Map());
 
   const addBird = bird => {
     setBirds(prevBirds => {
-      return { ...prevBirds, [bird.id]: bird }
+      const newMap = new Map(prevBirds);
+      newMap.set(bird.id, bird);
+      return newMap;
     });
   };
 
