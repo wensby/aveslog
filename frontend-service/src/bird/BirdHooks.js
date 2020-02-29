@@ -1,28 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import birdRepository from './BirdRepository';
 import { useTranslation } from 'react-i18next';
+import { BirdsContext } from './BirdsContext';
 
-export function useBird(birdId) {
+export const useBird = birdId => {
+  const { birds, addBird } = useContext(BirdsContext);
   const [bird, setBird] = useState(null);
-  const [error, setError] = useState(null);
-  const apiUrl = window._env_.API_URL;
-  const url = `${apiUrl}/birds/${birdId}?embed=commonNames`;
+  const [loading, setLoading] = useState(null);
+  const birdPromise = useBirdPromise(birdId);
 
   useEffect(() => {
-    const resolveBird = async () => {
-      const response = await fetch(url);
-      if (response.status === 200) {
-        setBird(await response.json());
-      }
-      else {
-        setError('missing');
-      }
+    const correctBirdState = bird && bird.id === birdId;
+    if (!loading && !correctBirdState && birdId in birds) {
+      setBird(birds[birdId]);
     }
-    resolveBird();
-  }, [birdId, url]);
+  }, [birdId, birds, bird, loading]);
 
-  return { bird, error };
-}
+  useEffect(() => {
+    const resolveBirdPromise = async promise => {
+      setLoading(true);
+      const response = await promise;
+      if (response.status === 200 && !response.bodyUsed) {
+        addBird(await response.json());
+      }
+      setLoading(false);
+    };
+    if (birdPromise) {
+      resolveBirdPromise(birdPromise);
+    }
+  }, [birdPromise]);
+
+  return { bird, error: null };
+};
+
+const useBirdPromise = birdId => {
+  const [promise, setPromise] = useState(null);
+
+  useEffect(() => {
+    const apiUrl = window._env_.API_URL;
+    setPromise(fetch(`${apiUrl}/birds/${birdId}?embed=commonNames`));
+  }, [birdId]);
+
+  return promise;
+};
 
 export function useCommonName(bird) {
   const [loading, setLoading] = useState(true);
@@ -61,7 +81,7 @@ export function useCommonName(bird) {
     }
     resolveCommonName();
   }, [bird, language]);
-  
+
   return { commonName, loading };
 }
 
