@@ -1,10 +1,10 @@
 import React from 'react';
 import { BirdResultCard, BirdResultCardPlaceholder } from './BirdResultCard';
 import { useTranslation } from 'react-i18next';
-import './style.scss';
 import { LazyLoad } from '../LazyLoad.js';
+import './style.scss';
 
-export function BirdSearchResults({ query, birds }) {
+export const BirdSearchResults = ({ query, birds }) => {
   const { t } = useTranslation();
 
   return (
@@ -18,10 +18,10 @@ export function BirdSearchResults({ query, birds }) {
   );
 };
 
-function BirdSearchResultItem({ item, key }) {
+const BirdSearchResultItem = ({ item, key }) => {
   return (
     <LazyLoad offset={300} key={key} placeholder={<BirdResultCardPlaceholder />}>
       <BirdResultCard searchResult={item} />
     </LazyLoad>
   );
-}
+};
