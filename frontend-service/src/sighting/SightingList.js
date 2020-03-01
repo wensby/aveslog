@@ -4,7 +4,7 @@ import { LazyLoad } from '../LazyLoad.js';
 
 export const SightingList = ({ sightings }) => {
   return (
-    <div className='text-break'>
+    <div>
       {sightings.map(s => <LazyLoadedSightingCard key={s.id} sighting={s} />)}
     </div>
   );

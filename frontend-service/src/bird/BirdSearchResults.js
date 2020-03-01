@@ -8,7 +8,7 @@ export function BirdSearchResults({ query, birds }) {
   const { t } = useTranslation();
 
   return (
-    <div className='bird-result-container text-break'>
+    <div className='bird-result-container'>
       <div className='info'>{t('result-info-label')}: {query}</div>
       {birds.map((item, index) => <BirdSearchResultItem
         item={item}
