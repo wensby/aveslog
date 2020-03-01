@@ -3,7 +3,7 @@ import BirdService from './BirdService.js';
 import { LoadingOverlay } from '../loading/LoadingOverlay';
 import { BirdSearchResults } from './BirdSearchResults.js';
 
-export function BirdSearchResultsContainer({ query }) {
+export const BirdSearchResultsContainer = ({ query }) => {
   const [resultItems, setResultItems] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState(null);
   const [loading, setLoading] = useState(false);
