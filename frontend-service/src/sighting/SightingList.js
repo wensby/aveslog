@@ -16,4 +16,4 @@ const LazyLoadedSightingCard = ({ sighting }) => {
       <SightingCard sighting={sighting} />
     </LazyLoad>
   );
-}
+};
