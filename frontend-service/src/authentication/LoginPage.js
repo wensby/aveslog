@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { LoginForm } from './LoginForm.js';
 import { PageHeading } from '../generic/PageHeading.js';
-import './LoginPage.scss';
 import { Alert } from '../generic/Alert.js';
+import './LoginPage.scss';
 
 const Separator = () => {
   return <div className='separator' />;
