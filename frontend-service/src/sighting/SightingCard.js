@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, memo, forwardRef } from 'react';
 import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
 import { useLazyBird } from '../bird/BirdHooks.js';
@@ -10,15 +10,19 @@ import { Link } from 'react-router-dom';
 import { useReveal } from '../generic/ScrollHooks.js';
 import './SightingCard.scss';
 
-export const SightingCard = ({ sighting }) => {
+export const RevealingSightingCard = ({ sighting }) => {
   const ref = useRef(null);
   const revealed = useReveal(ref, 1000);
-  const { account } = useContext(UserContext);
   const bird = useLazyBird(sighting.birdId, revealed);
+  return <SightingCard sighting={sighting} bird={bird} ref={ref} />;
+};
+
+const SightingCard = memo(forwardRef(({ sighting, bird }, ref) => {
+  const { account } = useContext(UserContext);
   const { t } = useTranslation();
 
   if (!bird) {
-    return <SightingCardPlaceholder ref={ref} />;
+    return <div ref={ref} className='sighting-card' />;
   }
 
   return (
@@ -42,8 +46,4 @@ export const SightingCard = ({ sighting }) => {
       </div>
     </div>
   );
-};
-
-export const SightingCardPlaceholder = React.forwardRef((props, ref) => {
-  return <div ref={ref} className='sighting-card' />;
-});
+}));
