@@ -3,10 +3,11 @@
 
 .login-page {
   display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  flex-direction: column;
 
   & h1.page-heading {
     @extend %common-page-heading-positioning;
