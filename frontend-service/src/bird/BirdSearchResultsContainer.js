@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import BirdService from './BirdService.js';
-import './style.scss';
 import { LoadingOverlay } from '../loading/LoadingOverlay';
 import { BirdSearchResults } from './BirdSearchResults.js';
 

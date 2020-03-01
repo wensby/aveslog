@@ -2,7 +2,7 @@ import React from 'react';
 import { BirdResultCard, BirdResultCardPlaceholder } from './BirdResultCard';
 import { useTranslation } from 'react-i18next';
 import { LazyLoad } from '../LazyLoad.js';
-import './style.scss';
+import './BirdSearchResults.scss';
 
 export const BirdSearchResults = ({ query, birds }) => {
   const { t } = useTranslation();
