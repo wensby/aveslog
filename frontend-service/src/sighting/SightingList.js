@@ -1,6 +1,5 @@
 import React from 'react';
-import { SightingCard, SightingCardPlaceholder } from './SightingCard.js';
-import { LazyLoad } from '../generic/LazyLoad.js';
+import { SightingCard } from './SightingCard.js';
 
 export const SightingList = ({ sightings }) => {
   return (
@@ -11,9 +10,5 @@ export const SightingList = ({ sightings }) => {
 };
 
 const LazyLoadedSightingCard = ({ sighting }) => {
-  return (
-    <LazyLoad offset={1000} placeholder={<SightingCardPlaceholder />}>
-      <SightingCard sighting={sighting} />
-    </LazyLoad>
-  );
+  return <SightingCard sighting={sighting} />;
 };

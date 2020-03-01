@@ -1,25 +1,28 @@
 import React, { useContext } from 'react';
 import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
-import { useBird } from '../bird/BirdHooks.js';
+import { useLazyBird } from '../bird/BirdHooks.js';
 import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
 import { BirdLink } from '../bird/BirdLink.js';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';
+import { useReveal } from '../generic/ScrollHooks.js';
 import './SightingCard.scss';
 
 export const SightingCard = ({ sighting }) => {
+  const ref = React.createRef();
+  const revealed = useReveal(ref, 1000);
   const { account } = useContext(UserContext);
-  const { bird } = useBird(sighting.birdId);
+  const bird = useLazyBird(sighting.birdId, revealed);
   const { t } = useTranslation();
 
   if (!bird) {
-    return <SightingCardPlaceholder />;
+    return <SightingCardPlaceholder ref={ref} />;
   }
 
   return (
-    <div className='sighting-card' >
+    <div className='sighting-card' ref={ref}>
       <div className='picture'>
         <BirdLink bird={bird} >
           <BirdThumbnailImage bird={bird} />
