@@ -5,14 +5,14 @@ import { LazyLoad } from '../LazyLoad.js';
 export const SightingList = ({ sightings }) => {
   return (
     <div className='text-break'>
-      {sightings.map(s => <LazyLoadedSightingCard sighting={s} />)}
+      {sightings.map(s => <LazyLoadedSightingCard key={s.id} sighting={s} />)}
     </div>
   );
 };
 
 const LazyLoadedSightingCard = ({ sighting }) => {
   return (
-    <LazyLoad offset={1000} key={sighting.id} placeholder={<SightingCardPlaceholder />}>
+    <LazyLoad offset={1000} placeholder={<SightingCardPlaceholder />}>
       <SightingCard sighting={sighting} />
     </LazyLoad>
   );
