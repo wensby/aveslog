@@ -4,10 +4,13 @@ import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
-import { useBird } from './BirdHooks';
+import { useLazyBird } from './BirdHooks';
+import { useReveal } from '../generic/ScrollHooks';
 
 export const BirdResultCard = ({ searchResult, ...other }) => {
-  const { bird } = useBird(searchResult.id);
+  const ref = React.createRef();
+  const revealed = useReveal(ref, 500);
+  const bird = useLazyBird(searchResult.id, revealed);
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
 
@@ -21,11 +24,11 @@ export const BirdResultCard = ({ searchResult, ...other }) => {
   };
 
   if (!bird) {
-    return <BirdResultCardPlaceholder />;
+    return <BirdResultCardPlaceholder ref={ref} />;
   }
   
   return (
-    <BirdCard bird={bird} {...other} >
+    <BirdCard ref={ref} bird={bird} {...other} >
       <BirdCardName bird={bird} />
       {renderAddSightingLink(bird)}
     </BirdCard>

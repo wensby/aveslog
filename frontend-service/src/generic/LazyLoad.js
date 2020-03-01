@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useLayoutEffect, useContext, useRef } from 'react';
-import { WindowScrollContext } from '../WindowScrollContext';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useWindowScroll } from './ScrollHooks.js';
 
 export const LazyLoad = ({ offset, placeholder, children, ...props }) => {
   const [visible, setVisible] = useState(false);
@@ -37,11 +37,3 @@ export const LazyLoad = ({ offset, placeholder, children, ...props }) => {
     return React.cloneElement(placeholder, { ref: placeholderRef, ...props });
   }
 }
-
-const useWindowScroll = (active) => {
-  const { windowScroll } = useContext(WindowScrollContext);
-  if (active) {
-    return windowScroll;
-  }
-  return 0;
-};

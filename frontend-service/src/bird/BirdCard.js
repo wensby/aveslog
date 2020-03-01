@@ -3,9 +3,9 @@ import { BirdThumbnailImage } from './BirdThumbnailImage.js';
 import { BirdLink } from './BirdLink.js';
 import './BirdCard.scss';
 
-export const BirdCard = ({ bird, children }) => {
+export const BirdCard = React.forwardRef(({ bird, children }, ref) => {
   return (
-    <div className='bird-card'>
+    <div ref={ref} className='bird-card'>
       <div className='bird-card-picture'>
         <BirdLink bird={bird} >
           <BirdThumbnailImage bird={bird} />
@@ -16,4 +16,4 @@ export const BirdCard = ({ bird, children }) => {
       </div>
     </div>
   );
-};
+});

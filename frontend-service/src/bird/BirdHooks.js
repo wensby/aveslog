@@ -31,7 +31,40 @@ export const useBird = birdId => {
   return { bird, error: null };
 };
 
-const useContextBird = birdId => {
+/**
+ * Returns previously fetched bird BirdsContext, but refreshes the bird it is
+ * urgent that we have a bird.
+ * @param {*} id the id of the bird
+ * @param {*} eager true if it is urgent that we get a fresh state of the bird
+ */
+export const useLazyBird = (id, eager) => {
+  const { addBird } = useContext(BirdsContext);
+  const [bird, setBird] = useState(null);
+  const contextBird = useContextBird(id);
+
+  useEffect(() => {
+    setBird(contextBird);
+  }, [contextBird]);
+
+  useEffect(() => {
+    const resolveBirdPromise = async () => {
+      const apiUrl = window._env_.API_URL;
+      const promise = fetch(`${apiUrl}/birds/${id}?embed=commonNames`);
+      const response = await promise;
+      if (response.status === 200 && !response.bodyUsed) {
+        const bird = await response.json();
+        addBird(bird);
+      }
+    };
+    if (eager) {
+      resolveBirdPromise();
+    }
+  }, [id, eager])
+
+  return bird;
+}
+
+export const useContextBird = birdId => {
   const { birds } = useContext(BirdsContext);
   return birds.has(birdId) ? birds.get(birdId) : null;
 };
