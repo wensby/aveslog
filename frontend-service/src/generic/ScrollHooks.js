@@ -1,6 +1,10 @@
 import { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import { WindowScrollContext } from '../WindowScrollContext';
 
+/**
+ * Returns true when the component associated with the argument ref is within
+ * the offset of being revealed, vertically.
+ */
 export const useReveal = (componentRef, offset) => {
   const [revealed, setRevealed] = useState(false);
   const [triggered, setTriggered] = useState(true);
