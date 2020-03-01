@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { useReveal } from '../generic/ScrollHooks.js';
 import './SightingCard.scss';
 
-export const RevealingSightingCard = ({ sighting }) => {
+export const RevealableSightingCard = ({ sighting }) => {
   const ref = useRef(null);
   const revealed = useReveal(ref, 1000);
   const bird = useLazyBird(sighting.birdId, revealed);
