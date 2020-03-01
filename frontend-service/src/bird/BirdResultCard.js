@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { BirdCard } from './BirdCard';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
@@ -8,7 +8,7 @@ import { useLazyBird } from './BirdHooks';
 import { useReveal } from '../generic/ScrollHooks';
 
 export const BirdResultCard = ({ searchResult, ...other }) => {
-  const ref = React.createRef();
+  const ref = useRef(null);
   const revealed = useReveal(ref, 500);
   const bird = useLazyBird(searchResult.id, revealed);
   const { t } = useTranslation();
