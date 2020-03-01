@@ -1,6 +1,6 @@
 import React from 'react';
 import { SightingCard, SightingCardPlaceholder } from './SightingCard.js';
-import { LazyLoad } from '../LazyLoad.js';
+import { LazyLoad } from '../generic/LazyLoad.js';
 
 export const SightingList = ({ sightings }) => {
   return (

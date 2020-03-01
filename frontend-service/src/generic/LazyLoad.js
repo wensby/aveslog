@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useContext, useRef } from 'react';
-import { WindowScrollContext } from './WindowScrollContext';
+import { WindowScrollContext } from '../WindowScrollContext';
 
 export const LazyLoad = ({ offset, placeholder, children, ...props }) => {
   const [visible, setVisible] = useState(false);
