@@ -5,13 +5,45 @@ div.bird-search-result-card {
   height: 5rem;
   display: grid;
   grid-template-columns: 5rem auto;
-  overflow: hidden;
+  grid-template-rows: 5rem;
 
   & div.picture {
-    overflow: hidden;
+    grid-row: 1;
+    grid-column: 1;
+    position: relative;
+    z-index: 0;
+
+    &::before {
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      content: '';
+      border-radius: 5rem;
+      margin: .5rem;
+      box-shadow: inset -.25rem .5rem 1rem rgba($black, .15);
+
+      @media only screen and (min-width : $break-small) {
+        margin: .71rem;
+      }
+    }
+
+    & img {
+      border-radius: 50%;
+      scale: 80%;
+
+      &[src$=".png"] {
+        border-radius: unset;
+        scale: unset;
+      }
+    }
   }
 
   & div.body {
+    grid-row: 1;
+    grid-column: 2;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -49,7 +81,7 @@ div.bird-search-result-card {
 
       & svg {
         padding: .3rem;
-        box-shadow: 0 0 1rem rgba($black, $alpha: .07);
+        box-shadow: 0 0 1rem rgba($black, .1);
         box-sizing: border-box;
         border-radius: 50%;
         width: 3rem;
@@ -58,7 +90,7 @@ div.bird-search-result-card {
         transition: background-color .1s, fill .1s, box-shadow .1s;
 
         &:active {
-          box-shadow: 0 0 1rem rgba($primary, $alpha: .5);
+          box-shadow: 0 0 1rem rgba($primary, .5);
           background-color: $primary;
           fill: $white;
         }
@@ -69,5 +101,6 @@ div.bird-search-result-card {
   @media only screen and (min-width : $break-small) {
     height: 7rem;
     grid-template-columns: 7rem auto;
+    grid-template-rows: 7rem;
   }
 }
