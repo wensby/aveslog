@@ -42,6 +42,11 @@ div.bird-search-result-card {
       -ms-user-select: none;
       user-select: none;
 
+      /* override styling set by android firefox browser */
+      &:active {
+        background-color: unset !important;
+      }
+
       & svg {
         padding: .3rem;
         box-shadow: 0 0 1rem rgba($black, $alpha: .07);
