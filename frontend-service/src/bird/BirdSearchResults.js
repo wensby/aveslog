@@ -1,10 +1,9 @@
 import React from 'react';
-import { RevealableBirdResultCard } from './BirdResultCard';
+import { RevealableBirdResultCard } from './RevealableBirdResultCard.js';
 import { useTranslation } from 'react-i18next';
 import './BirdSearchResults.scss';
 
 export const BirdSearchResults = ({ query, birds }) => {
-
   return (
     <div className='bird-result-container'>
       <BirdSearchResultInfo query={query} />
