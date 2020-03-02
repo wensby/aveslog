@@ -1,4 +1,4 @@
-import React, { useContext, forwardRef } from 'react';
+import React, { useContext, forwardRef, memo } from 'react';
 import { BirdCard } from './BirdCard';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
@@ -12,7 +12,7 @@ export const RevealableBirdResultCard = withReveal(({ searchResult, revealed }, 
   return <BirdResultCard bird={bird} ref={ref}/>
 });
 
-const BirdResultCard = React.memo(forwardRef(({bird}, ref) => {
+const BirdResultCard = memo(forwardRef(({bird}, ref) => {
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
 
