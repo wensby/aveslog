@@ -8,10 +8,9 @@ export const BirdSearchResults = ({ query, birds }) => {
   return (
     <div className='bird-result-container'>
       <BirdSearchResultInfo query={query} />
-      {birds.map((item, index) => <BirdSearchResultItem
-        item={item}
-        key={index}
-      />)}
+      {birds.map((item, index) => (
+        <BirdResultCard searchResult={item} key={index} />
+      ))}
     </div>
   );
 };
@@ -24,7 +23,3 @@ const BirdSearchResultInfo = ({ query }) => {
     </div>
   );
 }
-
-const BirdSearchResultItem = ({ item }) => {
-  return <BirdResultCard searchResult={item} />;
-};
