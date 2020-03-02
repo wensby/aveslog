@@ -44,8 +44,14 @@ const withRevealingRef = WrappedComponent => {
 };
 
 /**
- * Higher order component for giving the wrapped component a reveal prop,
- * informing it when it has been scrolled into view and revealed.
+ * Higher order component for giving the wrapped component a reveal prop and
+ * ref that's attached to the DOM element that will be "revealed". Thus, the
+ * wrapped component will get informed when it's DOM element has been scrolled
+ * into view and revealed.
+ *
+ * This makes it easy to create components that should get revealed as you
+ * scroll them into view, when it is important to not do expensive calculations
+ * or fetches as long as they are not visible.
  */
 export const withReveal = WrappedComponent => (
   withRevealingRef(forwardRef(WrappedComponent))
