@@ -33,9 +33,13 @@ div.bird-search-result-card {
     & img {
       border-radius: 50%;
       scale: 80%;
+      -webkit-transform: scale(.8);
+      transform: scale(.8);
 
       &[src$=".png"] {
         border-radius: unset;
+        -webkit-transform: unset;
+        transform: unset;
         scale: unset;
       }
     }
