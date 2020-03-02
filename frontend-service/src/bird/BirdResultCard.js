@@ -22,7 +22,7 @@ export const BirdResultCard = withReveal(({ searchResult, revealed, ...other }, 
   };
 
   if (!bird) {
-    return <BirdResultCardPlaceholder ref={ref} />;
+    return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '150px' }} />;
   }
   
   return (
@@ -31,8 +31,4 @@ export const BirdResultCard = withReveal(({ searchResult, revealed, ...other }, 
       {renderAddSightingLink(bird)}
     </BirdCard>
   );
-});
-
-export const BirdResultCardPlaceholder = React.forwardRef((props, ref) => {
-  return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '150px' }} />;
 });
