@@ -5,11 +5,9 @@ import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
 import { useLazyBird } from './BirdHooks';
-import { useReveal } from '../generic/ScrollHooks';
+import { withReveal } from '../generic/ScrollHooks';
 
-export const BirdResultCard = ({ searchResult, ...other }) => {
-  const ref = useRef(null);
-  const revealed = useReveal(ref, 500);
+export const BirdResultCard = withReveal(({ searchResult, revealed, ...other }, ref) => {
   const bird = useLazyBird(searchResult.id, revealed);
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
@@ -33,7 +31,7 @@ export const BirdResultCard = ({ searchResult, ...other }) => {
       {renderAddSightingLink(bird)}
     </BirdCard>
   );
-};
+});
 
 export const BirdResultCardPlaceholder = React.forwardRef((props, ref) => {
   return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '150px' }} />;
