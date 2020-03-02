@@ -5,7 +5,7 @@ import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
 
-export const BirdResultCard = memo(forwardRef(({ bird }, ref) => {
+export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
   const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
 
