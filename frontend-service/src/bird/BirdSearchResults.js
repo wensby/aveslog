@@ -1,5 +1,5 @@
 import React from 'react';
-import { BirdResultCard } from './BirdResultCard';
+import { RevealableBirdResultCard } from './BirdResultCard';
 import { useTranslation } from 'react-i18next';
 import './BirdSearchResults.scss';
 
@@ -9,7 +9,7 @@ export const BirdSearchResults = ({ query, birds }) => {
     <div className='bird-result-container'>
       <BirdSearchResultInfo query={query} />
       {birds.map((item, index) => (
-        <BirdResultCard searchResult={item} key={index} />
+        <RevealableBirdResultCard searchResult={item} key={index} />
       ))}
     </div>
   );
