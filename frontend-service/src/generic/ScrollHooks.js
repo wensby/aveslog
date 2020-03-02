@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef, useLayoutEffect, forwardRef } from 'react';
 import { WindowScrollContext } from '../WindowScrollContext';
 
 /**
@@ -43,3 +43,19 @@ export const useWindowScroll = active => {
   }
   return 0;
 };
+
+const withRevealingRef = WrappedComponent => {
+  return props => {
+    const ref = useRef(null);
+    const revealed = useReveal(ref, 1000);
+    return <WrappedComponent ref={ref} revealed={revealed} {...props} />
+  };
+};
+
+/**
+ * Higher order component for giving the wrapped component a reveal prop,
+ * informing it when it has been scrolled into view and revealed.
+ */
+export const withReveal = WrappedComponent => (
+  withRevealingRef(forwardRef(WrappedComponent))
+);

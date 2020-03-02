@@ -7,15 +7,13 @@ import { BirdLink } from '../bird/BirdLink.js';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';
-import { useReveal } from '../generic/ScrollHooks.js';
+import { withReveal } from '../generic/ScrollHooks.js';
 import './SightingCard.scss';
 
-export const RevealableSightingCard = ({ sighting }) => {
-  const ref = useRef(null);
-  const revealed = useReveal(ref, 1000);
+export const RevealableSightingCard = withReveal(({ sighting, revealed }, ref) => {
   const bird = useLazyBird(sighting.birdId, revealed);
   return <SightingCard sighting={sighting} bird={bird} ref={ref} />;
-};
+});
 
 const SightingCard = memo(forwardRef(({ sighting, bird }, ref) => {
   const { account } = useContext(UserContext);
