@@ -2,9 +2,9 @@
 @import '../layout.scss';
 
 .login-page {
+  @extend %common-main-margin-top;
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;

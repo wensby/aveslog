@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import './BirdSearchResults.scss';
 
 export const BirdSearchResults = ({ query, birds }) => {
-  const { t } = useTranslation();
 
   return (
     <div className='bird-result-container'>
-      <div className='info'>{t('result-info-label')}: {query}</div>
+      <BirdSearchResultInfo query={query} />
       {birds.map((item, index) => <BirdSearchResultItem
         item={item}
         key={index}
@@ -16,6 +15,15 @@ export const BirdSearchResults = ({ query, birds }) => {
     </div>
   );
 };
+
+const BirdSearchResultInfo = ({ query }) => {
+  const { t } = useTranslation();
+  return (
+    <div className='bird-search-result-info'>
+      {t('result-info-label')}: {query}
+    </div>
+  );
+}
 
 const BirdSearchResultItem = ({ item }) => {
   return <BirdResultCard searchResult={item} />;

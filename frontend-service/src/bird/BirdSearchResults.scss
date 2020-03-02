@@ -1,9 +1,11 @@
 @import '../colors.scss';
+@import '../layout.scss';
 
 .bird-result-container {
+  @extend %common-main-margin-top;
   position: relative;
 
-  & .info {
+  & .bird-search-result-info {
     color: $lightgrey;
     margin-bottom: 10px;
   }
