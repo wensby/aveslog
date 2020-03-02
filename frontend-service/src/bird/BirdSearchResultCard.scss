@@ -32,21 +32,31 @@ div.bird-search-result-card {
       }
     }
 
-    & svg {
+    & a {
       margin-right: 1rem;
-      padding: .3rem;
-      box-shadow: 0 0 1rem rgba($black, $alpha: .07);
-      box-sizing: border-box;
-      border-radius: 50%;
-      width: 3rem;
-      height: 3rem;
-      fill: $primary;
-      transition: background-color .1s, fill .1s, box-shadow .1s;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
 
-      &:active {
-        box-shadow: 0 0 1rem rgba($primary, $alpha: .5);
-        background-color: $primary;
-        fill: $white;
+      & svg {
+        padding: .3rem;
+        box-shadow: 0 0 1rem rgba($black, $alpha: .07);
+        box-sizing: border-box;
+        border-radius: 50%;
+        width: 3rem;
+        height: 3rem;
+        fill: $primary;
+        transition: background-color .1s, fill .1s, box-shadow .1s;
+
+        &:active {
+          box-shadow: 0 0 1rem rgba($primary, $alpha: .5);
+          background-color: $primary;
+          fill: $white;
+        }
       }
     }
   }
