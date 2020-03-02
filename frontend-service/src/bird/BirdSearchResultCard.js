@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
 
 export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
-  const { t } = useTranslation();
   const { authenticated } = useContext(UserContext);
+  const { t } = useTranslation();
 
   if (!bird) {
     return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '150px' }} />;
