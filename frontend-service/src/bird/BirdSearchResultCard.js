@@ -1,22 +1,43 @@
 import React, { useContext, forwardRef, memo } from 'react';
-import { BirdCard } from './BirdCard';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
+import { BirdThumbnailImage } from './BirdThumbnailImage.js';
+import { BirdLink } from './BirdLink.js';
+import Icon from '../Icon.js';
+import './BirdSearchResultCard.scss';
 
 export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
   const { authenticated } = useContext(UserContext);
-  const { t } = useTranslation();
 
   if (!bird) {
-    return <div ref={ref} className='sighting-card-body-placeholder' style={{ height: '150px' }} />;
+    return <div className='bird-search-result-card' ref={ref} />;
   }
 
   return (
-    <BirdCard ref={ref} bird={bird} >
-      <BirdCardName bird={bird} />
-      {authenticated && <NewBirdSightingLink bird={bird}>{t('add-sighting-link')}</NewBirdSightingLink>}
-    </BirdCard>
+    <div className='bird-search-result-card' ref={ref}>
+      <div className='picture'>
+        <BirdLink bird={bird} >
+          <BirdThumbnailImage bird={bird} />
+        </BirdLink>
+      </div>
+      <div className='body'>
+        <div className='name'>
+          <BirdCardName bird={bird} />
+          {bird.binomialName}
+        </div>
+        {authenticated && <NewSightingButton bird={bird} />}
+      </div>
+    </div>
   );
 }));
+
+const NewSightingButton = ({ bird }) => {
+  const { t } = useTranslation();
+  return (
+    <NewBirdSightingLink bird={bird}>
+      <Icon name='add'></Icon>
+    </NewBirdSightingLink>
+  );
+}

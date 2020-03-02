@@ -1,0 +1,58 @@
+@import '../layout.scss';
+@import '../colors.scss';
+
+div.bird-search-result-card {
+  height: 5rem;
+  display: grid;
+  grid-template-columns: 5rem auto;
+  overflow: hidden;
+
+  & div.picture {
+    overflow: hidden;
+  }
+
+  & div.body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    overflow: hidden;
+
+    & .name {
+      margin-left: .5rem;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      color: $lightgrey;
+      font-size: .75rem;
+      overflow: hidden;
+
+      & .bird-name {
+        font-size: 1rem;
+        font-weight: bolder;
+        color: $darkgrey;
+      }
+    }
+
+    & svg {
+      margin-right: 1rem;
+      padding: .3rem;
+      box-shadow: 0 0 1rem rgba($black, $alpha: .07);
+      box-sizing: border-box;
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      fill: $primary;
+      transition: background-color .1s, fill .1s, box-shadow .1s;
+
+      &:active {
+        box-shadow: 0 0 1rem rgba($primary, $alpha: .5);
+        background-color: $primary;
+        fill: $white;
+      }
+    }
+  }
+
+  @media only screen and (min-width : $break-small) {
+    height: 7rem;
+    grid-template-columns: 7rem auto;
+  }
+}
