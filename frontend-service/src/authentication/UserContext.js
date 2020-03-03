@@ -22,43 +22,42 @@ const UserProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const refreshAccessToken = async refreshToken => {
-      const response = await fetchAccessToken(refreshToken);
-      if (response.status === 200) {
-        const json = await response.json();
-        const accessToken = createAccessToken(json);
-        console.log('Resolved new access token');
-        setAccessToken(accessToken);
-        setTimeout(() => {
-          console.log('Access token refresh timeout hit');
-          if (latestRefreshToken.current === refreshToken) {
-            refreshAccessToken(refreshToken);
-          }
-        }, (json.expiresIn - 60) * 1000);
-      }
-      else if (response.status === 401) {
-        unauthenticate();
-      }
-    };
     if (refreshToken) {
-      refreshAccessToken(refreshToken);
-    }
-    else {
-      setAccessToken(null);
+      console.log('Storing refresh token in local storage');
+      localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
+      return () => {
+        console.log('Clearing refresh token from local storage');
+        localStorage.removeItem(refreshTokenKey);
+      }
     }
   }, [refreshToken]);
 
   useEffect(() => {
-    if (!loading) {
-      if (refreshToken) {
-        localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
+    const refreshAccessToken = async () => {
+      if (refreshToken && refreshToken === latestRefreshToken.current) {
+        console.log('Refreshing access token');
+        const response = await fetchAccessToken(refreshToken);
+        if (response.status === 200) {
+          console.log('Received fresh access token');
+          const json = await response.json();
+          const accessToken = createAccessToken(json);
+          setAccessToken(accessToken);
+          const refreshDeadline = (json.expiresIn - 60) * 1000;
+          setTimeout(refreshAccessToken, refreshDeadline);
+        }
+        else if (response.status === 401) {
+          unauthenticate();
+        }
       }
-      else {
-        localStorage.removeItem(refreshTokenKey);
-      }
-    }
+    };
+    refreshAccessToken();
+  }, [refreshToken]);
 
-  }, [refreshToken, loading]);
+  useEffect(() => {
+    if (!loading && !refreshToken) {
+      unauthenticate();
+    }
+  }, [loading, refreshToken]);
 
   useEffect(() => {
     if (accessToken) {
@@ -98,7 +97,6 @@ const UserProvider = ({ children }) => {
         await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
       }
       setRefreshToken(null);
-      localStorage.removeItem(refreshTokenKey);
       setAccessToken(null);
       setAccount(null);
     }
@@ -114,17 +112,23 @@ const UserProvider = ({ children }) => {
     return date;
   };
 
-  if (loading || (refreshToken && !account)) {
+  const unresolvedAccount = refreshToken && !account;
+  const accessTokenExpired = accessToken && accessToken.expiration < new Date();
+
+  if (loading || unresolvedAccount || accessTokenExpired) {
     return null;
   }
+
+  const contextValues = {
+    authenticated: accessToken !== null,
+    account,
+    unauthenticate,
+    setRefreshToken,
+    accessToken,
+  };
+
   return (
-    <UserContext.Provider value={{
-      authenticated: accessToken !== null,
-      account,
-      unauthenticate,
-      setRefreshToken,
-      accessToken,
-    }}>
+    <UserContext.Provider value={contextValues}>
       {children}
     </UserContext.Provider>
   );
