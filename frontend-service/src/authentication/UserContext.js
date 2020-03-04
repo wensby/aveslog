@@ -4,6 +4,16 @@ import AuthenticationService from './AuthenticationService.js';
 const UserContext = React.createContext();
 const refreshTokenKey = 'refreshToken';
 
+const createAccessToken = json => {
+  return { jwt: json.jwt, expiration: createFutureDate(json.expiresIn) };
+};
+
+const createFutureDate = seconds => {
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + seconds);
+  return date;
+};
+
 const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
@@ -100,17 +110,7 @@ const UserProvider = ({ children }) => {
       setAccessToken(null);
       setAccount(null);
     }
-  }, [refreshToken, accessToken]);
-
-  const createAccessToken = json => {
-    return { jwt: json.jwt, expiration: createFutureDate(json.expiresIn) };
-  };
-
-  const createFutureDate = seconds => {
-    const date = new Date();
-    date.setSeconds(date.getSeconds() + seconds);
-    return date;
-  };
+  }, [refreshToken, accessToken]); 
 
   const unresolvedAccount = refreshToken && !account;
   const accessTokenExpired = accessToken && accessToken.expiration < new Date();
