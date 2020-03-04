@@ -1,7 +1,6 @@
 import React, { useContext, forwardRef, memo } from 'react';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { UserContext } from '../authentication/UserContext';
-import { useTranslation } from 'react-i18next';
 import { BirdCardName } from './BirdCardName';
 import { BirdThumbnailImage } from './BirdThumbnailImage.js';
 import { BirdLink } from './BirdLink.js';
@@ -34,7 +33,6 @@ export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
 }));
 
 const NewSightingButton = ({ bird }) => {
-  const { t } = useTranslation();
   return (
     <NewBirdSightingLink bird={bird}>
       <Icon name='add'></Icon>
