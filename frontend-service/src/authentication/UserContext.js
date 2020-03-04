@@ -91,7 +91,7 @@ const UserProvider = ({ children }) => {
     });
   };
 
-  const unauthenticate = async () => {
+  const unauthenticate = useCallback(async () => {
     if (refreshToken) {
       if (accessToken) {
         await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
@@ -100,7 +100,7 @@ const UserProvider = ({ children }) => {
       setAccessToken(null);
       setAccount(null);
     }
-  };
+  }, [refreshToken, accessToken]);
 
   const createAccessToken = json => {
     return { jwt: json.jwt, expiration: createFutureDate(json.expiresIn) };

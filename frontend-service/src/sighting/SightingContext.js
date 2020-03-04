@@ -35,7 +35,7 @@ const SightingProvider = props => {
         unauthenticate();
       }
     }
-  }, [getAccessToken, account]);
+  }, [getAccessToken, account, unauthenticate]);
 
 
   return <SightingContext.Provider value={{ sightings, refreshSightings }}>
