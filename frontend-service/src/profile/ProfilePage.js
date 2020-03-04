@@ -6,21 +6,24 @@ import { useAccount } from '../account/AccountHooks';
 
 export function ProfilePage({ username }) {
   const [sightings, setSightings] = useState([]);
-  const { accessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(UserContext);
   const { account } = useAccount(username);
 
   useEffect(() => {
     const fetchSightings = async () => {
-      const response = await new SightingService().fetchBirderSightings(account.birder.id, accessToken);
-      if (response.status === 200) {
-        const json = await response.json();
-        setSightings(json.items);
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        const response = await new SightingService().fetchBirderSightings(account.birder.id, accessToken);
+        if (response.status === 200) {
+          const json = await response.json();
+          setSightings(json.items);
+        }
       }
     }
     if (account) {
       fetchSightings();
     }
-  }, [account]);
+  }, [account, getAccessToken]);
 
   return (
     <div>

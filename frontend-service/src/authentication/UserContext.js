@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AuthenticationService from './AuthenticationService.js';
 
 const UserContext = React.createContext();
@@ -115,16 +115,25 @@ const UserProvider = ({ children }) => {
   const unresolvedAccount = refreshToken && !account;
   const accessTokenExpired = accessToken && accessToken.expiration < new Date();
 
+  const getAccessToken = useCallback(() => {
+    if (accessToken && new Date() < accessToken.expiration) {
+      return accessToken;
+    }
+    else {
+      return null;
+    }
+  }, [accessToken]);
+
   if (loading || unresolvedAccount || accessTokenExpired) {
     return null;
   }
 
   const contextValues = {
     authenticated: accessToken !== null,
+    getAccessToken,
     account,
     unauthenticate,
-    setRefreshToken,
-    accessToken,
+    setRefreshToken
   };
 
   return (

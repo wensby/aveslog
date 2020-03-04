@@ -5,19 +5,21 @@ import AccountService from '../account/AccountService';
 import AccountLink from './AccountLink';
 
 export function Accounts() {
-  const { authenticated, accessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [usernames, setUsernames] = useState([]);
 
   useEffect(() => {
     const fetchAccounts = async () => {
-      const response = await new AccountService().fetchAccounts(accessToken);
-      if (response.status === 200) {
-        const json = await response.json();
-        setUsernames(json.items.map(a => a.username));
-        setLoading(false);
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        const response = await new AccountService().fetchAccounts(accessToken);
+        if (response.status === 200) {
+          const json = await response.json();
+          setUsernames(json.items.map(a => a.username));
+          setLoading(false);
+        }
       }
-      
     }
     if (authenticated) {
       fetchAccounts();
@@ -25,7 +27,7 @@ export function Accounts() {
     else {
       setLoading(false);
     }
-  }, [authenticated]);
+  }, [authenticated, getAccessToken]);
 
   if (loading) {
     return <Spinner />;

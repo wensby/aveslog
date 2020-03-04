@@ -4,7 +4,7 @@ import AccountService from '../account/AccountService';
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { authenticated, accessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(UserContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
@@ -22,10 +22,11 @@ export function usePermissions() {
         }, []));
       }
     };
-    if (authenticated) {
+    const accessToken = getAccessToken();
+    if (authenticated && accessToken) {
       resolvePermissions();
     }
-  }, [authenticated]);
+  }, [authenticated, getAccessToken]);
 
   return { permissions };
 }
@@ -44,22 +45,25 @@ export function useResourcePermission(resource, method) {
 }
 
 export const useAccount = username => {
-  const { accessToken, authenticated } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAccount = async () => {
-      setLoading(true);
-      const response = await new AccountService().fetchAccount(accessToken, username);
-      if (response.status === 200) {
-        setAccount(await response.json());
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        setLoading(true);
+        const response = await new AccountService().fetchAccount(accessToken, username);
+        if (response.status === 200) {
+          setAccount(await response.json());
+        }
+        else {
+          setError((await response.json()).message);
+        }
+        setLoading(false);
       }
-      else {
-        setError((await response.json()).message);
-      }
-      setLoading(false);
     };
     setAccount(null);
     setError(null);

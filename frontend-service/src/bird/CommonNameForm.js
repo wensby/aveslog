@@ -5,7 +5,7 @@ import { UserContext } from '../authentication/UserContext';
 export function CommonNameForm({ bird, locales, onNameAdded }) {
   const [selectedLanguage, setSelectedLangauge] = useState(null);
   const [name, setName] = useState('');
-  const { accessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(UserContext);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -18,10 +18,13 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
 
   const handleSubmit = event => {
     const postName = async (langauge, name) => {
-      const response = await postCommonName(accessToken, bird, langauge, name);
-      if (response.status === 201) {
-        onNameAdded();
-        setName('');
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        const response = await postCommonName(accessToken, bird, langauge, name);
+        if (response.status === 201) {
+          onNameAdded();
+          setName('');
+        }
       }
     }
     event.preventDefault();

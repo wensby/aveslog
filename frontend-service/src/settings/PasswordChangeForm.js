@@ -10,7 +10,7 @@ import { FormGroup } from '../generic/FormGroup';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
-  const { accessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(UserContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -30,7 +30,8 @@ export const PasswordChangeForm = () => {
 
   const handleFormSubmit = async event => {
     event.preventDefault();
-    if (newPassword) {
+    const accessToken = getAccessToken();
+    if (accessToken && newPassword) {
       const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
       if (response.status === 204) {
         history.push('/');

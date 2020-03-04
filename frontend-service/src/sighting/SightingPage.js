@@ -10,7 +10,7 @@ import './SightingPage.scss';
 export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
-  const { accessToken, account } = useContext(UserContext);
+  const { getAccessToken, account } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -21,15 +21,19 @@ export function SightingPage({match}) {
         setSighting(sighting);
       }
     }
+    const accessToken = getAccessToken();
     if (accessToken) {
       resolveSighting();
     }
-  }, [sightingId]);
+  }, [sightingId, getAccessToken]);
 
   const handleDelete = async () => {
-    const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
-    if (deleted) {
-      history.push('/sighting');
+    const accessToken = getAccessToken();
+    if (accessToken) {
+      const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
+      if (deleted) {
+        history.push('/sighting');
+      }
     }
   };
 
