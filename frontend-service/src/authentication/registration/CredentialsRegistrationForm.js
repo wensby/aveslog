@@ -6,7 +6,7 @@ import './CredentialsRegistrationForm.scss'
 import { FormGroup } from '../../generic/FormGroup';
 
 
-export const CredentialsRegistrationForm = ({ }) => {
+export const CredentialsRegistrationForm = () => {
   const { email, takenUsernames, submit } = useContext(CredentialsRegistrationContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
