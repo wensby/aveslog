@@ -11,7 +11,7 @@ export function ProfilePage({ username }) {
 
   useEffect(() => {
     const fetchSightings = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await new SightingService().fetchBirderSightings(account.birder.id, accessToken);
         if (response.status === 200) {

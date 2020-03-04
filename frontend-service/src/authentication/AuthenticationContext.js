@@ -4,21 +4,12 @@ import AuthenticationService from './AuthenticationService.js';
 const AuthenticationContext = React.createContext();
 const refreshTokenKey = 'refreshToken';
 
-const createAccessToken = json => {
-  return { jwt: json.jwt, expiration: createFutureDate(json.expiresIn) };
-};
-
-const createFutureDate = seconds => {
-  const date = new Date();
-  date.setSeconds(date.getSeconds() + seconds);
-  return date;
-};
-
 const AuthenticationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const latestRefreshToken = useRef(refreshToken);
+  const [accessTokenPromise, setAccessTokenPromise] = useState(null);
   latestRefreshToken.current = refreshToken;
 
   useEffect(() => {
@@ -37,83 +28,105 @@ const AuthenticationProvider = ({ children }) => {
       return () => {
         console.log('Clearing refresh token from local storage');
         localStorage.removeItem(refreshTokenKey);
+        setAccessToken(null);
       }
     }
   }, [refreshToken]);
 
-  useEffect(() => {
-    const refreshAccessToken = async () => {
-      if (refreshToken && refreshToken === latestRefreshToken.current) {
-        console.log('Refreshing access token');
-        const response = await fetchAccessToken(refreshToken);
-        if (response.status === 200) {
-          console.log('Received fresh access token');
-          const json = await response.json();
-          const accessToken = createAccessToken(json);
-          setAccessToken(accessToken);
-          const refreshDeadline = (json.expiresIn - 60) * 1000;
-          setTimeout(refreshAccessToken, refreshDeadline);
-        }
-        else if (response.status === 401) {
-          unauthenticate();
-        }
+  const unauthenticate = useCallback(() => {
+    if (refreshToken) {
+      if (accessToken) {
+        new AuthenticationService().deleteRefreshToken(refreshToken, accessToken);
       }
-    };
-    refreshAccessToken();
-  }, [refreshToken]);
-
-  useEffect(() => {
-    if (!loading && !refreshToken) {
-      unauthenticate();
+      setRefreshToken(null);
     }
-  }, [loading, refreshToken]);
+  }, [refreshToken, accessToken]);
 
-  const fetchAccessToken = async refreshToken => {
+  const fetchAccessToken = useCallback(() => {
     console.log('Fetching new access token');
-    return await fetch(`${window._env_.API_URL}/authentication/access-token`, {
+    return fetch(`${window._env_.API_URL}/authentication/access-token`, {
       headers: {
         'refreshToken': refreshToken.jwt,
       },
-    });
-  };
+    })
+      .then(status)
+      .then(response => response.json())
+      .then(json => {
+        console.log('Received fresh access token');
+        return Promise.resolve(createAccessToken(json));
+      })
+      .catch(error => {
+        if (error === 401) {
+          setRefreshToken(null);
+        }
+      });
+  }, [refreshToken])
 
-  const unauthenticate = useCallback(async () => {
-    if (refreshToken) {
-      if (accessToken) {
-        await (new AuthenticationService().deleteRefreshToken(refreshToken, accessToken));
-      }
-      setRefreshToken(null);
-      setAccessToken(null);
+  useEffect(() => {
+    const resolveAccessToken = async () => {
+      const token = await accessTokenPromise;
+      console.log('access token resolved');
+      setAccessToken(token);
     }
-  }, [refreshToken, accessToken]); 
+    if (accessTokenPromise) {
+      resolveAccessToken();
+    }
+  }, [accessTokenPromise]);
 
-  const accessTokenExpired = accessToken && accessToken.expiration < new Date();
-
-  const getAccessToken = useCallback(() => {
+  const getAccessToken = useCallback(async () => {
     if (accessToken && new Date() < accessToken.expiration) {
       return accessToken;
     }
-    else {
-      return null;
+    else if (refreshToken) {
+      const promise = fetchAccessToken();
+      setAccessTokenPromise(promise);
+      return await promise;
     }
-  }, [accessToken]);
+  }, [accessToken, fetchAccessToken, refreshToken]);
 
-  if (loading || (refreshToken && !accessToken) || accessTokenExpired) {
-    return null;
-  }
+  useEffect(() => {
+    if (refreshToken) {
+      const promise = fetchAccessToken();
+      setAccessTokenPromise(promise);
+    }
+  }, [refreshToken, fetchAccessToken]);
 
   const contextValues = {
-    authenticated: accessToken !== null,
+    authenticated: refreshToken !== null,
     getAccessToken,
     unauthenticate,
     setRefreshToken
   };
 
+  const resolvingAuthentication = (refreshToken && !accessToken) || loading
+
   return (
     <AuthenticationContext.Provider value={contextValues}>
-      {children}
+      {!resolvingAuthentication && children}
     </AuthenticationContext.Provider>
   );
 }
+
+const createAccessToken = json => {
+  return {
+    jwt: json.jwt,
+    expiration: createFutureDate(json.expiresIn - 60)
+  };
+};
+
+const createFutureDate = seconds => {
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + seconds);
+  return date;
+};
+
+const status = response => {
+  if (response.status === 200) {
+    return Promise.resolve(response);
+  }
+  else if (response.status === 401) {
+    return Promise.reject(new Error(response.status));
+  }
+};
 
 export { AuthenticationContext, AuthenticationProvider }

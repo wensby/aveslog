@@ -11,7 +11,7 @@ export const FeedContainer = () => {
 
   useEffect(() => {
     const fetchSightings = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await new SightingService().getSightingFeedSightings(accessToken);
         if (response.status === 200) {

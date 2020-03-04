@@ -8,6 +8,7 @@ export function usePermissions() {
 
   useEffect(() => {
     const resolvePermissions = async () => {
+      const accessToken = await getAccessToken();
       const response = await fetch(`${window._env_.API_URL}/account/roles`, {
         headers: {
           'accessToken': accessToken.jwt
@@ -22,8 +23,8 @@ export function usePermissions() {
         }, []));
       }
     };
-    const accessToken = getAccessToken();
-    if (authenticated && accessToken) {
+    setPermissions([]);
+    if (authenticated) {
       resolvePermissions();
     }
   }, [authenticated, getAccessToken]);
@@ -52,7 +53,7 @@ export const useAccount = username => {
 
   useEffect(() => {
     const fetchAccount = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         setLoading(true);
         const response = await new AccountService().fetchAccount(accessToken, username);

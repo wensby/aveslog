@@ -17,20 +17,18 @@ export function SightingPage({match}) {
 
   useEffect(() => {
     const resolveSighting = async () => {
+      const accessToken = await getAccessToken();
       const response = await (new SightingService()).fetchSighting(accessToken, sightingId);
       if (response.status === 200) {
         const sighting = await response.json();
         setSighting(sighting);
       }
     }
-    const accessToken = getAccessToken();
-    if (accessToken) {
-      resolveSighting();
-    }
+    resolveSighting();
   }, [sightingId, getAccessToken]);
 
   const handleDelete = async () => {
-    const accessToken = getAccessToken();
+    const accessToken = await getAccessToken();
     if (accessToken) {
       const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
       if (deleted) {

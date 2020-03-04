@@ -24,6 +24,7 @@ export function LoginForm({ onError }) {
       event.preventDefault();
       setLoading(true);
       const response = await postRefreshToken();
+      setLoading(false);
       if (response.status === 201) {
         const refreshResponseJson = await response.json();
         setRefreshToken({
@@ -41,9 +42,6 @@ export function LoginForm({ onError }) {
     }
     catch (e) {
       console.log(e);
-    }
-    finally {
-      setLoading(false);
     }
   };
 

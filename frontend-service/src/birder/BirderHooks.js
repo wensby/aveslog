@@ -8,7 +8,7 @@ export function useBirder(birderId) {
 
   useEffect(() => {
     const resolveBirder = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const birder = await birderRepository.getBirder(birderId, accessToken);
         setBirder(birder);

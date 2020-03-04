@@ -30,7 +30,7 @@ export const PasswordChangeForm = () => {
 
   const handleFormSubmit = async event => {
     event.preventDefault();
-    const accessToken = getAccessToken();
+    const accessToken = await getAccessToken();
     if (accessToken && newPassword) {
       const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
       if (response.status === 204) {

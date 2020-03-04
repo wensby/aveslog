@@ -8,7 +8,7 @@ export function BirderPage({ birder }) {
   const [sightings, setSightings] = useState([]);
   useEffect(() => {
     const fetchSightings = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await new SightingService().fetchBirderSightings(birder.id, accessToken);
         if (response.status === 200) {

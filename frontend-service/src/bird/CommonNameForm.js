@@ -18,7 +18,7 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
 
   const handleSubmit = event => {
     const postName = async (langauge, name) => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await postCommonName(accessToken, bird, langauge, name);
         if (response.status === 201) {

@@ -50,7 +50,7 @@ export function NewSightingForm({ bird, onSuccess }) {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!blockedByLocation) {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await sightingService.postSighting(accessToken, account.birder.id, bird.binomialName, date, time, location);
         if (response.status === 201) {

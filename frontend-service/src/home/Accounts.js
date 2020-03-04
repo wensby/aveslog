@@ -11,7 +11,7 @@ export function Accounts() {
 
   useEffect(() => {
     const fetchAccounts = async () => {
-      const accessToken = getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await new AccountService().fetchAccounts(accessToken);
         if (response.status === 200) {

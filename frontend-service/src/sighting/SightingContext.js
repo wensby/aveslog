@@ -20,7 +20,7 @@ const SightingProvider = props => {
   }, [account, sightingsAccount]);
 
   const refreshSightings = useCallback(async () => {
-    const accessToken = getAccessToken();
+    const accessToken = await getAccessToken();
     if (accessToken) {
       const response = await sightingService.fetchBirderSightings(account.birder.id, accessToken);
       if (response.status === 200) {

@@ -4,9 +4,8 @@ import { AuthenticationContext } from './AuthenticationContext.js';
 const UserContext = React.createContext();
 
 const UserProvider = ({ children }) => {
-  const { getAccessToken } = useContext(AuthenticationContext);
+  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const [account, setAccount] = useState(null);
-  const accessToken = getAccessToken();
   
   useEffect(() => {
     const resolveAccount = async () => {
@@ -18,18 +17,19 @@ const UserProvider = ({ children }) => {
           }
         });
       };
+      const accessToken = await getAccessToken();
       const response = await fetchAuthenticatedAccount(accessToken);
       if (response.status === 200) {
         const json = await response.json();
         setAccount(json);
       }
     };
-    if (accessToken) {
+    if (authenticated) {
       resolveAccount();
     }
-  }, [accessToken]);  
+  }, [authenticated, getAccessToken]);  
 
-  if (accessToken && !account) {
+  if (authenticated && !account) {
     return null;
   }
 
