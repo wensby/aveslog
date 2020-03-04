@@ -4,7 +4,7 @@ import { FadeInBottom } from './FadeInBottom';
 import './BirdCardName.scss';
 
 export function BirdCardName({ bird }) {
-  const { commonName, loading } = useCommonName(bird);
+  const { commonName } = useCommonName(bird);
 
   if (commonName) {
     return (
