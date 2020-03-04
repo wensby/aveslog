@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Spinner from '../loading/Spinner';
-import { UserContext } from '../authentication/UserContext';
 import AccountService from '../account/AccountService';
 import AccountLink from './AccountLink';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function Accounts() {
-  const { authenticated, getAccessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const [loading, setLoading] = useState(true);
   const [usernames, setUsernames] = useState([]);
 

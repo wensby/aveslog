@@ -6,11 +6,13 @@ import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';
 import { useHistory } from "react-router-dom";
 import './SightingPage.scss';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function SightingPage({match}) {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
-  const { getAccessToken, account } = useContext(UserContext);
+  const { account } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const history = useHistory();
 
   useEffect(() => {

@@ -2,16 +2,16 @@ import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from '../AuthenticationService.js';
 import { CredentialsRegistrationForm } from './CredentialsRegistrationForm';
-import { UserContext } from '../UserContext.js';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
 import './CredentialsRegistration.scss';
+import { AuthenticationContext } from '../AuthenticationContext.js';
 
 export const CredentialsRegistrationContext = React.createContext();
 
 export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
-  const { setRefreshToken } = useContext(UserContext);
+  const { setRefreshToken } = useContext(AuthenticationContext);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const [alert, setAlert] = useState(null);
   const { t } = useTranslation();

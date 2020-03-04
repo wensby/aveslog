@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
-import { UserContext } from './UserContext.js';
 import { useHistory } from "react-router-dom";
 import './spinner.scss';
 import './LoginForm.scss';
+import { AuthenticationContext } from './AuthenticationContext.js';
 
 export function LoginForm({ onError }) {
   const history = useHistory();
@@ -13,7 +13,7 @@ export function LoginForm({ onError }) {
   const [password, setPassword] = useState('');
   const authentication = new AuthenticationService();
   const { t } = useTranslation();
-  const { setRefreshToken } = useContext(UserContext);
+  const { setRefreshToken } = useContext(AuthenticationContext);
 
   const postRefreshToken = async () => {
     return authentication.postRefreshToken(username, password);

@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function BirderPage({ birder }) {
-  const { getAccessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const [sightings, setSightings] = useState([]);
   useEffect(() => {
     const fetchSightings = async () => {

@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect } from 'react';
-import { UserContext } from '../authentication/UserContext';
 import birderRepository from './BirderRepository';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function useBirder(birderId) {
-  const { getAccessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const [birder, setBirder] = useState(null);  
 
   useEffect(() => {

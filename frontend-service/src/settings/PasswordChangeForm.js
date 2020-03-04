@@ -2,15 +2,15 @@ import React, { useState, useContext } from 'react';
 import { useTranslation } from "react-i18next";
 import NewPasswordFormGroup from '../authentication/NewPasswordFormGroup';
 import AuthenticationService from '../authentication/AuthenticationService';
-import { UserContext } from '../authentication/UserContext';
 import { useHistory } from "react-router-dom";
 import { Alert } from '../generic/Alert';
 import './PasswordChangeForm.scss';
 import { FormGroup } from '../generic/FormGroup';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
-  const { getAccessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);

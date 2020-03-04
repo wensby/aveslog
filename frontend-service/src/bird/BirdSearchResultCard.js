@@ -1,14 +1,14 @@
 import React, { useContext, forwardRef, memo } from 'react';
 import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
-import { UserContext } from '../authentication/UserContext';
 import { BirdCardName } from './BirdCardName';
 import { BirdThumbnailImage } from './BirdThumbnailImage.js';
 import { BirdLink } from './BirdLink.js';
 import Icon from '../Icon.js';
 import './BirdSearchResultCard.scss';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
-  const { authenticated } = useContext(UserContext);
+  const { authenticated } = useContext(AuthenticationContext);
 
   if (!bird) {
     return <div className='bird-search-result-card' ref={ref} />;

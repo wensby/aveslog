@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
-import { UserContext } from '../authentication/UserContext';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 import { useAccount } from '../account/AccountHooks';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function ProfilePage({ username }) {
   const [sightings, setSightings] = useState([]);
-  const { getAccessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const { account } = useAccount(username);
 
   useEffect(() => {

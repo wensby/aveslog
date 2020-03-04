@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from './UserContext.js';
 import AuthenticationService from './AuthenticationService.js';
+import { AuthenticationContext } from './AuthenticationContext.js';
 
 export function useAuthentication() {
-  const { authenticated, account } = useContext(UserContext);
+  const { account } = useContext(UserContext);
+  const { authenticated } = useContext(AuthenticationContext);
   if (authenticated) {
     return { account };
   }

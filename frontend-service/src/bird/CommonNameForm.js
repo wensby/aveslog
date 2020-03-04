@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserContext } from '../authentication/UserContext';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function CommonNameForm({ bird, locales, onNameAdded }) {
   const [selectedLanguage, setSelectedLangauge] = useState(null);
   const [name, setName] = useState('');
-  const { getAccessToken } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const { t } = useTranslation();
 
   useEffect(() => {

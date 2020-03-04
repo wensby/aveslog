@@ -7,10 +7,12 @@ import { BirdSection } from "./BirdSection";
 import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
 import './NewSightingForm.scss';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export function NewSightingForm({ bird, onSuccess }) {
   const { t } = useTranslation();
-  const { getAccessToken, account } = useContext(UserContext);
+  const { account } = useContext(UserContext);
+  const { getAccessToken } = useContext(AuthenticationContext);
   const [blockedByLocation, setBlockedByLocation] = useState(false);
   const sightingService = new SightingService();
   const [date, setDate] = useState('');

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserContext } from '../authentication/UserContext';
 import { FeedContainer } from './FeedContainer';
 import { PageHeading } from '../generic/PageHeading.js';
 import './HomePage.scss';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const HomePage = () => {
-  const { authenticated } = useContext(UserContext);
+  const { authenticated } = useContext(AuthenticationContext);
   const { t } = useTranslation();
 
   return (

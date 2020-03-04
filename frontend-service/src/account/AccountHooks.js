@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { UserContext } from '../authentication/UserContext';
 import AccountService from '../account/AccountService';
+import { AuthenticationContext } from "../authentication/AuthenticationContext";
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { authenticated, getAccessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
@@ -45,7 +45,7 @@ export function useResourcePermission(resource, method) {
 }
 
 export const useAccount = username => {
-  const { authenticated, getAccessToken } = useContext(UserContext);
+  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);

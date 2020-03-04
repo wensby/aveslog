@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../authentication/UserContext';
 import SightingService from './SightingService.js';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 const sightingService = new SightingService();
 const SightingContext = React.createContext();
 
 const SightingProvider = props => {
-  const { account, getAccessToken, unauthenticate } = useContext(UserContext);
+  const { account } = useContext(UserContext);
+  const { getAccessToken, unauthenticate } = useContext(AuthenticationContext);
   const [sightingsAccount, setSightingsAccount] = useState(null);
   const [sightings, setSightings] = useState([]);
 

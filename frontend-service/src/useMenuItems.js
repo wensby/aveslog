@@ -1,9 +1,11 @@
 import { useContext } from 'react';
 import { UserContext } from './authentication/UserContext.js';
 import { useTranslation } from 'react-i18next';
+import { AuthenticationContext } from './authentication/AuthenticationContext.js';
 
 export const useMenuItems = () => {
-  const { authenticated, account, unauthenticate } = useContext(UserContext);
+  const { account } = useContext(UserContext);
+  const { authenticated, unauthenticate } = useContext(AuthenticationContext);
   const { t } = useTranslation();
 
   if (authenticated && account) {

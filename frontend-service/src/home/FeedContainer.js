@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Feed } from './Feed';
-import { UserContext } from '../authentication/UserContext';
 import SightingService from '../sighting/SightingService';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 const FeedContext = React.createContext();
 
 export const FeedContainer = () => {
-  const { getAccessToken, authenticated } = useContext(UserContext);
+  const { getAccessToken, authenticated } = useContext(AuthenticationContext);
   const [sightings, setSightings] = useState([]);
 
   useEffect(() => {

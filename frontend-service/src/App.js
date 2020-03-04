@@ -6,6 +6,7 @@ import { WindowScrollProvider } from './WindowScrollContext.js';
 import { SightingProvider } from './sighting/SightingContext.js';
 import { BirdsProvider } from './bird/BirdsContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
+import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
@@ -13,15 +14,17 @@ export const App = ({ version }) => {
   return (
     <BrowserRouter>
       <WindowScrollProvider>
-        <UserProvider>
-          <BirdsProvider>
-            <SightingProvider>
-              <Suspense fallback={<SuspenseLoader />}>
-                <Page />
-              </Suspense>
-            </SightingProvider>
-          </BirdsProvider>
-        </UserProvider>
+        <AuthenticationProvider>
+          <UserProvider>
+            <BirdsProvider>
+              <SightingProvider>
+                <Suspense fallback={<SuspenseLoader />}>
+                  <Page />
+                </Suspense>
+              </SightingProvider>
+            </BirdsProvider>
+          </UserProvider>
+        </AuthenticationProvider>
       </WindowScrollProvider>
     </BrowserRouter>
   );
