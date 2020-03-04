@@ -26,7 +26,7 @@ export const useBird = birdId => {
     if (birdPromise) {
       resolveBirdPromise(birdPromise);
     }
-  }, [birdPromise]);
+  }, [birdPromise, addBird]);
 
   return { bird, error: null };
 };
@@ -59,7 +59,7 @@ export const useLazyBird = (id, eager) => {
     if (eager) {
       resolveBirdPromise();
     }
-  }, [id, eager])
+  }, [id, eager, addBird])
 
   return bird;
 }
