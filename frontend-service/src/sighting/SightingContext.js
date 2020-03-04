@@ -24,15 +24,18 @@ const SightingProvider = props => {
       if (response.status === 200) {
         const json = await response.json();
         const fetchedSightings = json.items;
-        if (JSON.stringify(sightings) !== JSON.stringify(fetchedSightings)) {
-          setSightings(fetchedSightings);
-        }
+        setSightings(prevSightings => {
+          if (JSON.stringify(prevSightings) !== JSON.stringify(fetchedSightings)) {
+            return fetchedSightings;
+          }
+          return prevSightings;
+        });
       }
       if (response.status === 401) {
         unauthenticate();
       }
     }
-  }, [getAccessToken]);
+  }, [getAccessToken, account]);
 
 
   return <SightingContext.Provider value={{ sightings, refreshSightings }}>
