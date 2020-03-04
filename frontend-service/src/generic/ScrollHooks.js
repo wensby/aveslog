@@ -37,7 +37,7 @@ const withRevealingRef = WrappedComponent => {
           }
         }, 10);
       }
-    }, [triggered, windowScroll, ref]);
+    }, [triggered, windowScroll, ref, revealed]);
 
     return <WrappedComponent ref={ref} revealed={revealed} {...props} />
   };
