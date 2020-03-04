@@ -1,4 +1,4 @@
-import React, { useContext, useRef, memo, forwardRef } from 'react';
+import React, { useContext, memo, forwardRef } from 'react';
 import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
 import { useLazyBird } from '../bird/BirdHooks.js';
