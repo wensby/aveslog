@@ -68,7 +68,7 @@ export const useAccount = username => {
     setAccount(null);
     setError(null);
     fetchAccount();
-  }, [username, authenticated])
+  }, [username, authenticated, getAccessToken])
 
   return { loading, account, error }
 };
