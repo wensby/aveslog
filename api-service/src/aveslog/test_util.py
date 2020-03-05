@@ -92,7 +92,7 @@ class AppTestCase(IntegrationTestCase):
   def db_insert_registration(self, email, token):
     cursor = self.database_connection.cursor()
     cursor.execute(
-      'INSERT INTO account_registration (id, email, token) '
+      'INSERT INTO registration_request (id, email, token) '
       'VALUES (%s, %s, %s);', (4, email, token))
     self.database_connection.commit()
 
@@ -257,7 +257,7 @@ class AppTestCase(IntegrationTestCase):
     cursor.execute('DELETE FROM bird_common_name;')
     cursor.execute('DELETE FROM bird;')
     cursor.execute('DELETE FROM birder;')
-    cursor.execute('DELETE FROM account_registration;')
+    cursor.execute('DELETE FROM registration_request;')
     cursor.execute('DELETE FROM locale;')
     cursor.execute('ALTER SEQUENCE bird_common_name_id_seq RESTART WITH 1;')
     self.database_connection.commit()
