@@ -32,6 +32,10 @@ div.bird-search-result-card {
       @media only screen and (min-width : $break-small) {
         margin: .71rem;
       }
+
+      @media (prefers-color-scheme: dark) {
+        box-shadow: inset -.25rem .5rem 1rem rgba(black, .2);
+      }
     }
 
     & img {
