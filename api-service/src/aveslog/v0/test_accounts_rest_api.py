@@ -44,10 +44,13 @@ class TestGetAccount(AppTestCase):
     response = self.get_own_account(token.jwt)
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
+    creation_datetime = response.json['creationDatetime']
+    datetime.datetime.fromisoformat(creation_datetime) # should be ok
     self.assertDictEqual(response.json, {
       'id': 1,
       'username': 'hulot',
       'email': 'hulot@mail.com',
+      'creationDatetime': creation_datetime,
       'birder': {
         'id': 1,
         'name': 'hulot',
@@ -154,10 +157,13 @@ class TestCreateAccount(AppTestCase):
     response = self.post_account('myToken', 'my_username', 'myPassword')
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    creation_datetime = response.json['creationDatetime']
+    datetime.datetime.fromisoformat(creation_datetime) # should be ok
     self.assertDictEqual(response.json, {
       'id': 1,
       'username': 'my_username',
       'email': 'hulot@mail.com',
+      'creationDatetime': creation_datetime,
       'birder': {
         'id': 1,
         'name': 'my_username',

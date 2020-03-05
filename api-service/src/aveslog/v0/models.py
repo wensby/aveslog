@@ -8,6 +8,7 @@ from sqlalchemy import String
 from sqlalchemy import Date
 from sqlalchemy import Time
 from sqlalchemy import DateTime
+from sqlalchemy import func
 from sqlalchemy.orm import relationship
 from geoalchemy2 import Geography
 
@@ -115,6 +116,9 @@ class Account(Base):
   email = Column(String, nullable=False)
   birder_id = Column(Integer, ForeignKey('birder.id'))
   locale_id = Column(Integer, nullable=True)
+  creation_datetime = Column(
+    DateTime, nullable=False, default=func.current_timestamp()
+  )
 
   birder: Birder = relationship('Birder', uselist=False)
   refresh_tokens = relationship('RefreshToken', back_populates='account')

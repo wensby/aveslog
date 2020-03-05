@@ -524,6 +524,7 @@ Status: 201 CREATED
   "id": 4,
   "username": "kennybostick",
   "email": "kenny.bostick@mail.com",
+  "creationDatetime": "2020-03-05T13:29:50.269268",
   "birder": {
     "id": 8,
     "name": "kennybostick"
@@ -553,6 +554,7 @@ Status: 200 OK
   "id": 4,
   "username": "kennybostick",
   "email": "kenny.bostick@mail.com",
+  "creationDatetime": "2020-03-05T13:29:50.269268"
   "birder": {
     "id": 8,
     "name": "kennybostick"

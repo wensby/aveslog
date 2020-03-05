@@ -51,6 +51,7 @@ def authenticated_account_representation(account):
   representation = account_representation(account)
   representation.update({
     'email': account.email,
+    'creationDatetime': account.creation_datetime.isoformat(),
   })
   return representation
 
