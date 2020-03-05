@@ -18,4 +18,12 @@ div.common-name-item {
     text-transform: capitalize;
     font-size: 1.1em;
   }
+
+  @media (prefers-color-scheme: dark) {
+    color: $lighter;
+
+    & div:nth-child(1) {
+      color: $white;
+    }
+  }
 }

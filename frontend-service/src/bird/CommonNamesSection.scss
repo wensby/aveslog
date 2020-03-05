@@ -1,4 +1,5 @@
 @import '../layout.scss';
+@import '../colors.scss';
 
 div.common-names-section {
   padding: 0 .5em;
@@ -14,5 +15,11 @@ div.common-names-section {
   & div.names-cluster {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    & h2 {
+      color: $white;
+    }
   }
 }

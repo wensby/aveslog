@@ -19,4 +19,14 @@
     transform: rotate(180deg);
     fill: $darkgrey;
   }
+
+  @media (prefers-color-scheme: dark) {
+    &:hover {
+      fill: $white;
+    }
+
+    &.expanded svg {
+      fill: $white;
+    }
+  }
 }

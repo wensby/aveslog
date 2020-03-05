@@ -41,6 +41,10 @@ div.sighting-card {
       color: $lightgrey;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+    color: $white;
+  }
 }
 
 .sighting-card-body {

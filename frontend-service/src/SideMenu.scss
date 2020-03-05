@@ -21,4 +21,11 @@
       }
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+
+    & .sidebar .nav-link:hover {
+      color: $white;
+    }
+  }
 }

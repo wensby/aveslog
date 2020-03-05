@@ -11,6 +11,11 @@
   max-height: 0px;
   overflow-y: hidden;
 
+  @media (prefers-color-scheme: dark) {
+    background-color: $black;
+    border-bottom: 1px $lightgrey solid;
+  }
+
   &.collapsed {
     visibility: hidden;
   }

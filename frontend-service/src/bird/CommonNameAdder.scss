@@ -45,4 +45,8 @@ div.common-name-adder {
       outline: unset;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+    fill: $white;
+  }
 }

@@ -1,7 +1,13 @@
+@import '../colors.scss';
+
 div.navbar {
   display: flex;
   flex-wrap: wrap;
   box-shadow: 0 .5rem 1rem transparentize(black, .85);
+
+  @media (prefers-color-scheme: dark) {
+    background-color: $black;
+  }
 
   & .navbar-nav .nav-link {
     padding-right: 0;
@@ -10,6 +16,14 @@ div.navbar {
   
     &:hover {
       color: rgba(0,0,0,.7);
+    }    
+
+    @media (prefers-color-scheme: dark) {
+      color: $lighter;
+
+      &:hover {
+        color: white;
+      }
     }
   }
 }

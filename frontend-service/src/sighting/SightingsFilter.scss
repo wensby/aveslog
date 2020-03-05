@@ -25,4 +25,11 @@
       cursor: unset;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+
+    & button:hover {
+      color: $white;
+    }
+  }
 }

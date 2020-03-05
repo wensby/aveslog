@@ -1,3 +1,5 @@
+@import '../colors.scss';
+
 .bird-name-card {
   width: 100%;
   display: flex;
@@ -24,6 +26,14 @@
       @media (min-width: 768px) {
         font-size: 35px;
       }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: $white;
+
+    & div {
+      background-color: $black;
     }
   }
 }

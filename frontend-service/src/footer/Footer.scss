@@ -8,6 +8,10 @@ footer {
   box-sizing: border-box;
   white-space: nowrap;
 
+  @media (prefers-color-scheme: dark) {
+    background-color: $darkgrey;
+  }
+
   & .languages {
     display: flex;
     flex-direction: row;
@@ -35,6 +39,14 @@ footer {
 
       &.selected {
         color: $darkgrey;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        color: $lighter;
+
+        &.selected {
+          color: $black;
+        }
       }
     }
   }

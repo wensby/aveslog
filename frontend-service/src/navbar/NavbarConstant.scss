@@ -10,6 +10,10 @@
   grid-template-areas:
     "main button"
     "search search";
+    
+    @media (prefers-color-scheme: dark) {
+      background-color: $black;
+    }
 
   @media #{$tablet-landscape-up} {
     grid: 64px/ 3fr 7fr;

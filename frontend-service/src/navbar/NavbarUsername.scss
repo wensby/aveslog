@@ -11,4 +11,10 @@ div.navbar-username {
       text-decoration: none;
     }
   }
+
+  @media (prefers-color-scheme: dark) {
+    & a {
+      color: $white;
+    }
+  }
 }

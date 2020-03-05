@@ -1,6 +1,14 @@
+@import '../colors.scss';
+
 div.detailed-bird-card {
+  
+
   & hr {
     border: 0;
     border-top: 1px solid rgba(0,0,0,.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: $white;
   }
 }

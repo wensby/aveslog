@@ -7,6 +7,10 @@ div.bird-search-result-card {
   grid-template-columns: 5rem auto;
   grid-template-rows: 5rem;
 
+  @media (prefers-color-scheme: dark) {
+    background-color: $black;
+  }
+
   & div.picture {
     grid-row: 1;
     grid-column: 1;
@@ -63,6 +67,10 @@ div.bird-search-result-card {
         font-size: 1rem;
         font-weight: bolder;
         color: $darkgrey;
+        
+        @media (prefers-color-scheme: dark) {
+          color: $white;
+        }
       }
     }
 
@@ -95,6 +103,10 @@ div.bird-search-result-card {
           box-shadow: 0 0 1rem rgba($primary, .5);
           background-color: $primary;
           fill: $white;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: black;
         }
       }
     }
