@@ -1,6 +1,7 @@
 @import '../layout.scss';
 
 div.home-page {
+  @extend %common-main-margin-top;
   
   & h1.page-heading {
     @extend %phone-side-margins;
