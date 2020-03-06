@@ -18,6 +18,11 @@
   src: url('../LeckerliOne-Regular.ttf');
 }
 
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('../CourierPrime-Bold.ttf');
+}
+
 .brand-name {
   margin-left: 10px;
   color: $primary;
@@ -33,7 +38,7 @@
   }
 
   & span:nth-child(2) {
-    font-family: monospace, monospace; // avoids automatic font resizing
+    font-family: 'Courier Prime', Courier, monospace; // avoids automatic font resizing
     font-size: .8em;
     font-weight: 900;
   }
