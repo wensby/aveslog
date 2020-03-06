@@ -2,7 +2,7 @@
 
 .navbar-brand {
   display: inline-block;
-  padding-top: 0.35rem;
+  margin-top: -7px;
   margin-right: 1rem;
   font-size: 1.25rem;
   line-height: inherit;
@@ -14,21 +14,27 @@
 }
 
 @font-face {
-  font-family: 'Luckiest Guy';
-  src: url('../LuckiestGuy-Regular.ttf');
+  font-family: 'Leckerli One';
+  src: url('../LeckerliOne-Regular.ttf');
 }
 
 .brand-name {
-  font-family: 'Luckiest Guy', cursive;
-  font-size: 130%;
   margin-left: 10px;
   color: $primary;
+  font-size: 1.5em;
 
   &:hover {
     color: $darkgrey;
   }
 
-  & span {
-    margin-left: 1px;
+  & span:nth-child(1) {
+    font-family: 'Leckerli One', cursive;
+    font-size: 1em;
+  }
+
+  & span:nth-child(2) {
+    font-family: monospace, monospace; // avoids automatic font resizing
+    font-size: .8em;
+    font-weight: 900;
   }
 }

@@ -5,7 +5,8 @@ import './NavbarBrand.scss';
 export const NavbarBrand = () => (
   <div className='navbar-brand'>
     <Link to="/" className='text-decoration-none brand-name'>
-      Aves<span />log
+      <span>Aves</span>
+      <span>LOG</span>
     </Link>
   </div>
 );
