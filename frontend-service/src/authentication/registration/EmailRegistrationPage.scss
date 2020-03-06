@@ -2,6 +2,7 @@
 @import '../../colors.scss';
 
 div.email-registration-page {
+  @extend %common-main-margin-top;
   display: flex;
   flex-direction: column;
 
