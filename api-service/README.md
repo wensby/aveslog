@@ -702,14 +702,23 @@ how well it matched the search query. Items scoring 0 will not be returned.
 GET /search/birds
 ```
 
-#### Parameters
+**Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
 | q | string | **Required.** |
 | embed | string | Optional comma separated list of fields to be included in each result item. Supported field is: thumbnail. |
 
-#### Response
+The query string supports a position qualifier, that filters birds only sighted
+within the qualifier value.
+
+**Query Qualifiers**
+
+| Qualifier Key | Example Value | Notes |
+|---------------|---------------|-------|
+| `position` | `47.240055,2.2783327;r=1` | The `r` dictates the circle radius in km. |
+
+**Response**
 
 ```
 Status: 200 OK

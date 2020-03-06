@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from datetime import date
 
 from aveslog.test_util import AppTestCase
 
@@ -21,6 +22,49 @@ class TestSearchBirds(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertEqual(response.json, {
       'items': []
+    })
+
+  def test_search_with_location(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_bird(2, 'Turdus merula')
+    self.db_insert_birder(1, 'kennybostick')
+    self.db_insert_position(1, (47.240055, 2.2783327))
+    self.db_insert_position(2, (48.240055, 2.2783327))
+    self.db_insert_sighting(1, 1, 1, date(2020, 3, 6), None, 1)
+    self.db_insert_sighting(2, 1, 2, date(2020, 3, 6), None, 2)
+
+    response = self.client.get('/search/birds?q=position:47.240055,2.2783327;r=1')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'id': 'pica-pica',
+          'binomialName': 'Pica pica',
+          'score': 1
+        }
+      ]
+    })
+
+  def test_search_with_name_location(self):
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_bird(2, 'Turdus merula')
+    self.db_insert_birder(1, 'kennybostick')
+    self.db_insert_position(1, (47.240055, 2.2783327))
+    self.db_insert_sighting(1, 1, 1, date(2020, 3, 6), None, 1)
+    self.db_insert_sighting(2, 1, 2, date(2020, 3, 6), None, 1)
+
+    response = self.client.get('/search/birds?q=pica+position:47.240055,2.2783327;r=1')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'id': 'pica-pica',
+          'binomialName': 'Pica pica',
+          'score': 0.5
+        },
+      ]
     })
 
   def test_search_pica_pica_with_thumbnail(self):

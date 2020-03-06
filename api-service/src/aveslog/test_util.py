@@ -197,6 +197,13 @@ class AppTestCase(IntegrationTestCase):
     )
     self.database_connection.commit()
 
+  def db_insert_birder(self, birder_id, username):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO birder (id, name) VALUES (%s, %s);', (birder_id, username)
+    )
+    self.database_connection.commit()
+
   def db_setup_account(self,
         birder_id: int,
         account_id: int,
