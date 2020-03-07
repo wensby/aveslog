@@ -2,8 +2,9 @@ import re
 from typing import Dict, List, Optional
 
 from geoalchemy2 import WKTElement
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
+from sqlalchemy import or_
 import shlex
 
 from .models import Bird
@@ -61,8 +62,10 @@ class BirdSearcher:
     return scores_by_bird
 
   def search_by_binomial_name(self, name: str) -> Dict[Bird, float]:
-    result = self.session.query(Bird, func.similarity(Bird.binomial_name, name)) \
-      .filter(func.similarity(Bird.binomial_name, name) > 0.3) \
+    subquery = self.session.query(Bird.id, func.similarity(Bird.binomial_name, name).label('similarity')).subquery()
+    result = self.session.query(Bird, subquery.c.similarity) \
+      .outerjoin(subquery, Bird.id==subquery.c.id) \
+      .filter(subquery.c.similarity > 0.01) \
       .all()
     matches = dict()
     for bird, similarity in result:
@@ -70,8 +73,13 @@ class BirdSearcher:
     return matches
 
   def search_by_language_names(self, name: str) -> Dict[Bird, float]:
-    result = self.session.query(BirdCommonName, func.similarity(BirdCommonName.name, name)) \
-      .filter(func.similarity(BirdCommonName.name, name) > 0.3) \
+    subquery = self.session.query(BirdCommonName.id, func.similarity(BirdCommonName.name, name).label('similarity')) \
+      .filter(BirdCommonName.name.ilike(fr'%{name}%')) \
+      .subquery()
+    result = self.session.query(BirdCommonName, subquery.c.similarity) \
+      .outerjoin(subquery, BirdCommonName.id==subquery.c.id) \
+      .options(joinedload(BirdCommonName.bird)) \
+      .filter(subquery.c.similarity > 0.01) \
       .all()
     matches = dict()
     for common_name, similarity in result:
