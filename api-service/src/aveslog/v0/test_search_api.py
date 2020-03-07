@@ -49,12 +49,13 @@ class TestSearchBirds(AppTestCase):
   def test_search_with_name_location(self):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_bird(2, 'Turdus merula')
+    self.db_insert_bird(3, 'Pica serica')
     self.db_insert_birder(1, 'kennybostick')
     self.db_insert_position(1, (47.240055, 2.2783327))
     self.db_insert_sighting(1, 1, 1, date(2020, 3, 6), None, 1)
     self.db_insert_sighting(2, 1, 2, date(2020, 3, 6), None, 1)
 
-    response = self.client.get('/search/birds?q=pica+position:47.240055,2.2783327;r=1')
+    response = self.client.get('/search/birds?q="pica"+position:47.240055,2.2783327;r=1')
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertDictEqual(response.json, {

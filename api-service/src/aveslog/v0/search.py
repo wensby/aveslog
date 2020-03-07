@@ -45,7 +45,9 @@ class BirdSearcher:
         scores_by_bird[bird] = scores_by_bird[bird] * sighting_score
     matches = []
     for bird in scores_by_bird:
-      matches.append(BirdSearchMatch(bird, scores_by_bird[bird]))
+      score = scores_by_bird[bird]
+      if score:
+        matches.append(BirdSearchMatch(bird, score))
     return matches
 
   def name_search(self, name_query):
