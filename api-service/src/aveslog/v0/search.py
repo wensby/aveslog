@@ -65,7 +65,7 @@ class BirdSearcher:
     subquery = self.session.query(Bird.id, func.similarity(Bird.binomial_name, name).label('similarity')).subquery()
     result = self.session.query(Bird, subquery.c.similarity) \
       .outerjoin(subquery, Bird.id==subquery.c.id) \
-      .filter(subquery.c.similarity > 0.01) \
+      .filter(subquery.c.similarity > 0.2) \
       .all()
     matches = dict()
     for bird, similarity in result:
