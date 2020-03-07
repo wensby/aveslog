@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import { SearchBarContext } from './SearchBar.js';
+import { useTranslation } from 'react-i18next';
 import './AdvancedSearchSection.scss';
 
 export const AdvancedSearchSection = () => {
   const { advanced, positionActive, setPositionActive } = useContext(SearchBarContext);
+  const { t } = useTranslation();
 
   const handleChange = e => {
     setPositionActive(e.target.checked);
@@ -21,7 +23,7 @@ export const AdvancedSearchSection = () => {
     <div className={classNames.join(' ')}>
       <div className='sighted-nearby-group'>
         <input id='positionCheckbox' type='checkbox' onChange={handleChange} checked={positionActive} />
-        <label htmlFor='positionCheckbox'>Sighted near my location</label>
+        <label htmlFor='positionCheckbox'>{t('search-sighted-nearby-label')}</label>
       </div>
     </div>
   );
