@@ -1,0 +1,18 @@
+@import '../colors.scss';
+
+div.advanced-search-section {
+  
+}
+
+div.sighted-nearby-group {
+  color: $darkgrey;
+  font-size: 1rem;
+
+  & label {
+    margin-left: .5rem;
+  }
+
+  & input:checked ~ label {
+    color: $primary;
+  }
+}

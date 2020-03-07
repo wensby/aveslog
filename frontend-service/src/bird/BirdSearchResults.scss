@@ -9,5 +9,6 @@
     @extend %phone-side-margins;
     color: $lightgrey;
     margin-bottom: 10px;
+    overflow: hidden;
   }
 }

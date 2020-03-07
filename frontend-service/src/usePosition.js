@@ -27,6 +27,7 @@ export const usePosition = (enabled) => {
     }
     else {
       setPosition({});
+      setError(null);
     }
   }, [enabled]);
 

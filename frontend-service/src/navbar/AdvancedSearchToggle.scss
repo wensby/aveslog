@@ -15,9 +15,16 @@
     transition: transform .1s ease-in-out;
   }
 
-  &.expanded svg {
-    transform: rotate(180deg);
-    fill: $darkgrey;
+  &.expanded {
+    & svg {
+      transform: rotate(180deg);
+      fill: $darkgrey;
+    }
+  }
+
+  &:not(.expanded).dirty svg {
+    fill: $primary;
+    filter: drop-shadow(0 0 5px transparentize($primary, .75))
   }
 
   @media (prefers-color-scheme: dark) {
