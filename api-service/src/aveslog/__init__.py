@@ -1,7 +1,7 @@
 import logging
 import os
 from distutils.util import strtobool
-from typing import Optional
+from typing import Optional, Callable
 
 from flask import Flask
 from flask_cors import CORS
@@ -10,16 +10,24 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from aveslog.mail import MailDispatcherFactory
+from aveslog.mail import MailDispatcher
 from aveslog.v0 import create_api_v0_blueprint
 
 
 def create_app(test_config: Optional[dict] = None) -> Flask:
+  mail_dispatcher_supplier = lambda app: MailDispatcherFactory().create_dispatcher(app)
+  return create_app_with_dependencies(mail_dispatcher_supplier, test_config)
+
+
+def create_app_with_dependencies(
+      mail_dispatcher_supplier: Callable[[Flask], MailDispatcher],
+      test_config: Optional[dict] = None,
+) -> Flask:
   app = Flask(__name__, instance_relative_config=True)
   configure_app(app, test_config)
 
   # Create blueprint dependencies
-  mail_dispatcher_factory = MailDispatcherFactory(app)
-  mail_dispatcher = mail_dispatcher_factory.create_dispatcher()
+  mail_dispatcher = mail_dispatcher_supplier(app)
 
   # Create and register blueprints
   api_v0_blueprint = create_api_v0_blueprint(mail_dispatcher)

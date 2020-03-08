@@ -12,6 +12,7 @@ from flask.testing import FlaskClient
 from werkzeug.datastructures import Headers
 
 import aveslog
+from aveslog import MailDispatcher
 from aveslog.v0 import EngineFactory, SessionFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import SaltFactory
@@ -41,6 +42,19 @@ class IntegrationTestCase(TestCase):
         'Skipping database depending test case ' + str(cls.__name__))
 
 
+class TestMailDispatcher(MailDispatcher):
+
+  def __init__(self, dispatched_mails: list):
+    self._dispatched_mails: list = dispatched_mails
+
+  def dispatch(self, recipient, subject, body):
+    self._dispatched_mails.append({
+      'recipient': recipient,
+      'subject': subject,
+      'body': body
+    })
+
+
 class AppTestCase(IntegrationTestCase):
 
   @classmethod
@@ -57,7 +71,12 @@ class AppTestCase(IntegrationTestCase):
       'FRONTEND_HOST': 'http://localhost:3002',
       'RATE_LIMIT': f'{self.test_rate_limit_per_minute}/minute',
     }
-    self._app = aveslog.create_app(test_config=test_config)
+
+    self.dispatched_mails = []
+    self._app = aveslog.create_app_with_dependencies(
+      lambda app: TestMailDispatcher(self.dispatched_mails),
+      test_config=test_config,
+    )
     self._app.test_client_class = TestClient
     database_connection_details = aveslog.v0.create_database_connection_details()
     self.database_connection = psycopg2.connect(**database_connection_details)

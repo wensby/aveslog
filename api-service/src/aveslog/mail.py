@@ -1,4 +1,6 @@
 import os
+
+from flask import Flask
 from flask_mail import Mail, Message
 from distutils.util import strtobool
 import re
@@ -17,10 +19,7 @@ class MailDispatcher():
 
 class MailDispatcherFactory:
 
-  def __init__(self, app):
-    self.app = app
-
-  def create_dispatcher(self) -> MailDispatcher:
+  def create_dispatcher(self, app: Flask) -> MailDispatcher:
     if 'MAIL_SERVER' in os.environ:
       server = os.environ['MAIL_SERVER']
       port = os.environ['MAIL_PORT']
@@ -28,10 +27,10 @@ class MailDispatcherFactory:
       password = os.environ['MAIL_PASSWORD']
       use_tls = bool(strtobool(os.environ['MAIL_USE_TLS']))
       use_ssl = bool(strtobool(os.environ['MAIL_USE_SSL']))
-      return MailServerDispatcher(self.app, server, port, username, password,
+      return MailServerDispatcher(app, server, port, username, password,
         use_tls, use_ssl)
     else:
-      return MailDebugDispatcher(self.app)
+      return MailDebugDispatcher(app)
 
 
 class MailDebugDispatcher(MailDispatcher):
