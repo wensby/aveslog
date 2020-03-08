@@ -18,7 +18,8 @@ from aveslog.v0.models import RegistrationRequest
 
 def post_registration_request() -> Response:
   email = request.json['email']
-  locale = load_english_locale()
+  locale = request.json.get('locale', 'en')
+  locale = load_locale(locale)
   link_factory = LinkFactory(
     current_app.config['EXTERNAL_HOST'],
     current_app.config['FRONTEND_HOST'],
@@ -49,9 +50,9 @@ def get_registration_request(token: str) -> Response:
   return make_response('', HTTPStatus.NOT_FOUND)
 
 
-def load_english_locale() -> LoadedLocale:
+def load_locale(code) -> LoadedLocale:
   locales_directory_path = current_app.config['LOCALES_PATH']
   loader = LocaleLoader(locales_directory_path)
   locale_repository = LocaleRepository(locales_directory_path, loader)
-  locale = locale_repository.find_locale_by_code('en')
+  locale = locale_repository.find_locale_by_code(code)
   return loader.load_locale(locale)

@@ -22,11 +22,11 @@ class TestCreateRegistrationRequest(AppTestCase):
     dispatched_mail = self.dispatched_mails[0]
     self.assertDictEqual(dispatched_mail, {
       'body':
-        'Hi there, thanks for showing interest in aveslog. Here is your link '
+        'Hi there, thanks for showing interest in Aveslog. Here is your link '
         'to the registration form: '
         f'{self._app.config["FRONTEND_HOST"]}/authentication/registration/{token}',
       'recipient': 'hulot@mail.com',
-      'subject': 'Birding Registration',
+      'subject': 'Aveslog Registration',
     })
 
   def test_post_registration_request_when_email_invalid(self):
@@ -51,6 +51,31 @@ class TestCreateRegistrationRequest(AppTestCase):
     self.assertDictEqual(response.json, {
       'code': ErrorCode.EMAIL_TAKEN,
       'message': 'Email taken',
+    })
+    self.assertListEqual(self.dispatched_mails, [])
+
+  def test_post_registration_request_with_specified_locale(self):
+    self.db_insert_locale(1, 'sv')
+
+    response = self.client.post('/registration-requests', json={
+      'email': 'bostick@mail.com',
+      'locale': 'sv'
+    })
+
+    self.assertEqual(response.status_code, HTTPStatus.CREATED)
+    self.assertIsNone(response.json)
+    registration_requests = self.db_get_registration_requests()
+    self.assertEqual(len(registration_requests), 1)
+    token = registration_requests[0][2]
+    self.assertEqual(len(self.dispatched_mails), 1)
+    dispatched_mail = self.dispatched_mails[0]
+    self.assertDictEqual(dispatched_mail, {
+      'body':
+        'Hej, vad kul att du också är intresserad av fåglar! Här kommer din '
+        'registreringslänk: '
+        f'{self._app.config["FRONTEND_HOST"]}/authentication/registration/{token}',
+      'recipient': 'bostick@mail.com',
+      'subject': 'Aveslog registrering',
     })
 
   def post_registration_request(self, email: str) -> Response:

@@ -95,7 +95,7 @@ class AccountRegistrationController:
         email_address: str,
         registration_link: str,
         locale: LoadedLocale) -> None:
-    subject = 'Birding Registration'
+    subject = locale.text('Aveslog Registration')
     message = self.__create_registration_mail_message(registration_link, locale)
     self.mail_dispatcher.dispatch(email_address, subject, message)
 
@@ -107,7 +107,7 @@ class AccountRegistrationController:
         link: str,
         locale: LoadedLocale) -> str:
     message = (
-      'Hi there, thanks for showing interest in aveslog. '
+      'Hi there, thanks for showing interest in Aveslog. '
       'Here is your link to the registration form: ')
     return locale.text(message) + link
 

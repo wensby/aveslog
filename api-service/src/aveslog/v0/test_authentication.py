@@ -74,7 +74,7 @@ class TestAccountRegistrationController(TestCase):
   def test_initiate_registration_creates_correct_registration_link_when_valid_email_and_rest_api(
         self):
     locale = Mock()
-    locale.text.return_value = 'translated'
+    locale.text.side_effect = ['translated-subject', 'translated message: ']
     self.account_repository.add_account_registration().token = 'myToken'
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
@@ -87,19 +87,19 @@ class TestAccountRegistrationController(TestCase):
   def test_initiate_registration_dispatches_registration_link_when_valid_free_email(
         self):
     locale = Mock()
-    locale.text.return_value = 'translated message: '
+    locale.text.side_effect = ['translated-subject', 'translated message: ']
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
 
     result = self.controller.initiate_registration(valid_email, locale)
 
     self.mail_dispatcher.dispatch.assert_called_with(valid_email,
-      'Birding Registration',
+      'translated-subject',
       'translated message: myLink')
 
   def test_initiate_registration_returns_registration_when_success(self):
     locale = Mock()
-    locale.text.return_value = 'translated'
+    locale.text.side_effect = ['translated-subject', 'translated message: ']
     registration = self.account_repository.add_account_registration()
     self.link_factory.create_frontend_link.return_value = 'myLink'
     self.account_repository.find_account_by_email.return_value = None
