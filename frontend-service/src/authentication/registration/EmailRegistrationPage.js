@@ -11,11 +11,12 @@ const PageContext = React.createContext();
 export const EmailRegistrationPage = () => {
   const [email, setEmail] = useState('');
   const [alert, setAlert] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.languages[0];
   const authentication = new AuthenticationService();
 
   const submit = async () => {
-    const response = await authentication.postRegistrationEmail(email);
+    const response = await authentication.postRegistrationEmail(email, language);
     if (response.status === 201) {
       setAlert({
         type: 'success',

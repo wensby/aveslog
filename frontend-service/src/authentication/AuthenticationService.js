@@ -66,7 +66,7 @@ export default class AuthenticationService {
     });
   }
 
-  async postRegistrationEmail(email) {
+  async postRegistrationEmail(email, locale) {
     const url = `${this.apiUrl}/registration-requests`;
     return await fetch(url, {
       method: 'POST',
@@ -75,6 +75,7 @@ export default class AuthenticationService {
       },
       body: JSON.stringify({
         'email': email,
+        'locale': locale
       })
     });
   }
