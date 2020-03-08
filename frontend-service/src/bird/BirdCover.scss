@@ -1,8 +1,10 @@
+@import '../colors.scss';
+
 .picture-cover-container {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 15%;
-  background-color: #EEE;
+  background-color: $color3;
 }
 
 .picture-cover {
