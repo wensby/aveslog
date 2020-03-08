@@ -294,6 +294,12 @@ class AppTestCase(IntegrationTestCase):
     self.database_connection.commit()
     return cursor.fetchall()
 
+  def db_get_registration_requests(self):
+    cursor = self.database_connection.cursor()
+    cursor.execute('SELECT * FROM registration_request;')
+    self.database_connection.commit()
+    return cursor.fetchall()
+
 
 def get_test_database_session():
   engine_factory = EngineFactory(echo=False)

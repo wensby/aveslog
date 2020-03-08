@@ -15,6 +15,19 @@ class TestCreateRegistrationRequest(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertIsNone(response.json)
+    registration_requests = self.db_get_registration_requests()
+    self.assertEqual(len(registration_requests), 1)
+    token = registration_requests[0][2]
+    self.assertEqual(len(self.dispatched_mails), 1)
+    dispatched_mail = self.dispatched_mails[0]
+    self.assertDictEqual(dispatched_mail, {
+      'body':
+        'Hi there, thanks for showing interest in aveslog. Here is your link '
+        'to the registration form: '
+        f'{self._app.config["FRONTEND_HOST"]}/authentication/registration/{token}',
+      'recipient': 'hulot@mail.com',
+      'subject': 'Birding Registration',
+    })
 
   def test_post_registration_request_when_email_invalid(self):
     self.db_insert_locale(1, 'en')
@@ -26,6 +39,7 @@ class TestCreateRegistrationRequest(AppTestCase):
       'code': ErrorCode.EMAIL_INVALID,
       'message': 'Email invalid',
     })
+    self.assertListEqual(self.dispatched_mails, [])
 
   def test_post_registration_request_when_email_taken(self):
     self.db_insert_locale(1, 'en')
