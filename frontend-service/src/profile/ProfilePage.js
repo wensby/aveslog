@@ -1,34 +1,18 @@
-import React, { useState, useContext, useEffect } from 'react';
-import SightingService from '../sighting/SightingService';
+import React from 'react';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 import { useAccount } from '../account/AccountHooks';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { LoadingOverlay } from '../loading/LoadingOverlay';
+import { useBirderSightings } from '../birder/useBirderSightings';
 
 export function ProfilePage({ username }) {
-  const [sightings, setSightings] = useState([]);
-  const { getAccessToken } = useContext(AuthenticationContext);
   const { account } = useAccount(username);
-
-  useEffect(() => {
-    const fetchSightings = async () => {
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        const response = await new SightingService().fetchBirderSightings(account.birder.id, accessToken);
-        if (response.status === 200) {
-          const json = await response.json();
-          setSightings(json.items);
-        }
-      }
-    }
-    if (account) {
-      fetchSightings();
-    }
-  }, [account, getAccessToken]);
+  const { sightings, loading } = useBirderSightings(account ? account.birder : null);
 
   return (
     <div>
       <h1>{username}</h1>
-      <FilterableSightingsList sightings={sightings} />
+      {loading && <LoadingOverlay />}
+      {!loading && <FilterableSightingsList sightings={sightings} />}
     </div>
   );
 };
