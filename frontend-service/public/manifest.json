@@ -3,13 +3,13 @@
   "name": "Aveslog",
   "icons": [
     {
-      "src": "birdlogo-50.png",
-      "sizes": "50x50",
+      "src": "favicon96.png",
+      "sizes": "96x96",
       "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#ee6352",
   "background_color": "#ffffff"
 }
