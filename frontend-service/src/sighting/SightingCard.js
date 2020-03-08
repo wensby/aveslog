@@ -2,12 +2,11 @@ import React, { useContext, memo, forwardRef } from 'react';
 import { BirdCardName } from '../bird/BirdCardName.js';
 import { SightingTime } from './SightingTime.js';
 import { useLazyBird } from '../bird/BirdHooks.js';
-import { BirdThumbnailImage } from '../bird/BirdThumbnailImage.js';
-import { BirdLink } from '../bird/BirdLink.js';
 import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';
 import { withReveal } from '../generic/ScrollHooks.js';
+import { CircledBirdPicture } from '../bird/CircledBirdPicture.js';
 import './SightingCard.scss';
 
 export const RevealableSightingCard = withReveal(({ sighting, revealed }, ref) => {
@@ -25,11 +24,7 @@ const SightingCard = memo(forwardRef(({ sighting, bird }, ref) => {
 
   return (
     <div className='sighting-card' ref={ref}>
-      <div className='picture'>
-        <BirdLink bird={bird} >
-          <BirdThumbnailImage bird={bird} />
-        </BirdLink>
-      </div>
+      <CircledBirdPicture bird={bird} />
       <div className='details'>
         <div className='name'>
           <BirdCardName bird={bird} className='common-name' />
