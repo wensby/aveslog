@@ -17,6 +17,18 @@ export const SearchBar = () => {
   const [position, setPosition] = useState(null);
   const inputRef = useRef(null);
   const { latitude, longitude, error } = usePosition(positionActive);
+  const searchFormRef = useRef()
+
+  const onDocumentClick = event => {
+    if (searchFormRef && !searchFormRef.current.contains(event.target)) {
+      setAdvanced(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', onDocumentClick, true);
+    return () => document.removeEventListener('click', onDocumentClick);
+  }, []);
 
   useEffect(() => {
     if (latitude && longitude) {
@@ -68,7 +80,7 @@ export const SearchBar = () => {
 
   return (
     <SearchBarContext.Provider value={contextValues}>
-      <form className='search-bar' onSubmit={submit}>
+      <form ref={searchFormRef} className='search-bar' onSubmit={submit}>
         <AdvancedSearchSection />
         <div className='simple-search-section'>
           <div className='text-input'>
