@@ -1,0 +1,28 @@
+@import './colors.scss';
+
+nav.sidebar {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #dee2e6;
+
+  & .nav-link {
+    font-weight: 500;
+    display: block;
+    padding: .5rem 1rem;
+    cursor: pointer;
+    color: $primary;
+    text-decoration: none;
+  
+    &:hover {
+      color: $black;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  nav.sidebar .nav-link:hover {
+    color: $white;
+  }
+}
