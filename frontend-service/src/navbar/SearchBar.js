@@ -5,6 +5,7 @@ import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import { ClearSearchButton } from './ClearSearchButton';
 import { usePosition } from '../usePosition.js';
 import { AdvancedSearchSection } from './AdvancedSearchSection.js';
+import { SearchInput } from './SearchInput.js';
 import './SearchBar.scss';
 
 export const SearchBarContext = React.createContext();
@@ -96,18 +97,6 @@ export const SearchBar = () => {
     </SearchBarContext.Provider>
   );
 };
-
-const SearchInput = React.forwardRef(({ value, onChange }, ref) => {
-  const { t } = useTranslation();
-
-  return <input
-    className='search-input'
-    ref={ref}
-    placeholder={t('Search bird')}
-    aria-label={t('Search bird')}
-    onChange={e => onChange(e.target.value)}
-    value={value} />;
-});
 
 const SearchButton = () => {
   const { dirty } = useContext(SearchBarContext);

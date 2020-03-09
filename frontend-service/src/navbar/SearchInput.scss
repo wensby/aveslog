@@ -1,0 +1,28 @@
+@import '../layout.scss';
+@import '../colors.scss';
+
+input.search-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: .75rem 1rem;
+  border: 1px solid $lighter;
+  border-width: 1px 0;
+  color: $black;
+  background-color: $white;
+  font-size: inherit;
+  min-width: 0px;
+  transition:
+      border-color 0.15s ease-in-out, 
+      box-shadow 0.15s ease-in-out;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: $darkgrey;
+    border-color: $lightgrey;
+    color: $white;
+  }
+
+  @media #{$tablet-landscape-up} {
+    border-radius: 0.5rem 0 0 0.5rem;
+    border-left-width: 1px;
+  }
+}
