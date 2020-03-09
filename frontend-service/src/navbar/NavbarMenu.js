@@ -7,8 +7,11 @@ import './NavbarMenu.scss';
 export const NavbarMenu = ({ state }) => {
   const { collapseMenu } = useContext(NavbarContext);
   const items = useMenuItems();
+
   const needMaxHeight = ['expanding', 'expanded'].indexOf(state) >= 0;
-  const style = needMaxHeight ? { maxHeight: `${items.length * 37}px` } : null;
+  const menuItemHeight = 37;
+  const maxHeight = items.length * menuItemHeight;
+  const style = needMaxHeight ? { maxHeight: `${maxHeight}px` } : null;
   const classNames = ['navbar-menu', state];
 
   return (
