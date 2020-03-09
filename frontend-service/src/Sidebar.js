@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMenuItems } from './useMenuItems.js';
-import { Link } from 'react-router-dom';
+import { MenuItem } from './menu/MenuItem.js';
 import './Sidebar.scss';
 
 export const Sidebar = () => {
@@ -12,12 +12,3 @@ export const Sidebar = () => {
     </nav>
   );
 };
-
-const MenuItem = ({ item }) => {
-  if (item.link) {
-    return <Link to={item.link} onClick={item.action}>{item.label}</Link>;
-  }
-  else {
-    return <div onClick={item.action}>{item.label}</div>
-  }
-}

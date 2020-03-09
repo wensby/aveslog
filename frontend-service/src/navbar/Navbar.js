@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavbarConstant } from './NavbarConstant.js';
-import { ExpandibleMenu } from './ExpandibleMenu.js';
+import { NavbarMenu } from './NavbarMenu.js';
 import './Navbar.scss';
 
 export const NavbarContext = React.createContext();
@@ -81,7 +81,7 @@ export const Navbar = () => {
     <NavbarContext.Provider value={{ toggleNavbar, collapseMenu }}>
       <div ref={setFullNavbarRef} className='navbar'>
         <NavbarConstant ref={setGridRef} />
-        <ExpandibleMenu state={menuCollapseState} />
+        <NavbarMenu state={menuCollapseState} />
       </div>
     </NavbarContext.Provider>
   );

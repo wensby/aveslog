@@ -9,22 +9,4 @@ div.navbar {
     background-color: $black;
     box-shadow: 0 .5rem 1rem transparentize(black, .7);
   }
-
-  & .navbar-nav .nav-link {
-    padding-right: 0;
-    padding-left: 0;
-    color: rgba(0,0,0,.5);
-  
-    &:hover {
-      color: rgba(0,0,0,.7);
-    }    
-
-    @media (prefers-color-scheme: dark) {
-      color: $lighter;
-
-      &:hover {
-        color: white;
-      }
-    }
-  }
 }

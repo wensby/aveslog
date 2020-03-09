@@ -1,7 +1,7 @@
 @import '../colors.scss';
 @import '../layout.scss';
 
-.expandible-menu {
+nav.navbar-menu {
   background-color: $white;
   transition: max-height .3s;
   padding-left: 15px;
@@ -27,9 +27,24 @@
     display: none !important;
   }
 
-  & .nav-link {
+  & > * {
     display: block;
     padding: .5rem 1rem;
     cursor: pointer;
+    padding-right: 0;
+    padding-left: 0;
+    color: rgba(0,0,0,.5);
+  
+    &:hover {
+      color: rgba(0,0,0,.7);
+    }    
+  
+    @media (prefers-color-scheme: dark) {
+      color: $lighter;
+  
+      &:hover {
+        color: white;
+      }
+    }
   }
 }
