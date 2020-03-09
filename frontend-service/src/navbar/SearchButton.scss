@@ -1,0 +1,30 @@
+@import '../layout.scss';
+@import '../colors.scss';
+
+button.search-button {
+  white-space: nowrap;
+  font-size: inherit;
+  font-weight: 500;
+  border: 1px solid transparent;
+  padding: 0;
+  border: 0;
+  transition: 
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out,
+      max-width 0.1s ease-in,
+      padding 0.1s ease-in;
+  color: $white;
+  background-color: $primary;
+  
+  &:hover {
+    color: $white;
+    background-color: $darkgrey;
+  }
+
+  @media #{$tablet-landscape-up} {
+    transition: max-width 0s, padding 0s;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 0 16px;
+  }
+}

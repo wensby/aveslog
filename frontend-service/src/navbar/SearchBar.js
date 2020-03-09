@@ -1,11 +1,11 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useRef, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import { ClearSearchButton } from './ClearSearchButton';
 import { usePosition } from '../usePosition.js';
 import { AdvancedSearchSection } from './AdvancedSearchSection.js';
 import { SearchInput } from './SearchInput.js';
+import { SearchButton } from './SearchButton.js';
 import './SearchBar.scss';
 
 export const SearchBarContext = React.createContext();
@@ -97,11 +97,4 @@ export const SearchBar = () => {
       </form>
     </SearchBarContext.Provider>
   );
-};
-
-const SearchButton = () => {
-  const { dirty } = useContext(SearchBarContext);
-  const { t } = useTranslation();
-  const className = (dirty) ? 'expanded' : null;
-  return <button className={className} type='submit'>{t('Search')}</button>;
 };
