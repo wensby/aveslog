@@ -7,12 +7,12 @@ export const SearchInput = React.forwardRef(({ }, ref) => {
   const { query, setQuery } = useContext(SearchBarContext);
   const { t } = useTranslation();
 
-  return <input
-    className='search-input'
-    ref={ref}
-    placeholder={t('Search bird')}
-    aria-label={t('Search bird')}
-    onChange={e => setQuery(e.target.value)}
-    value={query}
-  />;
+  const label = t('Search bird');
+
+  const handleChange = event => {
+    setQuery(event.target.value);
+  };
+
+  return <input className='search-input' ref={ref} placeholder={label}
+    aria-label={label} onChange={handleChange} value={query}/>;
 });
