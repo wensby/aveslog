@@ -21,8 +21,10 @@ button.search-button {
     color: $white;
     background-color: $darkgrey;
   }
+}
 
-  @media #{$tablet-landscape-up} {
+@media #{$tablet-landscape-up} {
+  button.search-button {
     transition: max-width 0s, padding 0s;
     border-radius: 0 0.5rem 0.5rem 0;
     padding: 0 16px;
