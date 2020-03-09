@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { Menu } from './Menu.js';
 import { NavbarContext } from './Navbar.js';
-import './ExpandibleMenu.scss';
 import { useMenuItems } from '../useMenuItems.js';
+import { Link } from 'react-router-dom';
+import './ExpandibleMenu.scss';
 
 export const ExpandibleMenu = ({ state }) => {
   const { collapseMenu } = useContext(NavbarContext);
@@ -12,7 +12,18 @@ export const ExpandibleMenu = ({ state }) => {
 
   return (
     <div className={`expandible-menu ${state}`} style={style}>
-      <Menu items={items} onClick={collapseMenu} />
+      <div className='navbar-nav' id='collapsableMenuList' onClick={collapseMenu}>
+        {items.map((item, index) => <MenuItem key={index} item={item} />)}
+      </div>
     </div>
   );
-}
+};
+
+const MenuItem = ({ item }) => {
+  if (item.link) {
+    return <Link className='nav-link' to={item.link} onClick={item.action}>{item.label}</Link>;
+  }
+  else {
+    return <div className='nav-link' onClick={item.action}>{item.label}</div>
+  }
+};
