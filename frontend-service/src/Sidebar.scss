@@ -6,7 +6,7 @@ nav.sidebar {
   flex-direction: column;
   border-left: 1px solid #dee2e6;
 
-  & .nav-link {
+  & > * {
     font-weight: 500;
     display: block;
     padding: .5rem 1rem;
@@ -22,7 +22,7 @@ nav.sidebar {
 
 @media (prefers-color-scheme: dark) {
 
-  nav.sidebar .nav-link:hover {
+  nav.sidebar > *:hover {
     color: $white;
   }
 }

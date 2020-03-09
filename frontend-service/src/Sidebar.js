@@ -4,20 +4,20 @@ import { Link } from 'react-router-dom';
 import './Sidebar.scss';
 
 export const Sidebar = () => {
-  const items = useMenuItems();
+  const menuItems = useMenuItems();
 
   return (
     <nav className='sidebar'>
-      {items.map(renderItem)}
+      {menuItems.map((item, index) => <MenuItem item={item} key={index} />)}
     </nav>
   );
 };
 
-const renderItem = (item, index) => {
+const MenuItem = ({ item }) => {
   if (item.link) {
-    return <Link key={index} className='nav-link' to={item.link} onClick={item.action}>{item.label}</Link>;
+    return <Link to={item.link} onClick={item.action}>{item.label}</Link>;
   }
   else {
-    return <div key={index} className='nav-link' onClick={item.action}>{item.label}</div>
+    return <div onClick={item.action}>{item.label}</div>
   }
-};
+}
