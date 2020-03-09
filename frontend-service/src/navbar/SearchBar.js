@@ -71,6 +71,7 @@ export const SearchBar = () => {
 
   const contextValues = {
     dirty: query || advanced || positionActive,
+    setQuery,
     query,
     advanced,
     clear,
@@ -85,7 +86,7 @@ export const SearchBar = () => {
         <AdvancedSearchSection />
         <div className='simple-search-section'>
           <div className='text-input'>
-            <SearchInput ref={inputRef} value={query} onChange={setQuery} />
+            <SearchInput ref={inputRef} />
             <div className='right'>
               {(position || query) && <ClearSearchButton />}
               <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
