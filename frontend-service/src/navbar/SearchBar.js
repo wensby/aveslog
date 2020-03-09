@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import { ClearSearchButton } from './ClearSearchButton';
@@ -70,11 +70,13 @@ export const SearchBar = () => {
   }
 
   const contextValues = {
-    dirty: query || advanced || positionActive,
+    dirty: query || positionActive,
     setQuery,
     query,
     advanced,
+    setAdvanced,
     clear,
+    position,
     setPosition,
     positionActive,
     setPositionActive
@@ -87,14 +89,21 @@ export const SearchBar = () => {
         <div className='simple-search-section'>
           <div className='text-input'>
             <SearchInput ref={inputRef} />
-            <div className='right'>
-              {(position || query) && <ClearSearchButton />}
-              <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
-            </div>
+            <TextInputRightOverlay />
           </div>
           <SearchButton />
         </div>
       </form>
     </SearchBarContext.Provider>
+  );
+};
+
+const TextInputRightOverlay = () => {
+  const { advanced, setAdvanced, dirty } = useContext(SearchBarContext);
+  return (
+    <div className='right'>
+      {dirty && <ClearSearchButton />}
+      <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
+    </div>
   );
 };

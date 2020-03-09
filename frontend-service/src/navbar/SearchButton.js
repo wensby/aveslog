@@ -4,12 +4,12 @@ import { SearchBarContext } from './SearchBar';
 import './SearchButton.scss';
 
 export const SearchButton = () => {
-  const { dirty } = useContext(SearchBarContext);
+  const { dirty, advanced } = useContext(SearchBarContext);
   const { t } = useTranslation();
 
   const classNames = ['search-button'];
   
-  if (dirty) {
+  if (dirty || advanced) {
     classNames.push('expanded');
   }
   
