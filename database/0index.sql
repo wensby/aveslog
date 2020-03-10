@@ -16,6 +16,7 @@
 \i /schema/public/table/account_role.sql
 \i /schema/public/table/resource_permission.sql
 \i /schema/public/table/role_resource_permission.sql
+\i /schema/public/table/birder_connection.sql
 
 \i /schema/public/foreign-key-constraint/account.sql
 \i /schema/public/foreign-key-constraint/bird_thumbnail.sql
@@ -27,3 +28,4 @@
 \i /schema/public/foreign-key-constraint/position_name.sql
 \i /schema/public/foreign-key-constraint/account_role.sql
 \i /schema/public/foreign-key-constraint/role_resource_permission.sql
+\i /schema/public/foreign-key-constraint/birder_connection.sql

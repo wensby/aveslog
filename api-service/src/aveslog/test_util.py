@@ -267,6 +267,7 @@ class AppTestCase(IntegrationTestCase):
 
   def clear_database(self):
     cursor = self.database_connection.cursor()
+    cursor.execute('DELETE FROM birder_connection;')
     cursor.execute('DELETE FROM position_name;')
     cursor.execute('DELETE FROM refresh_token;')
     cursor.execute('DELETE FROM password_reset_token;')

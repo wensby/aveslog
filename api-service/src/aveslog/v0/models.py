@@ -78,11 +78,26 @@ class BirdCommonName(Base):
     return f"<BirdCommonName(name='{self.name}')>"
 
 
+class BirderConnection(Base):
+  __tablename__ = 'birder_connection'
+  birder_id = Column(Integer, ForeignKey('birder.id'), primary_key=True)
+  connection_birder_id = Column(
+    Integer, ForeignKey('birder.id'), primary_key=True
+  )
+
+  connection_birder = relationship(
+    'Birder', uselist=False, foreign_keys=[connection_birder_id],
+  )
+
+
 class Birder(Base):
   __tablename__ = 'birder'
   id = Column(Integer, primary_key=True)
   name = Column(String)
   sightings = relationship('Sighting')
+  connections = relationship(
+    'BirderConnection', foreign_keys='BirderConnection.birder_id',
+  )
 
   def __repr__(self):
     return f"<Birder(name='{self.name}')>"
