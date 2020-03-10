@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { FeedContainer } from './FeedContainer';
-import { PageHeading } from '../generic/PageHeading.js';
-import './HomePage.scss';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { useTranslation } from 'react-i18next';
+import { PageHeading } from '../generic/PageHeading.js';
+import { FeedContainer } from './FeedContainer';
+import './HomePage.scss';
 
 export const HomePage = () => {
   const { authenticated } = useContext(AuthenticationContext);
