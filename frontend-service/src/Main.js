@@ -7,7 +7,6 @@ import { BirdRoute } from './bird/BirdRoute.js';
 import { Sighting } from './sighting/Sighting.js';
 import { BirdersRoute } from './profile/BirdersRoute';
 import AuthenticatedRoute from './authentication/AuthenticatedRoute';
-import { Birder } from './birder/Birder';
 import './Main.scss';
 
 export const Main = () => {
@@ -16,7 +15,6 @@ export const Main = () => {
       <Route path='/' exact component={HomePage} />
       <Route path='/authentication' component={Authentication} />
       <Route path='/birders' component={BirdersRoute} />
-      <Route path='/birder' component={Birder} />
       <AuthenticatedRoute path='/settings' exact component={Settings} />
       <Route path='/bird' component={BirdRoute} />
       <Route path='/sighting' component={Sighting} />

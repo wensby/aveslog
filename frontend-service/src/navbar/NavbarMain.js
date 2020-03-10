@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavbarBrand } from './NavbarBrand';
-import { NavbarUsername } from './NavbarUsername';
+import { NavbarAccount } from './NavbarAccount';
 import { useAuthentication } from '../authentication/AuthenticationHooks';
 import './NavbarMain.scss';
 
@@ -10,7 +10,7 @@ export function NavbarMain() {
   return (
     <div className='navbar-main'>
       <NavbarBrand />
-      {account && <NavbarUsername username={account.username} />}
+      {account && <NavbarAccount account={account} />}
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default class AccountService {
   }
 
   async fetchAccounts(accessToken) {
-    const url = `${window._env_.API_URL}/accounts`;
+    const url = `${window._env_.API_URL}/accounts?embed=birder`;
     return await fetch(url, {
       'headers': {
         'accessToken': accessToken.jwt

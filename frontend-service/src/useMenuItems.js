@@ -10,7 +10,7 @@ export const useMenuItems = () => {
 
   if (authenticated && account) {
     return [
-      { label: t('Profile'), link: `/birders/${account.username}` },
+      { label: t('Profile'), link: `/birders/${account.birder.id}` },
       { label: t('Sightings'), link: '/sighting' },
       { label: t('birders'), link: '/birders', },
       { label: t('Settings'), link: '/settings' },

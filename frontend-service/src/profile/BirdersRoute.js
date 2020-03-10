@@ -1,20 +1,20 @@
 import React from 'react';
 import { Switch } from "react-router-dom";
-import { ProfilePage } from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
-import { ProfilesPage } from './ProfilesPage';
+import { BirdersPage } from './BirdersPage';
+import { BirderPageContainer } from '../birder/BirderPageContainer.js';
 
 export const BirdersRoute = ({ match }) => {
   const { path } = match;
 
-  const renderProfilePage = props => {
-    return <ProfilePage username={props.match.params.username}/>;
-  }
+  const renderBirderPage = props => {
+    return <BirderPageContainer birderId={props.match.params.birderId}/>;
+  };
 
   return (
     <Switch>
-      <AuthenticatedRoute exact path={path} component={ProfilesPage} />
-      <AuthenticatedRoute path={`${path}/:username`} render={renderProfilePage} />
+      <AuthenticatedRoute exact path={path} component={BirdersPage} />
+      <AuthenticatedRoute path={`${path}/:birderId`} render={renderBirderPage} />
     </Switch>
   );
 };

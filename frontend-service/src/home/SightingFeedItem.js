@@ -18,7 +18,7 @@ export function SightingFeedItem({ birder, sighting, bird }) {
         <hr />
         <div>
           <Trans i18nKey='logged-by'>
-            Logged by <Link to={`/birder/${birder.id}`}>{{ name }}</Link>
+            Logged by <Link to={`/birders/${birder.id}`}>{{ name }}</Link>
           </Trans>
           <div>
           <SightingTime sighting={sighting} />

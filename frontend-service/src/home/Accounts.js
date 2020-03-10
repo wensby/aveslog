@@ -1,13 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Spinner from '../loading/Spinner';
 import AccountService from '../account/AccountService';
-import AccountLink from './AccountLink';
+import { BirderLink } from './BirderLink';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const Accounts = () => {
   const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const [loading, setLoading] = useState(true);
-  const [usernames, setUsernames] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -16,7 +16,7 @@ export const Accounts = () => {
         const response = await new AccountService().fetchAccounts(accessToken);
         if (response.status === 200) {
           const json = await response.json();
-          setUsernames(json.items.map(a => a.username));
+          setAccounts(json.items);
           setLoading(false);
         }
       }
@@ -33,5 +33,5 @@ export const Accounts = () => {
     return <Spinner />;
   }
 
-  return usernames.map(name => (<AccountLink key={name} name={name}/>));
+  return accounts.map(account => (<BirderLink key={account.username} birder={account.birder} />));
 };

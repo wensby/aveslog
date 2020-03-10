@@ -1,6 +1,6 @@
 import React from 'react';
 import { Accounts } from '../home/Accounts';
 
-export const ProfilesPage = () => {
+export const BirdersPage = () => {
   return <div><Accounts /></div>;
 };
