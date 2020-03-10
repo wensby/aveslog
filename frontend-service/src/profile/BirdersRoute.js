@@ -4,7 +4,7 @@ import { ProfilePage } from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 import { ProfilesPage } from './ProfilesPage';
 
-export const Profile = ({ match }) => {
+export const BirdersRoute = ({ match }) => {
   const { path } = match;
 
   const renderProfilePage = props => {

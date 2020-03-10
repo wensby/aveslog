@@ -4,6 +4,6 @@ import './NavbarUsername.scss';
 
 export const NavbarUsername = ({username}) => (
   <div className='navbar-username'>
-    <Link to={`/profile/${username}`}>{username}</Link>
+    <Link to={`/birders/${username}`}>{username}</Link>
   </div>
 );
