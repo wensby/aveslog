@@ -4,7 +4,7 @@ import AccountService from '../account/AccountService';
 import AccountLink from './AccountLink';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
-export function Accounts() {
+export const Accounts = () => {
   const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const [loading, setLoading] = useState(true);
   const [usernames, setUsernames] = useState([]);
@@ -34,4 +34,4 @@ export function Accounts() {
   }
 
   return usernames.map(name => (<AccountLink key={name} name={name}/>));
-}
+};
