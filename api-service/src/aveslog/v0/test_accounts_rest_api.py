@@ -56,7 +56,7 @@ class TestGetAccount(AppTestCase):
     jwt_factory = JwtFactory(secret_key)
     self.token_factory = AuthenticationTokenFactory(jwt_factory, time_supplier)
 
-  def test_get_account_when_access_token_ok(self):
+  def test_get_authenticated_account_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     token = self.token_factory.create_access_token(1)
 
