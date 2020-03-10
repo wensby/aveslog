@@ -5,6 +5,7 @@ from flask import g
 from flask import request
 from flask import make_response
 from flask import jsonify
+from sqlalchemy.orm import joinedload
 
 from aveslog.v0.error import ErrorCode
 from aveslog.v0.authentication import SaltFactory
@@ -135,8 +136,13 @@ def get_account(username: str):
 
 @require_authentication
 def get_accounts() -> Response:
-  accounts = g.database_session.query(Account).all()
-  json = jsonify({'items': list(map(account_summary_representation, accounts))})
+  embed = request.args.get('embed', '').split(',')
+  query = g.database_session.query(Account)
+  if 'birder' in embed:
+    query = query.options(joinedload(Account.birder))
+  accounts = query.all()
+  json = jsonify({'items': list(
+    map(lambda a: account_summary_representation(a, embed), accounts))})
   return make_response(json, HTTPStatus.OK)
 
 
@@ -178,8 +184,15 @@ def post_password() -> Response:
   return make_response('', HTTPStatus.NO_CONTENT)
 
 
-def account_summary_representation(account: Account):
-  return {
+def account_summary_representation(account: Account, embed: list = None):
+  representation = {
     'username': account.username,
-    'birderId': account.birder_id
   }
+  if embed and 'birder' in embed:
+    representation['birder'] = {
+      'id': account.birder.id,
+      'name': account.birder.name
+    }
+  else:
+    representation['birderId'] = account.birder_id
+  return representation

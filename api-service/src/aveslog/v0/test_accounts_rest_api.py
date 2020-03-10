@@ -27,6 +27,25 @@ class TestGetActiveAccounts(AppTestCase):
       ],
     })
 
+  def test_get_accounts_with_embedded_birder(self):
+    self.db_setup_account(1, 1, 'hulot', 'password', 'hulot@mail.com')
+
+    url = '/accounts?embed=birder'
+    response = self.get_with_access_token(url, account_id=1)
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'username': 'hulot',
+          'birder': {
+            'id': 1,
+            'name': 'hulot'
+          }
+        },
+      ],
+    })
+
 
 class TestGetAccount(AppTestCase):
 

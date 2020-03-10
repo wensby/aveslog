@@ -596,6 +596,10 @@ GET /accounts
 
 `accessToken: {accessTokenJwt}`
 
+**Embeddable fields**
+
+`birder`
+
 **Response**
 
 ```
@@ -614,6 +618,42 @@ Status: 200 OK
     {
       "username": "stupreissler",
       "birderId": 15
+    }
+  ]
+}
+```
+
+**Additional Examples**
+
+```
+GET /accounts?embed=birder
+```
+
+```
+Status: 200 OK
+
+{
+  "items": [
+    {
+      "username": "kennybostick",
+      "birder": {
+        "id": 4,
+        "name": "Kenny"
+      }
+    },
+    {
+      "username": "bradharris",
+      "birder": {
+        "id": 8,
+        "name": "Brad"
+      }
+    },
+    {
+      "username": "stupreissler",
+      "birder": {
+        "id: 15,
+        "name": "Stu"
+      }
     }
   ]
 }
