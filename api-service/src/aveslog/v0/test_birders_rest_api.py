@@ -25,6 +25,31 @@ class TestGetBirder(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
+class TestGetBirders(AppTestCase):
+
+  def test_get_birders_when_ok(self):
+    token = self.create_access_token(1)
+    self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
+    self.db_insert_birder(2, 'Kenny Bostick')
+    response = self.client.get('/birders', headers={'accessToken': token.jwt})
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertNotIn('Cache-Control', response.headers)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'id': 1,
+          'name': 'hulot',
+        },
+        {
+          'id': 2,
+          'name': 'Kenny Bostick',
+        }
+      ],
+      'hasMore': False,
+    })
+
+
 class TestGetBirderSightings(AppTestCase):
 
   def test_get_birder_sightings(self):

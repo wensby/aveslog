@@ -148,6 +148,10 @@ sightings_routes = [
 
 birders_routes = [
   {
+    'rule': '/birders',
+    'func': birders_rest_api.get_birders,
+  },
+  {
     'rule': '/birders/<int:birder_id>',
     'func': birders_rest_api.get_birder,
   },

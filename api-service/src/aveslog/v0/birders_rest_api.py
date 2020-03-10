@@ -15,6 +15,16 @@ def get_birder(birder_id: int):
   return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
 
 
+@require_authentication
+def get_birders():
+  birders = g.database_session.query(Birder).all()
+  json = jsonify({
+    'items': list(map(convert_birder, birders)),
+    'hasMore': False,
+  })
+  return make_response(json, HTTPStatus.OK)
+
+
 def convert_birder(birder: Birder) -> dict:
   return {
     'id': birder.id,

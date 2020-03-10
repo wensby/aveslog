@@ -317,6 +317,40 @@ POST /birds/:bird/common-names
 Status: 201 CREATED
 ```
 
+## Birders
+
+### List all birders
+
+```
+GET /birders
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}`
+
+**Examples**
+
+```
+GET /birders
+```
+
+```
+{
+  "items": [
+    {
+      "id": 4,
+      "name": "Kenny Bostick",
+    },
+    {
+      "id": 8,
+      "name": "Brad Harris",
+    }
+  ],
+  "hasMore": false
+}
+```
+
 ## Sightings
 
 ### List birder's sightings
