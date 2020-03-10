@@ -4,7 +4,7 @@ import { ProfilePage } from './ProfilePage.js';
 import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
 import { ProfilesPage } from './ProfilesPage';
 
-export function Profile({ match }) {
+export const Profile = ({ match }) => {
   const { path } = match;
 
   const renderProfilePage = props => {
@@ -17,4 +17,4 @@ export function Profile({ match }) {
       <AuthenticatedRoute path={`${path}/:username`} render={renderProfilePage} />
     </Switch>
   );
-}
+};
