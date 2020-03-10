@@ -3,9 +3,10 @@ import SightingService from '../sighting/SightingService';
 import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
-export function BirderPage({ birder }) {
+export const BirderPage = ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
   const [sightings, setSightings] = useState([]);
+
   useEffect(() => {
     const fetchSightings = async () => {
       const accessToken = await getAccessToken();
@@ -19,10 +20,11 @@ export function BirderPage({ birder }) {
     }
     fetchSightings();
   }, [birder, getAccessToken]);
+  
   return (
     <div>
       <h1>{birder.name}</h1>
       <FilterableSightingsList sightings={sightings} />
     </div>
   );
-}
+};
