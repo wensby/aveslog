@@ -25,6 +25,40 @@ class TestGetBirder(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
+class TestGetBirderConnections(AppTestCase):
+
+  def test_get_authenticated_accounts_birder_connections(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    self.db_insert_birder(2, 'Brad Harris')
+    self.db_insert_birder_connection(1, 2)
+    token = self.create_access_token(1)
+
+    uri = '/birders/1/birder-connections'
+    response = self.client.get(uri, headers={'accessToken': token.jwt})
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'birderId': 2
+        }
+      ],
+      "hasMore": False,
+    })
+
+  def test_get_birder_connections_without_proper_authentication(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    self.db_insert_birder(2, 'Brad Harris')
+    self.db_insert_birder_connection(2, 1)
+    token = self.create_access_token(1)
+
+    uri = '/birders/2/birder-connections'
+    response = self.client.get(uri, headers={'accessToken': token.jwt})
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    self.assertIsNone(response.json)
+
+
 class TestGetBirders(AppTestCase):
 
   def test_get_birders_when_ok(self):

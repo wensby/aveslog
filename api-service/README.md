@@ -351,6 +351,34 @@ GET /birders
 }
 ```
 
+### List birder's connections with other birders
+
+```
+GET /birders/:id/birder-connections
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}` The access token needs to be for the account
+that controls the birder in question.
+
+**Examples**
+
+```
+GET /birders/1/birder-connections
+```
+
+```
+{
+  "items": [
+    {
+      "birderId": 2,
+    }
+  ],
+  "hasMore": false
+}
+```
+
 ## Sightings
 
 ### List birder's sightings
