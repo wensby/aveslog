@@ -28,6 +28,11 @@
   border-top-color: $primary;
   animation: spinner .6s linear infinite;
   -webkit-animation: spinner .6s linear infinite;
+
+  @media (prefers-color-scheme: dark) {
+    border-color: $black;
+    border-top-color: $primary;
+  }
 }
 
 .spinner {
