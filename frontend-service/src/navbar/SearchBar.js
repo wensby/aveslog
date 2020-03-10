@@ -21,7 +21,8 @@ export const SearchBar = () => {
   const searchFormRef = useRef()
 
   const onDocumentClick = event => {
-    if (searchFormRef && !searchFormRef.current.contains(event.target)) {
+    const target = event.target;
+    if (searchFormRef.current && !searchFormRef.current.contains(target)) {
       setAdvanced(false);
     }
   };
