@@ -310,6 +310,12 @@ class AppTestCase(IntegrationTestCase):
     self.database_connection.commit()
     return cursor.fetchall()
 
+  def db_get_birder_connections(self):
+    cursor = self.database_connection.cursor()
+    cursor.execute('SELECT * FROM birder_connection;')
+    self.database_connection.commit()
+    return cursor.fetchall()
+
 
 def get_test_database_session():
   engine_factory = EngineFactory(echo=False)

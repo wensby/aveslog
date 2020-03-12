@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import g, make_response, jsonify
+from flask import g, make_response, jsonify, request
 from sqlalchemy.orm import joinedload
 
 from aveslog.v0.models import Birder
@@ -32,6 +32,27 @@ def get_birders_birder_connections(birder_id: int):
   })
   return make_response(json, HTTPStatus.OK)
 
+
+@require_authentication
+def post_birders_birder_connection(birder_id: int):
+  account = g.authenticated_account
+  if account.birder_id != birder_id:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
+  primary_birder = g.database_session.query(Birder).get(birder_id)
+  if not primary_birder:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  secondary_birder_id = request.json.get('secondaryBirderId')
+  if not secondary_birder_id or not isinstance(secondary_birder_id, int) or secondary_birder_id == birder_id:
+    return make_response('', HTTPStatus.BAD_REQUEST)
+  if g.database_session.query(BirderConnection).filter_by(primary_birder_id=primary_birder.id).filter_by(secondary_birder_id=secondary_birder_id).first():
+    return make_response('', HTTPStatus.CONFLICT)
+  birder_connection = BirderConnection(primary_birder_id=primary_birder.id, secondary_birder_id=secondary_birder_id)
+  g.database_session.add(birder_connection)
+  g.database_session.commit()
+  response = make_response('', HTTPStatus.CREATED)
+  response.headers['Location'] = f'/birder-connections/{birder_connection.id}'
+  response.autocorrect_location_header = False
+  return response
 
 @require_authentication
 def get_birders():

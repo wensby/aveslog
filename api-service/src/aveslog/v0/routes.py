@@ -158,5 +158,11 @@ birders_routes = [
   {
     'rule': '/birders/<int:birder_id>/birder-connections',
     'func': birders_rest_api.get_birders_birder_connections,
+    'options': {'methods': ['GET']},
+  },
+  {
+    'rule': '/birders/<int:birder_id>/birder-connections',
+    'func': birders_rest_api.post_birders_birder_connection,
+    'options': {'methods': ['POST']},
   },
 ]
