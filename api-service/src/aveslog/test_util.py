@@ -223,11 +223,11 @@ class AppTestCase(IntegrationTestCase):
     )
     self.database_connection.commit()
 
-  def db_insert_birder_connection(self, birder_id, connection_birder_id):
+  def db_insert_birder_connection(self, primary_birder_id, secondary_birder_id):
     cursor = self.database_connection.cursor()
     cursor.execute(
-      'INSERT INTO birder_connection (birder_id, connection_birder_id) '
-      'VALUES (%s, %s);', (birder_id, connection_birder_id)
+      'INSERT INTO birder_connection (primary_birder_id, secondary_birder_id) '
+      'VALUES (%s, %s);', (primary_birder_id, secondary_birder_id)
     )
     self.database_connection.commit()
 
@@ -276,6 +276,7 @@ class AppTestCase(IntegrationTestCase):
   def clear_database(self):
     cursor = self.database_connection.cursor()
     cursor.execute('DELETE FROM birder_connection;')
+    cursor.execute('ALTER SEQUENCE birder_connection_id_seq RESTART WITH 1;')
     cursor.execute('DELETE FROM position_name;')
     cursor.execute('DELETE FROM refresh_token;')
     cursor.execute('DELETE FROM password_reset_token;')

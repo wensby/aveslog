@@ -40,7 +40,8 @@ class TestGetBirderConnections(AppTestCase):
     self.assertDictEqual(response.json, {
       'items': [
         {
-          'birderId': 2
+          'id': 1,
+          'secondaryBirderId': 2,
         }
       ],
       "hasMore": False,

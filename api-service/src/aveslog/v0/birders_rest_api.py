@@ -44,7 +44,10 @@ def get_birders():
 
 
 def birder_connection_representation(connection: BirderConnection) -> dict:
-  return {'birderId': connection.connection_birder_id}
+  return {
+    'id': connection.id,
+    'secondaryBirderId': connection.secondary_birder_id,
+  }
 
 
 def convert_birder(birder: Birder) -> dict:

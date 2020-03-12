@@ -1,7 +1,7 @@
 from typing import Any
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Table
+from sqlalchemy import Column, Table, UniqueConstraint
 from sqlalchemy import Integer
 from sqlalchemy import ForeignKey
 from sqlalchemy import String
@@ -80,13 +80,16 @@ class BirdCommonName(Base):
 
 class BirderConnection(Base):
   __tablename__ = 'birder_connection'
-  birder_id = Column(Integer, ForeignKey('birder.id'), primary_key=True)
-  connection_birder_id = Column(
-    Integer, ForeignKey('birder.id'), primary_key=True
+  id = Column(Integer, primary_key=True)
+  primary_birder_id = Column(Integer, ForeignKey('birder.id'))
+  secondary_birder_id = Column(Integer, ForeignKey('birder.id'))
+  modification_datetime = Column(
+    DateTime, nullable=False, default=func.current_timestamp()
   )
+  __table_args__ = (UniqueConstraint('primary_birder_id', 'secondary_birder_id', name='birder_connection_birder_ids_unique'),)
 
   connection_birder = relationship(
-    'Birder', uselist=False, foreign_keys=[connection_birder_id],
+    'Birder', uselist=False, foreign_keys=[secondary_birder_id],
   )
 
 
@@ -96,7 +99,7 @@ class Birder(Base):
   name = Column(String)
   sightings = relationship('Sighting')
   connections = relationship(
-    'BirderConnection', foreign_keys='BirderConnection.birder_id',
+    'BirderConnection', foreign_keys='BirderConnection.primary_birder_id',
   )
 
   def __repr__(self):
