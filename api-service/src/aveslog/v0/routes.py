@@ -165,4 +165,9 @@ birders_routes = [
     'func': birders_rest_api.post_birders_birder_connection,
     'options': {'methods': ['POST']},
   },
+  {
+    'rule': '/birders/<int:birder_id>/birder-connections/<int:birder_connection_id>',
+    'func': birders_rest_api.delete_birders_birder_connection,
+    'options': {'methods': ['DELETE']},
+  },
 ]

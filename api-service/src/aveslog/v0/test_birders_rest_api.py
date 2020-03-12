@@ -30,7 +30,7 @@ class TestGetBirderConnections(AppTestCase):
   def test_get_authenticated_accounts_birder_connections(self):
     self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
     self.db_insert_birder(2, 'Brad Harris')
-    self.db_insert_birder_connection(1, 2)
+    self.db_insert_birder_connection(1, 1, 2)
     token = self.create_access_token(1)
 
     uri = '/birders/1/birder-connections'
@@ -50,7 +50,7 @@ class TestGetBirderConnections(AppTestCase):
   def test_get_birder_connections_without_proper_authentication(self):
     self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
     self.db_insert_birder(2, 'Brad Harris')
-    self.db_insert_birder_connection(2, 1)
+    self.db_insert_birder_connection(1, 2, 1)
     token = self.create_access_token(1)
 
     uri = '/birders/2/birder-connections'
@@ -80,6 +80,23 @@ class TestPostBirderConnection(AppTestCase):
     self.assertEqual(birder_connections[0][1], 1)
     self.assertEqual(birder_connections[0][2], 2)
     self.assertIsInstance(birder_connections[0][3], datetime)
+
+
+class TestDeleteBirdersBirderConnection(AppTestCase):
+
+  def test_delete_birders_birder_connection_when_ok(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    self.db_insert_birder(2, 'Brad Harris')
+    self.db_insert_birder_connection(1, 1, 2)
+    token = self.create_access_token(1)
+    uri = '/birders/1/birder-connections/1'
+    headers = {'accessToken': token.jwt}
+
+    response = self.client.delete(uri, headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+    birder_connections = self.db_get_birder_connections()
+    self.assertEqual(len(birder_connections), 0)
 
 
 class TestGetBirders(AppTestCase):

@@ -223,11 +223,11 @@ class AppTestCase(IntegrationTestCase):
     )
     self.database_connection.commit()
 
-  def db_insert_birder_connection(self, primary_birder_id, secondary_birder_id):
+  def db_insert_birder_connection(self, birder_connection_id, primary_birder_id, secondary_birder_id):
     cursor = self.database_connection.cursor()
     cursor.execute(
-      'INSERT INTO birder_connection (primary_birder_id, secondary_birder_id) '
-      'VALUES (%s, %s);', (primary_birder_id, secondary_birder_id)
+      'INSERT INTO birder_connection (id, primary_birder_id, secondary_birder_id) '
+      'VALUES (%s, %s, %s);', (birder_connection_id, primary_birder_id, secondary_birder_id)
     )
     self.database_connection.commit()
 

@@ -54,6 +54,23 @@ def post_birders_birder_connection(birder_id: int):
   response.autocorrect_location_header = False
   return response
 
+
+@require_authentication
+def delete_birders_birder_connection(birder_id: int, birder_connection_id: int):
+  account = g.authenticated_account
+  if account.birder_id != birder_id:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
+  birder = g.database_session.query(Birder).get(birder_id)
+  if not birder:
+    return make_response('', HTTPStatus.NOT_FOUND)
+  birder_connection = g.database_session.query(BirderConnection).get(birder_connection_id)
+  if not birder.id == birder_connection.primary_birder_id:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
+  g.database_session.delete(birder_connection)
+  g.database_session.commit()
+  return make_response('', HTTPStatus.NO_CONTENT)
+
+
 @require_authentication
 def get_birders():
   birders = g.database_session.query(Birder).all()
