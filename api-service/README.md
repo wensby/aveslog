@@ -379,6 +379,38 @@ GET /birders/1/birder-connections
 }
 ```
 
+## Birder Connections
+
+An individual birder's connection to other birders are represented through these
+birder connection resources. They can only be viewed and/or manipulated with
+proper authentication for an account that controls the associated primary
+birder. Account B controlling birder B can't see or modify connections of birder
+A, for example.
+
+### Get birder connection
+
+```
+GET /birder-connections/:id
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}` The access token needs to be for the account
+that controls the birder in question.
+
+**Examples**
+
+```
+GET /birder-connections/1
+```
+
+```
+{
+  "id": 1,
+  "secondaryBirderId": 2
+}
+```
+
 ## Sightings
 
 ### List birder's sightings

@@ -5,6 +5,7 @@ from aveslog.v0 import search_api
 from aveslog.v0 import authentication_rest_api
 from aveslog.v0 import sightings_rest_api
 from aveslog.v0 import birders_rest_api
+from aveslog.v0 import birder_connections_rest_api
 from aveslog.v0 import locales_rest_api
 from aveslog.v0 import roles_rest_api
 
@@ -170,4 +171,11 @@ birders_routes = [
     'func': birders_rest_api.delete_birders_birder_connection,
     'options': {'methods': ['DELETE']},
   },
+]
+
+birder_connections_routes = [
+  {
+    'rule': '/birder-connections/<int:birder_connection_id>',
+    'func': birder_connections_rest_api.get_birder_connection,
+  }
 ]

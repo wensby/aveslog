@@ -3,6 +3,8 @@ from http import HTTPStatus
 from flask import g, make_response, jsonify, request
 from sqlalchemy.orm import joinedload
 
+from aveslog.v0.birder_connections_rest_api import \
+  birder_connection_representation
 from aveslog.v0.models import Birder
 from aveslog.v0.models import BirderConnection
 from aveslog.v0.rest_api import require_authentication, cache
@@ -79,13 +81,6 @@ def get_birders():
     'hasMore': False,
   })
   return make_response(json, HTTPStatus.OK)
-
-
-def birder_connection_representation(connection: BirderConnection) -> dict:
-  return {
-    'id': connection.id,
-    'secondaryBirderId': connection.secondary_birder_id,
-  }
 
 
 def convert_birder(birder: Birder) -> dict:
