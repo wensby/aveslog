@@ -372,7 +372,8 @@ GET /birders/1/birder-connections
 {
   "items": [
     {
-      "birderId": 2,
+      "id": 1
+      "secondaryBirderId": 2,
     }
   ],
   "hasMore": false
