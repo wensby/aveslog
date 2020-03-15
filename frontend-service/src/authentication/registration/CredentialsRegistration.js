@@ -43,6 +43,12 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
         });
       }
     }
+    else if (response.status === 400) {
+      setAlert({
+        category: 'danger',
+        message: 'An error occurred.'
+      });
+    }
   };
 
   return (

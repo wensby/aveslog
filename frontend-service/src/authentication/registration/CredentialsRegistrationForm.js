@@ -17,10 +17,10 @@ export const CredentialsRegistrationForm = () => {
     setUsernameValid(!takenUsernames.includes(username) && /^[A-Za-z0-9._-]{5,32}$/.test(username));
   }, [takenUsernames, username]);
 
-  const handleSubmit = event => {
+  const handleSubmit = async event => {
     event.preventDefault();
     if (usernameValid && password) {
-      submit([username, password]);
+      await submit([username, password]);
     }
     setShowFeedback(true);
   }
