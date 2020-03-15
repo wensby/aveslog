@@ -7,7 +7,6 @@ from unittest.mock import Mock
 
 from sqlalchemy.orm import Session
 
-from aveslog.v0.localization import LocaleDeterminer
 from aveslog.v0.localization import LoadedLocale
 from aveslog.v0.localization import Locale
 from aveslog.v0.localization import LocaleRepository
@@ -46,33 +45,13 @@ class TestLoadedLocale(TestCase):
       "Hello {{}}! It is {{}} today.": "Hej {{}}! Det är {{}} idag.",
       "Monday": "Måndag"})
     result = loaded_locale.text("Hello {{}}! It is {{}} today.",
-                                ['Lukas', loaded_locale.text("Monday")])
+      ['Lukas', loaded_locale.text("Monday")])
     self.assertTrue(result == "Hej Lukas! Det är Måndag idag.")
 
 
 english_locale = Mock()
 swedish_locale = Mock()
 
-
-class TestLocaleDeterminer(TestCase):
-
-  def setUp(self):
-    self.request = Mock()
-
-  def test_determine_locale_from_request_when_no_cookie(self):
-    header_value = 'en-GB,en-US;q=0.9,en;q=0.8,sv;q=0.7'
-    self.request.cookies = dict()
-    self.request.headers = {'Accept-Language': header_value}
-    determiner = LocaleDeterminer(['en'])
-    locale = determiner.determine_locale_from_request(self.request)
-    self.assertEqual(locale, 'en')
-
-  def test_determine_locale_from_request_defaults_to_english(self):
-    self.request.cookies = dict()
-    self.request.headers = dict()
-    determiner = LocaleDeterminer(['en'])
-    locale = determiner.determine_locale_from_request(self.request)
-    self.assertEqual(locale, 'en')
 
 class TestLocaleRepository(TestCase):
 

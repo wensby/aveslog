@@ -89,34 +89,3 @@ class LocaleRepository:
   @property
   def locales(self) -> List[Locale]:
     return g.database_session.query(Locale).all()
-
-
-class LocaleDeterminerFactory:
-
-  def __init__(self, locale_repository: LocaleRepository) -> None:
-    self.locale_repository = locale_repository
-
-  def create_locale_determiner(self) -> LocaleDeterminer:
-    enabled = self.locale_repository.enabled_locale_codes()
-    return LocaleDeterminer(enabled)
-
-
-class LocaleDeterminer:
-
-  def __init__(self, locale_codes: list) -> None:
-    self.locale_codes = locale_codes
-
-  def determine_locale_from_request(self, request: Request) -> Optional[str]:
-    if not self.locale_codes:
-      return None
-    locale_code = self.__determine_from_headers(request.headers)
-    if not locale_code:
-      locale_code = next(iter(self.locale_codes), None)
-    return locale_code
-
-  def __determine_from_headers(self, headers: dict) -> Optional[str]:
-    if 'Accept-Language' in headers:
-      header = headers['Accept-Language']
-      requested_codes = list(map(lambda c: c.split(';')[0], header.split(',')))
-      matching_codes = filter(lambda c: c in self.locale_codes, requested_codes)
-      return next(matching_codes, None)
