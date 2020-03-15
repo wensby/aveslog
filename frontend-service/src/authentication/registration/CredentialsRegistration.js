@@ -14,14 +14,15 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
   const { setRefreshToken } = useContext(AuthenticationContext);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const [alert, setAlert] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const { t } = useTranslation();
   const history = useHistory();
   const email = registrationRequest ? registrationRequest.email : '';
 
   const submit = async credentials => {
+    setSubmitting(true);
     const response = await new AuthenticationService().postRegistration(registrationRequest.token, credentials);
     if (response.status === 201) {
-      onSuccess();
       const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
       if (response.status === 201) {
         const refreshResponseJson = await response.json();
@@ -49,10 +50,11 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
         message: 'An error occurred.'
       });
     }
+    setSubmitting(false);
   };
 
   return (
-    <CredentialsRegistrationContext.Provider value={{ email, takenUsernames, submit }}>
+    <CredentialsRegistrationContext.Provider value={{ email, takenUsernames, submit, submitting }}>
       <div className='credentials-registration'>
         <PageHeading>{t('Registration')}</PageHeading>
         <p>{t('registration-form-instructions')}</p>

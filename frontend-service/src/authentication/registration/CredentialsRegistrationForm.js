@@ -7,7 +7,7 @@ import { FormGroup } from '../../generic/FormGroup';
 
 
 export const CredentialsRegistrationForm = () => {
-  const { email, takenUsernames, submit } = useContext(CredentialsRegistrationContext);
+  const { email, takenUsernames, submit, submitting } = useContext(CredentialsRegistrationContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [usernameValid, setUsernameValid] = useState(false);
@@ -19,11 +19,13 @@ export const CredentialsRegistrationForm = () => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    if (usernameValid && password) {
-      await submit([username, password]);
+    if (!submitting) {
+      if (usernameValid && password) {
+        await submit([username, password]);
+      }
+      setShowFeedback(true);
     }
-    setShowFeedback(true);
-  }
+  };
 
   return (
     <form className='credentials-form' onSubmit={handleSubmit} >
@@ -32,7 +34,7 @@ export const CredentialsRegistrationForm = () => {
         valid={usernameValid} showFeedback={showFeedback} />
       <NewPasswordFormGroup onChange={setPassword}
         showFeedback={showFeedback} />
-      <SubmitButton />
+      <SubmitButton submitting={submitting} />
     </form>
   );
 };
@@ -65,7 +67,7 @@ const UsernameFormGroup = ({ value, onChange, valid, showFeedback }) => {
   );
 };
 
-const SubmitButton = () => {
+const SubmitButton = ({ submitting }) => {
   const { t } = useTranslation();
-  return <button type='submit'>{t('registration-button')}</button>;
+  return <button type='submit' disabled={submitting}>{t('registration-button')}</button>;
 };
