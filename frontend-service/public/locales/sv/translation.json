@@ -74,5 +74,7 @@
   "add-button": "Lägg till",
   "send-registration-link-button-label": "Skicka länk",
   "search-sighted-nearby-label": "Observerad i närheten",
+  "birder-connection-following-label": "Följer",
+  "birder-connection-no-connection-label": "Följ",
   "Logout": "Logga ut"
 }

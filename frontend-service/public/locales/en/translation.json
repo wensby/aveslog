@@ -74,5 +74,7 @@
   "add-button": "Add",
   "send-registration-link-button-label": "Send link",
   "search-sighted-nearby-label": "Sighted in my current vicinity",
+  "birder-connection-following-label": "Following",
+  "birder-connection-no-connection-label": "Follow",
   "Logout": "Logout"
 }
