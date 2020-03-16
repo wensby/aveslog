@@ -27,7 +27,6 @@ export const BirderPage = ({ birder }) => {
   return (
     <div>
       <h1>{birder.name}</h1>
-      {(account && account.birder.id !== birder.id) && <BirderConnectionButton birder={birder} />}
       <FilterableSightingsList sightings={sightings} />
     </div>
   );
