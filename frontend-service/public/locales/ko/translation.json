@@ -34,7 +34,7 @@
   "password-reset-failure-alert-message": "비밀번호를 초기화가 실패했습니다.",
   "sighting-item-edit-link": "편집",
   "registration-form-instructions": "이 양식을 입력하여 등록하세요.",
-  "username-help-block": "사용자 이름은 5-32자리 사이의 문자, 숫자, 기호 3가지 (- . _)으로 이뤄져야 합니다.",
+  "username-help-block": "사용자 이름은 5-32자리 사이의 소문자, 숫자, 기호 3가지 (- . _)으로 이뤄져야 합니다.",
   "terms-and-conditions-checkbox-label": "이용 약관에 동의",
   "registration-button": "만들기",
   "username-valid-feedback": "사용자 이름이 괜찮아보여요!",

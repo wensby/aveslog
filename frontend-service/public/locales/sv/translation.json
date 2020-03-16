@@ -34,7 +34,7 @@
   "password-reset-failure-alert-message": "Lösenordsåterställningen misslyckades.",
   "sighting-item-edit-link": "Ändra",
   "registration-form-instructions": "Fyll i formuläret nedan för att slutföra din registrering.",
-  "username-help-block": "Måste vara 5 till 32 tecken lång och enbart innehålla bokstäver, siffror, bindestreck (-), punkter (.) och understreck (_).",
+  "username-help-block": "Måste vara 5 till 32 tecken lång och enbart innehålla små bokstäver, siffror, bindestreck (-), punkter (.) och understreck (_).",
   "terms-and-conditions-checkbox-label": "Godkänn vilkoren",
   "registration-button": "Registrera",
   "username-valid-feedback": "Ser bra ut!",

@@ -14,7 +14,7 @@ export const CredentialsRegistrationForm = () => {
   const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
-    setUsernameValid(!takenUsernames.includes(username) && /^[A-Za-z0-9._-]{5,32}$/.test(username));
+    setUsernameValid(!takenUsernames.includes(username) && /^[a-z0-9_.-]{5,32}$/.test(username));
   }, [takenUsernames, username]);
 
   const handleSubmit = async event => {

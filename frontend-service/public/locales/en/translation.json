@@ -34,7 +34,7 @@
   "password-reset-failure-alert-message": "Password reset failed.",
   "sighting-item-edit-link": "Edit",
   "registration-form-instructions": "Fill out the following form to complete your registration.",
-  "username-help-block": "Must be 5 to 32 characters long, contain only letters, numbers, dashes (-), periods (.), and underscores (_).",
+  "username-help-block": "Must be 5 to 32 characters long, contain only lowercase letters, numbers, dashes (-), periods (.), and underscores (_).",
   "terms-and-conditions-checkbox-label": "Agree to terms and conditions",
   "registration-button": "Register",
   "username-valid-feedback": "Nice username!",
