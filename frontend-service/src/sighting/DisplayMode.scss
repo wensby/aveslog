@@ -1,0 +1,36 @@
+@import '../colors.scss';
+
+.display-mode {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 1rem;
+  margin: 1rem;
+  border: 1px solid transparent;
+
+  & .stat {
+    font-size: xx-large;
+    color: $primary;
+  }
+
+  &:not(.selected) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: $white;
+      border: 1px solid $primary;
+    }
+  }
+
+  &.selected {
+    color: $white;
+    background-color: $primary;
+    cursor: unset;
+
+    & .stat {
+      color: $white;
+    }
+  }
+}

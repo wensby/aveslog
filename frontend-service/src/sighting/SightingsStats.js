@@ -1,16 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { StatCard } from "./StatCard";
-import './SightingsStats.scss';
+import { DisplayMode } from "./DisplayMode";
 
-export function SightingsStats({ sightings }) {
+export function SightingsStats({ sightings, uniqueSelected, onUniqueSelectedChange }) {
   const { t } = useTranslation();
-  return (
-    <div className='sighting-stats'>
-      <StatCard label={t('total-label')} stat={sightings.length} />
-      <StatCard label={t('unique-label')} stat={countUniqueBirds(sightings)} />
-    </div>
-  );
+  return null;
 }
 
 function countUniqueBirds(sightings) {

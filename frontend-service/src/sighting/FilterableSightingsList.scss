@@ -1,0 +1,9 @@
+.filterable-sightings-list {
+
+  & div.display-settings {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: stretch;
+    justify-content: evenly;
+  }
+}
