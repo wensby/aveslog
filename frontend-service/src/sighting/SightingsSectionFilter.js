@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FilterYearOption } from './FilterYearOption';
-import './SightingsFilter.scss';
+import { SightingsSectionContext } from './SightingsSection';
+import './SightingsSectionFilter.scss';
 
-export function SightingsFilter({ sightings, selectedYear, onYearChange }) {
+export const SightingsSectionFilter = () => {
+  const { sightings, year, setYear } = useContext(SightingsSectionContext);
   const [years, setYears] = useState([]);
   const { t } = useTranslation();
 
@@ -19,8 +21,8 @@ export function SightingsFilter({ sightings, selectedYear, onYearChange }) {
   return (
     <div className='sightings-filter'>
       <span>{t('filter-label') + ': '}</span>
-      <FilterYearOption year={null} yearFilter={selectedYear} onClick={onYearChange} />
-      {years.map(year => <FilterYearOption year={year} yearFilter={selectedYear} onClick={onYearChange} key={year} />)}
+      <FilterYearOption year={null} yearFilter={year} onClick={setYear} />
+      {years.map(y => <FilterYearOption year={y} yearFilter={year} onClick={setYear} key={y} />)}
     </div>
   );
-}
+};
