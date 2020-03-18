@@ -4,6 +4,7 @@ import { SightingsSection } from '../sighting/SightingsSection.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
+import './BirderPage.scss';
 
 export const BirderPage = ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -25,7 +26,7 @@ export const BirderPage = ({ birder }) => {
   }, [birder, getAccessToken]);
 
   return (
-    <div>
+    <div className='birder-page'>
       <h1>{birder.name}</h1>
       <SightingsSection sightings={sightings} />
     </div>

@@ -1,0 +1,7 @@
+@import '../layout.scss';
+
+div.birder-page {
+  & h1 {
+    @extend %phone-side-margins;
+  }
+}

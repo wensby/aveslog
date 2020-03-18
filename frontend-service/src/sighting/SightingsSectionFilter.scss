@@ -1,6 +1,9 @@
 @import '../colors.scss';
+@import '../layout.scss';
 
-.sightings-filter {
+div.sightings-filter {
+  @extend %phone-side-margins;
+  
   & button {
     color: $primary;
     box-sizing: content-box;
