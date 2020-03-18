@@ -21,14 +21,14 @@ export const SightingsSection = ({ sightings }) => {
   }, [sightings, yearFilter]);
 
   return (
-    <div className='sightings-section'>
+    <section className='sightings'>
       <SightingsFilter sightings={sightings} selectedYear={yearFilter} onYearChange={setYearFilter} />
       <div className='display-settings'>
         <DisplayMode label={t('total-label')} stat={filteredSightings.length} selected={!uniqueFilter} onClick={() => setUniqueFilter(false)} />
         <DisplayMode label={t('unique-label')} stat={countUniqueBirds(filteredSightings)} selected={uniqueFilter} onClick={() => setUniqueFilter(true)} />
       </div>
       <SightingsList sightings={uniqueFilter ? getUnique(filteredSightings) : filteredSightings} />
-    </div>
+    </section>
   );
 };
 
