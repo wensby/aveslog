@@ -3,9 +3,9 @@ import { SightingsFilter } from './SightingsFilter';
 import { SightingsList } from './SightingsList.js';
 import { useTranslation } from 'react-i18next';
 import { DisplayMode } from './DisplayMode.js';
-import './FilterableSightingsList.scss';
+import './SightingsSection.scss';
 
-export const FilterableSightingsList = ({ sightings }) => {
+export const SightingsSection = ({ sightings }) => {
   const [filteredSightings, setFilteredSightings] = useState([]);
   const [yearFilter, setYearFilter] = useState(null);
   const [uniqueFilter, setUniqueFilter] = useState(false);
@@ -20,14 +20,16 @@ export const FilterableSightingsList = ({ sightings }) => {
     setFilteredSightings(filtered);
   }, [sightings, yearFilter]);
 
-  return <div className='filterable-sightings-list'>
-    <SightingsFilter sightings={sightings} selectedYear={yearFilter} onYearChange={setYearFilter} />
-    <div className='display-settings'>
-      <DisplayMode label={t('total-label')} stat={filteredSightings.length} selected={!uniqueFilter} onClick={() => setUniqueFilter(false)} />
-      <DisplayMode label={t('unique-label')} stat={countUniqueBirds(filteredSightings)} selected={uniqueFilter} onClick={() => setUniqueFilter(true)} />
+  return (
+    <div className='sightings-section'>
+      <SightingsFilter sightings={sightings} selectedYear={yearFilter} onYearChange={setYearFilter} />
+      <div className='display-settings'>
+        <DisplayMode label={t('total-label')} stat={filteredSightings.length} selected={!uniqueFilter} onClick={() => setUniqueFilter(false)} />
+        <DisplayMode label={t('unique-label')} stat={countUniqueBirds(filteredSightings)} selected={uniqueFilter} onClick={() => setUniqueFilter(true)} />
+      </div>
+      <SightingsList sightings={uniqueFilter ? getUnique(filteredSightings) : filteredSightings} />
     </div>
-    <SightingsList sightings={uniqueFilter ? getUnique(filteredSightings) : filteredSightings} />
-  </div>;
+  );
 };
 
 function countUniqueBirds(sightings) {

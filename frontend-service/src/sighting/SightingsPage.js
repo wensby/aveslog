@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedAccountSightings } from '../useAuthenticatedAccountSightings';
-import { FilterableSightingsList } from './FilterableSightingsList';
+import { SightingsSection } from './SightingsSection.js';
 
 export default function SightingsPage() {
   const sightings = useAuthenticatedAccountSightings();
@@ -10,7 +10,7 @@ export default function SightingsPage() {
   return (
     <div>
       <h1>{t('Sightings')}</h1>
-      <FilterableSightingsList sightings={sightings} />
+      <SightingsSection sightings={sightings} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
-import { FilterableSightingsList } from '../sighting/FilterableSightingsList';
+import { SightingsSection } from '../sighting/SightingsSection.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +27,7 @@ export const BirderPage = ({ birder }) => {
   return (
     <div>
       <h1>{birder.name}</h1>
-      <FilterableSightingsList sightings={sightings} />
+      <SightingsSection sightings={sightings} />
     </div>
   );
 };
