@@ -85,10 +85,3 @@ const getUnique = sightings => {
   }
   return result.reverse();
 }
-
-const sightingDateTime = sighting => {
-  if (sighting.time) {
-    return new Date(`${sighting.date}T${sighting.time}`);
-  }
-  return new Date(sighting.date);
-};
