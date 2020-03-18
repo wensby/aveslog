@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SightingsFilter } from './SightingsFilter';
-import { SightingList } from './SightingList.js';
+import { SightingsList } from './SightingsList.js';
 import { useTranslation } from 'react-i18next';
 import { DisplayMode } from './DisplayMode.js';
 import './FilterableSightingsList.scss';
@@ -26,7 +26,7 @@ export const FilterableSightingsList = ({ sightings }) => {
       <DisplayMode label={t('total-label')} stat={filteredSightings.length} selected={!uniqueFilter} onClick={() => setUniqueFilter(false)} />
       <DisplayMode label={t('unique-label')} stat={countUniqueBirds(filteredSightings)} selected={uniqueFilter} onClick={() => setUniqueFilter(true)} />
     </div>
-    <SightingList sightings={uniqueFilter ? getUnique(filteredSightings) : filteredSightings} />
+    <SightingsList sightings={uniqueFilter ? getUnique(filteredSightings) : filteredSightings} />
   </div>;
 };
 
