@@ -34,3 +34,10 @@
     }
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .display-mode:not(.selected):hover {
+    background-color: transparentize($primary, .75);
+    border: 1px solid $primary;
+  }
+}
