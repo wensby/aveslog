@@ -28,6 +28,7 @@ export const BirderPage = ({ birder }) => {
   return (
     <div className='birder-page'>
       <h1>{birder.name}</h1>
+      {account.birder.id !== birder.id && <BirderConnectionButton birder={birder} />}
       <SightingsSection sightings={sightings} />
     </div>
   );
@@ -39,7 +40,7 @@ const BirderConnectionButton = ({ birder }) => {
   const [loading, setLoading] = useState(true);
   const [birderConnection, setBirderConnection] = useState(null);
   const { t } = useTranslation();
-  const message = birderConnection == null ? 'birder-connection-following-label' : 'birder-connection-no-connection-label';
+  const message = birderConnection !== null ? 'birder-connection-following-label' : 'birder-connection-no-connection-label';
 
   useEffect(() => {
     const resolveFollows = async () => {
@@ -68,29 +69,44 @@ const BirderConnectionButton = ({ birder }) => {
   const handleClick = e => {
     const updateBirderConnection = async () => {
       setLoading(true);
-      if (birderConnection == null) {
+      if (birderConnection === null) {
         const accessToken = await getAccessToken();
         const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}/birder-connections`, {
           method: 'POST',
           headers: {
-            'accessToken': accessToken.jwt
+            'accessToken': accessToken.jwt,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ secondaryBirderId: birder.id })
+          body: JSON.stringify({ 'secondaryBirderId': birder.id })
         });
         if (response.status === 201) {
-          const location = response.headers['Location'];
-          const response = await fetch(`${window._env_.API_URL}${location}`, {
+          const location = response.headers.get('Location');
+          const response2 = await fetch(`${window._env_.API_URL}${location}`, {
             headers: {
               accessToken: accessToken.jwt
             }
           });
-          setBirderConnection(birderConnection == null);
-          setLoading(false);
+          if (response2.status === 200) {
+            setBirderConnection(await response2.json());
+          }
+          else {
+            setBirderConnection(null);
+          }
         }
       }
       else {
-
+        const accessToken = await getAccessToken();
+        const response = await fetch(`${window._env_.API_URL}/birder-connections/${birderConnection.id}`, {
+          method: 'DELETE',
+          headers: {
+            'accessToken': accessToken.jwt,
+          },
+        });
+        if (response.status === 204) {
+          setBirderConnection(null);
+        }
       }
+      setLoading(false);
     };
     updateBirderConnection();
   };
