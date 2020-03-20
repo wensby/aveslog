@@ -24,3 +24,10 @@ button.birder-connection-button {
     border: 1px solid transparent;
   }
 }
+
+@media(prefers-color-scheme: dark) {
+  button.birder-connection-button {
+    color: $white;
+    border: 1px solid $white;
+  }
+}
