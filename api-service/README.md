@@ -412,6 +412,27 @@ GET /birder-connections/1
 }
 ```
 
+### Delete birder connection
+
+```
+DELETE /birder-connections/:id
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}` The access token needs to be for the account
+that controls the birder in question
+
+**Examples**
+
+```
+DELETE /birder-connections/1
+```
+
+```
+Status: 204 NO CONTENT
+```
+
 ## Sightings
 
 ### List birder's sightings

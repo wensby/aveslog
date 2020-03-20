@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from aveslog.v0.birder_connections_rest_api import \
   birder_connection_representation
+from aveslog.v0.birder_connections_rest_api import BirderConnectionDeleter
 from aveslog.v0.models import Birder
 from aveslog.v0.models import BirderConnection
 from aveslog.v0.rest_api import require_authentication, cache
@@ -59,18 +60,10 @@ def post_birders_birder_connection(birder_id: int):
 
 @require_authentication
 def delete_birders_birder_connection(birder_id: int, birder_connection_id: int):
+  session = g.database_session
   account = g.authenticated_account
-  if account.birder_id != birder_id:
-    return make_response('', HTTPStatus.UNAUTHORIZED)
-  birder = g.database_session.query(Birder).get(birder_id)
-  if not birder:
-    return make_response('', HTTPStatus.NOT_FOUND)
-  birder_connection = g.database_session.query(BirderConnection).get(birder_connection_id)
-  if not birder.id == birder_connection.primary_birder_id:
-    return make_response('', HTTPStatus.UNAUTHORIZED)
-  g.database_session.delete(birder_connection)
-  g.database_session.commit()
-  return make_response('', HTTPStatus.NO_CONTENT)
+  deleter = BirderConnectionDeleter(session, account)
+  return deleter.delete(birder_id, birder_connection_id)
 
 
 @require_authentication

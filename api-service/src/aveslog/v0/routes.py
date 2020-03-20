@@ -177,5 +177,10 @@ birder_connections_routes = [
   {
     'rule': '/birder-connections/<int:birder_connection_id>',
     'func': birder_connections_rest_api.get_birder_connection,
-  }
+  },
+  {
+    'rule': '/birder-connections/<int:birder_connection_id>',
+    'func': birder_connections_rest_api.delete_birder_connection,
+    'options': {'methods': ['DELETE']},
+  },
 ]
