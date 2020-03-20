@@ -5,6 +5,7 @@ import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import './BirderPage.scss';
+import './BirderConnectionButton.scss';
 
 export const BirderPage = ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -111,5 +112,10 @@ const BirderConnectionButton = ({ birder }) => {
     updateBirderConnection();
   };
 
-  return <button className='birder-connection-button' onClick={handleClick}>{loading ? '...' : t(message)}</button>;
+  const classNames = ['birder-connection-button'];
+  if (birderConnection) {
+    classNames.push('active');
+  }
+
+  return <button className={classNames.join(' ')} onClick={handleClick}>{loading ? '...' : t(message)}</button>;
 };

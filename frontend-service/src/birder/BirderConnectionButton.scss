@@ -1,0 +1,26 @@
+@import '../colors.scss';
+@import '../layout.scss';
+
+button.birder-connection-button {
+  @extend %phone-side-margins;
+  display: flex;
+  background-color: transparent;
+  color: $black;
+  font-weight: bold;
+  border: 1px solid $black;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: 
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out, 
+    border-color 0.15s ease-in-out, 
+    box-shadow 0.15s ease-in-out;
+  
+  &.active {
+    background-color: $primary;
+    color: $white;
+    border: 1px solid transparent;
+  }
+}
