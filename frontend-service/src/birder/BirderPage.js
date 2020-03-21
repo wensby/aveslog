@@ -11,6 +11,7 @@ export const BirderPage = ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
   const { account } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchSightings = async () => {
@@ -30,6 +31,7 @@ export const BirderPage = ({ birder }) => {
     <div className='birder-page'>
       <h1>{birder.name}</h1>
       {account.birder.id !== birder.id && <BirderConnectionButton birder={birder} />}
+      <h2>{t('Sightings')}</h2>
       <SightingsSection sightings={sightings} />
     </div>
   );
