@@ -4,14 +4,9 @@ import { useTranslation } from 'react-i18next';
 import './AdvancedSearchSection.scss';
 
 export const AdvancedSearchSection = () => {
-  const { advanced, positionActive, setPositionActive } = useContext(SearchBarContext);
-  const { t } = useTranslation();
-
-  const handleChange = e => {
-    setPositionActive(e.target.checked);
-  }
-
+  const { advanced, positionActive } = useContext(SearchBarContext);
   const classNames = ['advanced-search-section'];
+
   if (advanced) {
     classNames.push('active');
   }
@@ -21,10 +16,23 @@ export const AdvancedSearchSection = () => {
 
   return (
     <div className={classNames.join(' ')}>
-      <div className='sighted-nearby-group'>
-        <input id='positionCheckbox' type='checkbox' onChange={handleChange} checked={positionActive} />
-        <label htmlFor='positionCheckbox'>{t('search-sighted-nearby-label')}</label>
-      </div>
+      <SightedNearbyFormGroup />
+    </div>
+  );
+};
+
+const SightedNearbyFormGroup = () => {
+  const { positionActive, setPositionActive } = useContext(SearchBarContext);
+  const { t } = useTranslation();
+
+  const handleChange = e => {
+    setPositionActive(e.target.checked);
+  }
+
+  return (
+    <div className='sighted-nearby-group'>
+      <input id='positionCheckbox' type='checkbox' checked={positionActive} onChange={handleChange} />
+      <label htmlFor='positionCheckbox'>{t('search-sighted-nearby-label')}</label>
     </div>
   );
 };
