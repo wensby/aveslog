@@ -67,7 +67,7 @@ const BirderConnectionButton = ({ birder }) => {
       }
     };
     resolveFollows();
-  }, [birder]);
+  }, [birder, account.birder.id, getAccessToken]);
 
   const handleClick = e => {
     const updateBirderConnection = async () => {
