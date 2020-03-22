@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import AuthenticationService from './AuthenticationService.js';
 import { useHistory } from "react-router-dom";
-import './spinner.scss';
+import { Spinner } from '../generic/Spinner.js';
 import './LoginForm.scss';
 import { AuthenticationContext } from './AuthenticationContext.js';
 
@@ -65,7 +65,7 @@ export function LoginForm({ onError }) {
       </div>
       <div className='login-button-row'>
         <div>
-          {loading && <div className='spinner' />}
+          {loading && <Spinner />}
           <button type='submit'>{t('Login')}</button>
         </div>
       </div>
