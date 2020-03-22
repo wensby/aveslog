@@ -1,6 +1,7 @@
 @import './layout.scss';
 
 main {
+  overflow: hidden;
   display: grid;
   grid-template-areas: 'content';
   -webkit-perspective: 500px;
