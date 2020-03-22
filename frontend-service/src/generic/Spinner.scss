@@ -9,35 +9,31 @@
 }
 
 .spinner {
-  min-width: 20px;
-  min-height: 20px;
-}
-
-.spinner:before {
-  content: 'Loading';
-  box-sizing: border-box;
-  position: absolute;
-  width: 20px;
-  height: 20px;
-}
-
-.spinner:not(:required):before {
-  content: '';
-  border-radius: 50%;
-  border: 2px solid $white;
-  border-top-color: $primary;
-  animation: spinner .6s linear infinite;
-  -webkit-animation: spinner .6s linear infinite;
-
-  @media (prefers-color-scheme: dark) {
-    border-color: $black;
-    border-top-color: $primary;
-  }
-}
-
-.spinner {
   position: relative;
-  margin-top: auto;
-  width: 30px;
-  height: 30px;
+  width: 100%;
+  padding-bottom: 100%;
+
+  & > div {
+    position: absolute;
+    content: 'Loading';
+    box-sizing: border-box;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:not(:required) > div {
+    content: '';
+    border-radius: 50%;
+    border: 2px solid $white;
+    border-top-color: $primary;
+    animation: spinner .6s linear infinite;
+    -webkit-animation: spinner .6s linear infinite;
+
+    @media (prefers-color-scheme: dark) {
+      border-color: $black;
+      border-top-color: $primary;
+    }
+  }
 }
