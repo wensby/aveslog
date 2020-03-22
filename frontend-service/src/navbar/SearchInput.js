@@ -3,7 +3,7 @@ import { SearchBarContext } from './SearchBar';
 import { useTranslation } from 'react-i18next';
 import './SearchInput.scss';
 
-export const SearchInput = React.forwardRef(({ }, ref) => {
+export const SearchInput = React.forwardRef((props, ref) => {
   const { query, setQuery } = useContext(SearchBarContext);
   const { t } = useTranslation();
 
