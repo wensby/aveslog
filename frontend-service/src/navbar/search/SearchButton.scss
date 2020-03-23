@@ -1,6 +1,8 @@
 @import 'layout.scss';
 @import 'colors.scss';
 
+$disabled-button-color: $lighter;
+
 button.search-button {
   white-space: nowrap;
   font-size: inherit;
@@ -21,6 +23,12 @@ button.search-button {
     color: $white;
     background-color: $darkgrey;
   }
+
+  &:disabled {
+    cursor: default;
+    background-color: $disabled-button-color;
+    color: darken($disabled-button-color, 15);
+  }
 }
 
 @media #{$tablet-landscape-up} {
@@ -28,5 +36,16 @@ button.search-button {
     transition: max-width 0s, padding 0s;
     border-radius: 0 0.5rem 0.5rem 0;
     padding: 0 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  $disabled-button-color: lighten($darkgrey, 15);
+
+  button.search-button {
+    &:disabled {
+      background-color: $disabled-button-color;
+      color: darken($disabled-button-color, 15);
+    }
   }
 }

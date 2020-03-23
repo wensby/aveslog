@@ -19,6 +19,7 @@ export const SearchBar = () => {
   const inputRef = useRef(null);
   const { latitude, longitude, error } = usePosition(positionActive);
   const searchFormRef = useRef();
+  const disabled = positionActive && !position;
 
   const onDocumentClick = event => {
     const target = event.target;
@@ -50,17 +51,19 @@ export const SearchBar = () => {
 
   const submit = event => {
     event.preventDefault();
-    const qParts = [];
-    if (query) {
-      qParts.push(`"${query}"`)
+    if (!disabled) {
+      const qParts = [];
+      if (query) {
+        qParts.push(`"${query}"`)
+      }
+      if (position) {
+        const [latitude, longitude] = position;
+        qParts.push(`position:${latitude},${longitude};r=10`)
+      }
+      history.push(`/bird/search?q=${qParts.join('+')}`);
+      setAdvanced(false);
+      inputRef.current.blur();
     }
-    if (position) {
-      const [latitude, longitude] = position;
-      qParts.push(`position:${latitude},${longitude};r=10`)
-    }
-    history.push(`/bird/search?q=${qParts.join('+')}`);
-    setAdvanced(false);
-    inputRef.current.blur();
   };
 
   const clear = () => {
@@ -71,6 +74,7 @@ export const SearchBar = () => {
   };
 
   const contextValues = {
+    disabled,
     dirty: query || positionActive,
     setQuery,
     query,
