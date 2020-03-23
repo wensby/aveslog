@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchBar } from './SearchBar';
+import { SearchBar } from './search/SearchBar';
 import { NavbarMain } from './NavbarMain';
 import { NavbarToggler} from './NavbarToggler.js';
 import './NavbarConstant.scss';

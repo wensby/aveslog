@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useHistory } from "react-router-dom";
 import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import { ClearSearchButton } from './ClearSearchButton';
-import { usePosition } from '../usePosition.js';
+import { usePosition } from 'usePosition.js';
 import { AdvancedSearchSection } from './AdvancedSearchSection.js';
 import { SearchInput } from './SearchInput.js';
 import { SearchButton } from './SearchButton.js';

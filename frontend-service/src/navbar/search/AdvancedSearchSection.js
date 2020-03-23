@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { SearchBarContext } from './SearchBar.js';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '../generic/Spinner';
+import { Spinner } from 'generic/Spinner';
 import './AdvancedSearchSection.scss';
 
 export const AdvancedSearchSection = () => {

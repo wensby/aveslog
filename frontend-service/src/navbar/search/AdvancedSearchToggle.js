@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import Icon from '../Icon.js';
+import Icon from 'Icon.js';
 import { SearchBarContext } from './SearchBar.js';
 import './AdvancedSearchToggle.scss';
 
