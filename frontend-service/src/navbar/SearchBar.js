@@ -18,7 +18,7 @@ export const SearchBar = () => {
   const [position, setPosition] = useState(null);
   const inputRef = useRef(null);
   const { latitude, longitude, error } = usePosition(positionActive);
-  const searchFormRef = useRef()
+  const searchFormRef = useRef();
 
   const onDocumentClick = event => {
     const target = event.target;
@@ -61,14 +61,14 @@ export const SearchBar = () => {
     history.push(`/bird/search?q=${qParts.join('+')}`);
     setAdvanced(false);
     inputRef.current.blur();
-  }
+  };
 
   const clear = () => {
     setQuery('');
     setPosition(null);
     setPositionActive(false);
     inputRef.current.focus();
-  }
+  };
 
   const contextValues = {
     dirty: query || positionActive,
@@ -81,7 +81,7 @@ export const SearchBar = () => {
     setPosition,
     positionActive,
     setPositionActive
-  }
+  };
 
   return (
     <SearchBarContext.Provider value={contextValues}>
