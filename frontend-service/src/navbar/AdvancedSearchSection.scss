@@ -5,8 +5,16 @@ div.advanced-search-section {
 }
 
 div.sighted-nearby-group {
+  display: flex;
+  align-items: center;
   color: $darkgrey;
   font-size: 1rem;
+
+  & > *:first-child {
+    width: 1rem;
+    padding: 0;
+    margin: 0;
+  }
 
   & label {
     margin-left: .5rem;
