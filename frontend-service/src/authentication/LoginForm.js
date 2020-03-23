@@ -65,7 +65,7 @@ export function LoginForm({ onError }) {
       </div>
       <div className='login-button-row'>
         <div>
-          {true && <div style={{marginRight: '10px', width: '20px', height: '20px'}}><Spinner /></div>}
+          {loading && <div style={{marginRight: '10px', width: '20px', height: '20px'}}><Spinner /></div>}
           <button type='submit'>{t('Login')}</button>
         </div>
       </div>
