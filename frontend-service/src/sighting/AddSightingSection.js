@@ -7,6 +7,7 @@ import { BirdSection } from "./BirdSection";
 import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { PageHeading } from 'generic/PageHeading';
 import './AddSightingSection.scss';
 
 export const AddSightingSection = ({ bird, onSuccess }) => {
@@ -64,7 +65,7 @@ export const AddSightingSection = ({ bird, onSuccess }) => {
 
   return (
     <div className='add-sighting-section'>
-      <h1>{t('new-sighting-title')}</h1>
+      <PageHeading>{t('new-sighting-title')}</PageHeading>
       <form onSubmit={handleFormSubmit}>
         <BirdSection bird={bird} />
         <div className='date-group'>

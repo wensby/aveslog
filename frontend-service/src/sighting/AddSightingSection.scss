@@ -1,4 +1,5 @@
 @import '../colors.scss';
+@import 'layout.scss';
 
 %input {
   box-sizing: border-box;
@@ -22,15 +23,8 @@
 }
 
 div.add-sighting-section {
-
-  & h1 {
-    box-sizing: border-box;
-    margin-top: 0;
-    margin-bottom: .5rem;
-    font-weight: 500;
-    line-height: 1.2;
-    font-size: 2.5rem;
-  }
+  @extend %phone-side-margins;
+  @extend %common-main-margin-top;
 
   & .form-group {
     font-weight: 400;
