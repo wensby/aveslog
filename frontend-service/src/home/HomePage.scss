@@ -6,8 +6,4 @@ div.home-page {
   & h1.page-heading {
     @extend %phone-side-margins;
   }
-
-  & div.feed {
-    @extend %phone-side-margins;
-  }
 }
