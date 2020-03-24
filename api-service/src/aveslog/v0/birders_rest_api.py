@@ -4,10 +4,9 @@ from flask import g, make_response, jsonify, request
 from sqlalchemy.orm import joinedload
 
 from aveslog.v0.birder_connections_rest_api import \
-  birder_connection_representation
+  birder_connection_representation, BirderConnectionPoster
 from aveslog.v0.birder_connections_rest_api import BirderConnectionDeleter
 from aveslog.v0.models import Birder
-from aveslog.v0.models import BirderConnection
 from aveslog.v0.rest_api import require_authentication, cache
 
 
@@ -38,25 +37,11 @@ def get_birders_birder_connections(birder_id: int):
 
 @require_authentication
 def post_birders_birder_connection(birder_id: int):
+  session = g.database_session
   account = g.authenticated_account
-  db_session = g.database_session
+  poster = BirderConnectionPoster(session, account)
   secondary_birder_id = request.json.get('secondaryBirderId')
-  if not secondary_birder_id or not isinstance(secondary_birder_id, int) or secondary_birder_id == birder_id:
-    return make_response('', HTTPStatus.BAD_REQUEST)
-  if account.birder_id != birder_id:
-    return make_response('', HTTPStatus.UNAUTHORIZED)
-  primary_birder = db_session.query(Birder).get(birder_id)
-  if not primary_birder:
-    return make_response('', HTTPStatus.NOT_FOUND)
-  if db_session.query(BirderConnection).filter_by(primary_birder_id=primary_birder.id).filter_by(secondary_birder_id=secondary_birder_id).first():
-    return make_response('', HTTPStatus.CONFLICT)
-  birder_connection = BirderConnection(primary_birder_id=primary_birder.id, secondary_birder_id=secondary_birder_id)
-  db_session.add(birder_connection)
-  db_session.commit()
-  response = make_response('', HTTPStatus.CREATED)
-  response.headers['Location'] = f'/birder-connections/{birder_connection.id}'
-  response.autocorrect_location_header = False
-  return response
+  return poster.post(birder_id, secondary_birder_id)
 
 
 @require_authentication
