@@ -9,7 +9,7 @@ import { LocationSection } from "./LocationSection";
 import './NewSightingForm.scss';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
-export function NewSightingForm({ bird, onSuccess }) {
+export const NewSightingForm = ({ bird, onSuccess }) => {
   const { t } = useTranslation();
   const { account } = useContext(UserContext);
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -105,4 +105,4 @@ export function NewSightingForm({ bird, onSuccess }) {
       <Link to='/'>{t('cancel-new-sighting-link')}</Link>
     </div>
   );
-}
+};
