@@ -5,7 +5,7 @@ import { DetailedSightingCard } from './DetailedSightingCard';
 import { BounceInRight } from '../component/BounceInRight';
 import './SightingSuccess.scss';
 
-export default function SightingSuccess({ sighting, stats }) {
+export const SightingSuccess = ({ sighting, stats }) => {
   const { t } = useTranslation();
 
   return (
@@ -17,4 +17,4 @@ export default function SightingSuccess({ sighting, stats }) {
       <Link to={'/sighting'}>{t('sightings-link')}</Link>
     </div>
   );
-}
+};
