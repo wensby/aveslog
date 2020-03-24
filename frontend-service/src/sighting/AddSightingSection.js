@@ -6,10 +6,10 @@ import { UserContext } from '../authentication/UserContext';
 import { BirdSection } from "./BirdSection";
 import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
-import './NewSightingForm.scss';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import './AddSightingSection.scss';
 
-export const NewSightingForm = ({ bird, onSuccess }) => {
+export const AddSightingSection = ({ bird, onSuccess }) => {
   const { t } = useTranslation();
   const { account } = useContext(UserContext);
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -63,7 +63,7 @@ export const NewSightingForm = ({ bird, onSuccess }) => {
   };
 
   return (
-    <div className='sighting-form'>
+    <div className='add-sighting-section'>
       <h1>{t('new-sighting-title')}</h1>
       <form onSubmit={handleFormSubmit}>
         <BirdSection bird={bird} />

@@ -21,7 +21,7 @@
   }
 }
 
-div.sighting-form {
+div.add-sighting-section {
 
   & h1 {
     box-sizing: border-box;
@@ -78,7 +78,7 @@ div.sighting-form {
   }
 }
 
-.sighting-form button[type=submit] {
+.add-sighting-section button[type=submit] {
   display: flex;
   background-color: $primary;
   color: $white;
