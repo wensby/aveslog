@@ -5,7 +5,7 @@ from flask import make_response
 from flask import Response
 from flask import g
 from flask import jsonify
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.models import BirderConnection
@@ -40,6 +40,25 @@ def birder_connection_representation(connection: BirderConnection) -> dict:
     'id': connection.id,
     'secondaryBirderId': connection.secondary_birder_id,
   }
+
+
+class BirderConnectionsGetter:
+
+  def __init__(self, account):
+    self._account: Account = account
+
+  def get(self, birder_id: int) -> Response:
+    if self._account.birder_id != birder_id:
+      return make_response('', HTTPStatus.UNAUTHORIZED)
+    birder = g.database_session.query(Birder) \
+      .options(joinedload(Birder.connections)) \
+      .get(birder_id)
+    if not birder:
+      return make_response('', HTTPStatus.NOT_FOUND)
+    return make_response(jsonify({
+      'items': list(map(birder_connection_representation, birder.connections)),
+      'hasMore': False
+    }), HTTPStatus.OK)
 
 
 class BirderConnectionPoster:

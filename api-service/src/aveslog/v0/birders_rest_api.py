@@ -1,10 +1,9 @@
 from http import HTTPStatus
 
 from flask import g, make_response, jsonify, request
-from sqlalchemy.orm import joinedload
 
-from aveslog.v0.birder_connections_rest_api import \
-  birder_connection_representation, BirderConnectionPoster
+from aveslog.v0.birder_connections_rest_api import BirderConnectionsGetter
+from aveslog.v0.birder_connections_rest_api import BirderConnectionPoster
 from aveslog.v0.birder_connections_rest_api import BirderConnectionDeleter
 from aveslog.v0.models import Birder
 from aveslog.v0.rest_api import require_authentication, cache
@@ -22,17 +21,8 @@ def get_birder(birder_id: int):
 @require_authentication
 def get_birders_birder_connections(birder_id: int):
   account = g.authenticated_account
-  if account.birder_id != birder_id:
-    return make_response('', HTTPStatus.UNAUTHORIZED)
-  birder = g.database_session.query(Birder).options(
-    joinedload(Birder.connections)).get(birder_id)
-  if not birder:
-    return make_response('', HTTPStatus.NOT_FOUND)
-  json = jsonify({
-    'items': list(map(birder_connection_representation, birder.connections)),
-    'hasMore': False
-  })
-  return make_response(json, HTTPStatus.OK)
+  getter = BirderConnectionsGetter(account)
+  return getter.get(birder_id)
 
 
 @require_authentication
