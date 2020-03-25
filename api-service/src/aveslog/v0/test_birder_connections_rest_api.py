@@ -20,6 +20,15 @@ class TestGetBirderConnection(AppTestCase):
       'secondaryBirderId': 2,
     })
 
+  def test_get_birder_connection_when_missing(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    uri = '/birder-connections/1'
+    headers = {'accessToken': self.create_access_token(1).jwt}
+
+    response = self.client.get(uri, headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
 
 class TestDeleteBirderConnection(AppTestCase):
 
