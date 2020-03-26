@@ -3,7 +3,7 @@ import NewBirdSightingLink from '../sighting/NewBirdSightingLink';
 import { BirdCardName } from './BirdCardName';
 import Icon from '../Icon.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
-import { CircledBirdPicture } from './CircledBirdPicture.js';
+import { PictureBirdLink } from './PictureBirdLink';
 import './BirdSearchResultCard.scss';
 
 export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
@@ -15,7 +15,7 @@ export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
 
   return (
     <div className='bird-search-result-card' ref={ref}>
-      <CircledBirdPicture bird={bird} />
+      <PictureBirdLink bird={bird} />
       <div className='body'>
         <div className='name'>
           <BirdCardName bird={bird} />

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { UserContext } from '../authentication/UserContext.js';
 import { Link } from 'react-router-dom';
 import { withReveal } from '../generic/ScrollHooks.js';
-import { CircledBirdPicture } from '../bird/CircledBirdPicture.js';
+import { PictureBirdLink } from '../bird/PictureBirdLink.js';
 import './SightingCard.scss';
 
 export const RevealableSightingCard = withReveal(({ sighting, revealed }, ref) => {
@@ -24,7 +24,7 @@ const SightingCard = memo(forwardRef(({ sighting, bird }, ref) => {
 
   return (
     <div className='sighting-card' ref={ref}>
-      <CircledBirdPicture bird={bird} />
+      <PictureBirdLink bird={bird} />
       <div className='details'>
         <div className='name'>
           <BirdCardName bird={bird} className='common-name' />

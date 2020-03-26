@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { SightingTime } from '../sighting/SightingTime';
 import { useCommonName } from '../bird/BirdHooks';
-import { CircledBirdPicture } from '../bird/CircledBirdPicture.js';
 import './SightingFeedItem.scss';
+import { PictureBirdLink } from 'bird/PictureBirdLink';
 
 export function SightingFeedItem({ birder, sighting, bird }) {
   const name = birder.name;
@@ -12,7 +12,7 @@ export function SightingFeedItem({ birder, sighting, bird }) {
 
   return (
     <div className='feed-card sighting'>
-      <CircledBirdPicture bird={bird} />
+      <PictureBirdLink bird={bird} />
       <div>
         <div className='bird-name'>{loading ? '' : commonName || bird.binomialName}</div>
         <hr />

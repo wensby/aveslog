@@ -10,7 +10,7 @@ div.sighting-card {
   grid-template-rows: 2rem 5rem;
   color: $black;
 
-  & div.circled-bird-picture {
+  & a {
     grid-row-start: 1;
     grid-row-end: span 2;
   }
