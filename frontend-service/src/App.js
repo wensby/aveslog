@@ -7,12 +7,14 @@ import { SightingProvider } from './sighting/SightingContext.js';
 import { BirdsProvider } from './bird/BirdsContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
+import { ScrollToTop } from 'sighting/ScrollToTop.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <WindowScrollProvider>
         <AuthenticationProvider>
           <UserProvider>
