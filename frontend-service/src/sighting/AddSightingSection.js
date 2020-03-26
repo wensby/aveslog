@@ -9,6 +9,7 @@ import { LocationSection } from "./LocationSection";
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { PageHeading } from 'generic/PageHeading';
 import './AddSightingSection.scss';
+import { CircledBirdPicture } from 'bird/CircledBirdPicture';
 
 export const AddSightingSection = ({ bird, onSuccess }) => {
   const { t } = useTranslation();
@@ -66,6 +67,9 @@ export const AddSightingSection = ({ bird, onSuccess }) => {
   return (
     <div className='add-sighting-section'>
       <PageHeading>{t('new-sighting-title')}</PageHeading>
+      <div style={{height: '150px', width: '150px', marginLeft: 'auto', marginRight: 'auto'}}>
+        <CircledBirdPicture bird={bird} />
+      </div>
       <form onSubmit={handleFormSubmit}>
         <BirdSection bird={bird} />
         <div className='date-group'>
