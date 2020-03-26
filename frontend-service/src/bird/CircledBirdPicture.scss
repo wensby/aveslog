@@ -13,28 +13,29 @@ div.circled-bird-picture {
     right: 0;
     left: 0;
     content: '';
-    border-radius: 5rem;
-    margin: .5rem;
+    border-radius: 50%;
+    margin: 9.7%;
     box-shadow: inset -.25rem .5rem 1rem rgba($black, .15);
-
-    @media only screen and (min-width : $break-small) {
-      margin: .71rem;
-    }
 
     @media (prefers-color-scheme: dark) {
       box-shadow: inset -.25rem .5rem 1rem rgba(black, .2);
     }
   }
 
-  & img {
-    border-radius: 50%;
-    -webkit-transform: scale(.8);
-    transform: scale(.8);
+  & > a {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 9.7%;
+  }
 
-    &[src$=".png"] {
-      border-radius: unset;
-      -webkit-transform: unset;
-      transform: unset;
-    }
+  & img:not([src$=".png"]) {
+    border-radius: 50%;
+  }
+
+  & img[src$=".png"] {
+    transform: scale(1.23);
   }
 }
