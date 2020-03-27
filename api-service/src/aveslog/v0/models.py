@@ -86,7 +86,11 @@ class BirderConnection(Base):
   modification_datetime = Column(
     DateTime, nullable=False, default=func.current_timestamp()
   )
-  __table_args__ = (UniqueConstraint('primary_birder_id', 'secondary_birder_id', name='birder_connection_birder_ids_unique'),)
+  __table_args__ = (UniqueConstraint(
+    'primary_birder_id',
+    'secondary_birder_id',
+    name='birder_connection_birder_ids_unique'),
+  )
 
   connection_birder = relationship(
     'Birder', uselist=False, foreign_keys=[secondary_birder_id],
