@@ -275,27 +275,29 @@ class AppTestCase(IntegrationTestCase):
 
   def clear_database(self):
     cursor = self.database_connection.cursor()
-    cursor.execute('DELETE FROM birder_connection;')
-    cursor.execute('ALTER SEQUENCE birder_connection_id_seq RESTART WITH 1;')
-    cursor.execute('DELETE FROM position_name;')
-    cursor.execute('DELETE FROM refresh_token;')
-    cursor.execute('DELETE FROM password_reset_token;')
-    cursor.execute('DELETE FROM hashed_password;')
-    cursor.execute('DELETE FROM account_role;')
-    cursor.execute('DELETE FROM role_resource_permission;')
-    cursor.execute('DELETE FROM role;')
-    cursor.execute('DELETE FROM resource_permission;')
-    cursor.execute('DELETE FROM account;')
-    cursor.execute('DELETE FROM sighting;')
-    cursor.execute('DELETE FROM position;')
-    cursor.execute('DELETE FROM bird_thumbnail;')
-    cursor.execute('DELETE FROM picture;')
-    cursor.execute('DELETE FROM bird_common_name;')
-    cursor.execute('DELETE FROM bird;')
-    cursor.execute('DELETE FROM birder;')
-    cursor.execute('DELETE FROM registration_request;')
-    cursor.execute('DELETE FROM locale;')
-    cursor.execute('ALTER SEQUENCE bird_common_name_id_seq RESTART WITH 1;')
+    cursor.execute(
+      'DELETE FROM birder_connection;'
+      'ALTER SEQUENCE birder_connection_id_seq RESTART WITH 1;'
+      'DELETE FROM position_name;'
+      'DELETE FROM refresh_token;'
+      'DELETE FROM password_reset_token;'
+      'DELETE FROM hashed_password;'
+      'DELETE FROM account_role;'
+      'DELETE FROM role_resource_permission;'
+      'DELETE FROM role;'
+      'DELETE FROM resource_permission;'
+      'DELETE FROM account;'
+      'DELETE FROM sighting;'
+      'DELETE FROM position;'
+      'DELETE FROM bird_thumbnail;'
+      'DELETE FROM picture;'
+      'DELETE FROM bird_common_name;'
+      'DELETE FROM bird;'
+      'DELETE FROM birder;'
+      'DELETE FROM registration_request;'
+      'DELETE FROM locale;'
+      'ALTER SEQUENCE bird_common_name_id_seq RESTART WITH 1;'
+    )
     self.database_connection.commit()
 
   def db_get_sighting_rows(self):
