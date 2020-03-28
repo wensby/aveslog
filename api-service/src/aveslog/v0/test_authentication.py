@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from aveslog.test_util import get_test_database_session
+from aveslog.test_util import IntegrationTestCase
 from aveslog.v0.authentication import AccountRegistrationController
 from aveslog.v0.authentication import PasswordUpdateController
 from aveslog.v0.authentication import AccessToken
@@ -159,7 +160,7 @@ class TestJwtDecoder(TestCase):
     self.assertEqual(result.error, 'token-invalid')
 
 
-class TestPasswordUpdateController(TestCase):
+class TestPasswordUpdateController(IntegrationTestCase):
 
   def setUp(self) -> None:
     self.db_session = get_test_database_session()

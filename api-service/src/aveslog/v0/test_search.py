@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from aveslog.test_util import get_test_database_session
+from aveslog.test_util import IntegrationTestCase
 from aveslog.v0.localization import Locale
 from aveslog.v0.models import Bird
 from aveslog.v0.models import BirdCommonName
@@ -10,7 +11,7 @@ from aveslog.v0.search import BirdSearcher
 picapica = Bird(binomial_name='Pica pica')
 
 
-class TestBirdSearcher(TestCase):
+class TestBirdSearcher(IntegrationTestCase):
 
   def setUp(self):
     self.database_session = get_test_database_session()
