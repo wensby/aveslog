@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import g, make_response, jsonify, request
 
 from aveslog.v0.birder_connections_rest_api import get_birder_connections
-from aveslog.v0.birder_connections_rest_api import BirderConnectionPoster
+from aveslog.v0.birder_connections_rest_api import post_birder_connection
 from aveslog.v0.birder_connections_rest_api import BirderConnectionDeleter
 from aveslog.v0.models import Birder
 from aveslog.v0.rest_api import require_authentication, cache
@@ -25,11 +25,7 @@ def get_birders_birder_connections(birder_id: int):
 
 @require_authentication
 def post_birders_birder_connection(birder_id: int):
-  session = g.database_session
-  account = g.authenticated_account
-  poster = BirderConnectionPoster(session, account)
-  secondary_birder_id = request.json.get('secondaryBirderId')
-  return poster.post(birder_id, secondary_birder_id)
+  return post_birder_connection(birder_id)
 
 
 @require_authentication

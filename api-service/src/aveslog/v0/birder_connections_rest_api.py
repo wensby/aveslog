@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import Optional
 
-from flask import make_response
+from flask import make_response, request
 from flask import Response
 from flask import g
 from flask import jsonify
@@ -57,40 +57,36 @@ def get_birder_connections(birder_id: int) -> Response:
   }), HTTPStatus.OK)
 
 
-class BirderConnectionPoster:
+def post_birder_connection(birder_id: int) -> Response:
+  secondary_birder_id = request.json.get('secondaryBirderId')
+  if not secondary_birder_id or not isinstance(secondary_birder_id, int):
+    return make_response('', HTTPStatus.BAD_REQUEST)
+  if secondary_birder_id == birder_id:
+    return make_response('', HTTPStatus.BAD_REQUEST)
+  if g.authenticated_account.birder_id != birder_id:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
+  if not g.database_session.query(Birder).get(birder_id):
+    return make_response('', HTTPStatus.NOT_FOUND)
+  if is_connection_present(birder_id, secondary_birder_id):
+    return make_response('', HTTPStatus.CONFLICT)
+  birder_connection = BirderConnection(
+    primary_birder_id=birder_id,
+    secondary_birder_id=secondary_birder_id,
+  )
+  g.database_session.add(birder_connection)
+  g.database_session.commit()
+  response = make_response('', HTTPStatus.CREATED)
+  response.headers['Location'] = f'/birder-connections/{birder_connection.id}'
+  response.autocorrect_location_header = False
+  return response
 
-  def __init__(self, database_session, account):
-    self._db: Session = database_session
-    self._account: Account = account
 
-  def post(self, birder_id: int, secondary_birder_id) -> Response:
-    if not secondary_birder_id or not isinstance(secondary_birder_id, int):
-      return make_response('', HTTPStatus.BAD_REQUEST)
-    if secondary_birder_id == birder_id:
-      return make_response('', HTTPStatus.BAD_REQUEST)
-    if self._account.birder_id != birder_id:
-      return make_response('', HTTPStatus.UNAUTHORIZED)
-    if not self._db.query(Birder).get(birder_id):
-      return make_response('', HTTPStatus.NOT_FOUND)
-    if self.is_connection_present(birder_id, secondary_birder_id):
-      return make_response('', HTTPStatus.CONFLICT)
-    birder_connection = BirderConnection(
-      primary_birder_id=birder_id,
-      secondary_birder_id=secondary_birder_id,
-    )
-    self._db.add(birder_connection)
-    self._db.commit()
-    response = make_response('', HTTPStatus.CREATED)
-    response.headers['Location'] = f'/birder-connections/{birder_connection.id}'
-    response.autocorrect_location_header = False
-    return response
-
-  def is_connection_present(self, primary_birder_id, secondary_birder_id):
-    connection = self._db.query(BirderConnection) \
-      .filter_by(primary_birder_id=primary_birder_id) \
-      .filter_by(secondary_birder_id=secondary_birder_id) \
-      .first()
-    return connection is not None
+def is_connection_present(primary_birder_id, secondary_birder_id):
+  connection = g.database_session.query(BirderConnection) \
+    .filter_by(primary_birder_id=primary_birder_id) \
+    .filter_by(secondary_birder_id=secondary_birder_id) \
+    .first()
+  return connection is not None
 
 
 class BirderConnectionDeleter:
