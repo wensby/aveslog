@@ -15,7 +15,7 @@ def get_birder(birder_id: int):
   birder = g.database_session.query(Birder).get(birder_id)
   if not birder:
     return make_response('', HTTPStatus.NOT_FOUND)
-  return make_response(jsonify(convert_birder(birder)), HTTPStatus.OK)
+  return make_response(jsonify(birder_representation(birder)), HTTPStatus.OK)
 
 
 @require_authentication
@@ -44,13 +44,13 @@ def delete_birders_birder_connection(birder_id: int, birder_connection_id: int):
 def get_birders():
   birders = g.database_session.query(Birder).all()
   json = jsonify({
-    'items': list(map(convert_birder, birders)),
+    'items': list(map(birder_representation, birders)),
     'hasMore': False,
   })
   return make_response(json, HTTPStatus.OK)
 
 
-def convert_birder(birder: Birder) -> dict:
+def birder_representation(birder: Birder) -> dict:
   return {
     'id': birder.id,
     'name': birder.name,
