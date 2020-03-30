@@ -46,13 +46,9 @@ def get_birder_connections(birder_id: int) -> Response:
   account = g.authenticated_account
   if account.birder_id != birder_id:
     return make_response('', HTTPStatus.UNAUTHORIZED)
-  birder = g.database_session.query(Birder) \
-    .options(joinedload(Birder.connections)) \
-    .get(birder_id)
-  if not birder:
-    return make_response('', HTTPStatus.NOT_FOUND)
+  connections = account.birder.connections
   return make_response(jsonify({
-    'items': list(map(birder_connection_representation, birder.connections)),
+    'items': list(map(birder_connection_representation, connections)),
     'hasMore': False
   }), HTTPStatus.OK)
 
