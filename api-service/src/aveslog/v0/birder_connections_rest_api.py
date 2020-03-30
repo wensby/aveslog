@@ -1,11 +1,12 @@
 from http import HTTPStatus
 from typing import Optional
 
-from flask import make_response, request
+from flask import make_response
+from flask import request
 from flask import Response
 from flask import g
 from flask import jsonify
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 from aveslog.v0.rest_api import require_authentication
 from aveslog.v0.models import BirderConnection
