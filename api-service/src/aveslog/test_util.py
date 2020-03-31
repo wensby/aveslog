@@ -55,6 +55,31 @@ class TestMailDispatcher(MailDispatcher):
     })
 
 
+def setup_test_app(mail_list):
+  test_config = {
+    'TESTING': True,
+    'SECRET_KEY': 'wowsosecret',
+    'LOGS_DIR_PATH': 'test-logs',
+    'FRONTEND_HOST': 'http://localhost:3002',
+    'RATE_LIMIT': f'60/minute',
+  }
+
+  app = aveslog.create_app_with_dependencies(
+    lambda app: TestMailDispatcher(mail_list),
+    test_config=test_config,
+  )
+  app.test_client_class = TestClient
+  return app
+
+
+test_mail_list = []
+test_app = setup_test_app(test_mail_list)
+test_request_context = test_app.test_request_context()
+database_connection_details = aveslog.v0.create_database_connection_details()
+database_connection = psycopg2.connect(**database_connection_details)
+test_client = test_app.test_client()
+
+
 class AppTestCase(IntegrationTestCase):
 
   @classmethod
@@ -64,26 +89,15 @@ class AppTestCase(IntegrationTestCase):
 
   def setUp(self) -> None:
     self.maxDiff = None
-    test_config = {
-      'TESTING': True,
-      'SECRET_KEY': 'wowsosecret',
-      'LOGS_DIR_PATH': 'test-logs',
-      'FRONTEND_HOST': 'http://localhost:3002',
-      'RATE_LIMIT': f'{self.test_rate_limit_per_minute}/minute',
-    }
-
-    self.dispatched_mails = []
-    self._app = aveslog.create_app_with_dependencies(
-      lambda app: TestMailDispatcher(self.dispatched_mails),
-      test_config=test_config,
-    )
-    self._app.test_client_class = TestClient
-    database_connection_details = aveslog.v0.create_database_connection_details()
-    self.database_connection = psycopg2.connect(**database_connection_details)
+    self.dispatched_mails = test_mail_list
+    test_mail_list.clear()
+    self._app = test_app
+    self._app.rate_limiter.reset()
+    self.database_connection = database_connection
     self.clear_database()
-    self.app_context = self._app.test_request_context()
+    self.app_context = test_request_context
     self.app_context.push()
-    self.client = self._app.test_client()
+    self.client = test_client
     logging.disable(logging.CRITICAL)
 
   def get_with_access_token(self, uri: str, *, account_id: int) -> Response:
@@ -269,7 +283,6 @@ class AppTestCase(IntegrationTestCase):
 
   def tearDown(self) -> None:
     self.clear_database()
-    self.database_connection.close()
     self.app_context.pop()
     logging.disable(logging.NOTSET)
 
