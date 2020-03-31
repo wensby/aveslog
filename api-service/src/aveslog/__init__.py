@@ -68,7 +68,7 @@ def configure_app(app: Flask, test_config: dict) -> None:
   configure_cross_origin_resource_sharing(app)
   if is_behind_proxy():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
-  configure_rate_limiter(app)
+  app.rate_limiter = configure_rate_limiter(app)
 
 
 def configure_cross_origin_resource_sharing(app: Flask) -> None:
@@ -90,7 +90,7 @@ def is_behind_proxy():
 
 
 def configure_rate_limiter(app):
-  Limiter(
+  limiter = Limiter(
     app,
     key_func=get_remote_address,
     default_limits=[app.config.get('RATE_LIMIT', '100/second,1000/minute')],
@@ -101,3 +101,5 @@ def configure_rate_limiter(app):
   def clean_header(response):
     del response.headers['X-RateLimit-Reset']
     return response
+
+  return limiter
