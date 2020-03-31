@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
-import PasswordReset from './PasswordReset.js';
+import { PasswordReset } from './PasswordReset.js';
 import { LoginPage } from './LoginPage.js';
 import { Registration } from './registration/Registration.js';
 

@@ -1,10 +1,9 @@
 import React from 'react';
-import { withTranslation } from 'react-i18next';
 import { Route } from "react-router-dom";
 import CreatePasswordReset from './CreatePasswordReset.js';
-import PasswordResetForm from './PasswordResetForm.js';
+import { PasswordResetForm } from './PasswordResetForm.js';
 
-function PasswordReset({ match }) {
+export const PasswordReset = ({ match }) => {
   const { path } = match;
 
   const renderCreatePasswordReset = props => {
@@ -21,6 +20,4 @@ function PasswordReset({ match }) {
       <Route path={`${path}/:token`} render={renderPasswordResetForm}/>
     </div>
   );
-}
-
-export default withTranslation()(PasswordReset);
+};

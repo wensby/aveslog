@@ -4,7 +4,7 @@ import AuthenticationService from './AuthenticationService.js';
 import NewPasswordFormGroup from './NewPasswordFormGroup';
 import { Alert } from '../generic/Alert.js';
 
-export default function PasswordResetForm(props) {
+export const PasswordResetForm = props => {
   const { t } = useTranslation();
   const token = props.match.params.token;
   const [alert, setAlert] = useState(null);
@@ -65,4 +65,4 @@ export default function PasswordResetForm(props) {
       </div>
     </div>
   );
-}
+};
