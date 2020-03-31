@@ -3,6 +3,8 @@ from datetime import date, time, datetime
 from aveslog.test_util import AppTestCase
 from http import HTTPStatus
 
+from aveslog.v0 import ErrorCode
+
 
 class TestGetBirder(AppTestCase):
 
@@ -62,15 +64,18 @@ class TestGetBirderConnections(AppTestCase):
 
 class TestPostBirderConnection(AppTestCase):
 
+  def setUp(self):
+    super().setUp()
+    self.uri = '/birders/1/birder-connections'
+
   def test_post_birder_connection_when_ok(self):
     self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
     self.db_insert_birder(2, 'Brad Harris')
     token = self.create_access_token(1)
-    uri = '/birders/1/birder-connections'
     json = {'secondaryBirderId': 2}
     headers = {'accessToken': token.jwt}
 
-    response = self.client.post(uri, json=json, headers=headers)
+    response = self.client.post(self.uri, json=json, headers=headers)
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertEqual(response.headers['Location'], '/birder-connections/1')
@@ -80,6 +85,27 @@ class TestPostBirderConnection(AppTestCase):
     self.assertEqual(birder_connections[0][1], 1)
     self.assertEqual(birder_connections[0][2], 2)
     self.assertIsInstance(birder_connections[0][3], datetime)
+
+  def test_post_birder_connection_when_field_invalid_format(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    token = self.create_access_token(1)
+    json = {'secondaryBirderId': '2'}
+    headers = {'accessToken': token.jwt}
+
+    response = self.client.post(self.uri, json=json, headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.VALIDATION_FAILED,
+      'message': 'Validation failed',
+      'errors': [
+        {
+          'code': ErrorCode.INVALID_FIELD_FORMAT,
+          'field': 'secondaryBirderId',
+          'message': 'Identifier need to be a positive integer'
+        },
+      ]
+    })
 
 
 class TestDeleteBirdersBirderConnection(AppTestCase):

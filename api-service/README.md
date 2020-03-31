@@ -84,6 +84,8 @@ Status: 404 Not Found
 | 15 | Username does not follow required format. |
 | 16 | Password does not follow required format. |
 | 17 | Provided locale code not one of the allowed codes. |
+| 18 | Identifier need to be a positive integer |
+| 19 | Birder may not create connection with itself |
 
 
 ## Authentication
@@ -379,6 +381,37 @@ GET /birders/1/birder-connections
   "hasMore": false
 }
 ```
+
+### Create birder connection
+
+```
+POST /birders/:id/birder-connections
+```
+
+**Required Headers**
+
+`accessToken: {accessTokenJwt}` The access token needs to be for the account
+that controls the birder in question.
+
+**Examples**
+
+```
+POST /birders/1/birder-connections
+
+{
+  "secondaryBirderId": 2
+}
+```
+
+**Possible Errors**
+
+`Status: 400 BAD REQUEST` When secondaryBirderId is missing, is of invalid
+format, or same as birder id.
+
+`Status: 401 UNAUTHORIZED` When trying to create a connection from a birder that
+is not the one specified by the authenticated account.
+
+`Status: 409 CONFLICT` When trying to create a connection that already exists. 
 
 ## Birder Connections
 

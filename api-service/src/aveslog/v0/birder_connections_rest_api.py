@@ -8,10 +8,14 @@ from flask import g
 from flask import jsonify
 from sqlalchemy.orm import Session
 
+from aveslog.v0.error import ErrorCode
 from aveslog.v0.rest_api import require_authentication
+from aveslog.v0.rest_api import validation_failed_error_response
 from aveslog.v0.models import BirderConnection
 from aveslog.v0.models import Birder
 from aveslog.v0.models import Account
+
+secondary_birder_id_key = 'secondaryBirderId'
 
 
 @require_authentication
@@ -55,11 +59,10 @@ def get_birder_connections(birder_id: int) -> Response:
 
 
 def post_birder_connection(birder_id: int) -> Response:
-  secondary_birder_id = request.json.get('secondaryBirderId')
-  if not secondary_birder_id or not isinstance(secondary_birder_id, int):
-    return make_response('', HTTPStatus.BAD_REQUEST)
-  if secondary_birder_id == birder_id:
-    return make_response('', HTTPStatus.BAD_REQUEST)
+  secondary_birder_id = request.json.get(secondary_birder_id_key)
+  field_errors = validate_fields(birder_id, secondary_birder_id)
+  if field_errors:
+    return validation_failed_error_response(field_errors)
   if g.authenticated_account.birder_id != birder_id:
     return make_response('', HTTPStatus.UNAUTHORIZED)
   if not g.database_session.query(Birder).get(birder_id):
@@ -76,6 +79,27 @@ def post_birder_connection(birder_id: int) -> Response:
   response.headers['Location'] = f'/birder-connections/{birder_connection.id}'
   response.autocorrect_location_header = False
   return response
+
+
+def validate_fields(primary_birder_id, secondary_birder_id) -> list:
+  errors = []
+  if not present_int(secondary_birder_id):
+    errors.append({
+      'code': ErrorCode.INVALID_FIELD_FORMAT,
+      'field': secondary_birder_id_key,
+      'message': 'Identifier need to be a positive integer',
+    })
+  elif secondary_birder_id == primary_birder_id:
+    errors.append({
+      'code': ErrorCode.SECONDARY_BIRDER_ID_INVALID,
+      'field': secondary_birder_id_key,
+      'message': 'Birder may not create connection with itself',
+    })
+  return errors
+
+
+def present_int(value) -> bool:
+  return value and isinstance(value, int)
 
 
 def is_connection_present(primary_birder_id, secondary_birder_id):
