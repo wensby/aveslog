@@ -1,6 +1,6 @@
 import React from 'react';
-import { Route } from "react-router-dom";
-import CreatePasswordReset from './CreatePasswordReset.js';
+import { Route, Switch } from "react-router-dom";
+import { CreatePasswordReset } from './CreatePasswordReset.js';
 import { PasswordResetForm } from './PasswordResetForm.js';
 
 export const PasswordReset = ({ match }) => {
@@ -15,9 +15,9 @@ export const PasswordReset = ({ match }) => {
   };
 
   return (
-    <div>
+    <Switch>
       <Route exact path={path} render={renderCreatePasswordReset}/>
       <Route path={`${path}/:token`} render={renderPasswordResetForm}/>
-    </div>
+    </Switch>
   );
 };

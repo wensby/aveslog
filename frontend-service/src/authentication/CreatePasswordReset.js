@@ -5,7 +5,7 @@ import { Alert } from '../generic/Alert.js';
 import './CreatePasswordReset.scss';
 import { FormGroup } from '../generic/FormGroup.js';
 
-export default () => {
+export const CreatePasswordReset = () => {
   const [email, setEmail] = useState('');
   const [alert, setAlert] = useState(null);
   const { t } = useTranslation();
@@ -45,27 +45,23 @@ export default () => {
 
   return (
     <div class='create-password-reset'>
-      <div>
-        <div>
-          <h1>{ t('Password Reset') }</h1>
-          <p>{ t('password-reset-email-prompt-message') }</p>
-          { renderAlert() }
-          <form onSubmit={handleFormSubmit}>
-            <FormGroup>
-              <label htmlFor='emailInput'>{ t('Email') }</label>
-              <input
-                value={email}
-                onChange={event => setEmail(event.target.value)}
-                className='form-control'
-                placeholder={ t('Email') }
-                id='emailInput'
-                name='email'
-                type='text'/>
-              </FormGroup>
-            <button type='submit'>{ t('Send') }</button>
-          </form>
-        </div>
-      </div>
+      <h1>{ t('Password Reset') }</h1>
+      <p>{ t('password-reset-email-prompt-message') }</p>
+      { renderAlert() }
+      <form onSubmit={handleFormSubmit}>
+        <FormGroup>
+          <label htmlFor='emailInput'>{ t('Email') }</label>
+          <input
+            value={email}
+            onChange={event => setEmail(event.target.value)}
+            className='form-control'
+            placeholder={ t('Email') }
+            id='emailInput'
+            name='email'
+            type='text'/>
+          </FormGroup>
+        <button type='submit'>{ t('Send') }</button>
+      </form>
     </div>
   );
-}
+};

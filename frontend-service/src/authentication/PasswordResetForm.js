@@ -51,18 +51,14 @@ export const PasswordResetForm = props => {
 
   return (
     <div>
-      <div>
-        <div>
-          <h1>{ t('password-reset-title') }</h1>
-          <p>{ t('password-reset-form-prompt-message') }</p>
-          {renderAlert()}
-          <form onSubmit={submitForm}>
-            <NewPasswordFormGroup onChange={setPassword}
-              showFeedback={showFeedback} />
-            <button type='submit'>{ t('button-submit-label') }</button>
-          </form>
-        </div>
-      </div>
+      <h1>{ t('password-reset-title') }</h1>
+      <p>{ t('password-reset-form-prompt-message') }</p>
+      {renderAlert()}
+      <form onSubmit={submitForm}>
+        <NewPasswordFormGroup onChange={setPassword}
+          showFeedback={showFeedback} />
+        <button type='submit'>{ t('button-submit-label') }</button>
+      </form>
     </div>
   );
 };
