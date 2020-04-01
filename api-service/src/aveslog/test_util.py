@@ -6,31 +6,24 @@ from datetime import timedelta
 from unittest import TestCase
 from unittest.mock import Mock
 
-import psycopg2
 from flask import Response
-from flask.testing import FlaskClient
-from werkzeug.datastructures import Headers
 
 import aveslog
-from aveslog import MailDispatcher
 from aveslog.v0 import EngineFactory, SessionFactory
 from aveslog.v0.account import PasswordHasher
 from aveslog.v0.authentication import SaltFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.v0.authentication import AuthenticationTokenFactory
+from aveslog.app_test_util import test_app_mail_list
+from aveslog.app_test_util import test_app
+from aveslog.app_test_util import test_app_database_connection
+from aveslog.app_test_util import test_app_request_context
+from aveslog.app_test_util import test_app_client
 
 
 def mock_return(value):
   return Mock(return_value=value)
-
-
-class TestClient(FlaskClient):
-
-  def open(self, *args, **kwargs):
-    headers = kwargs.pop('headers', Headers())
-    kwargs['headers'] = headers
-    return super().open(*args, **kwargs)
 
 
 class IntegrationTestCase(TestCase):
@@ -42,44 +35,6 @@ class IntegrationTestCase(TestCase):
         'Skipping database depending test case ' + str(cls.__name__))
 
 
-class TestMailDispatcher(MailDispatcher):
-
-  def __init__(self, dispatched_mails: list):
-    self._dispatched_mails: list = dispatched_mails
-
-  def dispatch(self, recipient, subject, body):
-    self._dispatched_mails.append({
-      'recipient': recipient,
-      'subject': subject,
-      'body': body
-    })
-
-
-def setup_test_app(mail_list):
-  test_config = {
-    'TESTING': True,
-    'SECRET_KEY': 'wowsosecret',
-    'LOGS_DIR_PATH': 'test-logs',
-    'FRONTEND_HOST': 'http://localhost:3002',
-    'RATE_LIMIT': f'60/minute',
-  }
-
-  app = aveslog.create_app_with_dependencies(
-    lambda app: TestMailDispatcher(mail_list),
-    test_config=test_config,
-  )
-  app.test_client_class = TestClient
-  return app
-
-
-test_mail_list = []
-test_app = setup_test_app(test_mail_list)
-test_request_context = test_app.test_request_context()
-database_connection_details = aveslog.v0.create_database_connection_details()
-database_connection = psycopg2.connect(**database_connection_details)
-test_client = test_app.test_client()
-
-
 class AppTestCase(IntegrationTestCase):
 
   @classmethod
@@ -89,15 +44,15 @@ class AppTestCase(IntegrationTestCase):
 
   def setUp(self) -> None:
     self.maxDiff = None
-    self.dispatched_mails = test_mail_list
-    test_mail_list.clear()
+    self.dispatched_mails = test_app_mail_list
+    test_app_mail_list.clear()
     self._app = test_app
     self._app.rate_limiter.reset()
-    self.database_connection = database_connection
+    self.database_connection = test_app_database_connection
     self.clear_database()
-    self.app_context = test_request_context
+    self.app_context = test_app_request_context
     self.app_context.push()
-    self.client = test_client
+    self.client = test_app_client
     logging.disable(logging.CRITICAL)
 
   def get_with_access_token(self, uri: str, *, account_id: int) -> Response:

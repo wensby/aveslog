@@ -4,7 +4,8 @@ import shutil
 from http import HTTPStatus
 
 import aveslog
-from aveslog.test_util import IntegrationTestCase, TestClient
+from aveslog.app_test_util import TestClient
+from aveslog.test_util import IntegrationTestCase
 
 
 class TestAppCreation(IntegrationTestCase):
