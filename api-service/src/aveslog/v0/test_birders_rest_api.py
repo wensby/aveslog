@@ -67,13 +67,13 @@ class TestPostBirderConnection(AppTestCase):
   def setUp(self):
     super().setUp()
     self.uri = '/birders/1/birder-connections'
-
-  def test_post_birder_connection_when_ok(self):
     self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
     self.db_insert_birder(2, 'Brad Harris')
-    token = self.create_access_token(1)
+    self.access_token = self.create_access_token(1).jwt
+
+  def test_post_birder_connection_when_ok(self):
     json = {'secondaryBirderId': 2}
-    headers = {'accessToken': token.jwt}
+    headers = {'accessToken': self.access_token}
 
     response = self.client.post(self.uri, json=json, headers=headers)
 
@@ -87,10 +87,8 @@ class TestPostBirderConnection(AppTestCase):
     self.assertIsInstance(birder_connections[0][3], datetime)
 
   def test_post_birder_connection_when_field_invalid_format(self):
-    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
-    token = self.create_access_token(1)
     json = {'secondaryBirderId': '2'}
-    headers = {'accessToken': token.jwt}
+    headers = {'accessToken': self.access_token}
 
     response = self.client.post(self.uri, json=json, headers=headers)
 
