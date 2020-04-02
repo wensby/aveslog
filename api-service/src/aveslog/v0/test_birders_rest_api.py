@@ -105,6 +105,25 @@ class TestPostBirderConnection(AppTestCase):
       ]
     })
 
+  def test_post_birder_connection_with_oneself(self):
+    json = {'secondaryBirderId': 1}
+    headers = {'accessToken': self.access_token}
+
+    response = self.client.post(self.uri, json=json, headers=headers)
+
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.VALIDATION_FAILED,
+      'message': 'Validation failed',
+      'errors': [
+        {
+          'code': ErrorCode.SECONDARY_BIRDER_ID_INVALID,
+          'field': 'secondaryBirderId',
+          'message': 'Birder may not create connection with itself'
+        },
+      ]
+    })
+
 
 class TestDeleteBirdersBirderConnection(AppTestCase):
 
