@@ -107,7 +107,7 @@ export const AddSightingSection = ({ bird, onSuccess }) => {
           {t('submit-sighting-button')}
         </button>
       </form>
-      <Link to='/'>{t('cancel-new-sighting-link')}</Link>
+      <Link to='/home'>{t('cancel-new-sighting-link')}</Link>
     </div>
   );
 };

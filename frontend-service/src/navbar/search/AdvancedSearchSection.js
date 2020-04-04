@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { SearchBarContext } from './SearchBar.js';
+import { SearchContext } from './SearchBar.js';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'generic/Spinner';
 import './AdvancedSearchSection.scss';
 
 export const AdvancedSearchSection = () => {
-  const { advanced, positionActive } = useContext(SearchBarContext);
+  const { advanced, positionActive } = useContext(SearchContext);
   const classNames = ['advanced-search-section'];
 
   if (advanced) {
@@ -34,7 +34,7 @@ const SightedNearbyFormGroup = () => {
 };
 
 const SightedNearbyCheckbox = () => {
-  const { positionActive, setPositionActive, position } = useContext(SearchBarContext);
+  const { positionActive, setPositionActive, position } = useContext(SearchContext);
   const loading = positionActive && !position;
 
   const handleChange = e => {

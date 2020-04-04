@@ -1,16 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
-import { AdvancedSearchToggle } from './AdvancedSearchToggle';
-import { ClearSearchButton } from './ClearSearchButton';
 import { usePosition } from 'usePosition.js';
-import { AdvancedSearchSection } from './AdvancedSearchSection.js';
-import { SearchInput } from './SearchInput.js';
-import { SearchButton } from './SearchButton.js';
-import './SearchBar.scss';
 
-export const SearchBarContext = React.createContext();
+export const SearchContext = React.createContext();
 
-export const SearchBar = () => {
+export const SearchContextProvider = ({children}) => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);
@@ -70,7 +64,9 @@ export const SearchBar = () => {
     setQuery('');
     setPosition(null);
     setPositionActive(false);
-    inputRef.current.focus();
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   const contextValues = {
@@ -84,31 +80,15 @@ export const SearchBar = () => {
     position,
     setPosition,
     positionActive,
-    setPositionActive
+    setPositionActive,
+    submit,
+    inputRef,
+    searchFormRef,
   };
 
   return (
-    <SearchBarContext.Provider value={contextValues}>
-      <form ref={searchFormRef} className='search-bar' onSubmit={submit}>
-        <AdvancedSearchSection />
-        <div className='simple-search-section'>
-          <div className='text-input'>
-            <SearchInput ref={inputRef} />
-            <TextInputRightOverlay />
-          </div>
-          <SearchButton />
-        </div>
-      </form>
-    </SearchBarContext.Provider>
-  );
-};
-
-const TextInputRightOverlay = () => {
-  const { advanced, setAdvanced, dirty } = useContext(SearchBarContext);
-  return (
-    <div className='right'>
-      {dirty && <ClearSearchButton />}
-      <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
-    </div>
+    <SearchContext.Provider value={contextValues}>
+      {children}
+    </SearchContext.Provider>
   );
 };

@@ -1,4 +1,7 @@
 import React from 'react';
+import { Switch } from 'react-router';
+import { Route } from 'react-router-dom';
+import { SplashPage } from 'splash/SplashPage.js';
 import { Navbar } from './navbar/Navbar.js';
 import { Sidebar } from './Sidebar.js';
 import { Main } from './Main.js';
@@ -7,11 +10,16 @@ import './Page.scss';
 
 export const Page = () => {
   return (
-    <>
-      <Navbar />
-      <Sidebar />
-      <Main />
-      <Footer />
-    </>
+    <Switch>
+      <Route path='/' exact>
+        <SplashPage />
+      </Route>
+      <Route>
+        <Navbar />
+        <Sidebar />
+        <Main />
+        <Footer />
+      </Route>
+    </Switch>
   );
 };

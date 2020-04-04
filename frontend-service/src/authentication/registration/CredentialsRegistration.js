@@ -31,7 +31,7 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
           jwt: refreshResponseJson.refreshToken,
           expiration: Date.parse(refreshResponseJson.expirationDate),
         });
-        history.push('/');
+        history.push('/home');
       }
     }
     else if (response.status === 409) {

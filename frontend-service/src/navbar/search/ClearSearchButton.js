@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import Icon from 'Icon.js';
 import './ClearSearchButton.scss';
-import { SearchBarContext } from './SearchBar.js';
+import { SearchContext } from './SearchBar.js';
 
 export const ClearSearchButton = () => {
-  const { clear } = useContext(SearchBarContext);
+  const { clear } = useContext(SearchContext);
   return (
     <div className='clear-search-button' onClick={clear}>
       <Icon name='cross' viewBox='0 0 1 1'/>

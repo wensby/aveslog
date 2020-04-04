@@ -32,7 +32,7 @@ export function LoginForm({ onError }) {
           jwt: refreshResponseJson.refreshToken,
           expiration: Date.parse(refreshResponseJson.expirationDate),
         });
-        history.push('/');
+        history.push('/home');
       }
       else {
         onError('Login failed.');

@@ -1,0 +1,42 @@
+@import 'colors.scss';
+@import 'layout.scss';
+
+div.splash-page {
+  background-color: $white;
+  display: grid;
+  width: 100vw;
+  min-height: 100vh;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 75px 100px 100px auto;
+  grid-template-areas: 
+    '. . .'
+    'brand brand brand'
+    '. account .'
+    '. search .';
+
+  @media (prefers-color-scheme: dark) {
+    background-color: $black;
+  }
+
+  & > *:nth-child(1) {
+    grid-area: brand;
+    font-size: 3em;
+  }
+
+  & > div.login-section {
+    text-align: center;
+    grid-area: account;
+
+    @media (prefers-color-scheme: dark) {
+      color: $white;
+    }
+  }
+
+  & > .search-form {
+    grid-area: search;
+
+    & input.search-input {
+      border-radius: 0.5rem;
+    }
+  }
+}

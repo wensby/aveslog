@@ -17,6 +17,8 @@ button.search-button {
       max-width 0.1s ease-in,
       padding 0.1s ease-in;
   color: $white;
+  flex-shrink: 0;
+  overflow: hidden;
   background-color: $primary;
   
   &:hover {

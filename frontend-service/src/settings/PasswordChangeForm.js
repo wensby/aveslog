@@ -34,7 +34,7 @@ export const PasswordChangeForm = () => {
     if (accessToken && newPassword) {
       const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
       if (response.status === 204) {
-        history.push('/');
+        history.push('/home');
       }
       else {
         const message = (await response.json())['message'];

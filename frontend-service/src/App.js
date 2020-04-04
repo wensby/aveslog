@@ -8,6 +8,7 @@ import { BirdsProvider } from './bird/BirdsContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
 import { ScrollToTop } from 'sighting/ScrollToTop.js';
+import { SearchContextProvider } from 'navbar/search/SearchBar.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
@@ -20,9 +21,11 @@ export const App = ({ version }) => {
           <UserProvider>
             <BirdsProvider>
               <SightingProvider>
-                <Suspense fallback={<SuspenseLoader />}>
-                  <Page />
-                </Suspense>
+                <SearchContextProvider>
+                  <Suspense fallback={<SuspenseLoader />}>
+                    <Page />
+                  </Suspense>
+                </SearchContextProvider>
               </SightingProvider>
             </BirdsProvider>
           </UserProvider>

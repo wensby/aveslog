@@ -1,5 +1,5 @@
 import React from 'react';
-import { SearchBar } from './search/SearchBar';
+import { SearchForm } from './search/SearchForm.js';
 import { NavbarMain } from './NavbarMain';
 import { NavbarToggler} from './NavbarToggler.js';
 import './NavbarConstant.scss';
@@ -10,6 +10,6 @@ export const NavbarConstant = React.forwardRef((props, ref) => (
     <div className='menu-button'>
       <NavbarToggler />
     </div>
-    <SearchBar />
+    <SearchForm />
   </div>
 ));

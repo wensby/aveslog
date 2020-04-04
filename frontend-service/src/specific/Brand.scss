@@ -1,0 +1,40 @@
+@import '../colors.scss';
+
+@font-face {
+  font-family: 'Leckerli One';
+  src: url('../LeckerliOne-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Courier Prime';
+  src: url('../CourierPrime-Bold.ttf');
+}
+
+div.brand {
+  color: $primary;
+  font-size: 1.5em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > span {
+    display: inline-block;
+    vertical-align: middle;
+
+    &:hover {
+      color: $darkgrey;
+    }
+
+    & span:nth-child(1) {
+      font-family: 'Leckerli One', cursive;
+      font-size: 1em;
+    }
+
+    & span:nth-child(2) {
+      font-family: 'Courier Prime', Courier, monospace; // avoids automatic font resizing
+      font-size: .8em;
+      font-weight: 900;
+    }
+  }
+}

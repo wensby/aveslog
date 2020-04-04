@@ -27,6 +27,9 @@ const UserProvider = ({ children }) => {
     if (authenticated) {
       resolveAccount();
     }
+    else {
+      setAccount(null);
+    }
   }, [authenticated, getAccessToken]);  
 
   if (authenticated && !account) {

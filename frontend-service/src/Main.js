@@ -12,7 +12,7 @@ import './Main.scss';
 export const Main = () => {
   return (
     <main role='main'>
-      <Route path='/' exact component={HomePage} />
+      <Route path='/home' exact component={HomePage} />
       <Route path='/authentication' component={Authentication} />
       <Route path='/birders' component={BirdersRoute} />
       <AuthenticatedRoute path='/settings' exact component={Settings} />

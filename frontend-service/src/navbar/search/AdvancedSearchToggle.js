@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import Icon from 'Icon.js';
-import { SearchBarContext } from './SearchBar.js';
+import { SearchContext } from './SearchBar.js';
 import './AdvancedSearchToggle.scss';
 
 export const AdvancedSearchToggle = ({ active, onChange }) => {
-  const { positionActive } = useContext(SearchBarContext);
+  const { positionActive } = useContext(SearchContext);
   const click = e => {
     e.preventDefault();
     onChange(!active);

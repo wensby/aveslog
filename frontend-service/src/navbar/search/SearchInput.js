@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { SearchBarContext } from './SearchBar';
+import { SearchContext } from './SearchBar';
 import { useTranslation } from 'react-i18next';
 import './SearchInput.scss';
 
 export const SearchInput = React.forwardRef((props, ref) => {
-  const { query, setQuery } = useContext(SearchBarContext);
+  const { query, setQuery } = useContext(SearchContext);
   const { t } = useTranslation();
 
   const label = t('Search bird');
