@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Icon from 'Icon.js';
 import './ClearSearchButton.scss';
-import { SearchContext } from './SearchBar.js';
+import { SearchContext } from './SearchContext.js';
 
 export const ClearSearchButton = () => {
   const { clear } = useContext(SearchContext);

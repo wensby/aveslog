@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import Icon from 'Icon.js';
-import { SearchContext } from './SearchBar.js';
+import { SearchContext } from './SearchContext.js';
 import './AdvancedSearchToggle.scss';
 
 export const AdvancedSearchToggle = ({ active, onChange }) => {

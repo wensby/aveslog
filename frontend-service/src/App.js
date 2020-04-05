@@ -8,7 +8,7 @@ import { BirdsProvider } from './bird/BirdsContext.js';
 import SuspenseLoader from './suspense/SuspenseLoader';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
 import { ScrollToTop } from 'sighting/ScrollToTop.js';
-import { SearchContextProvider } from 'navbar/search/SearchBar.js';
+import { SearchContextProvider } from 'navbar/search/SearchContext.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
