@@ -4,7 +4,7 @@ import { ClearSearchButton } from './ClearSearchButton';
 import { AdvancedSearchSection } from './AdvancedSearchSection.js';
 import { SearchInput } from './SearchInput.js';
 import { SearchButton } from './SearchButton.js';
-import { SearchContext } from './SearchContext.js';
+import { SearchContext } from '../../search/SearchContext.js';
 import './SearchForm.scss';
 
 export const SearchForm = () => {

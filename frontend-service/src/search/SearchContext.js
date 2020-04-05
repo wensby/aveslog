@@ -4,7 +4,7 @@ import { usePosition } from 'usePosition.js';
 
 export const SearchContext = React.createContext();
 
-export const SearchContextProvider = ({children}) => {
+export const SearchProvider = ({children}) => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);

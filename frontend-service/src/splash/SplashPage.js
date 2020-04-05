@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { SearchContext } from 'navbar/search/SearchContext';
+import { SearchContext } from 'search/SearchContext';
 import { Brand } from 'specific/Brand';
 import { SplashSearchForm } from 'navbar/search/SearchForm.js';
 import './SplashPage.scss';

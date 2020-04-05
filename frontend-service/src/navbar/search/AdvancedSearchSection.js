@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { SearchContext } from './SearchContext.js';
+import { SearchContext } from '../../search/SearchContext.js';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'generic/Spinner';
 import './AdvancedSearchSection.scss';

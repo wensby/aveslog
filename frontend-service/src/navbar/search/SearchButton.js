@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SearchContext } from './SearchContext';
+import { SearchContext } from '../../search/SearchContext';
 import './SearchButton.scss';
 
 export const SearchButton = () => {
