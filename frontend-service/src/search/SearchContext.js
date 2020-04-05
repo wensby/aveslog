@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { usePosition } from 'usePosition.js';
 
 export const SearchContext = React.createContext();
 
-export const SearchProvider = ({children}) => {
+export const SearchProvider = ({ children }) => {
   const history = useHistory();
   const [query, setQuery] = useState('');
   const [advanced, setAdvanced] = useState(false);
