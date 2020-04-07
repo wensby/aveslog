@@ -1,0 +1,147 @@
+@import 'colors.scss';
+@import 'layout.scss';
+
+$simple-search-height: 2.7rem;
+$bounce-curve: cubic-bezier(.65,.06,.08,1.3);
+
+div.splash-page form.search {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
+  width: 100%;
+
+  & > * {
+    max-width: 400px;
+  }
+
+  & > div.simple-input {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    font-size: 1rem;
+    height: $simple-search-height;
+
+
+    & > div.search-input {
+      border-radius: 10px;
+      box-sizing: border-box;
+      border: 1px solid $lighter;
+      height: $simple-search-height;
+
+      & > input {
+        height: 100%;
+      }
+    }
+
+    & > button {
+      white-space: nowrap;
+      font-size: inherit;
+      font-weight: 500;
+      border: 1px solid transparent;
+      padding: 0;
+      margin-top: $simple-search-height * 0.5;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      border: 0;
+      transition: 
+          margin .2s $bounce-curve,
+          width .2s $bounce-curve,
+          height .2s $bounce-curve,
+          color 0.15s ease-in-out,
+          background-color 0.15s ease-in-out,
+          box-shadow 0.15s ease-in-out,
+          max-width 0.1s ease-in;
+      color: $white;
+      flex-shrink: 0;
+      overflow: hidden;
+      background-color: transparent;
+    }
+  }
+
+  & > div.advanced-search-section {
+    box-sizing: border-box;
+    margin-top: 10px;
+    max-height: 0px;
+    overflow: hidden;
+    width: 100%;
+    transition: 
+      max-height .2s $bounce-curve,
+      padding .2s $bounce-curve,
+      border-color .2s $bounce-curve,
+      background-color .2s $bounce-curve;
+    border-radius: .5rem;
+    border: 1px solid lightgrey;
+    border-color: transparent;
+    padding: 0 1rem;
+  }
+
+  &:not(.extended) > div.advanced-search-section {
+    background-color: transparent;
+  }
+
+  & > div.extended-search-toggle {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    cursor: pointer;
+    fill: $lighter;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+    -o-user-select:none;
+    margin-bottom: 20px;
+
+    & svg {
+      width: 40px;
+      height: 40px;
+      transition: 
+        transform .1s ease-in-out,
+        border .1s ease-in-out;
+    }
+  }
+
+  &.dirty, &.extended {
+    & > div.simple-input > button {
+      margin-top: 0;
+      width: $simple-search-height;
+      height: $simple-search-height;
+      margin-left: .5rem;
+      margin-right: .5rem;
+      background-color: $primary;
+    }
+  }
+
+  & > div.simple-input > button:disabled {
+    cursor: default;
+    background-color: $lighter;
+    color: darken($lighter, 15);
+  }
+
+  &.extended {
+    & > div.extended-search-toggle {
+      & svg {
+        transform: rotate(180deg);
+        fill: $darkgrey;
+      }
+    }
+
+    & > div.advanced-search-section {
+      padding: .75rem 1rem;
+      max-height: 50px;
+      border-color: lightgrey;
+    }
+  }
+
+  @media only screen and (min-width : $break-small) {
+    & > div.simple-input {
+      width: 500px;
+    }
+
+    & > div.advanced-search-section {
+      width: 500px;
+    }
+  }
+}

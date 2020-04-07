@@ -1,0 +1,39 @@
+@import 'colors.scss';
+
+.extend-toggle {
+  cursor: pointer;
+  fill: $lighter;
+
+  &:hover {
+    fill: $darkgrey;
+  }
+
+  & svg {
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    transition: transform .1s ease-in-out;
+  }
+
+  &.extended {
+    & svg {
+      transform: rotate(180deg);
+      fill: $darkgrey;
+    }
+  }
+
+  &:not(.extended) svg {
+    fill: $primary;
+    filter: drop-shadow(0 0 5px transparentize($primary, .75))
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:hover {
+      fill: $white;
+    }
+
+    &.extended svg {
+      fill: $white;
+    }
+  }
+}

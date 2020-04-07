@@ -60,6 +60,7 @@ input:focus {
 div#root {
   position: relative;
   min-height: 100vh;
+  overflow: hidden;
 
   & div.navbar {
     position: fixed;

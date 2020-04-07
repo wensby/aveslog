@@ -13,6 +13,11 @@ export const SearchInput = React.forwardRef((props, ref) => {
     setQuery(event.target.value);
   };
 
-  return <input className='search-input' ref={ref} placeholder={label}
-    aria-label={label} onChange={handleChange} value={query}/>;
+  return (
+    <div className='search-input'>
+      <input ref={ref} placeholder={label}
+        aria-label={label} onChange={handleChange} value={query} />
+      {props.children}
+    </div>
+  );
 });

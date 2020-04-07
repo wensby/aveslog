@@ -76,34 +76,17 @@ div.simple-search-section {
     position: relative;
     width: 100%;
     align-items: center;
+    border: 1px solid $lighter;
+    border-width: 1px 0;
+
+    @media #{$tablet-landscape-up} {
+      border-radius: 0.5rem 0 0 0.5rem;
+      border-left-width: 1px;
+    }
 
     & input.search-input {
       width: 100%;
       min-width: 0px;
-    }
-
-    & div.right {
-      position: absolute;
-      align-items: center;
-      display: flex;
-      top: 0;
-      right: 0;
-      bottom: 0;
-
-      & > * {
-        box-sizing: border-box;
-        height: 100%;
-        width: 2.5rem;
-        padding: .5rem 0;
-      }
-
-      & div.clear-search-button {
-        padding: .7rem 0;
-      }
-
-      & div.advanced-search-toggle {
-        margin-right: .5rem;
-      }
     }
   }
 

@@ -1,15 +1,11 @@
 @import 'layout.scss';
 @import 'colors.scss';
 
-input.search-input {
-  box-sizing: border-box;
+div.search-input {
+  position: relative;
   width: 100%;
-  padding: .75rem 1rem;
-  border: 1px solid $lighter;
-  border-width: 1px 0;
-  color: $black;
-  background-color: $white;
-  font-size: inherit;
+  box-sizing: border-box;
+  border-radius: inherit;
   min-width: 0px;
   transition:
       border-color 0.15s ease-in-out, 
@@ -21,8 +17,45 @@ input.search-input {
     color: $white;
   }
 
-  @media #{$tablet-landscape-up} {
-    border-radius: 0.5rem 0 0 0.5rem;
-    border-left-width: 1px;
+  & > input {
+    border-radius: inherit;
+    box-sizing: border-box;
+    width: 100%;
+    padding: .75rem 1rem;
+    border: 0;
+    color: $black;
+    background-color: transparent;
+    font-size: inherit;
+    min-width: 0px;
+
+    @media (prefers-color-scheme: dark) {
+      background-color: $darkgrey;
+      border-color: $lightgrey;
+      color: $white;
+    }
+  }
+
+  & div.right {
+    position: absolute;
+    align-items: center;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    & > * {
+      box-sizing: border-box;
+      height: 100%;
+      width: 2.5rem;
+      padding: .5rem 0;
+    }
+
+    & div.clear-search-button {
+      padding: .7rem 0;
+    }
+
+    & div.advanced-search-toggle {
+      margin-right: .5rem;
+    }
   }
 }

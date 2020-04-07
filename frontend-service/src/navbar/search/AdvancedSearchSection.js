@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { Spinner } from 'generic/Spinner';
 import './AdvancedSearchSection.scss';
 
-export const AdvancedSearchSection = () => {
-  const { advanced, positionActive } = useContext(SearchContext);
+export const AdvancedSearchSection = ({active}) => {
+  const { positionActive } = useContext(SearchContext);
   const classNames = ['advanced-search-section'];
 
-  if (advanced) {
+  if (active) {
     classNames.push('active');
   }
   if (positionActive) {

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { SearchContext } from 'search/SearchContext';
 import { Brand } from 'specific/Brand';
-import { SplashSearchForm } from 'navbar/search/SearchForm.js';
-import './SplashPage.scss';
+import { SearchForm } from './SearchForm.js';
 import { UserContext } from 'authentication/UserContext';
 import { Link } from 'react-router-dom';
 import {Footer} from 'footer/Footer.js';
 import { useTranslation } from 'react-i18next';
+import './SplashPage.scss';
 
 export const SplashPage = () => {
   const { clear } = useContext(SearchContext);
@@ -21,7 +21,7 @@ export const SplashPage = () => {
         <Brand />
       </Link>
       <LoginSection />
-      <SplashSearchForm />
+      <SearchForm />
       <Footer />
     </div>
   );
