@@ -3,10 +3,12 @@
 
 div.splash-page {
   @extend %phone-side-margins;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background-color: $white;
   min-height: 100vh;
+  padding-bottom: $footer-height;
 
   @media (prefers-color-scheme: dark) {
     background-color: $black;
