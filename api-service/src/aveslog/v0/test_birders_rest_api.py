@@ -66,7 +66,6 @@ class TestPostBirderConnection(AppTestCase):
 
   def setUp(self):
     super().setUp()
-    self.uri = '/birders/1/birder-connections'
     self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
     self.db_insert_birder(2, 'Brad Harris')
     self.access_token = self.create_access_token(1).jwt
@@ -75,7 +74,7 @@ class TestPostBirderConnection(AppTestCase):
     json = {'secondaryBirderId': 2}
     headers = {'accessToken': self.access_token}
 
-    response = self.client.post(self.uri, json=json, headers=headers)
+    response = self.post('/birders/1/birder-connections', headers, json)
 
     self.assertEqual(response.status_code, HTTPStatus.CREATED)
     self.assertEqual(response.headers['Location'], '/birder-connections/1')
@@ -90,7 +89,7 @@ class TestPostBirderConnection(AppTestCase):
     json = {'secondaryBirderId': '2'}
     headers = {'accessToken': self.access_token}
 
-    response = self.client.post(self.uri, json=json, headers=headers)
+    response = self.post('/birders/1/birder-connections', headers, json)
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertDictEqual(response.json, {
@@ -109,7 +108,7 @@ class TestPostBirderConnection(AppTestCase):
     json = {'secondaryBirderId': 1}
     headers = {'accessToken': self.access_token}
 
-    response = self.client.post(self.uri, json=json, headers=headers)
+    response = self.post('/birders/1/birder-connections', headers, json)
 
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertDictEqual(response.json, {
@@ -123,6 +122,17 @@ class TestPostBirderConnection(AppTestCase):
         },
       ]
     })
+
+  def test_post_birder_connection_with_wrong_account(self):
+    json = {'secondaryBirderId': 1}
+    headers = {'accessToken': self.access_token}
+
+    response = self.post('/birders/2/birder-connections', headers, json)
+
+    self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+
+  def post(self, uri, headers, json):
+    return self.client.post(uri, json=json, headers=headers)
 
 
 class TestDeleteBirdersBirderConnection(AppTestCase):
