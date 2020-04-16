@@ -4,8 +4,14 @@ export default class BirdService {
     this.apiUrl = window._env_.API_URL;
   }
 
-  async searchBirds(query) {
-    return await fetch(`${this.apiUrl}/search/birds?q=${query}`);
+  async searchBirds(query, accessToken) {
+    const headers = {};
+    if (accessToken) {
+      headers['accessToken'] = accessToken.jwt;
+    }
+    return await fetch(`${this.apiUrl}/search/birds?q=${query}&embed=stats`, {
+      headers: headers
+    });
   }
 
   async getBirdStatistics(id) {

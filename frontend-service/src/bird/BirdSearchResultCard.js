@@ -4,9 +4,10 @@ import { BirdCardName } from './BirdCardName';
 import Icon from '../Icon.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { PictureBirdLink } from './PictureBirdLink';
+import { SightedIndicator } from './SightedIndicator';
 import './BirdSearchResultCard.scss';
 
-export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
+export const BirdSearchResultCard = memo(forwardRef(({ bird, stats }, ref) => {
   const { authenticated } = useContext(AuthenticationContext);
 
   if (!bird) {
@@ -20,6 +21,7 @@ export const BirdSearchResultCard = memo(forwardRef(({ bird }, ref) => {
         <div className='name'>
           <BirdCardName bird={bird} />
           {bird.binomialName}
+          {authenticated && stats && stats.lastSighting && <SightedIndicator date={stats.lastSighting} />}
         </div>
         {authenticated && <NewSightingButton bird={bird} />}
       </div>

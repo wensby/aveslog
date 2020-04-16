@@ -5,5 +5,5 @@ import { BirdSearchResultCard } from './BirdSearchResultCard.js';
 
 export const RevealableBirdResultCard = withReveal(({ searchResult, revealed }, ref) => {
   const bird = useLazyBird(searchResult.id, revealed);
-  return <BirdSearchResultCard bird={bird} ref={ref} />
+  return <BirdSearchResultCard bird={bird} ref={ref} stats={searchResult.stats} />
 });
