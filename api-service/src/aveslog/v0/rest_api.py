@@ -79,6 +79,29 @@ def require_authentication(route) -> RouteFunction:
   return route_wrapper
 
 
+def optional_authentication(route) -> RouteFunction:
+  """Wraps a route to require a valid authentication token
+
+  The wrapped route will then be able to access the authenticated account
+  through g.authenticated_account.
+  """
+
+  @wraps(route)
+  def route_wrapper(**kwargs):
+    access_token = request.headers.get('accessToken')
+    if access_token:
+      jwt_decoder = JwtDecoder(current_app.secret_key)
+      decode_result = jwt_decoder.decode_jwt(access_token)
+      if decode_result.ok:
+        account_id = decode_result.payload['sub']
+        account = g.database_session.query(Account).get(account_id)
+        if account:
+          g.authenticated_account = account
+    return route(**kwargs)
+
+  return route_wrapper
+
+
 def require_permission(route) -> RouteFunction:
   """Wraps a route to requiring an authentication with necessary permissions"""
 

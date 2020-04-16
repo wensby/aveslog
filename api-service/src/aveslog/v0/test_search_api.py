@@ -90,6 +90,48 @@ class TestSearchBirds(AppTestCase):
       ]
     })
 
+  def test_search_embed_stats_when_authenticated(self):
+    self.db_setup_account(1, 1, 'kenny', 'bostick', 'kenny@mail.com')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(1, 1, 1, date(2000, 4, 16), None, None)
+    self.db_insert_sighting(2, 1, 1, date(2020, 4, 16), None, None)
+    self.db_insert_sighting(3, 1, 1, date(2002, 4, 16), None, None)
+    access_token = self.create_access_token(1)
+
+    response = self.client.get('/search/birds?q=pica&embed=stats', headers={'accessToken': access_token.jwt})
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'id': 'pica-pica',
+          'binomialName': 'Pica pica',
+          'stats': {
+            'lastSighting': '2020-04-16'
+          },
+          'score': 1,
+        }
+      ]
+    })
+
+  def test_search_embed_stats_when_unauthenticated(self):
+    self.db_setup_account(1, 1, 'kenny', 'bostick', 'kenny@mail.com')
+    self.db_insert_bird(1, 'Pica pica')
+    self.db_insert_sighting(1, 1, 1, date(2020, 4, 16), None, None)
+
+    response = self.client.get('/search/birds?q=pica&embed=stats')
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'items': [
+        {
+          'id': 'pica-pica',
+          'binomialName': 'Pica pica',
+          'score': 1,
+        }
+      ]
+    })
+
   def test_get_birds_with_custom_page_size(self):
     self.db_insert_bird(1, 'Pica pica')
     self.db_insert_bird(2, 'Pica serica')
