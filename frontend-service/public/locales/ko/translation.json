@@ -78,5 +78,8 @@
   "birder-connection-no-connection-label": "팔로우하기",
   "birder-label": "버더",
   "extended-search-label": "검색 옵션",
+  "bird-sightings-count-label": "관찰",
+  "birders-count-label": "버더",
+  "thumbnail-credit-label": "썸네일",
   "Logout": "로그아웃"
 }

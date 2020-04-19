@@ -78,5 +78,8 @@
   "birder-connection-no-connection-label": "Follow",
   "birder-label": "Birder",
   "extended-search-label": "Advanced options",
+  "bird-sightings-count-label": "Sightings",
+  "birders-count-label": "Birders",
+  "thumbnail-credit-label": "Thumbnail",
   "Logout": "Logout"
 }

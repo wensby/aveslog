@@ -3,10 +3,12 @@ import { useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { CommonNamesSection } from './CommonNamesSection';
 import { BirdActionBar } from './BirdActionBar';
+import { useTranslation } from 'react-i18next';
 import './DetailedBirdCard.scss';
 
-export function DetailedBirdCard({ bird }) {
+export const DetailedBirdCard = ({ bird }) => {
   const stats = useBirdStatistics(bird);
+  const { t } = useTranslation();
 
   return (
     <div className='detailed-bird-card'>
@@ -15,14 +17,14 @@ export function DetailedBirdCard({ bird }) {
       <CommonNamesSection bird={bird} />
       <hr />
       <div>
-        Sightings: {stats.sightingsCount}
+        {t('bird-sightings-count-label')}: {stats.sightingsCount}
         <br />
-        Lucky birders: {stats.birdersCount}
+        {t('birders-count-label')}: {stats.birdersCount}
       </div>
       {bird.thumbnail &&
         <div>
-          <p><small>{`Thumbnail Photo by: ${bird.thumbnail.credit}`}</small></p>
+          <p><small>{`${t('thumbnail-credit-label')}: ${bird.thumbnail.credit}`}</small></p>
         </div>}
     </div>
   );
-}
+};

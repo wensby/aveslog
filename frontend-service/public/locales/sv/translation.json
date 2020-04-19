@@ -78,5 +78,8 @@
   "birder-connection-no-connection-label": "Följ",
   "birder-label": "Fågelskådare",
   "extended-search-label": "Avancerade alternativ",
+  "bird-sightings-count-label": "Observationer",
+  "birders-count-label": "Fågelskådare",
+  "thumbnail-credit-label": "Bild",
   "Logout": "Logga ut"
 }
