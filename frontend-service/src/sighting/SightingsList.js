@@ -1,10 +1,10 @@
 import React from 'react';
-import { RevealableSightingCard } from './SightingCard.js';
+import { RevealableSightingListItem } from './RevealableSightingListItem';
 
 export const SightingsList = ({ sightings }) => {
   return (
     <div>
-      {sightings.map(s => <RevealableSightingCard key={s.id} sighting={s} />)}
+      {sightings.map(s => <RevealableSightingListItem key={s.id} sighting={s} />)}
     </div>
   );
 };

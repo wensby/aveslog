@@ -2,7 +2,7 @@
 
 $height: 7rem;
 
-div.sighting-card {
+div.sighting-list-item {
   height: $height;
   overflow: hidden;
   display: grid;
@@ -47,11 +47,11 @@ div.sighting-card {
   }
 }
 
-.sighting-card-body {
+.sighting-list-item-body {
   display: grid;
   grid: auto auto / auto auto;
 }
 
-.sighting-card-body-placeholder {
+.sighting-list-item-body-placeholder {
   border: 1px solid #EEE;
 }
