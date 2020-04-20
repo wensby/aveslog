@@ -9,29 +9,32 @@ import SuspenseLoader from './suspense/SuspenseLoader';
 import { AuthenticationProvider } from './authentication/AuthenticationContext.js';
 import { ScrollToTop } from 'sighting/ScrollToTop.js';
 import { SearchProvider } from 'search/SearchContext.js';
+import { TitleProvider } from 'specific/TitleContext.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
 
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <WindowScrollProvider>
-        <AuthenticationProvider>
-          <UserProvider>
-            <BirdsProvider>
-              <SightingProvider>
-                <SearchProvider>
-                  <Suspense fallback={<SuspenseLoader />}>
-                    <Page />
-                  </Suspense>
-                </SearchProvider>
-              </SightingProvider>
-            </BirdsProvider>
-          </UserProvider>
-        </AuthenticationProvider>
-      </WindowScrollProvider>
-    </BrowserRouter>
+    <TitleProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <WindowScrollProvider>
+          <AuthenticationProvider>
+            <UserProvider>
+              <BirdsProvider>
+                <SightingProvider>
+                  <SearchProvider>
+                    <Suspense fallback={<SuspenseLoader />}>
+                      <Page />
+                    </Suspense>
+                  </SearchProvider>
+                </SightingProvider>
+              </BirdsProvider>
+            </UserProvider>
+          </AuthenticationProvider>
+        </WindowScrollProvider>
+      </BrowserRouter>
+    </TitleProvider>
   );
 }
 

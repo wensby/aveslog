@@ -107,7 +107,7 @@ export function useCommonName(bird) {
       setLoading(false);
     };
     setCommonName(null);
-    if (bird.commonNames) {
+    if (bird && bird.commonNames) {
       const result = bird.commonNames.filter(commonName => commonName.locale === language);
       if (result.length > 0) {
         setCommonName(result[0].name);
@@ -115,7 +115,9 @@ export function useCommonName(bird) {
         return;
       }
     }
-    resolveCommonName();
+    else if (bird) {
+      resolveCommonName();
+    }
   }, [bird, language]);
 
   return { commonName, loading };
