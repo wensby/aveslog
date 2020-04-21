@@ -43,6 +43,12 @@ export const useLazyBird = (id, eager) => {
   const contextBird = useContextBird(id);
 
   useEffect(() => {
+    if(bird && bird.id !== id) {
+      setBird(null);
+    }
+  }, [id, bird]);
+
+  useEffect(() => {
     setBird(contextBird);
   }, [contextBird]);
 
@@ -59,7 +65,7 @@ export const useLazyBird = (id, eager) => {
     if (eager) {
       resolveBirdPromise();
     }
-  }, [id, eager, addBird])
+  }, [id, eager, addBird]);
 
   return bird;
 }

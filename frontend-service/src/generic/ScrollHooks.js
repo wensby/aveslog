@@ -11,9 +11,9 @@ export const useWindowScroll = active => {
 
 const withRevealingRef = WrappedComponent => {
   return props => {
-    const ref = useRef(null);
     const [revealed, setRevealed] = useState(false);
     const [triggered, setTriggered] = useState(true);
+    const ref = useRef(null);
     const windowScroll = useWindowScroll(!revealed);
     const triggeredRef = useRef(triggered);
     triggeredRef.current = triggered;
