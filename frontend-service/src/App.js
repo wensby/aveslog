@@ -10,30 +10,33 @@ import { AuthenticationProvider } from './authentication/AuthenticationContext.j
 import { ScrollToTop } from 'sighting/ScrollToTop.js';
 import { SearchProvider } from 'search/SearchContext.js';
 import { TitleProvider } from 'specific/TitleContext.js';
+import { HomeProvider } from 'specific/HomeContext.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
 
   return (
     <TitleProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <WindowScrollProvider>
-          <AuthenticationProvider>
-            <UserProvider>
-              <BirdsProvider>
-                <SightingProvider>
-                  <SearchProvider>
-                    <Suspense fallback={<SuspenseLoader />}>
-                      <Page />
-                    </Suspense>
-                  </SearchProvider>
-                </SightingProvider>
-              </BirdsProvider>
-            </UserProvider>
-          </AuthenticationProvider>
-        </WindowScrollProvider>
-      </BrowserRouter>
+      <HomeProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <WindowScrollProvider>
+            <AuthenticationProvider>
+              <UserProvider>
+                <BirdsProvider>
+                  <SightingProvider>
+                    <SearchProvider>
+                      <Suspense fallback={<SuspenseLoader />}>
+                        <Page />
+                      </Suspense>
+                    </SearchProvider>
+                  </SightingProvider>
+                </BirdsProvider>
+              </UserProvider>
+            </AuthenticationProvider>
+          </WindowScrollProvider>
+        </BrowserRouter>
+      </HomeProvider>
     </TitleProvider>
   );
 }
