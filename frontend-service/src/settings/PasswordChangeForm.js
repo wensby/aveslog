@@ -4,6 +4,7 @@ import NewPasswordFormGroup from '../authentication/NewPasswordFormGroup';
 import AuthenticationService from '../authentication/AuthenticationService';
 import { useHistory } from "react-router-dom";
 import { Alert } from '../generic/Alert';
+import { SubmitButton } from 'generic/form/SubmitButton';
 import './PasswordChangeForm.scss';
 import { FormGroup } from '../generic/FormGroup';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
@@ -56,7 +57,7 @@ export const PasswordChangeForm = () => {
       </FormGroup>
       <NewPasswordFormGroup onChange={setNewPassword}
         showFeedback={showFeedback} />
-      <button>{t('password-change-button')}</button>
+      <SubmitButton>{t('password-change-button')}</SubmitButton>
     </form>
   );
 }

@@ -30,13 +30,19 @@ const UserProvider = ({ children }) => {
     else {
       setAccount(null);
     }
-  }, [authenticated, getAccessToken]);  
+  }, [authenticated, getAccessToken]);
 
   if (authenticated && !account) {
     return null;
   }
 
-  const contextValues = { account };
+  const patchBirder = birder => {
+    setAccount(prevAccount => {
+      return { ...prevAccount, birder: birder };
+    })
+  };
+
+  const contextValues = { account, patchBirder };
 
   return (
     <UserContext.Provider value={contextValues}>

@@ -81,5 +81,8 @@
   "bird-sightings-count-label": "Observationer",
   "birders-count-label": "Fågelskådare",
   "thumbnail-credit-label": "Bild",
+  "name-label": "Namn",
+  "name-placeholder": "Namn",
+  "save-birder-settings-button-label": "Spara",
   "Logout": "Logga ut"
 }
