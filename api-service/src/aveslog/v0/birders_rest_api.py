@@ -19,6 +19,18 @@ def get_birder(birder_id: int):
 
 
 @require_authentication
+def patch_birder(birder_id: int):
+  birder = g.authenticated_account.birder
+  if not birder.id == birder_id:
+    return make_response('', HTTPStatus.UNAUTHORIZED)
+  name = request.json.get('name')
+  if name:
+    birder.name = name
+  g.database_session.commit()
+  return make_response(jsonify(birder_representation(birder)), HTTPStatus.OK)
+
+
+@require_authentication
 def get_birders_birder_connections(birder_id: int):
   return get_birder_connections(birder_id)
 

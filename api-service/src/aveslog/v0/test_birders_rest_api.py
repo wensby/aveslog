@@ -27,6 +27,23 @@ class TestGetBirder(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
+class TestPatchBirder(AppTestCase):
+
+  def test_patch_birder(self):
+    self.db_setup_account(1, 1, 'kenny.bostick', 'myPassword', 'kenny@mail.com')
+    token = self.create_access_token(1)
+
+    response = self.client.patch('/birders/1',
+      headers={'accessToken': token.jwt},
+      json={'name': 'Kenny Bostick'})
+
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {
+      'id': 1,
+      'name': 'Kenny Bostick'
+    })
+
+
 class TestGetBirderConnections(AppTestCase):
 
   def test_get_authenticated_accounts_birder_connections(self):
