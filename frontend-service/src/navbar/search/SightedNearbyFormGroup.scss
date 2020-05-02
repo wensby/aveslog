@@ -35,6 +35,12 @@ div.sighted-nearby-group {
       color: $primary;
     }
   }
+
+  & > div.range {
+    & input {
+      width: 100%;
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {

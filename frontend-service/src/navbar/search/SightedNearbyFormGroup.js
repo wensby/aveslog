@@ -1,52 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { SearchContext } from '../../search/SearchContext.js';
+import { SearchContext } from 'search/SearchContext';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'generic/Spinner';
 import './SightedNearbyFormGroup.scss';
 
-const radiusToRangeValue = radius => {
-  const minp = 0;
-  const maxp = 100;
-  const minv = Math.log(1);
-  const maxv = Math.log(1000);
-  const scale = (maxv-minv) / (maxp-minp);
-  return ((Math.log(radius) - minv) / scale) + minp;
-};
-
-const sliderValue = position => {
-  const minp = 0;
-  const maxp = 100;
-  const minv = Math.log(1);
-  const maxv = Math.log(1000);
-  const scale = (maxv-minv) / (maxp-minp);
-  return Math.exp(minv + scale*(position-minp));
-}
-
 export const SightedNearbyFormGroup = () => {
-  const { positionActive, positionRadius, setPositionRadius } = useContext(SearchContext);
-  const [rangeValue, setRangeValue] = useState(radiusToRangeValue(positionRadius));
-
-  const handleChange = e => {
-    setRangeValue(e.target.value);
-  };
-
-  useEffect(() => {
-    setPositionRadius(Math.round(sliderValue(rangeValue)));
-  }, [rangeValue]);
-
-  const repr = () => {
-    return `${positionRadius}km`;
-  }
+  const { positionActive } = useContext(SearchContext);
 
   return (
     <div className='sighted-nearby-group'>
       <Toggle />
-      {positionActive &&
-        <div>
-          {repr()}
-          <input type='range' value={rangeValue} min='0' max='100' step='2' onChange={handleChange} style={{ width: '100%' }} />
-        </div>
-      }
+      {positionActive && <Range />}
     </div>
   );
 };
@@ -72,4 +36,40 @@ const Toggle = () => {
       <label htmlFor='positionCheckbox'>{t('search-sighted-nearby-label')}</label>
     </div>
   );
+};
+
+const Range = () => {
+  const { positionRadius, setPositionRadius } = useContext(SearchContext);
+  const [rangeValue, setRangeValue] = useState(radiusToRangeValue(positionRadius));
+
+  useEffect(() => {
+    setPositionRadius(Math.round(rangeValueToRadius(rangeValue)));
+  }, [rangeValue]);
+
+  return (
+    <div className='range'>
+      {`${positionRadius}km`}
+      <input type='range' value={rangeValue} min='0' max='100' step='2'
+        onChange={e => setRangeValue(e.target.value)}
+      />
+    </div>
+  );
+};
+
+const radiusToRangeValue = radius => {
+  const minp = 0;
+  const maxp = 100;
+  const minv = Math.log(1);
+  const maxv = Math.log(1000);
+  const scale = (maxv - minv) / (maxp - minp);
+  return ((Math.log(radius) - minv) / scale) + minp;
+};
+
+const rangeValueToRadius = value => {
+  const minp = 0;
+  const maxp = 100;
+  const minv = Math.log(1);
+  const maxv = Math.log(1000);
+  const scale = (maxv - minv) / (maxp - minp);
+  return Math.exp(minv + scale * (value - minp));
 }
