@@ -9,6 +9,7 @@ const SearchProvider = ({ children }) => {
   const [query, setQuery] = useState('');
   const [positionActive, setPositionActive] = useState(false);
   const [position, setPosition] = useState(null);
+  const [positionRadius, setPositionRadius] = useState(10);
   const { latitude, longitude, error } = usePosition(positionActive);
   const disabled = positionActive && !position;
 
@@ -36,7 +37,7 @@ const SearchProvider = ({ children }) => {
       }
       if (position) {
         const [latitude, longitude] = position;
-        qParts.push(`position:${latitude},${longitude};r=10`)
+        qParts.push(`position:${latitude},${longitude};r=${positionRadius}`)
       }
       history.push(`/bird/search?q=${qParts.join('+')}`);
     }
@@ -58,6 +59,8 @@ const SearchProvider = ({ children }) => {
     setPosition,
     positionActive,
     setPositionActive,
+    positionRadius,
+    setPositionRadius,
     submit,
   };
 

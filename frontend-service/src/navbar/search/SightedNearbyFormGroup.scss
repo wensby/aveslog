@@ -1,0 +1,44 @@
+@import 'colors.scss';
+
+div.sighted-nearby-group {
+
+  & > div.toggle {
+    display: flex;
+    align-items: center;
+    color: $darkgrey;
+    font-size: 1rem;
+
+    & > *:hover {
+      cursor: pointer;
+    }
+
+    &:hover {
+      color: $black;
+    }
+
+    &.loading > input {
+      display: none;
+    }
+
+    & > *:first-child {
+      width: 1rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    & label {
+      margin-left: .5rem;
+      cursor: pointer;
+    }
+
+    & input:checked ~ label {
+      color: $primary;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  div.sighted-nearby-group {
+    color: $white;
+  }
+}
