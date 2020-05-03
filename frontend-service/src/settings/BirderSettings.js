@@ -2,11 +2,11 @@ import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup } from 'generic/FormGroup';
 import { UserContext } from 'authentication/UserContext';
-import { AuthenticationContext } from 'authentication/AuthenticationContext';
 import { SubmitButton } from 'generic/form/SubmitButton';
+import { ApiContext } from 'api/ApiContext';
 
 export const BirderSettings = () => {
-  const { getAccessToken } = useContext(AuthenticationContext);
+  const { authenticatedApiFetch } = useContext(ApiContext);
   const { account, patchBirder } = useContext(UserContext);
   const [name, setName] = useState(account.birder.name);
   const nameValid = /^[^\s]+(\s?[^\s]+)*$/.test(name);
@@ -15,11 +15,9 @@ export const BirderSettings = () => {
   const submit = async e => {
     e.preventDefault();
     if (nameValid) {
-      const token = await getAccessToken();
-      const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}`, {
+      const response = await authenticatedApiFetch(`/birders/${account.birder.id}`, {
         method: 'PATCH',
         headers: {
-          accessToken: token.jwt,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
