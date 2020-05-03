@@ -9,25 +9,36 @@ export const BirderSettings = () => {
   const { getAccessToken } = useContext(AuthenticationContext);
   const { account, patchBirder } = useContext(UserContext);
   const [name, setName] = useState(account.birder.name);
+  const nameValid = /^[^\s]+(\s?[^\s]+)*$/.test(name);
   const { t } = useTranslation();
 
   const submit = async e => {
     e.preventDefault();
-    const token = await getAccessToken();
-    const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}`, {
-      method: 'PATCH',
-      headers: {
-        accessToken: token.jwt,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: name,
-      }),
-    })
-    if (response.status === 200) {
-      const json = await response.json();
-      patchBirder(json);
+    if (nameValid) {
+      const token = await getAccessToken();
+      const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}`, {
+        method: 'PATCH',
+        headers: {
+          accessToken: token.jwt,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+        }),
+      })
+      if (response.status === 200) {
+        const json = await response.json();
+        patchBirder(json);
+      }
     }
+  }
+
+  const classNames = [];
+  if (!nameValid) {
+    classNames.push('is-invalid');
+  }
+  else {
+    classNames.push('is-valid');
   }
 
   return (
@@ -36,10 +47,13 @@ export const BirderSettings = () => {
       <form onSubmit={submit} className='birder-settings-form'>
         <FormGroup>
           <label htmlFor='name'>{t('name-label')}</label>
-          <input id='name' type='text' placeholder={t('name-placeholder')}
+          <input className={classNames.join(' ')}
+            id='name' type='text' placeholder={t('name-placeholder')}
             value={name} onChange={event => setName(event.target.value)} />
         </FormGroup>
-        <SubmitButton>{t('save-birder-settings-button-label')}</SubmitButton>
+        <SubmitButton disabled={!nameValid || account.birder.name === name}>
+          {t('save-birder-settings-button-label')}
+        </SubmitButton>
       </form>
     </section>
   );

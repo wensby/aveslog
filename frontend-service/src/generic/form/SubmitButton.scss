@@ -1,5 +1,7 @@
 @import 'colors.scss';
 
+$disabled-button-color: $lighter;
+
 button.submit-button {
   margin-top: 10px;
   display: flex;
@@ -24,5 +26,11 @@ button.submit-button {
 
   &:hover {
     background-color: $darkgrey;
+  }
+
+  &:disabled {
+    cursor: default;
+    background-color: $disabled-button-color;
+    color: darken($disabled-button-color, 15);
   }
 }
