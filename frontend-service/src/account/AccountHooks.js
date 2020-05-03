@@ -1,18 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthenticationContext } from "../authentication/AuthenticationContext";
+import { ApiContext } from "api/ApiContext";
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
+  const { authenticatedApiFetch } = useContext(ApiContext);
+  const { authenticated } = useContext(AuthenticationContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
-      const accessToken = await getAccessToken();
-      const response = await fetch(`${window._env_.API_URL}/account/roles`, {
-        headers: {
-          'accessToken': accessToken.jwt
-        }
-      });
+      const response = await authenticatedApiFetch('/account/roles', {});
       if (response.status === 200) {
         const json = await response.json();
         setPermissions(json.items.reduce((list, obj) => {
@@ -26,7 +23,7 @@ export function usePermissions() {
     if (authenticated) {
       resolvePermissions();
     }
-  }, [authenticated, getAccessToken]);
+  }, [authenticated, authenticatedApiFetch]);
 
   return { permissions };
 }

@@ -4,6 +4,7 @@ import { SightingsSection } from '../sighting/SightingsSection.js';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
+import { ApiContext } from 'api/ApiContext';
 import './BirderPage.scss';
 import './BirderConnectionButton.scss';
 
@@ -38,7 +39,7 @@ export const BirderPage = ({ birder }) => {
 };
 
 const BirderConnectionButton = ({ birder }) => {
-  const { getAccessToken } = useContext(AuthenticationContext);
+  const { authenticatedApiFetch } = useContext(ApiContext);
   const { account } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [birderConnection, setBirderConnection] = useState(null);
@@ -48,12 +49,7 @@ const BirderConnectionButton = ({ birder }) => {
   useEffect(() => {
     const resolveFollows = async () => {
       setLoading(true);
-      const accessToken = await getAccessToken();
-      const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}/birder-connections`, {
-        headers: {
-          'accessToken': accessToken.jwt
-        }
-      });
+      const response = await authenticatedApiFetch(`/birders/${account.birder.id}/birder-connections`, {});
       if (response.status === 200) {
         const json = await response.json();
         const connection = json.items.find(bc => bc.secondaryBirderId === birder.id);
@@ -67,28 +63,22 @@ const BirderConnectionButton = ({ birder }) => {
       }
     };
     resolveFollows();
-  }, [birder, account.birder.id, getAccessToken]);
+  }, [birder, account.birder.id]);
 
   const handleClick = e => {
     const updateBirderConnection = async () => {
       setLoading(true);
       if (birderConnection === null) {
-        const accessToken = await getAccessToken();
-        const response = await fetch(`${window._env_.API_URL}/birders/${account.birder.id}/birder-connections`, {
+        const response = await authenticatedApiFetch(`/birders/${account.birder.id}/birder-connections`, {
           method: 'POST',
           headers: {
-            'accessToken': accessToken.jwt,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 'secondaryBirderId': birder.id })
         });
         if (response.status === 201) {
           const location = response.headers.get('Location');
-          const response2 = await fetch(`${window._env_.API_URL}${location}`, {
-            headers: {
-              accessToken: accessToken.jwt
-            }
-          });
+          const response2 = await authenticatedApiFetch(location, {});
           if (response2.status === 200) {
             setBirderConnection(await response2.json());
           }
@@ -98,12 +88,8 @@ const BirderConnectionButton = ({ birder }) => {
         }
       }
       else {
-        const accessToken = await getAccessToken();
-        const response = await fetch(`${window._env_.API_URL}/birder-connections/${birderConnection.id}`, {
+        const response = await authenticatedApiFetch(`/birder-connections/${birderConnection.id}`, {
           method: 'DELETE',
-          headers: {
-            'accessToken': accessToken.jwt,
-          },
         });
         if (response.status === 204) {
           setBirderConnection(null);
