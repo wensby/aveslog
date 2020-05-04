@@ -49,7 +49,12 @@ const AuthenticationProvider = ({ children }) => {
         'refreshToken': refreshToken.jwt,
       },
     })
-      .then(status)
+      .then(response => {
+        if (!response.ok) {
+          throw response.status;
+        }
+        return response;
+      })
       .then(response => response.json())
       .then(json => {
         console.log('Received fresh access token');
