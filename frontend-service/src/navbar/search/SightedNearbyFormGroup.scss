@@ -44,7 +44,7 @@ div.sighted-nearby-group {
 }
 
 @media (prefers-color-scheme: dark) {
-  div.sighted-nearby-group {
+  div.sighted-nearby-group > div.toggle {
     color: $white;
   }
 }
