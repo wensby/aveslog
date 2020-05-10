@@ -8,10 +8,10 @@ import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { PageHeading } from 'generic/PageHeading';
-import './AddSightingSection.scss';
+import './LogBirdSection.scss';
 import { CircledBirdPicture } from 'bird/CircledBirdPicture';
 
-export const AddSightingSection = ({ bird, onSuccess }) => {
+export const LogBirdSection = ({ bird, onSuccess }) => {
   const { t } = useTranslation();
   const { account } = useContext(UserContext);
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -65,7 +65,7 @@ export const AddSightingSection = ({ bird, onSuccess }) => {
   };
 
   return (
-    <div className='add-sighting-section'>
+    <div className='log-bird-section'>
       <PageHeading>{t('new-sighting-title')}</PageHeading>
       <div style={{height: '150px', width: '150px', marginLeft: 'auto', marginRight: 'auto'}}>
         <CircledBirdPicture bird={bird} />

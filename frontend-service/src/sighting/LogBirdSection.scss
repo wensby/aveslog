@@ -22,7 +22,7 @@
   }
 }
 
-div.add-sighting-section {
+div.log-bird-section {
   @extend %phone-side-margins;
   @extend %common-main-margin-top;
 
@@ -72,7 +72,7 @@ div.add-sighting-section {
   }
 }
 
-.add-sighting-section button[type=submit] {
+.log-bird-section button[type=submit] {
   display: flex;
   background-color: $primary;
   color: $white;

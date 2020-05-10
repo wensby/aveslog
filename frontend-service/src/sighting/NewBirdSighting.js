@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SightingSuccess } from './SightingSuccess';
-import { AddSightingSection } from './AddSightingSection';
+import { LogBirdSection } from './LogBirdSection';
 import { useBird } from '../bird/BirdHooks';
 
 export const NewBirdSighting = ({ match }) => {
@@ -16,5 +16,5 @@ export const NewBirdSighting = ({ match }) => {
     return <SightingSuccess sighting={addedSighting}/>;
   }
 
-  return <AddSightingSection bird={bird} onSuccess={setAddedSighting}/>;
+  return <LogBirdSection bird={bird} onSuccess={setAddedSighting}/>;
 };
