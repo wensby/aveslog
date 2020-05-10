@@ -8,6 +8,7 @@ import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { PageHeading } from 'generic/PageHeading';
+import { Spinner } from 'generic/Spinner';
 import './LogBirdSection.scss';
 import { CircledBirdPicture } from 'bird/CircledBirdPicture';
 
@@ -21,6 +22,7 @@ export const LogBirdSection = ({ bird, onSuccess }) => {
   const [time, setTime] = useState('');
   const [location, setLocation] = useState(null);
   const [timeEnabled, setTimeEnabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -52,6 +54,7 @@ export const LogBirdSection = ({ bird, onSuccess }) => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     if (!blockedByLocation) {
+      setLoading(true);
       const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await sightingService.postSighting(accessToken, account.birder.id, bird.binomialName, date, time, location);
@@ -60,6 +63,7 @@ export const LogBirdSection = ({ bird, onSuccess }) => {
           const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
           onSuccess(sighting);
         }
+        setLoading(false);
       }
     }
   };
@@ -103,9 +107,12 @@ export const LogBirdSection = ({ bird, onSuccess }) => {
         <LocationSection
           onCoordinatesChanged={setLocation}
           onBlocking={setBlockedByLocation} />
-        <button type='submit' disabled={blockedByLocation}>
-          {t('submit-sighting-button')}
-        </button>
+        <div className='submit-button-group'>
+          <button type='submit' disabled={loading || blockedByLocation}>
+            {t('submit-sighting-button')}
+          </button>
+          {loading && <div style={{width: '16px'}}><Spinner/></div>}
+        </div>
       </form>
       <Link to='/home'>{t('cancel-new-sighting-link')}</Link>
     </div>

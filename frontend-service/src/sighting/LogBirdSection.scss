@@ -69,6 +69,13 @@ div.log-bird-section {
         width: 100%;
       }
     }
+
+    &>div.submit-button-group {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
   }
 }
 
@@ -87,7 +94,6 @@ div.log-bird-section {
     background-color 0.15s ease-in-out, 
     border-color 0.15s ease-in-out, 
     box-shadow 0.15s ease-in-out;
-  margin-top: 15px;
   
   &[disabled] {
     background-color: $lighter;
