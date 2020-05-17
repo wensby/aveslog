@@ -38,6 +38,7 @@ class Bird(Base):
   binomial_name = Column(String, nullable=False)
   common_names = relationship('BirdCommonName')
   thumbnail: BirdThumbnail = relationship('BirdThumbnail', uselist=False)
+  looks = relationship('BirdLook')
 
   def __eq__(self, other: Any):
     if isinstance(other, Bird):
@@ -278,3 +279,11 @@ class RefreshToken(Base):
   account_id = Column(Integer, ForeignKey('account.id'), nullable=False)
   expiration_date = Column(DateTime, nullable=False)
   account = relationship('Account', back_populates='refresh_tokens')
+
+
+class BirdLook(Base):
+  __tablename__ = 'bird_look'
+  id = Column(Integer, primary_key=True)
+  bird_id = Column(Integer, ForeignKey('bird.id'), nullable=False)
+  label = Column(String)
+  description = Column(String)

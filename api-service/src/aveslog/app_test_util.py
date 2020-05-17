@@ -4,7 +4,7 @@ from werkzeug.datastructures import Headers
 
 import aveslog
 from aveslog.mail import MailDispatcher
-from aveslog.v0 import create_database_connection_details
+from aveslog.v0 import create_database_connection_details, EngineFactory
 
 
 class TestClient(FlaskClient):
@@ -46,9 +46,11 @@ def create_test_app(mail_list):
 
 
 connection_details = create_database_connection_details()
+engine_factory = EngineFactory()
 
 test_app_mail_list = []
 test_app = create_test_app(test_app_mail_list)
 test_app_request_context = test_app.test_request_context()
 test_app_database_connection = psycopg2.connect(**connection_details)
+test_app_engine = engine_factory.create_engine(**connection_details)
 test_app_client = test_app.test_client()

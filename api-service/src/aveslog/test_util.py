@@ -20,6 +20,7 @@ from aveslog.app_test_util import test_app
 from aveslog.app_test_util import test_app_database_connection
 from aveslog.app_test_util import test_app_request_context
 from aveslog.app_test_util import test_app_client
+from aveslog.app_test_util import test_app_engine
 
 
 def mock_return(value):
@@ -53,6 +54,7 @@ class AppTestCase(IntegrationTestCase):
     self.app_context = test_app_request_context
     self.app_context.push()
     self.client = test_app_client
+    self.database_engine = test_app_engine
     logging.disable(logging.CRITICAL)
 
   def get_with_access_token(self, uri: str, *, account_id: int) -> Response:
@@ -260,7 +262,10 @@ class AppTestCase(IntegrationTestCase):
       'DELETE FROM bird_thumbnail;'
       'DELETE FROM picture;'
       'DELETE FROM bird_common_name;'
+      'DELETE FROM bird_look;'
+      'ALTER SEQUENCE bird_look_id_seq RESTART WITH 1;'
       'DELETE FROM bird;'
+      'ALTER SEQUENCE bird_id_seq RESTART WITH 1;'
       'DELETE FROM birder;'
       'DELETE FROM registration_request;'
       'DELETE FROM locale;'
