@@ -287,3 +287,4 @@ class BirdLook(Base):
   bird_id = Column(Integer, ForeignKey('bird.id'), nullable=False)
   label = Column(String)
   description = Column(String)
+  bird = relationship('Bird')

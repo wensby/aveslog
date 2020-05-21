@@ -8,6 +8,7 @@ from aveslog.v0 import birders_rest_api
 from aveslog.v0 import birder_connections_rest_api
 from aveslog.v0 import locales_rest_api
 from aveslog.v0 import roles_rest_api
+from aveslog.v0 import bird_looks_rest_api
 
 birds_routes = [
   {
@@ -188,4 +189,11 @@ birder_connections_routes = [
     'func': birder_connections_rest_api.delete_birder_connection,
     'options': {'methods': ['DELETE']},
   },
+]
+
+bird_look_routes = [
+  {
+    'rule': '/bird-looks/<int:bird_look_id>',
+    'func': bird_looks_rest_api.get_bird_look,
+  }
 ]

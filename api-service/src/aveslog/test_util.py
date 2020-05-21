@@ -291,6 +291,15 @@ class AppTestCase(IntegrationTestCase):
     self.database_connection.commit()
     return cursor.fetchall()
 
+  def db_insert_bird_look(self, id, bird_id):
+    cursor = self.database_connection.cursor()
+    cursor.execute(
+      'INSERT INTO bird_look (id, bird_id, label, description) '
+      'VALUES (%s, %s, %s, %s);',
+      (id, bird_id, 'label', 'description'),
+    )
+    self.database_connection.commit()
+
 
 def get_test_database_session():
   engine_factory = EngineFactory(echo=False)

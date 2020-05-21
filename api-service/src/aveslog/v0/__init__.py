@@ -44,6 +44,7 @@ def create_api_v0_blueprint(mail_dispatcher: MailDispatcher) -> Blueprint:
   register_routes(routes.account_routes)
   register_routes(routes.birders_routes)
   register_routes(routes.birder_connections_routes)
+  register_routes(routes.bird_look_routes)
 
   @blueprint.before_request
   def before_request():
