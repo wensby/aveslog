@@ -6,7 +6,7 @@ import { Authentication } from './authentication/Authentication.js'
 import { BirdRoute } from './bird/BirdRoute.js';
 import { Sighting } from './sighting/Sighting.js';
 import { BirdersRoute } from './profile/BirdersRoute';
-import AuthenticatedRoute from './authentication/AuthenticatedRoute';
+import { AuthenticatedRoute } from './authentication/AuthenticatedRoute';
 import './Main.scss';
 
 export const Main = () => {

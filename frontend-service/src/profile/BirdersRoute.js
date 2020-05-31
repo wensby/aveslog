@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch } from "react-router-dom";
-import AuthenticatedRoute from '../authentication/AuthenticatedRoute';
+import { AuthenticatedRoute } from '../authentication/AuthenticatedRoute';
 import { BirdersPage } from './BirdersPage';
 import { BirderPageContainer } from '../birder/BirderPageContainer.js';
 
