@@ -1,0 +1,7 @@
+@import 'layout.scss';
+
+div.birder-link {
+  font-size: 1rem;
+  margin-top: .25rem;
+  @extend %phone-side-margins;
+}

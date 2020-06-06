@@ -1,14 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Spinner from 'loading/Spinner';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
-import { BirdersList } from 'home/Accounts';
+import { BirdersList } from 'home/BirdersList';
 import { ApiContext } from 'api/ApiContext';
+import { PageHeading } from 'generic/PageHeading';
+import { useTranslation } from 'react-i18next';
+import './BirdersPage.scss';
 
 export default () => {
   const { authenticated, getAccessToken } = useContext(AuthenticationContext);
   const { authenticatedApiFetch } = useContext(ApiContext);
   const [loading, setLoading] = useState(true);
   const [birders, setBirders] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -27,7 +31,8 @@ export default () => {
   }
 
   return (
-    <div>
+    <div className='birders-page'>
+      <PageHeading>{t('birders')}</PageHeading>
       <BirdersList birders={birders} />
     </div>
   );

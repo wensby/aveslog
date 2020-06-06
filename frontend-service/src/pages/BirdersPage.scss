@@ -1,0 +1,5 @@
+@import 'layout';
+
+div.birders-page {
+  @extend %common-main-margin-top;
+}
