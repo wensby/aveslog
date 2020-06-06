@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { BirdSearchResultsPage } from './BirdSearchResultsPage';
-import { BirdPage } from './BirdPage.js';
+import { BirdSearchResultsPage } from 'pages';
+import { BirdPage } from 'pages';
 import { NewBirdSighting } from '../sighting/NewBirdSighting';
 
 export const BirdRoute = ({ match }) => {

@@ -6,9 +6,9 @@ import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from 'api/ApiContext';
 import './BirderPage.scss';
-import './BirderConnectionButton.scss';
+import 'birder/BirderConnectionButton.scss';
 
-export const BirderPage = ({ birder }) => {
+export default ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
   const { account } = useContext(UserContext);
   const [sightings, setSightings] = useState([]);

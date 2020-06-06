@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch } from "react-router-dom";
 import { AuthenticatedRoute } from '../authentication/AuthenticatedRoute';
-import { BirdersPage } from './BirdersPage';
+import { BirdersPage } from 'pages';
 import { BirderPageContainer } from '../birder/BirderPageContainer.js';
 
 export const BirdersRoute = ({ match }) => {

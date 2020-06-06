@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext }  from '../authentication/UserContext';
-import SightingService from './SightingService';
-import { DetailedSightingCard } from './DetailedSightingCard';
+import SightingService from '../sighting/SightingService';
+import { DetailedSightingCard } from '../sighting/DetailedSightingCard';
 import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';
 import { useHistory } from "react-router-dom";
 import './SightingPage.scss';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
-export function SightingPage({match}) {
+export default ({match}) => {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const { account } = useContext(UserContext);
@@ -67,4 +67,4 @@ const DeleteButton = ({ onClick }) => {
     <Icon name='trash' />
     {`${t('delete-sighting-button')}`}
   </button>;
-}
+};

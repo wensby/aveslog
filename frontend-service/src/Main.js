@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from "react-router-dom";
 import { Settings } from './settings/Settings'
-import { HomePage } from './home/HomePage';
+import { HomePage } from 'pages';
 import { Authentication } from './authentication/Authentication.js'
 import { BirdRoute } from './bird/BirdRoute.js';
 import { Sighting } from './sighting/Sighting.js';

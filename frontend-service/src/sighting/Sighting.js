@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import SightingsPage from './SightingsPage';
-import { SightingPage } from './SightingPage.js';
+import { SightingsPage } from 'pages';
+import { SightingPage } from 'pages';
 import { AuthenticatedRoute } from '../authentication/AuthenticatedRoute.js';
 
 export const Sighting = ({ match }) => {

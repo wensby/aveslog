@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
-import { EmailRegistrationPage } from './EmailRegistrationPage';
-import { CredentialsRegistrationPage } from './CredentialsRegistrationPage';
+import { EmailRegistrationPage } from 'pages';
+import { CredentialsRegistrationPage } from 'pages';
 
 export const Registration = ({ match }) => {
   const path = match.path;

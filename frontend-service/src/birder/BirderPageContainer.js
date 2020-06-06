@@ -1,5 +1,5 @@
 import React from 'react';
-import { BirderPage } from './BirderPage';
+import { BirderPage } from 'pages';
 import Spinner from '../loading/Spinner';
 import { useBirder } from './BirderHooks';
 

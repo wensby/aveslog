@@ -1,14 +1,14 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import AuthenticationService from '../AuthenticationService.js';
+import AuthenticationService from '../authentication/AuthenticationService.js';
 import { Link } from 'react-router-dom'
-import { PageHeading } from '../../generic/PageHeading.js';
-import { Alert } from '../../generic/Alert.js';
+import { PageHeading } from '../generic/PageHeading.js';
+import { Alert } from '../generic/Alert.js';
 import './EmailRegistrationPage.scss';
 
 const PageContext = React.createContext();
 
-export const EmailRegistrationPage = () => {
+export default () => {
   const [email, setEmail] = useState('');
   const [alert, setAlert] = useState(null);
   const { t, i18n } = useTranslation();

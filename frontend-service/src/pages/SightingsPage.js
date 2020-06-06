@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthenticatedAccountSightings } from '../useAuthenticatedAccountSightings';
-import { SightingsSection } from './SightingsSection.js';
+import { SightingsSection } from '../sighting/SightingsSection.js';
 
-export default function SightingsPage() {
+export default () => {
   const sightings = useAuthenticatedAccountSightings();
   const { t } = useTranslation();
 
@@ -13,4 +13,4 @@ export default function SightingsPage() {
       <SightingsSection sightings={sightings} />
     </div>
   );
-}
+};

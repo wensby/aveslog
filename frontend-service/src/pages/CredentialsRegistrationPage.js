@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useReactRouter } from '../../reactRouterHook';
-import { RegistrationSuccess } from './RegistrationSuccess';
-import { FadeIn } from '../../component/FadeIn.js';
+import { useReactRouter } from '../reactRouterHook';
+import { RegistrationSuccess } from '../authentication/registration/RegistrationSuccess';
+import { FadeIn } from '../component/FadeIn.js';
 import { useHistory } from "react-router-dom";
-import { useRegistrationRequest } from '../AuthenticationHooks.js';
-import { CredentialsRegistration } from './CredentialsRegistration';
-import { LoadingOverlay } from '../../loading/LoadingOverlay.js';
+import { useRegistrationRequest } from '../authentication/AuthenticationHooks.js';
+import { CredentialsRegistration } from '../authentication/registration/CredentialsRegistration';
+import { LoadingOverlay } from '../loading/LoadingOverlay.js';
 
-export const CredentialsRegistrationPage = () => {
+export default () => {
   const { match } = useReactRouter();
   const [success, setSuccess] = useState(false);
   const { token } = match.params;

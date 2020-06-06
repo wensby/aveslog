@@ -1,10 +1,10 @@
 import React from 'react';
-import { useBird, useCommonName } from './BirdHooks';
-import { DetailedBirdCard } from './DetailedBirdCard';
+import { useBird, useCommonName } from '../bird/BirdHooks';
+import { DetailedBirdCard } from '../bird/DetailedBirdCard';
 import { Redirect } from 'react-router';
 import { useTitle } from 'specific/TitleContext';
 
-export const BirdPage = ({ match }) => {
+export default ({ match }) => {
   const { bird, error } = useBird(match.params.birdId);
   const { commonName } = useCommonName(bird);
   useTitle(commonName);
