@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Spinner from 'loading/Spinner';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
-import { Accounts } from 'home/Accounts';
+import { BirdersList } from 'home/Accounts';
 import { ApiContext } from 'api/ApiContext';
 
 export default () => {
@@ -28,7 +28,7 @@ export default () => {
 
   return (
     <div>
-      <Accounts birders={birders} />
+      <BirdersList birders={birders} />
     </div>
   );
 };
