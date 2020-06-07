@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ApiContext } from 'api/ApiContext';
 import './BirderPage.scss';
 import 'birder/BirderConnectionButton.scss';
+import { PageHeading } from 'generic/PageHeading';
 
 export default ({ birder }) => {
   const { getAccessToken } = useContext(AuthenticationContext);
@@ -30,7 +31,7 @@ export default ({ birder }) => {
 
   return (
     <div className='birder-page'>
-      <h1>{birder.name}</h1>
+      <PageHeading>{birder.name}</PageHeading>
       {account.birder.id !== birder.id && <BirderConnectionButton birder={birder} />}
       <h2>{t('Sightings')}</h2>
       <SightingsSection sightings={sightings} />

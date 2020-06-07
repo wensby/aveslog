@@ -1,6 +1,7 @@
 @import '../layout.scss';
 
 div.birder-page {
+  @extend %common-main-margin-top;
   & h1 {
     @extend %phone-side-margins;
   }
