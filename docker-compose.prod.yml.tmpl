@@ -7,16 +7,16 @@ services:
       context: ./frontend-service
       dockerfile: Dockerfile-prod
       args:
-        apiurl: https://yourrestapidomain.tld
+        appversion: "${FRONTEND_APP_VERSION}"
     expose:
       - 3003
     environment:
-      API_URL: https://yourrestapidomain.tld
       EXTERNAL_HOST: https://yourwebpagedomain.tld
       VIRTUAL_HOST: yourwebpagedomain.tld
       VIRTUAL_PORT: 3003
       LETSENCRYPT_HOST: yourwebpagedomain.tld
       LETSENCRYPT_EMAIL: email@domain.tld
+      NODE_ENV: production
 
   api-service:
     expose:

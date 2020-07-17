@@ -1,16 +1,25 @@
 FROM node:10
+
+# install server and client dependencies
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json /app/package.json
-RUN npm i --package-lock-only
-RUN npm audit fix
+COPY server/package*.json ./
 RUN npm install
-RUN npm install react-scripts@3.0.1 -g
-COPY . /app
-ARG apiurl
-ENV API_URL=${apiurl}
+WORKDIR /client
+COPY client/package*.json ./
+RUN npm install
+
+# copy server and client src
+COPY server /app/
+COPY client /client/
+
+# build client
 ARG appversion
-ENV APP_VERSION=${appversion}
-RUN ./env.sh
+ENV REACT_APP_APP_VERSION=${appversion}
 RUN npm run build
-CMD ["npm", "run", "start"]
+
+# move client build into app
+RUN mv build /app/client/build
+
+WORKDIR /app
+
+CMD ["npm", "run", "server"]

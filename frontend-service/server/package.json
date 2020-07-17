@@ -1,0 +1,24 @@
+{
+  "name": "frontend-server",
+  "version": "1.0.0",
+  "description": "server for frontend of aveslog web app",
+  "main": "server.js",
+  "keywords": [],
+  "author": "Lukas J. Wensby <wensby@gmail.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wensby/aveslog.git"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  },
+  "scripts": {
+    "start": "(npm run dev-server) & npm run dev-client",
+    "server": "node server.js",
+    "dev-server": "nodemon server.js",
+    "dev-client": "cd client && npm run dev"
+  }
+}

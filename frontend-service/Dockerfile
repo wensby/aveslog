@@ -1,6 +1,14 @@
 FROM node:10
+
+# server
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json /app/package.json
+COPY server/package*.json ./
 RUN npm install
-CMD ./env.sh && npm run dev
+
+# client
+WORKDIR /app/client
+COPY client/package*.json ./
+RUN npm install
+
+WORKDIR /app
+CMD npm start

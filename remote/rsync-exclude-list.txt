@@ -13,7 +13,8 @@ api-service/src/htmlcov
 api-service/src/logs
 api-service/src/venv
 api-service/src/static/image
-frontend-service/node_modules
-frontend-service/build
+frontend-service/client/node_modules
+frontend-service/server/node_modules
+frontend-service/client/build
 database/testDockerfile
 .idea/
