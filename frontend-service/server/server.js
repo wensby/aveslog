@@ -230,9 +230,11 @@ app.get('/api/birds/:id/statistics', async (req, res) => {
 });
 
 // Handles any requests that don't match the ones above
-app.get('*', (req, res) => {
-  const hashedFilePathPattern = new RegExp('\\.[0-9a-f]{8}\\.');
-});
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(__dirname + '/client/build/index.html');
+  });
+}
 
 app.listen(port);
 console.log('App is listening on port ' + port);
