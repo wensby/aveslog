@@ -5,7 +5,7 @@ export default class BirdService {
     if (accessToken) {
       headers['accessToken'] = accessToken.jwt;
     }
-    return await fetch(`/api/search/birds?q=${query}&embed=stats`, {
+    return await fetch(`/api/search?q=${query}`, {
       headers: headers
     });
   }

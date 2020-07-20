@@ -33,6 +33,7 @@ app.use('/api/account', require('./account.js'));
 app.use('/api/birds', require('./birds.js'));
 app.use('/api/birders', require('./birders.js'));
 app.use('/api/birder-connections', require('./birderConnections.js'));
+app.use('/api/search', require('./search.js'));
 
 app.post('/api/authentication/refresh-token', async (req, res) => {
   axios.post('/authentication/refresh-token', {}, {
@@ -195,16 +196,6 @@ app.get('/api/account', async (req, res) => {
   const response = await axios.get('/account', {
     headers: {
       accessToken: req.header('accessToken'),
-    }
-  });
-  res.json(response.data);
-});
-
-app.get('/api/search/birds', async (req, res) => {
-  const response = await axios.get('/search/birds', {
-    params: {
-      q: req.query.q,
-      embed: 'stats',
     }
   });
   res.json(response.data);
