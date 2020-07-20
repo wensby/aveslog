@@ -79,7 +79,7 @@ const BirderConnectionButton = ({ birder }) => {
         });
         if (response.status === 201) {
           const location = response.headers.get('Location');
-          const response2 = await authenticatedApiFetch(location, {});
+          const response2 = await authenticatedApiFetch('/api' + location, {});
           if (response2.status === 200) {
             setBirderConnection(await response2.json());
           }

@@ -31,6 +31,8 @@ app.use('/api/authentication', require('./authentication.js'));
 app.use('/api/locales', require('./locales.js'));
 app.use('/api/account', require('./account.js'));
 app.use('/api/birds', require('./birds.js'));
+app.use('/api/birders', require('./birders.js'));
+app.use('/api/birder-connections', require('./birderConnections.js'));
 
 app.post('/api/authentication/refresh-token', async (req, res) => {
   axios.post('/authentication/refresh-token', {}, {
