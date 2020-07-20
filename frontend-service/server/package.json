@@ -18,7 +18,7 @@
   "scripts": {
     "start": "(npm run dev-server) & npm run dev-client",
     "server": "node server.js",
-    "dev-server": "nodemon server.js",
+    "dev-server": "nodemon --delay 2 server.js",
     "dev-client": "cd client && npm run dev"
   }
 }
