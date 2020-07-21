@@ -9,32 +9,16 @@ import './BirderPage.scss';
 import 'birder/BirderConnectionButton.scss';
 import { PageHeading } from 'generic/PageHeading';
 
-export default ({ birder }) => {
-  const { getAccessToken } = useContext(AuthenticationContext);
+export default ({ data }) => {
   const { account } = useContext(UserContext);
-  const [sightings, setSightings] = useState([]);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const fetchSightings = async () => {
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        const response = await new SightingService().fetchBirderSightings(birder.id, accessToken);
-        if (response.status === 200) {
-          const json = await response.json();
-          setSightings(json.items);
-        }
-      }
-    }
-    fetchSightings();
-  }, [birder, getAccessToken]);
 
   return (
     <div className='birder-page'>
-      <PageHeading>{birder.name}</PageHeading>
-      {account.birder.id !== birder.id && <BirderConnectionButton birder={birder} />}
+      <PageHeading>{data.birder.name}</PageHeading>
+      {account.birder.id !== data.birder.id && <BirderConnectionButton birder={data.birder} />}
       <h2>{t('Sightings')}</h2>
-      <SightingsSection sightings={sightings} />
+      <SightingsSection sightings={data.sightings.items} />
     </div>
   );
 };
