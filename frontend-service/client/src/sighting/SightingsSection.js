@@ -4,6 +4,7 @@ import { SightingsList } from './SightingsList.js';
 import { useTranslation } from 'react-i18next';
 import { DisplayMode } from './DisplayMode.js';
 import './SightingsSection.scss';
+import { SightingsWeekGraph } from 'generic/SightingsWeekGraph.js';
 
 export const SightingsSectionContext = React.createContext();
 
@@ -12,8 +13,8 @@ export const SightingsSection = ({ sightings }) => {
   const [unique, setUnique] = useState(false);
 
   const contextValue = {
-    sightings, 
-    year, 
+    sightings,
+    year,
     setYear,
     unique,
     setUnique,
@@ -65,7 +66,12 @@ const SightingsSectionList = () => {
     setDisplayedSightings(result)
   }, [sightings, year, unique]);
 
-  return <SightingsList sightings={displayedSightings} />;
+  return (
+  <>
+  <SightingsWeekGraph sightings={displayedSightings} />
+  <SightingsList sightings={displayedSightings} />
+  </>
+  );
 };
 
 function countUniqueBirds(sightings) {

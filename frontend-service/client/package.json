@@ -5,6 +5,7 @@
   "private": true,
   "proxy": "http://localhost:3003",
   "dependencies": {
+    "d3": "^5.16.0",
     "express": "^4.16.4",
     "i18next": "^17.3.1",
     "i18next-browser-languagedetector": "^3.1.1",

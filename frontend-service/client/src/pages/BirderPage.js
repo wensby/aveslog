@@ -1,7 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import SightingService from '../sighting/SightingService';
 import { SightingsSection } from '../sighting/SightingsSection.js';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
 import { ApiContext } from 'api/ApiContext';
