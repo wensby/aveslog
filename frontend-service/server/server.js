@@ -85,14 +85,20 @@ app.get('/api/registration-requests/:id', async (req, res) => {
   res.json(response.data);
 });
 
-app.get('/api/authentication/access-token', async (req, res) => {
-  const response = await axios.get('/authentication/access-token', {
+app.get('/api/authentication/access-token', (req, res) => {
+  axios.get('/authentication/access-token', {
     headers: {
       refreshToken: req.header('refreshToken'),
     }
-  });
-  res.status(response.status);
-  res.json(response.data);
+  })
+    .then(response => {
+      res.status(response.status);
+      res.json(response.data);
+    })
+    .catch(error => {
+      res.status(error.status);
+    })
+
 });
 
 app.post('/api/accounts', async (req, res) => {
