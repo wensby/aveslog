@@ -91,6 +91,7 @@ app.get('/api/authentication/access-token', async (req, res) => {
       refreshToken: req.header('refreshToken'),
     }
   });
+  res.status(response.status);
   res.json(response.data);
 });
 
