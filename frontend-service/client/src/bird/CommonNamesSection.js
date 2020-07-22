@@ -5,27 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { CommonNameAdder } from './CommonNameAdder.js';
 import { useLocales } from './LocalesHooks.js';
 import { useResourcePermission } from '../account/AccountHooks.js'
-import { useCommonNames } from '../bird/BirdHooks.js';
 
-export function CommonNamesSection({ bird }) {
-  const [forceReloadNames, setForceReloadNames] = useState(false);
+export function CommonNamesSection({ bird, commonNames }) {
+  const [names, setNames] = useState(commonNames);
   const [namesByLanguageCode, setNamesByLanguageCode] = useState({});
   const [vacantLocales, setVacantLocales] = useState([]);
   const [showAdder, setShowAdder] = useState(false);
   const locales = useLocales();
-  const commonNames = useCommonNames(bird, forceReloadNames);
   const permissionToPostCommonNames = useResourcePermission(`/birds/${bird.id}/common-names`, 'POST');
   const { t } = useTranslation();
 
-  const cacheBustAndRefetchCommonNames = () => {
-    setForceReloadNames(true);
-    setInterval(() => { setForceReloadNames(false) }, 0);
-  };
-
   useEffect(() => {
-    if (commonNames.length > 0) {
+    if (names.length > 0) {
       setNamesByLanguageCode(
-        commonNames.reduce((map, obj) => {
+        names.reduce((map, obj) => {
           map[obj.locale] = obj.name;
           return map;
         }, {})
@@ -34,7 +27,7 @@ export function CommonNamesSection({ bird }) {
     else {
       setNamesByLanguageCode({});
     }
-  }, [commonNames]);
+  }, [names]);
 
   useEffect(() => {
     setVacantLocales(locales.filter(x => !(x in namesByLanguageCode)));
@@ -50,7 +43,7 @@ export function CommonNamesSection({ bird }) {
       <div className='names-cluster'>
         {Object.entries(namesByLanguageCode).map(([key, value]) => <CommonNameItem key={key + value} code={key} name={value} />)}
       </div>
-      {showAdder && <CommonNameAdder onNameAdded={cacheBustAndRefetchCommonNames} bird={bird} locales={vacantLocales} />}
+      {showAdder && <CommonNameAdder onNameAdded={(language, name) => { setNames([...names, { locale: language, name: name }]) }} bird={bird} locales={vacantLocales} />}
     </div>
 
   );

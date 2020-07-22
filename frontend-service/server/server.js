@@ -31,6 +31,7 @@ app.use('/api/authentication', require('./authentication.js'));
 app.use('/api/locales', require('./locales.js'));
 app.use('/api/account', require('./account.js'));
 app.use('/api/birds', require('./birds.js'));
+app.use('/api/bird-pages', require('./birdPages.js'));
 app.use('/api/birders', require('./birders.js'));
 app.use('/api/birder-page', require('./birderProfile.js'));
 app.use('/api/birder-connections', require('./birderConnections.js'));

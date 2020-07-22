@@ -22,7 +22,7 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
       if (accessToken) {
         const response = await postCommonName(accessToken, bird, langauge, name);
         if (response.status === 201) {
-          onNameAdded();
+          onNameAdded(langauge, name);
           setName('');
         }
       }

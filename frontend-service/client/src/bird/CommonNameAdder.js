@@ -12,9 +12,9 @@ export function CommonNameAdder({ bird, locales, onNameAdded }) {
     setExpanded(true);
   };
 
-  const handleNamedAdded = () => {
+  const handleNamedAdded = (language, name) => {
     setExpanded(false);
-    onNameAdded();
+    onNameAdded(language, name);
   }
 
   if (expanded) {

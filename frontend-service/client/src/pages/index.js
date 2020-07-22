@@ -1,6 +1,6 @@
 import BirderPage from './BirderPage';
 import BirdersPage from './BirdersPage';
-import BirdPage from './BirdPage';
+import RoutedBirdPage from './RoutedBirdPage.js';
 import BirdSearchResultsPage from './BirdSearchResultsPage';
 import CredentialsRegistrationPage from './CredentialsRegistrationPage';
 import EmailRegistrationPage from './EmailRegistrationPage';
@@ -12,7 +12,7 @@ import SightingsPage from './SightingsPage';
 export {
   BirderPage,
   BirdersPage,
-  BirdPage,
+  RoutedBirdPage,
   BirdSearchResultsPage,
   CredentialsRegistrationPage,
   EmailRegistrationPage,
