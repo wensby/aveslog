@@ -96,7 +96,9 @@ app.get('/api/authentication/access-token', (req, res) => {
       res.json(response.data);
     })
     .catch(error => {
-      res.status(error.status);
+      if (error.response) {
+        res.status(error.response.status).end();
+      }
     })
 
 });
