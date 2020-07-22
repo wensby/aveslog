@@ -1,5 +1,6 @@
 import os
 from http import HTTPStatus
+from operator import attrgetter
 
 from flask import Response, request, current_app, make_response, jsonify, g
 
@@ -46,17 +47,19 @@ def _result_item(match: BirdSearchMatch, embed: list) -> dict:
 @optional_authentication
 def search_birds() -> Response:
   query = request.args.get('q')
-  page_size = request.args.get('page_size', type=int)
+  page_size = parse_page_size(request.args)
   embed = parse_embed_list(request.args)
-  page_size = page_size if page_size else 30
   bird_searcher = BirdSearcher(g.database_session)
-  search_matches = bird_searcher.search(query)
-  search_matches.sort(key=lambda m: m.score, reverse=True)
-  bird_matches = list(
-    map(lambda x: _result_item(x, embed), search_matches[:page_size]))
+  matches = bird_searcher.search(query)
+  matches = sorted(matches, key=attrgetter('score'), reverse=True)[:page_size]
   return make_response(jsonify({
-    'items': bird_matches,
+    'items': [_result_item(m, embed) for m in matches],
   }), HTTPStatus.OK)
+
+
+def parse_page_size(args):
+  request_page_size = args.get('page_size', type=int)
+  return request_page_size if request_page_size else 30
 
 
 def parse_embed_list(args):
