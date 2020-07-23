@@ -3,35 +3,31 @@ const express = require('express');
 const app = express();
 app.use(express.json())
 
-const port = process.env.PORT || 3003;
-app.set("port", port);
+app.set("port", process.env.PORT || 3003);
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-  const hashedFilePathPattern = new RegExp('\\.[0-9a-f]{8}\\.');
 
   app.use(express.static('client/build', {
     etag: true,
     lastModified: true,
-    setHeaders: function (res, path) {
-      if (hashedFilePathPattern.test(path)) {
-        res.setHeader('Cache-Control', 'max-age=31536000');
-      }
-      else {
-        res.setHeader('Cache-Control', 'no-cache');
-      }
+    setHeaders: (res, path) => {
+      res.setHeader(
+        'Cache-Control',
+        /\\.[0-9a-f]{8}\\./.test(path) ? 'max-age=31536000' : 'no-cache'
+      );
     },
   }));
 }
 
 app.use('/api', require('./api.js'));
 
-// Handles any requests that don't match the ones above
+// Fallback to index.html in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(__dirname + '/client/build/index.html');
   });
 }
 
-app.listen(port);
-console.log('App is listening on port ' + port);
+app.listen(app.get('port'));
+console.log('App is listening on port ' + app.get('port'));
