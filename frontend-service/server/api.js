@@ -1,12 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const axios = require('axios');
 const { setupAxios } = require('./middleware.js');
 
-axios.defaults.baseURL = 'http://api-service:3002';
-
 router.use('/', setupAxios);
-
 router.use('/authentication', require('./authentication.js'));
 router.use('/locales', require('./locales.js'));
 router.use('/account', require('./account.js'));
@@ -16,38 +12,6 @@ router.use('/birders', require('./birders.js'));
 router.use('/birder-page', require('./birderProfile.js'));
 router.use('/birder-connections', require('./birderConnections.js'));
 router.use('/search', require('./search.js'));
-
-router.post('/authentication/refresh-token', async (req, res) => {
-  req.axios.post('/authentication/refresh-token', {}, {
-    params: {
-      username: req.query.username,
-      password: req.query.password,
-    }
-  }).then(response => {
-    res.status(response.status);
-    res.json(response.data);
-  }).catch(error => {
-    if (error.response) {
-      console.log(error.response.status);
-      res.status(error.response.status);
-      res.json({});
-    }
-  });
-});
-
-router.delete('/authentication/refresh-token/:id', (req, res) => {
-  req.axios.delete(`authentication/refresh-token/${req.params.id}`)
-  .then(response => {
-    res.status(response.status);
-    res.json(response.data);
-  }).catch(error => {
-    if (error.response) {
-      console.log(error.response.status);
-      res.status(error.response.status);
-      res.json({});
-    }
-  })
-});
 
 router.post('/registration-requests', async (req, res) => {
   const response = await req.axios.post('/registration-requests', {
@@ -61,24 +25,6 @@ router.post('/registration-requests', async (req, res) => {
 router.get('/registration-requests/:id', async (req, res) => {
   const response = await req.axios.get(`/registration-requests/${req.params.id}`);
   res.json(response.data);
-});
-
-router.get('/authentication/access-token', (req, res) => {
-  req.axios.get('/authentication/access-token', {
-    headers: {
-      refreshToken: req.header('refreshToken'),
-    }
-  })
-    .then(response => {
-      res.status(response.status);
-      res.json(response.data);
-    })
-    .catch(error => {
-      if (error.response) {
-        res.status(error.response.status).end();
-      }
-    })
-
 });
 
 router.post('/accounts', async (req, res) => {

@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+axios.defaults.baseURL = 'http://api-service:3002';
+
 const setupAxios = (req, res, next) => {
   if (req.headers['accesstoken']) {
     req.axios = axios.create({
