@@ -125,13 +125,4 @@ const createFutureDate = seconds => {
   return date;
 };
 
-const status = response => {
-  if (response.status === 200) {
-    return Promise.resolve(response);
-  }
-  else if (response.status === 401) {
-    return Promise.reject(new Error(response.status));
-  }
-};
-
 export { AuthenticationContext, AuthenticationProvider }
