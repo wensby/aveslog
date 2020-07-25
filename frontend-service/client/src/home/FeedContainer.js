@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Feed } from './Feed';
-import SightingService from '../sighting/SightingService';
 import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { HomeContext } from 'specific/HomeContext';
 
