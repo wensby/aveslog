@@ -1,6 +1,6 @@
 import React from 'react';
-import { SightingFeedItemContainer } from './SightingFeedItemContainer';
 import { DateDelimiter } from './DateDelimiter';
+import { SightingFeedItem } from './SightingFeedItem';
 
 export const Feed = ({ sightings }) => {
   let date = null;
@@ -12,7 +12,13 @@ export const Feed = ({ sightings }) => {
       elements.push(<DateDelimiter date={sighting.date} key={index + 'date'} />);
       date = sightingDate;
     }
-    elements.push(<SightingFeedItemContainer sighting={sighting} key={index} />);
+    elements.push(
+      <SightingFeedItem
+        sighting={sighting}
+        bird={sighting.bird}
+        birder={sighting.birder}
+      />
+    );
   });
 
   return <div className='feed'>{elements}</div>;
