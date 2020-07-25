@@ -9,10 +9,10 @@ const FeedContext = React.createContext();
 export const FeedContainer = () => {
   const { getAccessToken, authenticated } = useContext(AuthenticationContext);
   const { homeTrigger } = useContext(HomeContext);
-  const [sightings, setSightings] = useState([]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const fetchSightings = async () => {
+    const fetchItems = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
         const response = await fetch('/api/home-feed', {
@@ -22,18 +22,18 @@ export const FeedContainer = () => {
         });
         if (response.status === 200) {
           const json = await response.json();
-          setSightings(json.items);
+          setItems(json.items);
         }
       }
     }
     if (authenticated) {
-      fetchSightings();
+      fetchItems();
     }
   }, [authenticated, getAccessToken, homeTrigger]);
 
   return (
-    <FeedContext.Provider value={{ sightings }}>
-      <Feed sightings={sightings} />
+    <FeedContext.Provider value={{ items }}>
+      <Feed items={items} />
     </FeedContext.Provider>
   );
 }

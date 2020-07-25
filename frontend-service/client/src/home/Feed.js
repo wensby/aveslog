@@ -2,21 +2,21 @@ import React from 'react';
 import { DateDelimiter } from './DateDelimiter';
 import { SightingFeedItem } from './SightingFeedItem';
 
-export const Feed = ({ sightings }) => {
+export const Feed = ({ items }) => {
   let date = null;
   const elements = [];
 
-  sightings.forEach((sighting, index) => {
-    const sightingDate = new Date(sighting.date);
+  items.forEach((item, index) => {
+    const sightingDate = new Date(item.date);
     if (date === null || sightingDate < date) {
-      elements.push(<DateDelimiter date={sighting.date} key={index + 'date'} />);
+      elements.push(<DateDelimiter date={item.date} key={index + 'date'} />);
       date = sightingDate;
     }
     elements.push(
       <SightingFeedItem
-        sighting={sighting}
-        bird={sighting.bird}
-        birder={sighting.birder}
+        sighting={item}
+        bird={item.bird}
+        birder={item.birder}
       />
     );
   });
