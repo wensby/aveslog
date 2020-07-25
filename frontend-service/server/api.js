@@ -12,6 +12,7 @@ router.use('/birders', require('./birders.js'));
 router.use('/birder-page', require('./birderProfile.js'));
 router.use('/birder-connections', require('./birderConnections.js'));
 router.use('/search', require('./search.js'));
+router.use('/home-feed', require('./homeFeed.js'));
 
 router.post('/registration-requests', async (req, res) => {
   const response = await req.axios.post('/registration-requests', {

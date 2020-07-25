@@ -15,7 +15,11 @@ export const FeedContainer = () => {
     const fetchSightings = async () => {
       const accessToken = await getAccessToken();
       if (accessToken) {
-        const response = await new SightingService().getSightingFeedSightings(accessToken);
+        const response = await fetch('/api/home-feed', {
+          headers: {
+            'accessToken': accessToken.jwt,
+          },
+        });
         if (response.status === 200) {
           const json = await response.json();
           setSightings(json.items);
