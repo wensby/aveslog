@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export default class SightingService {
 
   async getSightingFeedSightings(accessToken) {
@@ -8,12 +10,8 @@ export default class SightingService {
     });
   }
 
-  async fetchBirderSightings(birderId, accessToken) {
-    return await fetch(`/api/birders/${birderId}/sightings`, {
-      'headers': {
-        'accessToken': accessToken.jwt,
-      },
-    });
+  async fetchBirderSightings(birderId) {
+    return await axios.get(`/api/birders/${birderId}/sightings`);
   }
 
   async fetchSightingByLocation(accessToken, location) {

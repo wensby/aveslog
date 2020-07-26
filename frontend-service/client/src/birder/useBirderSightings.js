@@ -1,9 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SightingService from '../sighting/SightingService';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const useBirderSightings = birder => {
-  const { getAccessToken } = useContext(AuthenticationContext);
   const [sightingsBirder, setSightingsBirder] = useState();
   const [sightings, setSightings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,14 +10,11 @@ export const useBirderSightings = birder => {
   useEffect(() => {
     const fetchSightings = async () => {
       setLoading(true);
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        const response = await new SightingService().fetchBirderSightings(birder.id, accessToken);
-        if (response.status === 200) {
-          const json = await response.json();
-          setSightings(json.items);
-          setSightingsBirder(birder);
-        }
+      const response = await new SightingService().fetchBirderSightings(birder.id);
+      if (response.status === 200) {
+        const json = response.data;
+        setSightings(json.items);
+        setSightingsBirder(birder);
       }
       setLoading(false);
     }
@@ -32,7 +27,7 @@ export const useBirderSightings = birder => {
     else {
       setSightings([]);
     }
-  }, [birder, sightingsBirder, getAccessToken]);
+  }, [birder, sightingsBirder]);
 
   return { sightings, loading, error };
 };
