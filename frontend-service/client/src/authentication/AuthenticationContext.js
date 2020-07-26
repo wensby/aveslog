@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import AuthenticationService from './AuthenticationService.js';
+import axios from 'axios';
 
 const AuthenticationContext = React.createContext();
 const refreshTokenKey = 'refreshToken';
@@ -95,6 +96,15 @@ const AuthenticationProvider = ({ children }) => {
       setAccessTokenPromise(promise);
     }
   }, [refreshToken, fetchAccessToken]);
+
+  useEffect(() => {
+    if (accessToken) {
+      axios.defaults.headers.common['accessToken'] = accessToken.jwt;
+    }
+    else {
+      delete axios.defaults.headers.common['accessToken'];
+    }
+  }, [accessToken]);
 
   const contextValues = {
     authenticated: refreshToken !== null,
