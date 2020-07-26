@@ -1,13 +1,9 @@
+import axios from 'axios';
+
 export default class BirdService {
 
-  async searchBirds(query, accessToken) {
-    const headers = {};
-    if (accessToken) {
-      headers['accessToken'] = accessToken.jwt;
-    }
-    return await fetch(`/api/search?q=${query}`, {
-      headers: headers
-    });
+  async searchBirds(query) {
+    return await axios.get(`/api/search?q=${query}`);
   }
 
   async getBirdStatistics(id) {

@@ -18,7 +18,7 @@ export const BirdSearchResultsContainer = ({ query }) => {
         const accessToken = await getAccessToken();
         const response = await service.searchBirds(query, accessToken);
         if (response.status === 200) {
-          setResultItems((await response.json()).items);
+          setResultItems(response.data.items);
         }
         setDisplayedQuery(query);
         setLoading(false);
