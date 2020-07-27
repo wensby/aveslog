@@ -4,8 +4,10 @@ import './BirderLink.scss';
 
 export const BirderLink = ({ birder }) => {
   return (
-    <div className='birder-link'>
-      <Link to={`/birders/${birder.id}`}>{birder.name}</Link>
-    </div>
+    <Link to={`/birders/${birder.id}`}>
+      <div className='birder-link'>
+        {birder.name}
+      </div>
+    </Link>
   );
 }

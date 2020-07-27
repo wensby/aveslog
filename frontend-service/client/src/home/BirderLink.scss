@@ -1,6 +1,11 @@
 @import 'layout.scss';
+@import 'colors.scss';
 
 div.birder-link {
+  border: 1px solid $primary;
+  border-radius: .25rem;
+  margin: 10px;
+  padding: 10px;
   font-size: 1rem;
   margin-top: .25rem;
   @extend %phone-side-margins;
