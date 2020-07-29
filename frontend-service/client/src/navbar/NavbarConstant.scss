@@ -5,7 +5,7 @@
   width: 100%;
   display: grid;
   background-color: $white;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 75px;
   grid-template-rows: 64px auto;
   grid-template-areas:
     "main button"
