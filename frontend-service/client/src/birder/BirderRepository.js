@@ -7,10 +7,10 @@ class BirderRepository {
     this.birderById = {};
   }
 
-  async getBirder(birderId, token) {
-    const response = await birderService.fetchBirder(birderId, token);
+  async getBirder(birderId) {
+    const response = await birderService.fetchBirder(birderId);
     if (response.status === 200) {
-      return await response.json();
+      return response.data;
     }
     return null;
   }

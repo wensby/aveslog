@@ -1,11 +1,9 @@
+import axios from 'axios';
+
 class BirderService {
 
-  fetchBirder(birderId, accessToken) {
-    return fetch(`/api/birders/${birderId}`, {
-      headers: {
-        'accessToken': accessToken.jwt,
-      },
-    })
+  fetchBirder(birderId) {
+    return axios.get(`/api/birders/${birderId}`)
   }
 }
 const birderService = new BirderService();

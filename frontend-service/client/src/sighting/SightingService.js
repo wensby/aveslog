@@ -2,38 +2,24 @@ import axios from 'axios';
 
 export default class SightingService {
 
-  async getSightingFeedSightings(accessToken) {
-    return await fetch('/api/sightings?limit=10', {
-      'headers': {
-        'accessToken': accessToken.jwt,
-      },
-    });
+  async getSightingFeedSightings() {
+    return await axios.get('/api/sightings?limit=10');
   }
 
   async fetchBirderSightings(birderId) {
     return await axios.get(`/api/birders/${birderId}/sightings`);
   }
 
-  async fetchSightingByLocation(accessToken, location) {
-    const url = `/api${location}`;
-    const response = await fetch(url, {
-      'headers': {
-        'accessToken': accessToken.jwt,
-      },
-    });
-    return await response.json();
+  async fetchSightingByLocation(location) {
+    const response = await axios.get(`/api${location}`);
+    return response.data;
   }
 
-  async fetchSighting(accessToken, sightingId) {
-    const url = `/api/sightings/${sightingId}`;
-    return await fetch(url, {
-      'headers': {
-        'accessToken': accessToken.jwt,
-      },
-    });
+  async fetchSighting(sightingId) {
+    return await axios.get(`/api/sightings/${sightingId}`);
   }
 
-  async postSighting(accessToken, birderId, binomialName, date, time, location) {
+  async postSighting(birderId, binomialName, date, time, location) {
     const body = {
       'birder': { 'id': birderId },
       'bird': { 'binomialName': binomialName },
@@ -48,24 +34,12 @@ export default class SightingService {
         'lon': location[1]
       }
     }
-    const response = await fetch('/api/sightings', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'accessToken': accessToken.jwt,
-      },
-      body: JSON.stringify(body),
-    });
+    const response = await axios.post('/api/sightings', body);
     return response;
   }
 
-  async deleteSighting(accessToken, sightingId) {
-    const response = await fetch(`/api/sightings/${sightingId}`, {
-      method: 'DELETE',
-      headers: {
-        'accessToken': accessToken.jwt,
-      },
-    });
+  async deleteSighting(sightingId) {
+    const response = await axios.delete(`/api/sightings/${sightingId}`);
     return response.status === 204;
   }
 }

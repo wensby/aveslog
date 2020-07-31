@@ -1,22 +1,16 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthentication } from '../authentication/AuthenticationHooks.js';
-import { AuthenticationContext } from '../authentication/AuthenticationContext.js';
+import axios from 'axios';
 
 export const FollowedBirdersContainer = () => {
-  const { getAccessToken } = useContext(AuthenticationContext);
   const [followedBirders, setFollowedBirders] = useState([]);
   const { account } = useAuthentication();
 
   useEffect(() => {
     const resolveBirderConnections = async () => {
-      const accessToken = await getAccessToken();
-      const response = await fetch(`/api/birders/${account.birder.id}/birder-connections`, {
-        headers: {
-          'accessToken': accessToken.jwt,
-        }
-      });
+      const response = await axios.get(`/api/birders/${account.birder.id}/birder-connections`);
       if (response.status === 200) {
-        const json = await response.json();
+        const json = response.data;
         setFollowedBirders(json.items);
       }
     };

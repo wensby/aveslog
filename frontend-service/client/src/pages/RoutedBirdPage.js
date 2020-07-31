@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BirdPage } from 'bird/BirdPage.js';
 import { Redirect } from 'react-router';
 import { useTitle } from 'specific/TitleContext';
+import axios from 'axios';
 
 export default ({ match }) => {
   const [data, setData] = useState(null);
@@ -10,8 +11,8 @@ export default ({ match }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/bird-pages/${match.params.birdId}`)
-      .then(response => response.json())
+    axios.get(`/api/bird-pages/${match.params.birdId}`)
+      .then(response => response.data)
       .then(json => {
         setLoading(false);
         setData(json);

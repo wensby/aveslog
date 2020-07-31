@@ -1,36 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthenticationContext } from './AuthenticationContext.js';
+import axios from 'axios';
 
 const UserContext = React.createContext();
 
 const UserProvider = ({ children }) => {
-  const { authenticated, getAccessToken } = useContext(AuthenticationContext);
+  const { authenticated } = useContext(AuthenticationContext);
   const [account, setAccount] = useState(null);
-  
+
   useEffect(() => {
-    const resolveAccount = async () => {
-      const fetchAuthenticatedAccount = async accessToken => {
-        const url = '/api/account';
-        return await fetch(url, {
-          'headers': {
-            'accessToken': accessToken.jwt
-          }
-        });
-      };
-      const accessToken = await getAccessToken();
-      const response = await fetchAuthenticatedAccount(accessToken);
-      if (response.status === 200) {
-        const json = await response.json();
-        setAccount(json);
-      }
-    };
     if (authenticated) {
-      resolveAccount();
+      console.log('fetching account');
+      axios.get('/api/account')
+        .then(response => setAccount(response.data));
     }
     else {
       setAccount(null);
     }
-  }, [authenticated, getAccessToken]);
+  }, [authenticated]);
 
   if (authenticated && !account) {
     return null;

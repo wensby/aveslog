@@ -25,7 +25,7 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
     if (response.status === 201) {
       const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
       if (response.status === 201) {
-        const refreshResponseJson = await response.json();
+        const refreshResponseJson = response.data;
         setRefreshToken({
           id: refreshResponseJson.id,
           jwt: refreshResponseJson.refreshToken,
@@ -35,7 +35,7 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
       }
     }
     else if (response.status === 409) {
-      const json = await response.json();
+      const json = response.data;
       if (json['code'] === 3) {
         setTakenUsernames(takenUsernames.concat([credentials[0]]))
         setAlert({

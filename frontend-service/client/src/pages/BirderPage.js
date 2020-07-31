@@ -2,10 +2,10 @@ import React, { useContext, useState, useEffect } from 'react';
 import { SightingsSection } from '../sighting/SightingsSection.js';
 import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
-import { ApiContext } from 'api/ApiContext';
 import './BirderPage.scss';
 import 'birder/BirderConnectionButton.scss';
 import { PageHeading } from 'generic/PageHeading';
+import axios from 'axios';
 
 export default ({ data }) => {
   const { account } = useContext(UserContext);
@@ -22,7 +22,6 @@ export default ({ data }) => {
 };
 
 const BirderConnectionButton = ({ birder }) => {
-  const { authenticatedApiFetch } = useContext(ApiContext);
   const { account } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
   const [birderConnection, setBirderConnection] = useState(null);
@@ -32,9 +31,9 @@ const BirderConnectionButton = ({ birder }) => {
   useEffect(() => {
     const resolveFollows = async () => {
       setLoading(true);
-      const response = await authenticatedApiFetch(`/api/birders/${account.birder.id}/birder-connections`, {});
+      const response = await axios.get(`/api/birders/${account.birder.id}/birder-connections`);
       if (response.status === 200) {
-        const json = await response.json();
+        const json = response.data;
         const connection = json.items.find(bc => bc.secondaryBirderId === birder.id);
         if (connection) {
           setBirderConnection(connection);
@@ -52,18 +51,14 @@ const BirderConnectionButton = ({ birder }) => {
     const updateBirderConnection = async () => {
       setLoading(true);
       if (birderConnection === null) {
-        const response = await authenticatedApiFetch(`/api/birders/${account.birder.id}/birder-connections`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 'secondaryBirderId': birder.id })
+        const response = await axios.post(`/api/birders/${account.birder.id}/birder-connections`, {
+          'secondaryBirderId': birder.id
         });
         if (response.status === 201) {
           const location = response.headers.get('Location');
-          const response2 = await authenticatedApiFetch('/api' + location, {});
+          const response2 = await axios.get('/api' + location);
           if (response2.status === 200) {
-            setBirderConnection(await response2.json());
+            setBirderConnection(response2.data);
           }
           else {
             setBirderConnection(null);
@@ -71,9 +66,7 @@ const BirderConnectionButton = ({ birder }) => {
         }
       }
       else {
-        const response = await authenticatedApiFetch(`/api/birder-connections/${birderConnection.id}`, {
-          method: 'DELETE',
-        });
+        const response = await axios.delete(`/api/birder-connections/${birderConnection.id}`);
         if (response.status === 204) {
           setBirderConnection(null);
         }

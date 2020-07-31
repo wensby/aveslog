@@ -20,7 +20,7 @@ export const useRegistrationRequest = token => {
     const resolveRegistrationRequest = async () => {
       const response = await new AuthenticationService().fetchRegistration(token);
       if (response.status === 200) {
-        setRegistrationRequest(await response.json());
+        setRegistrationRequest(response.data);
       }
       else {
         setError(response.status);

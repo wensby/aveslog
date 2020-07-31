@@ -1,11 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import BirdService from './BirdService.js';
 import { LoadingOverlay } from '../loading/LoadingOverlay';
 import { BirdSearchResults } from './BirdSearchResults.js';
-import { AuthenticationContext } from 'authentication/AuthenticationContext';
 
 export const BirdSearchResultsContainer = ({ query }) => {
-  const { getAccessToken } = useContext(AuthenticationContext);
   const [resultItems, setResultItems] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,8 +13,7 @@ export const BirdSearchResultsContainer = ({ query }) => {
       if (query !== displayedQuery) {
         setLoading(true);
         const service = new BirdService();
-        const accessToken = await getAccessToken();
-        const response = await service.searchBirds(query, accessToken);
+        const response = await service.searchBirds(query);
         if (response.status === 200) {
           setResultItems(response.data.items);
         }
@@ -25,7 +22,7 @@ export const BirdSearchResultsContainer = ({ query }) => {
       }
     }
     fetchResult();
-  }, [query, displayedQuery, getAccessToken]);
+  }, [query, displayedQuery]);
 
   if (loading) {
     return <LoadingOverlay />;

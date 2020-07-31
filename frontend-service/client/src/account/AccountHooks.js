@@ -1,17 +1,16 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthenticationContext } from "../authentication/AuthenticationContext";
-import { ApiContext } from "api/ApiContext";
+import axios from 'axios';
 
 export function usePermissions() {
   const [permissions, setPermissions] = useState([]);
-  const { authenticatedApiFetch } = useContext(ApiContext);
   const { authenticated } = useContext(AuthenticationContext);
 
   useEffect(() => {
     const resolvePermissions = async () => {
-      const response = await authenticatedApiFetch('/api/account/roles', {});
+      const response = await axios.get('/api/account/roles');
       if (response.status === 200) {
-        const json = await response.json();
+        const json = response.data;
         setPermissions(json.items.reduce((list, obj) => {
           const permissions = obj.permissions;
           list.push(...permissions);
@@ -23,7 +22,7 @@ export function usePermissions() {
     if (authenticated) {
       resolvePermissions();
     }
-  }, [authenticated, authenticatedApiFetch]);
+  }, [authenticated]);
 
   return { permissions };
 }

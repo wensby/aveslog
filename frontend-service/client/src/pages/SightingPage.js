@@ -6,34 +6,27 @@ import { useTranslation } from 'react-i18next';
 import Icon from '../Icon';
 import { useHistory } from "react-router-dom";
 import './SightingPage.scss';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export default ({match}) => {
   const sightingId = match.params.sightingId;
   const [sighting, setSighting] = useState(null);
   const { account } = useContext(UserContext);
-  const { getAccessToken } = useContext(AuthenticationContext);
   const history = useHistory();
 
   useEffect(() => {
     const resolveSighting = async () => {
-      const accessToken = await getAccessToken();
-      const response = await (new SightingService()).fetchSighting(accessToken, sightingId);
+      const response = await (new SightingService()).fetchSighting(sightingId);
       if (response.status === 200) {
-        const sighting = await response.json();
-        setSighting(sighting);
+        setSighting(response.data);
       }
     }
     resolveSighting();
-  }, [sightingId, getAccessToken]);
+  }, [sightingId]);
 
   const handleDelete = async () => {
-    const accessToken = await getAccessToken();
-    if (accessToken) {
-      const deleted = await new SightingService().deleteSighting(accessToken, sighting.id);
-      if (deleted) {
-        history.push('/sighting');
-      }
+    const deleted = await new SightingService().deleteSighting(sighting.id);
+    if (deleted) {
+      history.push('/sighting');
     }
   };
 

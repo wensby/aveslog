@@ -3,31 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { FormGroup } from 'generic/FormGroup';
 import { UserContext } from 'authentication/UserContext';
 import { SubmitButton } from 'generic/form/SubmitButton';
-import { ApiContext } from 'api/ApiContext';
+import axios from 'axios';
 
 export const BirderSettings = () => {
-  const { authenticatedApiFetch } = useContext(ApiContext);
   const { account, patchBirder } = useContext(UserContext);
   const [name, setName] = useState(account.birder.name);
   const nameValid = /^[^\s]+(\s?[^\s]+)*$/.test(name);
   const { t } = useTranslation();
 
-  const submit = async e => {
+  const submit = e => {
     e.preventDefault();
     if (nameValid) {
-      const response = await authenticatedApiFetch(`/api/birders/${account.birder.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: name,
-        }),
+      axios.patch(`/api/birders/${account.birder.id}`, {
+        name: name,
       })
-      if (response.status === 200) {
-        const json = await response.json();
-        patchBirder(json);
-      }
+        .then(response => patchBirder(response.data));
     }
   }
 

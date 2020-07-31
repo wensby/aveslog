@@ -11,7 +11,6 @@ import { ScrollToTop } from 'sighting/ScrollToTop.js';
 import { SearchProvider } from 'search/SearchContext.js';
 import { TitleProvider } from 'specific/TitleContext.js';
 import { HomeProvider } from 'specific/HomeContext.js';
-import { ApiProvider } from 'api/ApiContext.js';
 
 export const App = ({ version }) => {
   prepareLocalStorage(version);
@@ -23,19 +22,17 @@ export const App = ({ version }) => {
           <ScrollToTop />
           <WindowScrollProvider>
             <AuthenticationProvider>
-              <ApiProvider>
-                <UserProvider>
-                  <BirdsProvider>
-                    <SightingProvider>
-                      <SearchProvider>
-                        <Suspense fallback={<SuspenseLoader />}>
-                          <Page />
-                        </Suspense>
-                      </SearchProvider>
-                    </SightingProvider>
-                  </BirdsProvider>
-                </UserProvider>
-              </ApiProvider>
+              <UserProvider>
+                <BirdsProvider>
+                  <SightingProvider>
+                    <SearchProvider>
+                      <Suspense fallback={<SuspenseLoader />}>
+                        <Page />
+                      </Suspense>
+                    </SearchProvider>
+                  </SightingProvider>
+                </BirdsProvider>
+              </UserProvider>
             </AuthenticationProvider>
           </WindowScrollProvider>
         </BrowserRouter>

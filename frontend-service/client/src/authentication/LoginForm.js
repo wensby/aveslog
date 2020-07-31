@@ -26,7 +26,7 @@ export function LoginForm({ onError }) {
       const response = await postRefreshToken();
       setLoading(false);
       if (response.status === 201) {
-        const refreshResponseJson = await response.json();
+        const refreshResponseJson = response.data;
         setRefreshToken({
           id: refreshResponseJson.id,
           jwt: refreshResponseJson.refreshToken,

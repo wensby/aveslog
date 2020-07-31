@@ -6,7 +6,6 @@ import { UserContext } from '../authentication/UserContext';
 import { BirdSection } from "./BirdSection";
 import { Label } from "./Label";
 import { LocationSection } from "./LocationSection";
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { PageHeading } from 'generic/PageHeading';
 import { Spinner } from 'generic/Spinner';
 import './LogBirdSection.scss';
@@ -15,7 +14,6 @@ import { CircledBirdPicture } from 'bird/CircledBirdPicture';
 export const LogBirdSection = ({ bird, onSuccess }) => {
   const { t } = useTranslation();
   const { account } = useContext(UserContext);
-  const { getAccessToken } = useContext(AuthenticationContext);
   const [blockedByLocation, setBlockedByLocation] = useState(false);
   const sightingService = new SightingService();
   const [date, setDate] = useState('');
@@ -55,16 +53,13 @@ export const LogBirdSection = ({ bird, onSuccess }) => {
     event.preventDefault();
     if (!blockedByLocation) {
       setLoading(true);
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        const response = await sightingService.postSighting(accessToken, account.birder.id, bird.binomialName, date, time, location);
-        if (response.status === 201) {
-          const sightingLocation = response.headers.get('Location');
-          const sighting = await sightingService.fetchSightingByLocation(accessToken, sightingLocation);
-          onSuccess(sighting);
-        }
-        setLoading(false);
+      const response = await sightingService.postSighting(account.birder.id, bird.binomialName, date, time, location);
+      if (response.status === 201) {
+        const sightingLocation = response.headers['location'];
+        const sighting = await sightingService.fetchSightingByLocation(sightingLocation);
+        onSuccess(sighting);
       }
+      setLoading(false);
     }
   };
 

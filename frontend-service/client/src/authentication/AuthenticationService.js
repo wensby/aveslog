@@ -1,84 +1,48 @@
+import axios from 'axios';
+
 export default class AuthenticationService {
 
   async postRefreshToken(username, password) {
     const url = '/api/authentication/refresh-token';
     const parameters = `?username=${username.toLowerCase()}&password=${password}`;
-    return await fetch(url + parameters, {
-      method: 'POST',
-    });
+    return await axios.post(url + parameters);
   }
 
-  async deleteRefreshToken(refreshToken, accessToken) {
-    const url = `/api/authentication/refresh-token/${refreshToken.id}`
-    return await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'accessToken': accessToken.jwt,
-      },
-    });
+  async deleteRefreshToken(refreshToken) {
+    return await axios.delete(`/api/authentication/refresh-token/${refreshToken.id}`);
   }
 
   async postPasswordResetEmail(email) {
-    return await fetch(`/api/authentication/password-reset`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          'email': email,
-        }),
-      }
-    );
+    return await axios.post(`/api/authentication/password-reset`, {
+      'email': email,
+    });
   }
 
   async postPasswordResetPassword(token, password) {
-    return await fetch(
-      `/api/authentication/password-reset/${token}`,
+    return await axios.post(`/api/authentication/password-reset/${token}`,
       {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          'password': password
-        })
-      }
-    );
+        'password': password
+      });
   }
 
-  async postPasswordUpdate(accessToken, oldPassword, newPassword) {
-    return await fetch('/api/account/password', {
-      method: 'POST',
-      headers: {
-        'accessToken': accessToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        'oldPassword': oldPassword,
-        'newPassword': newPassword,
-      }),
+  async postPasswordUpdate(oldPassword, newPassword) {
+    return await axios.post('/api/account/password', {
+      'oldPassword': oldPassword,
+      'newPassword': newPassword,
     });
   }
 
   async postRegistrationEmail(email, locale) {
-    const url = '/api/registration-requests';
-    return await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    return await axios.post('/api/registration-requests',
+      {
         'email': email,
         'locale': locale
-      })
-    });
+      });
   }
 
   async fetchRegistration(token) {
     try {
-      const url = `/api/registration-requests/${token}`;
-      return await fetch(url);
+      return await axios.get(`/api/registration-requests/${token}`);
     }
     catch (err) {
       return undefined;
@@ -87,17 +51,12 @@ export default class AuthenticationService {
 
   async postRegistration(token, [username, password]) {
     try {
-      return await fetch('/api/accounts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      return await axios.post('/api/accounts',
+        {
           'token': token,
           'username': username,
           'password': password,
-        })
-      });
+        });
     }
     catch (err) {
       return undefined;

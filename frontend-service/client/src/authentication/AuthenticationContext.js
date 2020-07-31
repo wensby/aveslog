@@ -9,8 +9,8 @@ const AuthenticationProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
   const latestRefreshToken = useRef(refreshToken);
-  const [accessTokenPromise, setAccessTokenPromise] = useState(null);
   latestRefreshToken.current = refreshToken;
 
   useEffect(() => {
@@ -24,15 +24,70 @@ const AuthenticationProvider = ({ children }) => {
 
   useEffect(() => {
     if (refreshToken) {
+      // retrieve accessToken upon new refreshToken
+      axios.get('/api/authentication/access-token', {
+        headers: {
+          'refreshToken': refreshToken.jwt,
+        }
+      })
+        .then(response => createAccessToken(response.data))
+        .then(freshAccessToken => {
+          console.log('Received fresh access token');
+          setAccessToken(freshAccessToken);
+        });
+      const expiredAccessTokenRefresherInterceptor = axios.interceptors.response.use(
+        response => response,
+        error => {
+          console.log('intercepting axios error response');
+          if (error.response && error.response.status === 401
+            && error.config.url === axios.defaults.baseURL + '/api/authentication/access-token') {
+            setRefreshToken(null);
+            return Promise.reject(error);
+          }
+          if (error.response && error.response.status === 401
+            && !error.config._retry) {
+            error.config._retry = true;
+            return axios.get('/api/authentication/access-token', {
+              headers: {
+                'refreshToken': refreshToken.jwt,
+              }
+            })
+              .then(response => createAccessToken(response.data))
+              .then(freshAccessToken => {
+                console.log('Received fresh access token');
+                setAccessToken(freshAccessToken);
+                axios.defaults.headers.common['accessToken'] = freshAccessToken.jwt;
+                return axios(error.config);
+              })
+          }
+          return Promise.reject(error);
+        }
+      );
       console.log('Storing refresh token in local storage');
       localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
       return () => {
         console.log('Clearing refresh token from local storage');
         localStorage.removeItem(refreshTokenKey);
         setAccessToken(null);
+        setAuthenticated(false);
+        axios.interceptors.response.eject(expiredAccessTokenRefresherInterceptor);
       }
     }
+    else {
+      setAccessToken(null);
+    }
   }, [refreshToken]);
+
+  useEffect(() => {
+    if (accessToken) {
+      setAuthenticated(true);
+      const requestAuthenticationInterceptor = axios.interceptors.request.use(config => {
+        config.headers['accessToken'] = accessToken.jwt;
+        return config;
+      });
+      return () => axios.interceptors.request.eject(requestAuthenticationInterceptor);
+    }
+  }, [accessToken]);
 
   const unauthenticate = useCallback(() => {
     if (refreshToken) {
@@ -43,72 +98,8 @@ const AuthenticationProvider = ({ children }) => {
     }
   }, [refreshToken, accessToken]);
 
-  const fetchAccessToken = useCallback(() => {
-    console.log('Fetching new access token');
-    return fetch('/api/authentication/access-token', {
-      headers: {
-        'refreshToken': refreshToken.jwt,
-      },
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw response.status;
-        }
-        return response;
-      })
-      .then(response => response.json())
-      .then(json => {
-        console.log('Received fresh access token');
-        return Promise.resolve(createAccessToken(json));
-      })
-      .catch(error => {
-        if (error === 401) {
-          setRefreshToken(null);
-        }
-      });
-  }, [refreshToken])
-
-  useEffect(() => {
-    const resolveAccessToken = async () => {
-      const token = await accessTokenPromise;
-      console.log('access token resolved');
-      setAccessToken(token);
-    }
-    if (accessTokenPromise) {
-      resolveAccessToken();
-    }
-  }, [accessTokenPromise]);
-
-  const getAccessToken = useCallback(async () => {
-    if (accessToken && new Date() < accessToken.expiration) {
-      return accessToken;
-    }
-    else if (refreshToken) {
-      const promise = fetchAccessToken();
-      setAccessTokenPromise(promise);
-      return await promise;
-    }
-  }, [accessToken, fetchAccessToken, refreshToken]);
-
-  useEffect(() => {
-    if (refreshToken) {
-      const promise = fetchAccessToken();
-      setAccessTokenPromise(promise);
-    }
-  }, [refreshToken, fetchAccessToken]);
-
-  useEffect(() => {
-    if (accessToken) {
-      axios.defaults.headers.common['accessToken'] = accessToken.jwt;
-    }
-    else {
-      delete axios.defaults.headers.common['accessToken'];
-    }
-  }, [accessToken]);
-
   const contextValues = {
-    authenticated: refreshToken !== null,
-    getAccessToken,
+    authenticated,
     unauthenticate,
     setRefreshToken
   };

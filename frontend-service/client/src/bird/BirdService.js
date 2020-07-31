@@ -7,9 +7,9 @@ export default class BirdService {
   }
 
   async getBirdStatistics(id) {
-    const response = await fetch(`/api/birds/${id}/statistics`);
+    const response = await axios.get(`/api/birds/${id}/statistics`);
     if (response.status === 200) {
-      return await response.json();
+      return response.data;
     }
     return null;
   }

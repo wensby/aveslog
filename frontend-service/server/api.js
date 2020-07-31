@@ -71,7 +71,7 @@ router.get('/birders', async (req, res) => {
 });
 
 router.patch('/birders/:id', async (req, res) => {
-  const response = await req.axios.patch(`/birders/${req.params.id}`);
+  const response = await req.axios.patch(`/birders/${req.params.id}`, req.body);
   res.json(response.data);
 });
 

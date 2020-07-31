@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export function useLocales() {
   const [locales, setLocales] = useState([]);
 
   useEffect(() => {
     const resolveLocales = async () => {
-      const response = await fetch('/api/locales');
+      const response = await axios.get('/api/locales');
       if (response.status === 200) {
-        setLocales((await (response.json())).items);
+        setLocales(response.data.items);
       }
     };
     resolveLocales();

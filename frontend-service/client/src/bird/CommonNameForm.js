@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import axios from 'axios';
 
 export function CommonNameForm({ bird, locales, onNameAdded }) {
   const [selectedLanguage, setSelectedLangauge] = useState(null);
   const [name, setName] = useState('');
-  const { getAccessToken } = useContext(AuthenticationContext);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -18,13 +17,10 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
 
   const handleSubmit = event => {
     const postName = async (langauge, name) => {
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        const response = await postCommonName(accessToken, bird, langauge, name);
-        if (response.status === 201) {
-          onNameAdded(langauge, name);
-          setName('');
-        }
+      const response = await postCommonName(bird, langauge, name);
+      if (response.status === 201) {
+        onNameAdded(langauge, name);
+        setName('');
       }
     }
     event.preventDefault();
@@ -42,16 +38,13 @@ export function CommonNameForm({ bird, locales, onNameAdded }) {
   );
 }
 
-const postCommonName = async (accessToken, bird, language, name) => {
-  return await fetch(`/api/birds/${bird.id}/common-names`, {
-    method: 'POST',
+const postCommonName = async (bird, language, name) => {
+  return axios.post(`/api/birds/${bird.id}/common-names`, {
+    'locale': language,
+    'name': name
+  }, {
     headers: {
       'Content-Type': 'application/json',
-      'accessToken': accessToken.jwt
     },
-    body: JSON.stringify({
-      'locale': language,
-      'name': name
-    }),
   });
 };

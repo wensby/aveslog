@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import NewPasswordFormGroup from '../authentication/NewPasswordFormGroup';
 import AuthenticationService from '../authentication/AuthenticationService';
@@ -7,11 +7,9 @@ import { Alert } from '../generic/Alert';
 import { SubmitButton } from 'generic/form/SubmitButton';
 import './PasswordChangeForm.scss';
 import { FormGroup } from '../generic/FormGroup';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 
 export const PasswordChangeForm = () => {
   const history = useHistory();
-  const { getAccessToken } = useContext(AuthenticationContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showFeedback, setShowFeedback] = useState(false);
@@ -31,14 +29,13 @@ export const PasswordChangeForm = () => {
 
   const handleFormSubmit = async event => {
     event.preventDefault();
-    const accessToken = await getAccessToken();
-    if (accessToken && newPassword) {
-      const response = await service.postPasswordUpdate(accessToken.jwt, currentPassword, newPassword);
+    if (newPassword) {
+      const response = await service.postPasswordUpdate(currentPassword, newPassword);
       if (response.status === 204) {
         history.push('/home');
       }
       else {
-        const message = (await response.json())['message'];
+        const message = response.data['message'];
         setErrorMessage({ category: 'danger', message: message });
       }
     }

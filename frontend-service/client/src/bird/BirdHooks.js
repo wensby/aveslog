@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import birdRepository from './BirdRepository';
 import { useTranslation } from 'react-i18next';
 import { BirdsContext } from './BirdsContext';
+import axios from 'axios';
 
 export const useBird = birdId => {
   const { addBird } = useContext(BirdsContext);
@@ -18,9 +19,8 @@ export const useBird = birdId => {
   useEffect(() => {
     const resolveBirdPromise = async promise => {
       const response = await promise;
-      if (response.status === 200 && !response.bodyUsed) {
-        const bird = await response.json();
-        addBird(bird);
+      if (response.status === 200) {
+        addBird(response.data);
       }
     };
     if (birdPromise) {
@@ -54,11 +54,10 @@ export const useLazyBird = (id, eager) => {
 
   useEffect(() => {
     const resolveBirdPromise = async () => {
-      const promise = fetch(`/api/birds/${id}?embed=commonNames`);
+      const promise = axios.get(`/api/birds/${id}?embed=commonNames`);
       const response = await promise;
-      if (response.status === 200 && !response.bodyUsed) {
-        const bird = await response.json();
-        addBird(bird);
+      if (response.status === 200) {
+        addBird(response.data);
       }
     };
     if (eager) {
@@ -78,7 +77,7 @@ const useBirdPromise = birdId => {
   const [promise, setPromise] = useState(null);
 
   useEffect(() => {
-    setPromise(fetch(`/api/birds/${birdId}?embed=commonNames`));
+    setPromise(axios.get(`/api/birds/${birdId}?embed=commonNames`));
   }, [birdId]);
 
   return promise;
@@ -93,10 +92,9 @@ export function useCommonName(bird) {
   useEffect(() => {
     const resolveCommonName = async () => {
       setLoading(true);
-      const url = `/api/birds/${bird.id}/common-names?locale=${language}`;
-      const response = await fetch(url);
+      const response = await axios.get(`/api/birds/${bird.id}/common-names?locale=${language}`);
       if (response.status === 200) {
-        const json = await response.json();
+        const json = response.data;
         if (json.items.length > 0) {
           setCommonName(json.items[0].name);
         }
@@ -149,9 +147,9 @@ export function useCommonNames(bird, forceReload) {
 
   useEffect(() => {
     const resolveNames = async () => {
-      const response = await fetch(url);
+      const response = await axios.get(url);
       if (response.status === 200) {
-        setNames((await response.json()).items);
+        setNames(response.data.items);
       }
     };
     if (bird) {
@@ -161,9 +159,9 @@ export function useCommonNames(bird, forceReload) {
 
   useEffect(() => {
     const resolveNames = async () => {
-      const response = await fetch(url, { cache: 'reload' });
+      const response = await axios.get(url, { cache: 'reload' });
       if (response.status === 200) {
-        setNames((await response.json()).items);
+        setNames(response.data.items);
       }
     };
     if (forceReload) {

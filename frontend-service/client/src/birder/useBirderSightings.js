@@ -12,8 +12,7 @@ export const useBirderSightings = birder => {
       setLoading(true);
       const response = await new SightingService().fetchBirderSightings(birder.id);
       if (response.status === 200) {
-        const json = response.data;
-        setSightings(json.items);
+        setSightings(response.data.items);
         setSightingsBirder(birder);
       }
       setLoading(false);

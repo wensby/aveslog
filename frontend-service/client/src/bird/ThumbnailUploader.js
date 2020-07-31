@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export function ThumbnailUploader({ bird }) {
   const [file, setFile] = useState(null);
@@ -13,12 +14,9 @@ export function ThumbnailUploader({ bird }) {
     const formData = new FormData();
     formData.append('picture', file);
     formData.append('credit', credit);
-    const response = await fetch(`/api/pictures`, {
-      method: 'POST',
-      body: formData
-    });
+    const response = await axios.post(`/api/pictures`, formData);
     if (response.status === 200) {
-      const json = await response.json();
+      const json = response.data;
     }
     setFile(null);
   };

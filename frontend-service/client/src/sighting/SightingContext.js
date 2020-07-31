@@ -22,8 +22,7 @@ const SightingProvider = props => {
   const refreshSightings = useCallback(async () => {
     const response = await sightingService.fetchBirderSightings(account.birder.id);
     if (response.status === 200) {
-      const json = response.data;
-      const fetchedSightings = json.items;
+      const fetchedSightings = response.data.items;
       setSightings(prevSightings => {
         if (JSON.stringify(prevSightings) !== JSON.stringify(fetchedSightings)) {
           return fetchedSightings;
