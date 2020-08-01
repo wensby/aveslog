@@ -29,13 +29,20 @@ router.get('/registration-requests/:id', async (req, res) => {
 });
 
 router.post('/accounts', async (req, res) => {
-  const response = await req.axios.post('/accounts', {
+  req.axios.post('/accounts', {
     token: req.body.token,
     username: req.body.username,
     password: req.body.password,
+  }).then(response => {
+    res.status(response.status);
+    res.json(response.data);
+  }).catch(error => {
+    if (error.response) {
+      res.status(error.response.status);
+      res.json(error.response.data);
+    }
   });
-  res.status(response.status);
-  res.json(response.data);
+
 });
 
 router.get('/sightings', async (req, res) => {

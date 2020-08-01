@@ -5,8 +5,9 @@ import { CredentialsRegistrationForm } from './CredentialsRegistrationForm';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
 import { Alert } from '../../generic/Alert';
-import './CredentialsRegistration.scss';
 import { AuthenticationContext } from '../AuthenticationContext.js';
+import axios from 'axios';
+import './CredentialsRegistration.scss';
 
 export const CredentialsRegistrationContext = React.createContext();
 
@@ -21,36 +22,41 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
 
   const submit = async credentials => {
     setSubmitting(true);
-    const response = await new AuthenticationService().postRegistration(registrationRequest.token, credentials);
-    if (response.status === 201) {
-      const response = await new AuthenticationService().postRefreshToken(credentials[0], credentials[1]);
-      if (response.status === 201) {
-        const refreshResponseJson = response.data;
+    axios.post('/api/accounts', {
+      'token': registrationRequest.token,
+      'username': credentials[0],
+      'password': credentials[1],
+    })
+      .then(__ => new AuthenticationService().postRefreshToken(credentials[0], credentials[1]))
+      .then(response => response.data)
+      .then(refreshToken => {
         setRefreshToken({
-          id: refreshResponseJson.id,
-          jwt: refreshResponseJson.refreshToken,
-          expiration: Date.parse(refreshResponseJson.expirationDate),
+          id: refreshToken.id,
+          jwt: refreshToken.refreshToken,
+          expiration: Date.parse(refreshToken.expirationDate),
         });
         history.push('/home');
-      }
-    }
-    else if (response.status === 409) {
-      const json = response.data;
-      if (json['code'] === 3) {
-        setTakenUsernames(takenUsernames.concat([credentials[0]]))
-        setAlert({
-          category: 'danger',
-          message: 'Username already taken.',
-        });
-      }
-    }
-    else if (response.status === 400) {
-      setAlert({
-        category: 'danger',
-        message: 'An error occurred.'
-      });
-    }
-    setSubmitting(false);
+      })
+      .catch(error => {
+        if (error.response) {
+          if (error.response.status === 409) {
+            if (error.response.data['code'] === 3) {
+              setTakenUsernames(takenUsernames.concat([credentials[0]]))
+              setAlert({
+                category: 'danger',
+                message: 'Username already taken.',
+              });
+            }
+          }
+          else if (error.response.status === 400) {
+            setAlert({
+              category: 'danger',
+              message: 'An error occurred.'
+            });
+          }
+        }
+      })
+      .finally(() => setSubmitting(false));
   };
 
   return (
