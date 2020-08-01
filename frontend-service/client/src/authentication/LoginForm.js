@@ -15,35 +15,30 @@ export function LoginForm({ onError }) {
   const { t } = useTranslation();
   const { setRefreshToken } = useContext(AuthenticationContext);
 
-  const postRefreshToken = async () => {
-    return authentication.postRefreshToken(username, password);
-  }
-
-  const handleLoginFormSubmit = async event => {
-    try {
-      event.preventDefault();
-      setLoading(true);
-      const response = await postRefreshToken();
-      setLoading(false);
-      if (response.status === 201) {
-        const refreshResponseJson = response.data;
-        setRefreshToken({
-          id: refreshResponseJson.id,
-          jwt: refreshResponseJson.refreshToken,
-          expiration: Date.parse(refreshResponseJson.expirationDate),
-        });
-        history.push('/home');
-      }
-      else {
+  const handleLoginFormSubmit = event => {
+    event.preventDefault();
+    setLoading(true);
+    authentication.postRefreshToken(username, password)
+      .then(response => {
+        setLoading(false);
+        if (response.status === 201) {
+          const refreshResponseJson = response.data;
+          setRefreshToken({
+            id: refreshResponseJson.id,
+            jwt: refreshResponseJson.refreshToken,
+            expiration: Date.parse(refreshResponseJson.expirationDate),
+          });
+          history.push('/home');
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.log(error);
         onError('Login failed.');
         setUsername('');
         setPassword('');
-      }
-    }
-    catch (e) {
-      console.log(e);
-    }
-  };
+      });
+  }
 
   return (
     <form className='login-form' onSubmit={handleLoginFormSubmit}>
@@ -56,16 +51,16 @@ export function LoginForm({ onError }) {
             name='username' placeholder={t('username-label')} />
         </div>
         <div>
-        <label htmlFor='passwordInput'>{t('Password')}</label>
-        <input value={password}
-          onChange={event => setPassword(event.target.value)}
-          id='passwordInput' className='form-control' type='password'
-          name='password' placeholder={t('Password')} />
+          <label htmlFor='passwordInput'>{t('Password')}</label>
+          <input value={password}
+            onChange={event => setPassword(event.target.value)}
+            id='passwordInput' className='form-control' type='password'
+            name='password' placeholder={t('Password')} />
         </div>
       </div>
       <div className='login-button-row'>
         <div>
-          {loading && <div style={{marginRight: '10px', width: '20px', height: '20px'}}><Spinner /></div>}
+          {loading && <div style={{ marginRight: '10px', width: '20px', height: '20px' }}><Spinner /></div>}
           <button type='submit'>{t('Login')}</button>
         </div>
       </div>

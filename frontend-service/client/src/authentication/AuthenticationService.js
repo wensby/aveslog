@@ -2,10 +2,10 @@ import axios from 'axios';
 
 export default class AuthenticationService {
 
-  async postRefreshToken(username, password) {
+  postRefreshToken(username, password) {
     const url = '/api/authentication/refresh-token';
     const parameters = `?username=${username.toLowerCase()}&password=${password}`;
-    return await axios.post(url + parameters);
+    return axios.post(url + parameters);
   }
 
   async deleteRefreshToken(refreshToken) {

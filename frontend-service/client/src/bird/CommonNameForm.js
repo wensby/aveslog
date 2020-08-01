@@ -42,9 +42,5 @@ const postCommonName = async (bird, language, name) => {
   return axios.post(`/api/birds/${bird.id}/common-names`, {
     'locale': language,
     'name': name
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
 };
