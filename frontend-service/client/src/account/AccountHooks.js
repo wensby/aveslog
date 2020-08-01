@@ -2,39 +2,35 @@ import { useState, useEffect, useContext } from "react";
 import { AuthenticationContext } from "../authentication/AuthenticationContext";
 import axios from 'axios';
 
-export function usePermissions() {
+export const usePermissions = () => {
   const [permissions, setPermissions] = useState([]);
   const { authenticated } = useContext(AuthenticationContext);
 
   useEffect(() => {
-    const resolvePermissions = async () => {
-      const response = await axios.get('/api/account/roles');
-      if (response.status === 200) {
-        const json = response.data;
-        setPermissions(json.items.reduce((list, obj) => {
-          const permissions = obj.permissions;
-          list.push(...permissions);
-          return list;
-        }, []));
-      }
-    };
     setPermissions([]);
     if (authenticated) {
-      resolvePermissions();
+      axios.get('/api/account/roles')
+        .then(response => response.data.items)
+        .then(roles => roles.reduce((list, role) => {
+          list.push(...role.permissions);
+          return list;
+        }, []))
+        .then(permissions => setPermissions(permissions));
     }
   }, [authenticated]);
 
   return { permissions };
 }
 
-export function useResourcePermission(resource, method) {
+export const useResourcePermission = (resource, method) => {
   const { permissions } = usePermissions();
   const [present, setPresent] = useState(false);
 
   useEffect(() => {
-    setPresent(permissions
-      .filter(x => x.method === method)
-      .filter(x => RegExp(x.resource_regex).test(resource)).length > 0);
+    const matchingPermissions = permissions
+      .filter(permission => permission.method === method)
+      .filter(permission => RegExp(permission.resource_regex).test(resource));
+    setPresent(matchingPermissions.length > 0);
   }, [permissions, resource, method]);
 
   return present;
