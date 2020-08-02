@@ -8,10 +8,6 @@ export default class AuthenticationService {
     return axios.post(url + parameters);
   }
 
-  async deleteRefreshToken(refreshToken) {
-    return await axios.delete(`/api/authentication/refresh-token/${refreshToken.id}`);
-  }
-
   async postPasswordResetEmail(email) {
     return await axios.post(`/api/authentication/password-reset`, {
       'email': email,

@@ -91,12 +91,10 @@ const AuthenticationProvider = ({ children }) => {
 
   const unauthenticate = useCallback(() => {
     if (refreshToken) {
-      if (accessToken) {
-        new AuthenticationService().deleteRefreshToken(refreshToken, accessToken);
-      }
-      setRefreshToken(null);
+      axios.delete(`/api/authentication/refresh-token/${refreshToken.id}`)
+        .then(__ => setRefreshToken(null));
     }
-  }, [refreshToken, accessToken]);
+  }, [refreshToken]);
 
   const contextValues = {
     authenticated,
