@@ -44,22 +44,4 @@ export default class AuthenticationService {
       return undefined;
     }
   }
-
-  async postRegistration(token, [username, password]) {
-    try {
-      return await axios.post('/api/accounts',
-        {
-          'token': token,
-          'username': username,
-          'password': password,
-        });
-    }
-    catch (err) {
-      return undefined;
-    }
-  }
-
-  async logout() {
-    localStorage.removeItem('accessToken');
-  }
 }
