@@ -31,34 +31,33 @@ const AuthenticationProvider = ({ children }) => {
         }
       })
         .then(response => createAccessToken(response.data))
-        .then(freshAccessToken => {
-          console.log('Received fresh access token');
-          setAccessToken(freshAccessToken);
-        });
-      const expiredAccessTokenRefresherInterceptor = axios.interceptors.response.use(
-        response => response,
+        .then(freshAccessToken => setAccessToken(freshAccessToken))
+        .catch(error => setRefreshToken(null));
+      const refreshTokenInterceptor = axios.interceptors.response.use(undefined,
         error => {
-          console.log('intercepting axios error response');
-          if (error.response && error.response.status === 401
-            && error.config.url === axios.defaults.baseURL + '/api/authentication/access-token') {
-            setRefreshToken(null);
-            return Promise.reject(error);
-          }
-          if (error.response && error.response.status === 401
-            && !error.config._retry) {
-            error.config._retry = true;
-            return axios.get('/api/authentication/access-token', {
-              headers: {
-                'refreshToken': refreshToken.jwt,
+          if (error.response) {
+            console.log('intercepting axios error response');
+            if (error.response.status === 401) {
+              if (error.config.url.endsWith('/api/authentication/access-token')) {
+                setRefreshToken(null);
+                return Promise.reject(error);
               }
-            })
-              .then(response => createAccessToken(response.data))
-              .then(freshAccessToken => {
-                console.log('Received fresh access token');
-                setAccessToken(freshAccessToken);
-                axios.defaults.headers.common['accessToken'] = freshAccessToken.jwt;
-                return axios(error.config);
-              })
+              else if (!error.config._retry) {
+                error.config._retry = true;
+                return axios.get('/api/authentication/access-token', {
+                  headers: {
+                    'refreshToken': refreshToken.jwt,
+                  }
+                })
+                  .then(response => createAccessToken(response.data))
+                  .then(accessToken => {
+                    console.log('Received fresh access token');
+                    setAccessToken(accessToken);
+                    error.config.headers['accessToken'] = accessToken.jwt;
+                    return axios(error.config);
+                  });
+              }
+            }
           }
           return Promise.reject(error);
         }
@@ -66,23 +65,24 @@ const AuthenticationProvider = ({ children }) => {
       console.log('Storing refresh token in local storage');
       localStorage.setItem(refreshTokenKey, JSON.stringify(refreshToken));
       return () => {
+        axios.interceptors.response.eject(refreshTokenInterceptor);
         console.log('Clearing refresh token from local storage');
         localStorage.removeItem(refreshTokenKey);
         setAccessToken(null);
         setAuthenticated(false);
-        axios.interceptors.response.eject(expiredAccessTokenRefresherInterceptor);
-      }
-    }
-    else {
-      setAccessToken(null);
+      };
     }
   }, [refreshToken]);
 
   useEffect(() => {
     if (accessToken) {
+      console.log('got new access token');
       setAuthenticated(true);
       const requestAuthenticationInterceptor = axios.interceptors.request.use(config => {
-        config.headers['accessToken'] = accessToken.jwt;
+        if (!config._retry) {
+          // When request is a retry, refreshed access token is set by response interceptor
+          config.headers['accessToken'] = accessToken.jwt;
+        }
         return config;
       });
       return () => axios.interceptors.request.eject(requestAuthenticationInterceptor);
