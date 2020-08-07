@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import AuthenticationService from '../AuthenticationService.js';
 import { CredentialsRegistrationForm } from './CredentialsRegistrationForm';
 import { useHistory } from "react-router-dom";
 import { PageHeading } from '../../generic/PageHeading.js';
@@ -12,7 +11,7 @@ import './CredentialsRegistration.scss';
 export const CredentialsRegistrationContext = React.createContext();
 
 export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
-  const { setRefreshToken } = useContext(AuthenticationContext);
+  const { login } = useContext(AuthenticationContext);
   const [takenUsernames, setTakenUsernames] = useState([]);
   const [alert, setAlert] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -27,16 +26,8 @@ export const CredentialsRegistration = ({ registrationRequest, onSuccess }) => {
       'username': credentials[0],
       'password': credentials[1],
     })
-      .then(__ => new AuthenticationService().postRefreshToken(credentials[0], credentials[1]))
-      .then(response => response.data)
-      .then(refreshToken => {
-        setRefreshToken({
-          id: refreshToken.id,
-          jwt: refreshToken.refreshToken,
-          expiration: Date.parse(refreshToken.expirationDate),
-        });
-        history.push('/home');
-      })
+      .then(__ => login(credentials[0], credentials[1]))
+      .then(__ => history.push('/home'))
       .catch(error => {
         if (error.response) {
           if (error.response.status === 409) {

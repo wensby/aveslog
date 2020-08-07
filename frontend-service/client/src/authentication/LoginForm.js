@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import AuthenticationService from './AuthenticationService.js';
 import { useHistory } from "react-router-dom";
 import { Spinner } from '../generic/Spinner.js';
 import './LoginForm.scss';
@@ -11,29 +10,16 @@ export function LoginForm({ onError }) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const authentication = new AuthenticationService();
   const { t } = useTranslation();
-  const { setRefreshToken } = useContext(AuthenticationContext);
+  const { login } = useContext(AuthenticationContext);
 
   const handleLoginFormSubmit = event => {
     event.preventDefault();
     setLoading(true);
-    authentication.postRefreshToken(username, password)
-      .then(response => {
+    login(username, password)
+      .then(__ => history.push('/home'))
+      .catch(__ => {
         setLoading(false);
-        if (response.status === 201) {
-          const refreshResponseJson = response.data;
-          setRefreshToken({
-            id: refreshResponseJson.id,
-            jwt: refreshResponseJson.refreshToken,
-            expiration: Date.parse(refreshResponseJson.expirationDate),
-          });
-          history.push('/home');
-        }
-      })
-      .catch(error => {
-        setLoading(false);
-        console.log(error);
         onError('Login failed.');
         setUsername('');
         setPassword('');

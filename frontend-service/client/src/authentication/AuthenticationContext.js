@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import AuthenticationService from './AuthenticationService.js';
 import axios from 'axios';
 
 const AuthenticationContext = React.createContext();
@@ -24,15 +23,6 @@ const AuthenticationProvider = ({ children }) => {
 
   useEffect(() => {
     if (refreshToken) {
-      // retrieve accessToken upon new refreshToken
-      axios.get('/api/authentication/access-token', {
-        headers: {
-          'refreshToken': refreshToken.jwt,
-        }
-      })
-        .then(response => createAccessToken(response.data))
-        .then(freshAccessToken => setAccessToken(freshAccessToken))
-        .catch(error => setRefreshToken(null));
       const refreshTokenInterceptor = axios.interceptors.response.use(undefined,
         error => {
           if (error.response) {
@@ -96,10 +86,21 @@ const AuthenticationProvider = ({ children }) => {
     }
   }, [refreshToken]);
 
+  const login = (username, password) => {
+    return axios.post('/api/authentication/tokens', {
+      username: username.toLowerCase(),
+      password: password,
+    }).then(response => {
+      setRefreshToken(createRefreshToken(response.data.refreshToken));
+      setAccessToken(createAccessToken(response.data.accessToken));
+      return true;
+    }).catch(__ => Promise.reject(false));
+  }
+
   const contextValues = {
     authenticated,
     unauthenticate,
-    setRefreshToken
+    login
   };
 
   const resolvingAuthentication = (refreshToken && !accessToken) || loading
@@ -117,6 +118,14 @@ const createAccessToken = json => {
     expiration: createFutureDate(json.expiresIn - 60)
   };
 };
+
+const createRefreshToken = json => {
+  return {
+    id: json.id,
+    jwt: json.refreshToken,
+    expiration: Date.parse(json.expirationDate),
+  }
+}
 
 const createFutureDate = seconds => {
   const date = new Date();

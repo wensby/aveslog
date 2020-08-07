@@ -2,12 +2,6 @@ import axios from 'axios';
 
 export default class AuthenticationService {
 
-  postRefreshToken(username, password) {
-    const url = '/api/authentication/refresh-token';
-    const parameters = `?username=${username.toLowerCase()}&password=${password}`;
-    return axios.post(url + parameters);
-  }
-
   async postPasswordResetEmail(email) {
     return await axios.post(`/api/authentication/password-reset`, {
       'email': email,
