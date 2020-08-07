@@ -16,9 +16,22 @@ const AuthenticationProvider = ({ children }) => {
     const localStorageRefreshToken = localStorage.getItem(refreshTokenKey);
     if (localStorageRefreshToken) {
       console.log('Recovered local storage refresh token');
-      setRefreshToken(JSON.parse(localStorageRefreshToken));
+      const refreshToken = JSON.parse(localStorageRefreshToken);
+      axios.post('/api/authentication/access-token', {
+        refreshToken: refreshToken.jwt,
+      })
+        .then(response => createAccessToken(response.data))
+        .then(accessToken => {
+          console.log('Received access token with refresh token recovered from local storage');
+          setRefreshToken(refreshToken);
+          setAccessToken(accessToken);
+        })
+        .catch(__ => localStorage.removeItem(refreshTokenKey))
+        .finally(() => setLoading(false))
     }
-    setLoading(false);
+    else {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -34,10 +47,8 @@ const AuthenticationProvider = ({ children }) => {
               }
               else if (!error.config._retry) {
                 error.config._retry = true;
-                return axios.get('/api/authentication/access-token', {
-                  headers: {
-                    'refreshToken': refreshToken.jwt,
-                  }
+                return axios.post('/api/authentication/access-token', {
+                    refreshToken: refreshToken.jwt,
                 })
                   .then(response => createAccessToken(response.data))
                   .then(accessToken => {
@@ -59,7 +70,6 @@ const AuthenticationProvider = ({ children }) => {
         console.log('Clearing refresh token from local storage');
         localStorage.removeItem(refreshTokenKey);
         setAccessToken(null);
-        setAuthenticated(false);
       };
     }
   }, [refreshToken]);
@@ -76,6 +86,9 @@ const AuthenticationProvider = ({ children }) => {
         return config;
       });
       return () => axios.interceptors.request.eject(requestAuthenticationInterceptor);
+    }
+    else {
+      setAuthenticated(false);
     }
   }, [accessToken]);
 
@@ -103,11 +116,9 @@ const AuthenticationProvider = ({ children }) => {
     login
   };
 
-  const resolvingAuthentication = (refreshToken && !accessToken) || loading
-
   return (
     <AuthenticationContext.Provider value={contextValues}>
-      {!resolvingAuthentication && children}
+      {!loading && children}
     </AuthenticationContext.Provider>
   );
 }
