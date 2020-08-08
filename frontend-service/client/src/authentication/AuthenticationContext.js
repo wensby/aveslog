@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AuthenticationContext = React.createContext();
@@ -9,8 +9,6 @@ const AuthenticationProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
-  const latestRefreshToken = useRef(refreshToken);
-  latestRefreshToken.current = refreshToken;
 
   useEffect(() => {
     const localStorageRefreshToken = localStorage.getItem(refreshTokenKey);
