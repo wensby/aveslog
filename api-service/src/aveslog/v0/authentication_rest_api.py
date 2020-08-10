@@ -136,6 +136,21 @@ def post_password_reset(token: str) -> Response:
   return make_response('', HTTPStatus.OK)
 
 
+def post_username_recovery() -> Response:
+  email = request.json['email']
+  session = g.database_session
+  account = session.query(Account).filter_by(email=email).first()
+  if not account:
+    return error_response(
+      ErrorCode.EMAIL_MISSING,
+      'E-mail not associated with any account',
+    )
+  message = 'Your aveslog.com username is: ' + account.username
+  g.mail_dispatcher.dispatch(email, 'Aveslog Username Recovery', message)
+  session.commit()
+  return make_response(jsonify({'email-status': 'sent'}), HTTPStatus.OK)
+
+
 def credentials_incorrect_response() -> Response:
   return error_response(
     ErrorCode.CREDENTIALS_INCORRECT,

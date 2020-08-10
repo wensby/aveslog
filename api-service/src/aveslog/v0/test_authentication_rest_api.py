@@ -187,3 +187,39 @@ class TestDeleteRefreshToken(AppTestCase):
     return self.client.delete(
       f'/authentication/refresh-token/{refresh_token_id}',
       headers={'accessToken': access_token.jwt})
+
+
+class TestCreateUsernameRecovery(AppTestCase):
+
+  def test_post_username_recovery_when_correct_email(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+
+    response = self.client.post(f'/authentication/username-recovery',
+      json={
+        'email': 'tbone@mail.com'
+      })
+
+    self.assertEqual(len(self.dispatched_mails), 1)
+    dispatched_mail = self.dispatched_mails[0]
+    self.assertDictEqual(dispatched_mail, {
+      'body': 'Your aveslog.com username is: george',
+      'recipient': 'tbone@mail.com',
+      'subject': 'Aveslog Username Recovery',
+    })
+    self.assertEqual(response.status_code, HTTPStatus.OK)
+    self.assertDictEqual(response.json, {'email-status': 'sent'})
+
+  def test_post_username_recovery_when_incorrect_email(self):
+    self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
+
+    response = self.client.post(f'/authentication/username-recovery',
+      json={
+        'email': 'hulot@mail.com'
+      })
+
+    self.assertFalse(self.dispatched_mails)
+    self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    self.assertDictEqual(response.json, {
+      'code': ErrorCode.EMAIL_MISSING,
+      'message': 'E-mail not associated with any account',
+    })
