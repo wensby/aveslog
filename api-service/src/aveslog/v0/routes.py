@@ -121,11 +121,6 @@ authentication_routes = [
     'func': authentication_rest_api.post_password_reset,
     'options': {'methods': ['POST']},
   },
-  {
-    'rule': '/authentication/username-recovery',
-    'func': authentication_rest_api.post_username_recovery,
-    'options': {'methods': ['POST']},
-  },
 ]
 
 sightings_routes = [
