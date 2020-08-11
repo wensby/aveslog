@@ -71,8 +71,8 @@ router.delete('/refresh-token/:id', (req, res) => {
     })
 });
 
-router.post('/password-reset', (req, res) => {
-  req.axios.post('/authentication/password-reset', req.body)
+router.post('/credentials-recovery', (req, res) => {
+  req.axios.post('/authentication/credentials-recovery', req.body)
     .then(response => {
       res.status(response.status);
       res.json(response.data);

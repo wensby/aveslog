@@ -29,9 +29,9 @@ export default () => {
       <PageHeading>{t('Login')}</PageHeading>
       {errorMessage && <ErrorMessage message={errorMessage} />}
       <LoginForm onError={setErrorMessage} />
-      <div className='password-recover-link'>
-        <Link to='/authentication/password-reset'>
-          {t('password-recover-link')}
+      <div className='credentials-recovery-link'>
+        <Link to='/authentication/credentials-recovery'>
+          {t('credentials-recovery-link')}
         </Link>
       </div>
       <Separator />

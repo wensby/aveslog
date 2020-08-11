@@ -90,7 +90,7 @@ def get_access_token() -> Response:
   }), HTTPStatus.OK)
 
 
-def post_password_reset_email() -> Response:
+def post_credentials_recovery() -> Response:
   email = request.json['email']
   session = g.database_session
   account = session.query(Account).filter_by(email=email).first()
@@ -112,11 +112,11 @@ def post_password_reset_email() -> Response:
   link = link_factory.create_frontend_link(
     f'/authentication/password-reset/{new_token}')
   message = (
-    'You have requested a password reset of your Birding account. '
-    'Please follow this link to get to your password reset form: ')
-  locale = load_english_locale()
-  mail_message = locale.text(message) + link
-  g.mail_dispatcher.dispatch(email, 'Birding Password Reset', mail_message)
+    'Having trouble logging into your aveslog.com account? Your username is '
+    f'{account.username}, and here\'s a password reset link if you need one: '
+    f'{link}'
+  )
+  g.mail_dispatcher.dispatch(email, 'Aveslog Credentials Recovery', message)
   session.commit()
   return make_response('', HTTPStatus.OK)
 

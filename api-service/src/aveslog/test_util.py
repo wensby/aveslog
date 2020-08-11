@@ -291,6 +291,12 @@ class AppTestCase(IntegrationTestCase):
     self.database_connection.commit()
     return cursor.fetchall()
 
+  def db_get_password_reset_tokens(self):
+    cursor = self.database_connection.cursor()
+    cursor.execute('SELECT * FROM password_reset_token;')
+    self.database_connection.commit()
+    return cursor.fetchall()
+
   def db_insert_bird_look(self, id, bird_id):
     cursor = self.database_connection.cursor()
     cursor.execute(

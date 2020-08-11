@@ -112,8 +112,8 @@ authentication_routes = [
     'func': authentication_rest_api.get_access_token,
   },
   {
-    'rule': '/authentication/password-reset',
-    'func': authentication_rest_api.post_password_reset_email,
+    'rule': '/authentication/credentials-recovery',
+    'func': authentication_rest_api.post_credentials_recovery,
     'options': {'methods': ['POST']},
   },
   {

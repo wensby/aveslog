@@ -23,7 +23,7 @@ export const CreatePasswordReset = () => {
   const handleFormSubmit = async event => {
     try {
       event.preventDefault();
-      const response = await authentication.postPasswordResetEmail(email);
+      const response = await authentication.createCredentialsRecovery(email);
       if (response.status === 200) {
         setAlert({
           type: 'success',

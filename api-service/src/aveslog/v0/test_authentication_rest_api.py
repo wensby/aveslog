@@ -1,11 +1,12 @@
 import datetime
 from http import HTTPStatus
-from flask import Response
+from flask import Response, current_app
 from aveslog.v0.authentication import AuthenticationTokenFactory
 from aveslog.v0.authentication import AccessToken
 from aveslog.v0.authentication import JwtFactory
 from aveslog.test_util import AppTestCase
 from aveslog.v0.error import ErrorCode
+from aveslog.v0.link import LinkFactory
 
 
 class TestPostRefreshToken(AppTestCase):
@@ -95,37 +96,81 @@ class TestGetAccessToken(AppTestCase):
     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
 
-class TestPasswordReset(AppTestCase):
+class TestCredentialsRecovery(AppTestCase):
 
-  def test_post_password_reset_email_when_ok(self):
+  def test_post_credentials_recovery_when_ok(self):
     self.db_setup_account(1, 1, 'hulot', 'myPassword', 'hulot@mail.com')
     self.db_insert_locale(1, 'en')
 
     response = self.post_password_reset_email('hulot@mail.com')
 
+    password_reset_tokens = self.db_get_password_reset_tokens()
+    link_factory = LinkFactory(
+      current_app.config['EXTERNAL_HOST'],
+      current_app.config['FRONTEND_HOST'],
+    )
+    self.assertEqual(len(password_reset_tokens), 1)
+    link = link_factory.create_frontend_link(
+      f'/authentication/password-reset/{password_reset_tokens[0][1]}')
+    self.assertListEqual(self.dispatched_mails, [
+      {
+        'body':
+          'Having trouble logging into your aveslog.com account? Your username '
+          'is hulot, and here\'s a password reset link if you need one: '
+          f'{link}',
+        'recipient': 'hulot@mail.com',
+        'subject': 'Aveslog Credentials Recovery',
+      }
+    ])
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertIsNone(response.json)
 
-  def test_post_password_reset_email_when_already_exist(self):
+  def test_post_credentials_recovery_when_already_exist(self):
     self.db_setup_account(1, 1, 'george', 'costanza', 'tbone@mail.com')
     self.db_insert_locale(1, 'en')
     self.db_insert_password_reset_token(1, 'myToken')
 
     response = self.post_password_reset_email('tbone@mail.com')
 
+    password_reset_tokens = self.db_get_password_reset_tokens()
+    link_factory = LinkFactory(
+      current_app.config['EXTERNAL_HOST'],
+      current_app.config['FRONTEND_HOST'],
+    )
+    self.assertEqual(len(password_reset_tokens), 1)
+    link = link_factory.create_frontend_link(
+      f'/authentication/password-reset/{password_reset_tokens[0][1]}')
+    self.assertListEqual(self.dispatched_mails, [
+      {
+        'body':
+          'Having trouble logging into your aveslog.com account? Your username '
+          'is george, and here\'s a password reset link if you need one: '
+          f'{link}',
+        'recipient': 'tbone@mail.com',
+        'subject': 'Aveslog Credentials Recovery',
+      }
+    ])
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertIsNone(response.json)
 
-  def test_post_password_reset_email_when_email_not_linked_with_account(self):
+  def test_post_credentials_recovery_when_email_not_linked_with_account(self):
     self.db_insert_locale(1, 'en')
 
     response = self.post_password_reset_email('hulot@mail.com')
 
+    self.assertFalse(self.dispatched_mails)
     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
     self.assertEqual(response.json, {
       'code': ErrorCode.EMAIL_MISSING,
       'message': 'E-mail not associated with any account',
     })
+
+  def post_password_reset_email(self, email: str) -> Response:
+    json = {'email': email}
+    return self.client.post('/authentication/credentials-recovery', json=json)
+
+
+class TestPasswordReset(AppTestCase):
 
   def test_post_password_reset_when_password_reset_not_first_created(self):
     response = self.post_password_reset('myToken', 'myNewPassword')
@@ -141,10 +186,6 @@ class TestPasswordReset(AppTestCase):
 
     self.assertEqual(response.status_code, HTTPStatus.OK)
     self.assertIsNone(response.json)
-
-  def post_password_reset_email(self, email: str) -> Response:
-    json = {'email': email}
-    return self.client.post('/authentication/password-reset', json=json)
 
   def post_password_reset(self, token: str, password: str) -> Response:
     resource = f'/authentication/password-reset/{token}'

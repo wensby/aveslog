@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default class AuthenticationService {
 
-  async postPasswordResetEmail(email) {
-    return await axios.post(`/api/authentication/password-reset`, {
+  async createCredentialsRecovery(email) {
+    return await axios.post(`/api/authentication/credentials-recovery`, {
       'email': email,
     });
   }
