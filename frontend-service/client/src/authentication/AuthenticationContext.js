@@ -15,7 +15,7 @@ const AuthenticationProvider = ({ children }) => {
     if (localStorageRefreshToken) {
       console.log('Recovered local storage refresh token');
       const refreshToken = JSON.parse(localStorageRefreshToken);
-      axios.post('/api/authentication/access-token', {
+      axios.post('/api/authentication/access-tokens', {
         refreshToken: refreshToken.jwt,
       })
         .then(response => createAccessToken(response.data))
@@ -24,7 +24,10 @@ const AuthenticationProvider = ({ children }) => {
           setRefreshToken(refreshToken);
           setAccessToken(accessToken);
         })
-        .catch(__ => localStorage.removeItem(refreshTokenKey))
+        .catch(error => {
+          console.log(error)
+          localStorage.removeItem(refreshTokenKey)
+        })
         .finally(() => setLoading(false))
     }
     else {
@@ -39,13 +42,13 @@ const AuthenticationProvider = ({ children }) => {
           if (error.response) {
             console.log('intercepting axios error response');
             if (error.response.status === 401) {
-              if (error.config.url.endsWith('/api/authentication/access-token')) {
+              if (error.config.url.endsWith('/api/authentication/access-tokens')) {
                 setRefreshToken(null);
                 return Promise.reject(error);
               }
               else if (!error.config._retry) {
                 error.config._retry = true;
-                return axios.post('/api/authentication/access-token', {
+                return axios.post('/api/authentication/access-tokens', {
                     refreshToken: refreshToken.jwt,
                 })
                   .then(response => createAccessToken(response.data))

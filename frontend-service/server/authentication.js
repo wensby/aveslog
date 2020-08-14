@@ -21,7 +21,7 @@ router.post('/tokens', async (req, res) => {
   }
 });
 
-router.post('/access-token', (req, res) => {
+router.post('/access-tokens', (req, res) => {
   req.axios.get('/authentication/access-token', {
     headers: {
       refreshToken: req.body.refreshToken,
