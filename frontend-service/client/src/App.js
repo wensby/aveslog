@@ -11,8 +11,13 @@ import { ScrollToTop } from 'sighting/ScrollToTop.js';
 import { SearchProvider } from 'search/SearchContext.js';
 import { TitleProvider } from 'specific/TitleContext.js';
 import { HomeProvider } from 'specific/HomeContext.js';
+import { useTranslation } from 'react-i18next';
 
 export const App = ({ version }) => {
+  const { ready } = useTranslation('', { useSuspense: false });
+  if (!ready) {
+    return <SuspenseLoader />;
+  }
   prepareLocalStorage(version);
 
   return (
