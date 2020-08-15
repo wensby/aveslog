@@ -5,8 +5,5 @@ import { LoadingOverlay } from 'loading/LoadingOverlay';
 
 export function BirderPageContainer({ birderId }) {
   const { data, loading } = useBirderPage(birderId);
-  if (loading) {
-    return <div><LoadingOverlay /></div>;
-  }
-  return <BirderPage data={data} />;
+  return loading ? <LoadingOverlay /> : <BirderPage data={data} />;
 }
