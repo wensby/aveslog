@@ -1,5 +1,4 @@
 import React from 'react';
-import { useBirdStatistics } from './BirdHooks';
 import { BirdCover } from './BirdCover.js';
 import { CommonNamesSection } from './CommonNamesSection';
 import { BirdActionBar } from './BirdActionBar';
