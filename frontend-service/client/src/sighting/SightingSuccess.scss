@@ -5,4 +5,8 @@ div.sighting-success {
   & .success-text {
     color: $success;
   }
+
+  & > * > * {
+    margin: auto;
+  }
 }

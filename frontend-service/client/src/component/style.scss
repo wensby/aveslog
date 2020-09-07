@@ -10,8 +10,8 @@
 
  @-webkit-keyframes bounce-in-right {
   0% {
-    -webkit-transform: translateX(600px);
-            transform: translateX(600px);
+    -webkit-transform: translateX(600px) rotateZ(30deg);
+            transform: translateX(600px) rotateZ(30deg);
     -webkit-animation-timing-function: ease-in;
             animation-timing-function: ease-in;
     opacity: 0;
@@ -62,8 +62,8 @@
 }
 @keyframes bounce-in-right {
   0% {
-    -webkit-transform: translateX(600px);
-            transform: translateX(600px);
+    -webkit-transform: translateX(600px) rotateZ(30deg);
+            transform: translateX(600px) rotateZ(30deg);
     -webkit-animation-timing-function: ease-in;
             animation-timing-function: ease-in;
     opacity: 0;
