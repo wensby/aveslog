@@ -5,7 +5,7 @@ import { DetailedSightingCard } from './DetailedSightingCard';
 import { BounceInRight } from '../component/BounceInRight';
 import './SightingSuccess.scss';
 
-export const SightingSuccess = ({ sighting, stats }) => {
+export const SightingSuccess = ({ sighting }) => {
   const { t } = useTranslation();
 
   return (
