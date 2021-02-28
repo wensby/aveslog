@@ -23,10 +23,6 @@ nav.navbar-menu {
     display: block;
   }
 
-  @media #{$tablet-landscape-up} {
-    display: none !important;
-  }
-
   & > * {
     display: block;
     padding: .5rem 1rem;

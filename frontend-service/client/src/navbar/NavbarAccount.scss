@@ -1,7 +1,9 @@
 @import '../colors.scss';
+@import 'layout.scss';
 
 div.navbar-account {
   padding-top: 0px;
+  display: none;
 
   & a {
     color: $black;
@@ -10,6 +12,10 @@ div.navbar-account {
       color: $primary;
       text-decoration: none;
     }
+  }
+
+  @media only screen and (min-width : $break-small) {
+    display: flex;
   }
 
   @media (prefers-color-scheme: dark) {

@@ -5,27 +5,26 @@
   width: 100%;
   display: grid;
   background-color: $white;
-  grid-template-columns: 1fr 75px;
-  grid-template-rows: 64px auto;
+  grid-template-columns: 150px auto 75px;
+  grid-template-rows: 64px;
   grid-template-areas:
-    "main button"
-    "search search";
+    "main search button";
     
     @media (prefers-color-scheme: dark) {
       background-color: $black;
     }
 
   @media #{$tablet-landscape-up} {
-    grid: 64px/ 3fr 7fr;
+    grid: 64px / 3fr 7fr 75px;
     grid-template-areas:
-      'main search';
+      'main search button';
   }
 
   @media #{$desktop-up} {
     grid: 64px / 1fr 750px 1fr;
     padding-right: 0;
     grid-template-areas:
-      "main search _";
+      "main search button";
   }
 }
 
@@ -53,8 +52,4 @@
   align-self: center;
   justify-self: end;
   padding: 7px;
-
-  @media #{$tablet-landscape-up} {
-    display: none;
-  }
 }

@@ -77,7 +77,7 @@ div.simple-search-section {
     width: 100%;
     align-items: center;
     border: 1px solid $lighter;
-    border-width: 1px 0;
+    border-width: 1px;
 
     @media #{$tablet-landscape-up} {
       border-radius: 0.5rem 0 0 0.5rem;

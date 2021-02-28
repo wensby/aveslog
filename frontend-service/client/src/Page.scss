@@ -2,11 +2,7 @@
 @import './colors.scss';
 
 %navbar-pushed {
-  padding-top: 112px;
-
-  @media only screen and (min-width : $break-small) {
-    padding-top: 64px;
-  }
+  padding-top: 64px;
 }
 
 :focus {
@@ -68,18 +64,6 @@ div#root {
     right: 0;
     left: 0;
     z-index: 1030;
-  }
-
-  & nav.sidebar {
-    @extend %navbar-pushed;
-    display: none;
-    z-index: 1;
-    position: fixed;
-    top: 0px;
-  
-    @media only screen and (min-width : 768px) {
-      display: block;
-    }
   }
 
   & main {

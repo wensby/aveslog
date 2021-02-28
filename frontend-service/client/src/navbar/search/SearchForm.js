@@ -17,7 +17,6 @@ export const SearchForm = () => {
 
   return (
     <form ref={searchFormRef} className='search-form' onSubmit={handleSubmit}>
-      <AdvancedSearchSection active={advanced} />
       <SimpleSearchSection />
     </form>
   );
@@ -45,7 +44,6 @@ const TextInputRightOverlay = () => {
   return (
     <div className='right'>
       {dirty && <ClearSearchButton />}
-      <AdvancedSearchToggle active={advanced} onChange={setAdvanced} />
     </div>
   );
 };

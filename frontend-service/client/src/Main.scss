@@ -1,21 +1,9 @@
-@import './layout.scss';
-
 main {
   overflow: hidden;
   display: grid;
   grid-template-areas: 'content';
   -webkit-perspective: 500px;
   perspective: 500px;
-
-  @media only screen and (min-width : $break-small) {
-    grid-template-columns: 3fr 7fr;
-    grid-template-areas: '. content';
-  }
-
-  @media only screen and (min-width : $break-large) {
-    grid-template-columns: 1fr 750px 1fr;
-    grid-template-areas: '. content .';
-  }
 
   & > div {
     grid-area: content;
