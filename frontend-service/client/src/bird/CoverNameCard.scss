@@ -24,12 +24,4 @@
       }
     }
   }
-
-  @media (prefers-color-scheme: dark) {
-    color: $white;
-
-    & div {
-      background-color: $black;
-    }
-  }
 }
