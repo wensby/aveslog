@@ -10,7 +10,7 @@ export function BirdCover({ bird, commonNames }) {
   return (
     <div className='picture-cover-container'>
       <div className='bird-picture'>
-        <img src={bird.cover.url}/>
+        <img src={bird.cover.url} alt={bird.id}/>
         </div>
       <CoverNameCard binomial={bird.binomialName} common={commonName.name} />
     </div>
