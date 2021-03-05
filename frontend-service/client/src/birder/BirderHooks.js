@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import birderRepository from './BirderRepository';
 import axios from 'axios';
 
