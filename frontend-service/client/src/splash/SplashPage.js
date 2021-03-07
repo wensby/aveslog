@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from 'react';
-import { SearchContext } from 'search/SearchContext';
+import React, { useContext } from 'react';
 import { Brand } from 'specific/Brand';
 import { SearchForm } from './SearchForm.js';
 import { UserContext } from 'authentication/UserContext';
@@ -9,12 +8,6 @@ import { useTranslation } from 'react-i18next';
 import './SplashPage.scss';
 
 export const SplashPage = () => {
-  const { clear } = useContext(SearchContext);
-
-  useEffect(() => {
-    clear();
-  }, []);
-
   return (
     <div className='splash-page'>
       <Link to ='/home'>
