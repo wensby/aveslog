@@ -3,6 +3,7 @@ import birdRepository from './BirdRepository';
 import { useTranslation } from 'react-i18next';
 import { BirdsContext } from './BirdsContext';
 import axios from 'axios';
+import placeholder from './placeholder-bird.jpg';
 
 export const useBird = birdId => {
   const { addBird } = useContext(BirdsContext);
@@ -171,3 +172,22 @@ export function useCommonNames(bird, forceReload) {
 
   return names;
 }
+
+
+
+export const useBirdPicture = (bird) => {
+  const [src, setSrc] = useState(placeholder);
+
+  useEffect(() => {
+    if (((bird || {}).thumbnail || {}).url) {
+      if (bird.thumbnail.url !== src) {
+        setSrc(bird.thumbnail.url);
+      }
+    }
+    else {
+      setSrc(placeholder);
+    }
+  }, [bird, src])
+
+  return src;
+};
