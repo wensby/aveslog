@@ -22,7 +22,7 @@ const useTitle = (title) => {
   useEffect(() => {
     setTitle(title);
     return () => setTitle(null);
-  }, [title]);
+  }, [title, setTitle]);
 }
 
 export { TitleProvider, TitleContext, useTitle }
