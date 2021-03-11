@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
-import { AdvancedSearchSection } from './AdvancedSearchSection.js';
 import { SearchInput } from './SearchInput.js';
 import { SearchButton } from './SearchButton.js';
 import { SearchBarContext } from './SearchBar';
-import { AdvancedSearchToggle } from './AdvancedSearchToggle';
 import { ClearSearchButton } from './ClearSearchButton';
 import './SearchForm.scss';
 
 export const SearchForm = () => {
-  const { searchFormRef, submit, advanced } = useContext(SearchBarContext);
+  const { searchFormRef, submit } = useContext(SearchBarContext);
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -39,7 +37,7 @@ export const SimpleSearchSection = () => {
 
 
 const TextInputRightOverlay = () => {
-  const { advanced, setAdvanced, dirty } = useContext(SearchBarContext);
+  const { dirty } = useContext(SearchBarContext);
 
   return (
     <div className='right'>
