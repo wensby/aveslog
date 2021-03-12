@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './SightingsWeekGraph.scss';
 var d3 = require("d3");
 
-Date.prototype.getWeek = function () {
-  var onejan = new Date(this.getFullYear(), 0, 1);
-  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+const getWeek = date => {
+  var onejan = new Date(date.getFullYear(), 0, 1);
+  return Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
 }
 
 const SightingsWeekGraph = ({ sightings }) => {
@@ -15,7 +15,7 @@ const SightingsWeekGraph = ({ sightings }) => {
     const newData = [];
     for (var i = 1; i <= 52; i++) {
       const count = sightings
-        .map(s => new Date(s.date).getWeek())
+        .map(s => getWeek(new Date(s.date)))
         .filter(week => week === i).length;
       newData.push({ week: i, value: count });
     }
