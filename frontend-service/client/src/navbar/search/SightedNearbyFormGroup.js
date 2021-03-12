@@ -44,7 +44,7 @@ const Range = () => {
 
   useEffect(() => {
     setPositionRadius(Math.round(rangeValueToRadius(rangeValue)));
-  }, [rangeValue]);
+  }, [rangeValue, setPositionRadius]);
 
   return (
     <div className='range'>
