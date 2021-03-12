@@ -14,9 +14,10 @@ const SightingsWeekGraph = ({ sightings }) => {
   useEffect(() => {
     const newData = [];
     for (var i = 1; i <= 52; i++) {
+      const iConst = i;
       const count = sightings
         .map(s => getWeek(new Date(s.date)))
-        .filter(week => week === i).length;
+        .filter(week => week === iConst).length;
       newData.push({ week: i, value: count });
     }
     newData.push({week: 52, value: 0});
