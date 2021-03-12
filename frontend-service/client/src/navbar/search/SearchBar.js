@@ -4,7 +4,7 @@ import { SearchForm } from './SearchForm';
 
 export const SearchBarContext = React.createContext();
 
-export const SearchBar = ({ children }) => {
+export const SearchBar = () => {
   const { positionActive, query, disabled, submit: searchSubmit } = useContext(SearchContext);
   const [advanced, setAdvanced] = useState(false);
   const inputRef = useRef(null);
@@ -27,12 +27,6 @@ export const SearchBar = ({ children }) => {
       searchSubmit();
       setAdvanced(false);
       inputRef.current.blur();
-    }
-  };
-
-  const clear = () => {
-    if (inputRef.current) {
-      inputRef.current.focus();
     }
   };
 
