@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useBird, useCommonName } from '../bird/BirdHooks';
 import { BirdThumbnailImage } from '../bird/BirdThumbnailImage';
 import './DetailedSightingCard.scss';
-import { BirdLink } from 'bird/BirdLink';
 
 export const DetailedSightingCard = ({ sighting }) => {
   const { bird } = useBird(sighting.birdId);
@@ -52,13 +51,6 @@ const Name = ({ name }) => {
 
 const Picture = ({ sighting }) => {
   const { bird } = useBird(sighting.birdId);
-  const [style, setStyle] = useState({});
-
-  useEffect(() => {
-    if (bird && bird.cover) {
-      setStyle({ backgroundImage: `url(${bird.cover.url})` });
-    }
-  }, [bird]);
 
   if (!bird) {
     return null;
