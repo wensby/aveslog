@@ -19,6 +19,7 @@ const SightingsWeekGraph = ({ sightings }) => {
         .filter(week => week === i).length;
       newData.push({ week: i, value: count });
     }
+    newData.push({week: 52, value: 0});
     newData.push({week: 1, value: 0});
     setData(newData);
   }, [sightings]);
