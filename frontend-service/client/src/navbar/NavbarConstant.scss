@@ -1,10 +1,10 @@
-@import '../colors.scss';
+@import 'colors.scss';
 @import '../layout.scss';
 
 .navbar-constant {
   width: 100%;
   display: grid;
-  background-color: $white;
+  background-color: $light-primary;
   grid-template-columns: 150px auto 75px;
   grid-template-rows: 64px;
   grid-template-areas:
