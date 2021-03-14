@@ -1,27 +1,23 @@
 @import '../colors.scss';
 
 .bird-name-card {
-  background-color: transparentize($color: #000, $amount: .75);
-  display: flex;
-  justify-content: center;
   flex-direction: column;
+  color: $black;
+  margin-bottom: 0;
 
-  & div {
-    color: $white;
-    text-align: center;
-    margin-bottom: 0;
-    box-shadow: 0 0 1em 0.2em rgba(38, 38, 38, 0.05);
+  & h1.bird-page-name {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 25px;
+    z-index: 1;
 
-    & h1.bird-page-name {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      font-size: 25px;
-      z-index: 1;
-
-      /* => md */
-      @media (min-width: 768px) {
-        font-size: 35px;
-      }
+    /* => md */
+    @media (min-width: 768px) {
+      font-size: 35px;
     }
+  }
+
+  & > p.binomial {
+    margin-top: 0px;
   }
 }

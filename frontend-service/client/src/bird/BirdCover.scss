@@ -1,31 +1,16 @@
-@import '../colors.scss';
+@import 'colors.scss';
 @import 'layout.scss';
 
 .picture-cover-container {
-  position: relative;
-  z-index: 0;
-  display: grid;
-  background-color: $black;
-  padding: 20px;
-  height: 200px;
-  @media only screen and (min-width : $break-small) {
-    height: 400px;
-  }
+  @extend %side-margins;
+  @extend %common-main-margin-top;
+  display: flex;
 
   & .bird-picture {
-    position: absolute;
-    z-index: -1;
-    padding: 20px;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    margin-right: 10px;
 
     & > img {
-      height: 100%;
+      width: 5rem;
     }
-  }
-
-  & .bird-name-card {
-    grid-column: 2;
   }
 }

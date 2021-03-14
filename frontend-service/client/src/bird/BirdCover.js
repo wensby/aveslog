@@ -13,7 +13,7 @@ export function BirdCover({ bird, commonNames }) {
     <div className='picture-cover-container'>
       <div className='bird-picture'>
         <img src={picture} alt={bird.id}/>
-        </div>
+      </div>
       <CoverNameCard binomial={bird.binomialName} common={commonName.name} />
     </div>
   );
