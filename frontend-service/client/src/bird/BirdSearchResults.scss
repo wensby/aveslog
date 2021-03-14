@@ -1,5 +1,5 @@
-@import '../colors.scss';
-@import '../layout.scss';
+@import 'colors.scss';
+@import 'layout.scss';
 
 .bird-result-container {
   @extend %common-main-margin-top;
@@ -10,5 +10,18 @@
     color: $lightgrey;
     margin-bottom: 10px;
     overflow: hidden;
+  }
+
+  & > div.items-container {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media only screen and (min-width : $break-small) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media only screen and (min-width : $break-large) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 }

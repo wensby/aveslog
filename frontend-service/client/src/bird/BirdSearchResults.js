@@ -7,9 +7,11 @@ export const BirdSearchResults = ({ query, birds }) => {
   return (
     <div className='bird-result-container'>
       <BirdSearchResultInfo query={query} />
-      {birds.map((item, index) => (
-        <BirdSearchResultItem bird={item.bird} stats={item.stats} key={index} />
-      ))}
+      <div className='items-container'>
+        {birds.map((item, index) => (
+          <BirdSearchResultItem bird={item.bird} stats={item.stats} key={index} />
+        ))}
+      </div>
     </div>
   );
 };
