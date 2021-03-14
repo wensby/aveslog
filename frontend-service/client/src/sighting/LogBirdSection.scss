@@ -23,7 +23,7 @@
 }
 
 div.log-bird-section {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   @extend %common-main-margin-top;
 
   & .form-group {

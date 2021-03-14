@@ -4,17 +4,9 @@ $footer-height: 60px;
 $tablet-landscape-up: "only screen and (min-width : 768px)";
 $desktop-up: "only screen and (min-width : 1224px)";
 
-%phone-side-margins {
+%side-margins {
   margin-left: 1rem;
   margin-right: 1rem;
-
-  @media only screen and (min-width : $break-small) {
-    margin-left: unset;
-  }
-
-  @media only screen and (min-width : $break-large) {
-    margin-right: unset;
-  }
 }
 
 %common-main-margin-top {
@@ -22,7 +14,7 @@ $desktop-up: "only screen and (min-width : 1224px)";
 }
 
 %common-page-heading-positioning {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   margin-bottom: .5rem;
   margin-top: 0;
 }

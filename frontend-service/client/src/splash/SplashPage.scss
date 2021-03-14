@@ -2,7 +2,7 @@
 @import 'layout.scss';
 
 div.splash-page {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

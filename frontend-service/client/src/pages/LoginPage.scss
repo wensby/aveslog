@@ -14,7 +14,7 @@
   }
 
   & .login-form {
-    @extend %phone-side-margins;
+    @extend %side-margins;
     max-width: 600px;
     align-content: center;
   }

@@ -2,7 +2,7 @@
 @import '../layout.scss';
 
 button.birder-connection-button {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   display: flex;
   background-color: transparent;
   color: $black;

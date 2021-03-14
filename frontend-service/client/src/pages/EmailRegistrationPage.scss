@@ -11,11 +11,11 @@ div.email-registration-page {
   }
 
   & p {
-    @extend %phone-side-margins;
+    @extend %side-margins;
   }
 
   & form {
-    @extend %phone-side-margins;
+    @extend %side-margins;
     align-self: stretch;
     display: flex;
     flex-direction: column;
@@ -65,7 +65,7 @@ div.email-registration-page {
   }
 
   & > a {
-    @extend %phone-side-margins;
+    @extend %side-margins;
     align-self: flex-start;
   }
 }

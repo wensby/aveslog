@@ -4,6 +4,6 @@ div.home-page {
   @extend %common-main-margin-top;
   
   & h1.page-heading {
-    @extend %phone-side-margins;
+    @extend %side-margins;
   }
 }

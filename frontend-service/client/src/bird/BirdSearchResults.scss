@@ -6,7 +6,7 @@
   position: relative;
 
   & .bird-search-result-info {
-    @extend %phone-side-margins;
+    @extend %side-margins;
     color: $lightgrey;
     margin-bottom: 10px;
     overflow: hidden;

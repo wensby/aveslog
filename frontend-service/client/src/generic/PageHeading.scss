@@ -2,7 +2,7 @@
 @import 'layout.scss';
 
 h1.page-heading {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   margin-bottom: .5rem;
   margin-top: 0px;
   box-sizing: border-box;

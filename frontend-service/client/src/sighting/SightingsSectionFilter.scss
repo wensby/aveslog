@@ -2,7 +2,7 @@
 @import '../layout.scss';
 
 div.sightings-filter {
-  @extend %phone-side-margins;
+  @extend %side-margins;
   
   & button {
     color: $primary;
