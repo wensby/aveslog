@@ -20,4 +20,8 @@
   & > p.binomial {
     margin-top: 0px;
   }
+
+  @media (prefers-color-scheme: dark) {
+    color: $white;
+  }
 }
