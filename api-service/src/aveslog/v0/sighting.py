@@ -11,7 +11,9 @@ class SightingRepository:
         birder_id: Optional[int] = None,
         limit: Optional[int] = None
   ) -> Tuple[List[Sighting], bool]:
-    query = g.database_session.query(Sighting).options(joinedload('bird'))
+    query = g.database_session.query(Sighting) \
+      .options(joinedload('bird')) \
+      .options(joinedload('position'))
     if birder_id:
       query = query.filter_by(birder_id=birder_id)
     count = query.count()
