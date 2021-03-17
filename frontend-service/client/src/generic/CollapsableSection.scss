@@ -1,0 +1,33 @@
+@import 'colors.scss';
+@import 'layout.scss';
+
+div.collapsable-section {
+  display: grid;
+  grid-template-columns: auto 66px;
+
+  &.expanded {
+    & > div.toggle {
+      transform: rotate(180deg);
+    }
+  }
+
+  &.collapsed {
+    & > div.collapsable-section-body {
+      display: none;
+    }
+  }
+
+  & > div.toggle {
+    width: 66px;
+    height: 100%;
+    transition: transform 0.15s ease-in-out;
+    grid-column: 2;
+    line-height: 0;
+  }
+
+  & > div.collapsable-section-header {
+    @extend %side-margins;
+    grid-row: 1;
+    grid-column: 1;
+  }
+}

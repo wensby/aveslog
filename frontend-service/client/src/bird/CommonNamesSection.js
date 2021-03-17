@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { CommonNameItem } from './CommonNameItem.js';
-import './CommonNamesSection.scss';
 import { useTranslation } from 'react-i18next';
 import { CommonNameAdder } from './CommonNameAdder.js';
 import { useLocales } from './LocalesHooks.js';
 import { useResourcePermission } from '../account/AccountHooks.js'
+import './CommonNamesSection.scss';
+import { CollapsableSection } from 'generic/CollapsableSection.js';
+import { CollapsableSectionHeader } from 'generic/CollapsableSectionHeader.js';
+import { CollapsableSectionBody } from 'generic/CollapsableSectionBody.js';
 
 export function CommonNamesSection({ bird, commonNames }) {
   const [names, setNames] = useState(commonNames);
@@ -38,13 +41,18 @@ export function CommonNamesSection({ bird, commonNames }) {
   }, [vacantLocales, permissionToPostCommonNames])
 
   return (
-    <div className='common-names-section'>
-      <h2>{t('common-names-title')}</h2>
-      <div className='names-cluster'>
-        {Object.entries(namesByLanguageCode).map(([key, value]) => <CommonNameItem key={key + value} code={key} name={value} />)}
-      </div>
-      {showAdder && <CommonNameAdder onNameAdded={(language, name) => { setNames([...names, { locale: language, name: name }]) }} bird={bird} locales={vacantLocales} />}
-    </div>
-
+    <CollapsableSection>
+      <CollapsableSectionHeader>
+        <h2>{t('common-names-title')}</h2>
+      </CollapsableSectionHeader>
+      <CollapsableSectionBody>
+        <div className='common-names-section'>
+          <div className='names-cluster'>
+            {Object.entries(namesByLanguageCode).map(([key, value]) => <CommonNameItem key={key + value} code={key} name={value} />)}
+          </div>
+          {showAdder && <CommonNameAdder onNameAdded={(language, name) => { setNames([...names, { locale: language, name: name }]) }} bird={bird} locales={vacantLocales} />}
+        </div>
+      </CollapsableSectionBody>
+    </CollapsableSection>
   );
 }
