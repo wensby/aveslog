@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { SightingsSection } from '../sighting/SightingsSection.js';
-import { UserContext } from '../authentication/UserContext';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { SightingsSection } from 'sighting/SightingsSection.js';
+import { UserContext } from 'authentication/UserContext';
+import { PageHeading } from 'generic/PageHeading';
 import './BirderPage.scss';
 import 'birder/BirderConnectionButton.scss';
-import { PageHeading } from 'generic/PageHeading';
-import axios from 'axios';
 
 export default ({ data }) => {
   const { account } = useContext(UserContext);

@@ -2,7 +2,7 @@
 
 div.birder-page {
   @extend %common-main-margin-top;
-  & h1 {
+  & h1,h2 {
     @extend %side-margins;
   }
 }
