@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { AuthenticationContext } from '../authentication/AuthenticationContext';
 import { useTranslation } from 'react-i18next';
-import { PageHeading } from '../generic/PageHeading.js';
-import { FeedContainer } from '../home/FeedContainer';
+import { AuthenticationContext } from 'authentication/AuthenticationContext';
+import { PageHeading } from 'generic/PageHeading';
+import { FeedContainer } from 'home/FeedContainer';
 import './HomePage.scss';
 
 export default () => {
