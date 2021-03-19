@@ -1,22 +1,25 @@
-@import '../layout.scss';
-@import '../colors.scss';
+@import 'layout.scss';
+@import 'colors.scss';
 
 div.bird-search-result-card {
-  height: 5rem;
   display: grid;
   grid-template-columns: 5rem auto;
   grid-template-rows: 5rem;
+  margin: .25rem;
+  border-radius: .25rem;
+  border: 1px solid $light-primary;
 
   @media (prefers-color-scheme: dark) {
     background-color: $black;
+    border: 1px solid $primary;
   }
 
-  & div.circled-bird-picture {
+  & > div.circled-bird-picture {
     grid-row: 1;
     grid-column: 1;
   }
 
-  & div.body {
+  & > div.body {
     grid-row: 1;
     grid-column: 2;
     display: flex;
