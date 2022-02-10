@@ -11,7 +11,7 @@
     "i18next": "^17.3.1",
     "i18next-browser-languagedetector": "^3.1.1",
     "i18next-xhr-backend": "^3.2.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "query-string": "6.8.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
